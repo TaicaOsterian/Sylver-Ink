@@ -58,7 +58,7 @@ public partial class SearchResult : Window, IDisposable
 	{
 		if (Edited)
 		{
-			switch(MessageBox.Show("You have unsaved changes. Save before closing this note?", "Sylver Ink: Notification", MessageBoxButton.YesNoCancel, MessageBoxImage.Information))
+			switch (MessageBox.Show("You have unsaved changes. Save before closing this note?", "Sylver Ink: Notification", MessageBoxButton.YesNoCancel, MessageBoxImage.Information))
 			{
 				case MessageBoxResult.Cancel:
 					return;
@@ -123,7 +123,7 @@ public partial class SearchResult : Window, IDisposable
 		}, TaskCreationOptions.LongRunning);
 	}
 
-	public void ScrollToText(string text) => TextUtils.ScrollToText(ResultBlock, text); 
+	public void ScrollToText(string text) => TextUtils.ScrollToText(ResultBlock, text);
 
 	private void ViewClick(object? sender, RoutedEventArgs e)
 	{
@@ -239,8 +239,8 @@ public partial class SearchResult : Window, IDisposable
 			}
 
 			if (position.X > 0.0
-				&& position.Y > 0.0
 				&& position.X <= Width
+				&& position.Y > 0.0
 				&& position.Y <= Height)
 			{
 				if (MouseInside)
