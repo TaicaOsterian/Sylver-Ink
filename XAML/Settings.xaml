@@ -36,10 +36,10 @@
 				<RowDefinition Height="*"/>
 			</Grid.RowDefinitions>
 			<Label FontStyle="Italic" Foreground="{Binding MenuForeground}" HorizontalAlignment="Right" Margin="10,0">
-				<TextBlock TextAlignment="Right">Recent notes<LineBreak/>sort by...</TextBlock>
+				<TextBlock TextAlignment="Right">Ribbon tabs<LineBreak/>display...</TextBlock>
 			</Label>
 			<Label FontStyle="Italic" Foreground="{Binding MenuForeground}" HorizontalAlignment="Right" Margin="10,0" Grid.Row="1">
-				<TextBlock TextAlignment="Right">Ribbon tabs<LineBreak/>display...</TextBlock>
+				<TextBlock TextAlignment="Right">Recent notes<LineBreak/>sort by...</TextBlock>
 			</Label>
 			<Label FontStyle="Italic" Foreground="{Binding MenuForeground}" HorizontalAlignment="Right" Margin="10,0" Grid.Row="2">
 				<TextBlock TextAlignment="Right">Sticky notes<LineBreak/>stay on top</TextBlock>
