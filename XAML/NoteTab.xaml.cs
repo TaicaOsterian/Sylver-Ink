@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Windows.Input;
 using System.Windows.Media;
 using static SylverInk.CommonUtils;
 using static SylverInk.Notes.DatabaseUtils;
@@ -167,6 +168,17 @@ public partial class NoteTab : UserControl
 			TimeSinceAutosave = DateTime.UtcNow;
 			return;
 		}, TaskCreationOptions.LongRunning);
+	}
+
+	private void NoteTab_KeyDown(object sender, KeyEventArgs e)
+	{
+		if (e.Key == Key.F && (Keyboard.Modifiers & ModifierKeys.Control) != 0)
+		{
+			InternalSearchPopup.IsOpen = true;
+			ISPText.Focus();
+
+			e.Handled = true;
+		}
 	}
 
 	private void NoteTab_Loaded(object sender, RoutedEventArgs e)

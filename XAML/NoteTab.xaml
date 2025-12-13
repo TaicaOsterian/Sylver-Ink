@@ -6,6 +6,7 @@
 			 xmlns:local="clr-namespace:SylverInk.XAML" xmlns:sylverink="clr-namespace:SylverInk"
 			 mc:Ignorable="d"
 			 d:DataContext="{d:DesignInstance Type=sylverink:ContextSettings}"
+			 KeyDown="NoteTab_KeyDown"
 			 Loaded="NoteTab_Loaded">
 	<UserControl.Resources>
 		<ResourceDictionary>
@@ -17,7 +18,7 @@
 			</Style>
 		</ResourceDictionary>
 	</UserControl.Resources>
-    <Grid Margin="2" x:Name="MainGrid">
+	<Grid Margin="2" x:Name="MainGrid">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="Auto"/>
@@ -119,7 +120,7 @@
 				</Button>
 			</Grid>
 		</Grid>
-		
+
 		<local:ColorPicker x:Name="TextColorPicker"/>
 
 		<Popup Height="75" IsOpen="False" StaysOpen="True" Width="300" x:Name="InternalSearchPopup">
@@ -147,7 +148,7 @@
 		<RichTextBox AcceptsReturn="True" Grid.Row="2" SelectionChanged="NoteBox_SelectionChanged" TextChanged="NoteBox_TextChanged" UndoLimit="10"
 					VerticalScrollBarVisibility="Auto"
 					x:Name="NoteBox"/>
-		
+
 		<Grid HorizontalAlignment="Center" Margin="0,20" Grid.Row="3" x:Name="ButtonGrid">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="*"/>
@@ -161,7 +162,7 @@
 			</Grid.RowDefinitions>
 			<Button Click="ClickPrevious" Grid.ColumnSpan="2" Content="←" Width="50" x:Name="PreviousButton"/>
 			<Button Click="ClickNext" Grid.Column="1" Grid.ColumnSpan="2" Content="→" Width="50" x:Name="NextButton"/>
-			
+
 			<Button Click="ClickDelete" Content="Delete" Grid.Row="2" x:Name="DeleteButton"/>
 			<Button Click="ClickSave" Grid.Column="1" Content="Save" Margin="20,0" Grid.Row="2" x:Name="SaveButton"/>
 			<Button Click="ClickReturn" Grid.Column="2" Content="Return" Grid.Row="2" x:Name="ReturnButton"/>

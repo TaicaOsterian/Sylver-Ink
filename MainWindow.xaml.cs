@@ -1,7 +1,5 @@
-﻿using SylverInk.Keyboard;
-using SylverInk.Net;
+﻿using SylverInk.Net;
 using SylverInk.Notes;
-using SylverInk.XAML;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -33,7 +31,6 @@ public partial class MainWindow : Window, IDisposable
 	[DllImport("User32.dll")]
 	private static extern bool UnregisterHotKey(nint hWnd, int id);
 
-	private KeyboardListener? hotkeyListener;
 	private readonly WindowInteropHelper hWndHelper;
 	private Mutex? mutex;
 	private readonly CancellationTokenSource mutexTokenSource = new();
@@ -188,10 +185,10 @@ public partial class MainWindow : Window, IDisposable
 
 	private async void HandleMutexPipe(CancellationToken token)
 	{
+		using var server = new NamedPipeServerStream(MutexName);
+
 		while (mutex != null)
 		{
-			using var server = new NamedPipeServerStream(MutexName);
-
 			try
 			{
 				await server.WaitForConnectionAsync(token);
@@ -297,7 +294,7 @@ public partial class MainWindow : Window, IDisposable
 
 	private async void MainWindow_Closing(object? sender, CancelEventArgs e)
 	{
-		if (IsShuttingDown()) // Prevent redundant event-handling.
+		if (IsShuttingDown()) // Prevent redundant event handling.
 			return;
 
 		if (AbortRun)
@@ -372,19 +369,6 @@ public partial class MainWindow : Window, IDisposable
 		base.OnClosed(e);
 	}
 
-	public void OnHotkey(object sender, RawKeyEventArgs e)
-	{
-		if (e.Ctrl == 0)
-			return;
-
-		switch (e.Key)
-		{
-			case Key.F:
-				Concurrent(OnNoteSearchHotkey);
-				break;
-		}
-	}
-
 	private static void OnNewNoteHotkey()
 	{
 		var firstRecord = CurrentDatabase.GetRecord(0);
@@ -403,18 +387,6 @@ public partial class MainWindow : Window, IDisposable
 		}
 
 		OpenQuery(CurrentDatabase.GetRecord(CurrentDatabase.CreateRecord(string.Empty)));
-	}
-
-	private static void OnNoteSearchHotkey()
-	{
-		var tabPanel = GetChildPanel("DatabasesPanel");
-		var openTab = (TabItem)tabPanel.SelectedItem;
-
-		if (openTab.Content is not NoteTab noteTab)
-			return;
-
-		noteTab.InternalSearchPopup.IsOpen = true;
-		noteTab.ISPText.Focus();
 	}
 
 	private static void OnPreviousNoteHotkey() => OpenQuery(PreviousOpenNote ?? CurrentDatabase.GetRecord(CurrentDatabase.CreateRecord(string.Empty)));
@@ -441,9 +413,6 @@ public partial class MainWindow : Window, IDisposable
 			return;
 		}
 
-		Erase(UpdateHandler.UpdateLockUri);
-		Erase(UpdateHandler.TempUri);
-
 		await CommonUtils.Settings.Load();
 		SettingsLoaded = true;
 
@@ -453,6 +422,8 @@ public partial class MainWindow : Window, IDisposable
 
 		SetMenuColors(this);
 
+		Erase(UpdateHandler.UpdateLockUri);
+		Erase(UpdateHandler.TempUri);
 		await UpdateHandler.CheckForUpdates();
 
 		if (!IsShuttingDown())
@@ -466,9 +437,6 @@ public partial class MainWindow : Window, IDisposable
 
 	private void RegisterHotKeys()
 	{
-		hotkeyListener = new();
-		hotkeyListener.KeyDown += new RawKeyEventHandler(OnHotkey);
-
 		RegisterHotKey(hWndHelper.Handle, NewNoteHotKeyID, 2, (uint)KeyInterop.VirtualKeyFromKey(Key.N));
 		RegisterHotKey(hWndHelper.Handle, PreviousNoteHotKeyID, 2, (uint)KeyInterop.VirtualKeyFromKey(Key.L));
 	}
@@ -477,7 +445,5 @@ public partial class MainWindow : Window, IDisposable
 	{
 		UnregisterHotKey(hWndHelper.Handle, NewNoteHotKeyID);
 		UnregisterHotKey(hWndHelper.Handle, PreviousNoteHotKeyID);
-
-		hotkeyListener?.Dispose();
 	}
 }
