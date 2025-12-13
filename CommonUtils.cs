@@ -1,9 +1,12 @@
-﻿using SylverInk.Notes;
+﻿using SylverInk.Net;
+using SylverInk.Notes;
 using SylverInk.XAML;
 using SylverInk.XAMLUtils;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
@@ -122,6 +125,8 @@ public static partial class CommonUtils
 
 		return null;
 	}
+
+	public static bool InstanceRunning() => Process.GetProcessesByName("Sylver Ink").Length > 1 && !File.Exists(UpdateHandler.UpdateLockUri);
 
 	public static int IntFromBytes(byte[] data) =>
 		(data[0] << 24)

@@ -2,7 +2,6 @@
 using SylverInk.Notes;
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.IO.Pipes;
 using System.Linq;
@@ -277,8 +276,6 @@ public partial class MainWindow : Window, IDisposable
 		return default;
 	}
 
-	private static bool InstanceRunning() => Process.GetProcessesByName("Sylver Ink").Length > 1 && !File.Exists(UpdateHandler.UpdateLockUri);
-
 	private static bool IsShuttingDown()
 	{
 		try
@@ -369,25 +366,7 @@ public partial class MainWindow : Window, IDisposable
 		base.OnClosed(e);
 	}
 
-	private static void OnNewNoteHotkey()
-	{
-		var firstRecord = CurrentDatabase.GetRecord(0);
-		var lastRecord = CurrentDatabase.GetRecord(CurrentDatabase.RecordCount - 1);
-
-		if (string.IsNullOrEmpty(firstRecord.ToString()))
-		{
-			OpenQuery(firstRecord);
-			return;
-		}
-
-		if (string.IsNullOrEmpty(lastRecord.ToString()))
-		{
-			OpenQuery(lastRecord);
-			return;
-		}
-
-		OpenQuery(CurrentDatabase.GetRecord(CurrentDatabase.CreateRecord(string.Empty)));
-	}
+	private static void OnNewNoteHotkey() => CreateNewNote();
 
 	private static void OnPreviousNoteHotkey() => OpenQuery(PreviousOpenNote ?? CurrentDatabase.GetRecord(CurrentDatabase.CreateRecord(string.Empty)));
 
@@ -395,10 +374,12 @@ public partial class MainWindow : Window, IDisposable
 	{
 		base.OnSourceInitialized(e);
 
+		// Hotkey registration
 		WindowSource = HwndSource.FromHwnd(hWndHelper.Handle);
 		WindowSource.AddHook(HwndHook);
 		RegisterHotKeys();
 
+		// Database initialization
 		HandleCheckInit();
 		HandleShellVerbs();
 
@@ -407,12 +388,13 @@ public partial class MainWindow : Window, IDisposable
 			if (!ShellVerbsPassed)
 				MessageBox.Show("Another instance of Sylver Ink is already running.", "Sylver Ink: Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
-			// Otherwise, close the program silently before a head is established.
+			// If shell verbs were passed to an existing instance, close this instance silently before a head is established.
 			AbortRun = true;
 			Close();
 			return;
 		}
 
+		// Settings initialization
 		await CommonUtils.Settings.Load();
 		SettingsLoaded = true;
 
@@ -420,15 +402,19 @@ public partial class MainWindow : Window, IDisposable
 			if (!Directory.Exists(folder.Value))
 				Directory.CreateDirectory(folder.Value);
 
+		// Style initialization
 		SetMenuColors(this);
 
+		// Check for updates
 		Erase(UpdateHandler.UpdateLockUri);
 		Erase(UpdateHandler.TempUri);
 		await UpdateHandler.CheckForUpdates();
 
+		// (If initialization was interrupted, prevent marking it as completed)
 		if (!IsShuttingDown())
 			UpdatesChecked = true;
 
+		// Create an empty database if and only if we haven't loaded any from files
 		if (!CommonUtils.Settings.FirstRun)
 			return;
 

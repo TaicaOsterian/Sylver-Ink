@@ -76,6 +76,26 @@ public static class DatabaseUtils
 		DeferUpdateRecentNotes();
 	}
 
+	public static void CreateNewNote()
+	{
+		var firstRecord = CurrentDatabase.GetRecord(0);
+		var lastRecord = CurrentDatabase.GetRecord(CurrentDatabase.RecordCount - 1);
+
+		if (string.IsNullOrEmpty(firstRecord.ToString()))
+		{
+			OpenQuery(firstRecord);
+			return;
+		}
+
+		if (string.IsNullOrEmpty(lastRecord.ToString()))
+		{
+			OpenQuery(lastRecord);
+			return;
+		}
+
+		OpenQuery(CurrentDatabase.GetRecord(CurrentDatabase.CreateRecord(string.Empty)));
+	}
+
 	public static Database? GetDatabaseFromRecord(NoteRecord target)
 	{
 		foreach (Database db in Databases)
