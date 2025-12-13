@@ -10,9 +10,8 @@
   
   <PropertyGroup>
 	<SourceRevisionId>build$([System.DateTime]::UtcNow.ToString("yyyyMMdd"))</SourceRevisionId>
-	<SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
 	<NeutralLanguage>en-US</NeutralLanguage>
-	<Version>1.5.5</Version>
+	<Version>1.6.1</Version>
 	<UseWindowsForms>False</UseWindowsForms>
 	<Title>Sylver Ink</Title>
 	<Authors>taicanium,norvinsk.hunter,milesfarber</Authors>
@@ -20,15 +19,15 @@
 	<ApplicationIcon>res\glasses.ico</ApplicationIcon>
 	<PackageReadmeFile>README.md</PackageReadmeFile>
 	<Company>Taica</Company>
-	<PackageProjectUrl>https://github.com/Taicanium/Sylver-Ink</PackageProjectUrl>
+	<PackageProjectUrl></PackageProjectUrl>
 	<AllowUnsafeBlocks>False</AllowUnsafeBlocks>
-	<RepositoryUrl>https://github.com/Taicanium/Sylver-Ink</RepositoryUrl>
+	<RepositoryUrl></RepositoryUrl>
 	<IncludeSymbols>False</IncludeSymbols>
 	<AnalysisLevel>latest-recommended</AnalysisLevel>
 	<ProduceReferenceAssembly>True</ProduceReferenceAssembly>
 	<PackageLicenseFile>LICENSE</PackageLicenseFile>
 	<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-	<TargetFramework>net8.0-windows10.0.26100.0</TargetFramework>
+	<TargetFramework>net8.0-windows7.0</TargetFramework>
 	<PlatformTarget>x64</PlatformTarget>
 	<ErrorReport>none</ErrorReport>
   </PropertyGroup>
@@ -48,6 +47,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <DebugType>embedded</DebugType>
   </PropertyGroup>
+  
+  <ItemGroup>
+    <Compile Remove="publish\**" />
+    <EmbeddedResource Remove="publish\**" />
+    <None Remove="publish\**" />
+    <Page Remove="publish\**" />
+  </ItemGroup>
   
   <ItemGroup>
 	<Content Include="res\glasses.ico">
@@ -80,10 +86,6 @@
 	<None Update="res\sidb.ico">
 	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	</None>
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Folder Include="publish\" />
   </ItemGroup>
   
   <ItemGroup>

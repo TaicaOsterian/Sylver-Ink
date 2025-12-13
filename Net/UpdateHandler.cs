@@ -13,12 +13,16 @@ namespace SylverInk.Net;
 
 static class UpdateHandler
 {
-	private static string GitReleasesURI { get; } = "https://api.github.com/repos/taicanium/Sylver-Ink/releases?per_page=1&page=1";
-	public static string TempUri { get; } = Path.Join(DocumentsFolder, "SylverInk_Setup.msi");
+	private static string GitReleasesURI { get; } = "https://api.github.com/repos/TaicaOsterian/Sylver-Ink/releases?per_page=1&page=1";
+	public static string TempUri { get; } = Path.Join(DocumentsFolder, "SylverInk.msi");
 	public static string UpdateLockUri { get; } = Path.Join(DocumentsFolder, "~si_update.lock");
 
 	public static async Task CheckForUpdates()
 	{
+		using var httpClient = new HttpClient();
+		Version? releaseVersion;
+		string? uriNode = null;
+
 		if (Assembly.GetExecutingAssembly().GetName().Version is not Version assemblyVersion)
 			return;
 
@@ -27,7 +31,6 @@ static class UpdateHandler
 
 		try
 		{
-			using var httpClient = new HttpClient();
 			if (!httpClient.DefaultRequestHeaders.UserAgent.TryParseAdd("request"))
 				return;
 
@@ -41,13 +44,11 @@ static class UpdateHandler
 			if (releaseString.StartsWith('v'))
 				releaseString = releaseString[1..];
 
-			if (!Version.TryParse(releaseString, out var releaseVersion) || releaseVersion.CompareTo(assemblyVersion) < 1)
+			if (!Version.TryParse(releaseString, out releaseVersion) || releaseVersion.CompareTo(assemblyVersion) < 1)
 				return;
 
 			if (assetNode?.AsArray() is not JsonArray assetArray)
 				return;
-
-			string? uriNode = null;
 
 			foreach (var asset in assetArray)
 			{
@@ -66,36 +67,43 @@ static class UpdateHandler
 
 			if (uriNode is null)
 				return;
+		}
+		catch
+		{
+			return;
+		}
 
-			if (MessageBox.Show($"A new update is available ({assemblyVersion.ToString(3)} → {releaseVersion.ToString(3)}). Would you like to install it now?", "Sylver Ink: Notification", MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.No)
-				return;
+		if (MessageBox.Show($"A new update is available ({assemblyVersion.ToString(3)} → {releaseVersion.ToString(3)}). Would you like to install it now?", "Sylver Ink: Notification", MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.No)
+			return;
 
-			await DownloadAndInstallUpdate(httpClient, uriNode);
+		await DownloadAndInstallUpdate(httpClient, uriNode);
+	}
+
+	private static async Task DownloadAndInstallUpdate(HttpClient httpClient, string uriNode)
+	{
+		try
+		{
+			Erase(TempUri);
+			Erase(UpdateLockUri);
+
+			File.Create(UpdateLockUri, 0).Close();
+
+			await httpClient.DownloadFileTaskAsync(uriNode, TempUri);
+
+			CommonUtils.AbortRun = true;
+
+			Process.Start(new ProcessStartInfo()
+			{
+				FileName = TempUri,
+				UseShellExecute = true,
+			});
+
+			Application.Current.Shutdown();
 		}
 		catch (Exception ex)
 		{
 			MessageBox.Show($"Unable to update Sylver Ink: {ex.Message}", "Sylver Ink: Error", MessageBoxButton.OK, MessageBoxImage.Error);
 			return;
 		}
-	}
-
-	private static async Task DownloadAndInstallUpdate(HttpClient httpClient, string uriNode)
-	{
-		Erase(TempUri);
-		Erase(UpdateLockUri);
-
-		File.Create(UpdateLockUri, 0).Close();
-
-		await httpClient.DownloadFileTaskAsync(uriNode, TempUri);
-
-		CommonUtils.AbortRun = true;
-
-		Process.Start(new ProcessStartInfo()
-		{
-			FileName = TempUri,
-			UseShellExecute = true,
-		});
-
-		Application.Current.Shutdown();
 	}
 }
