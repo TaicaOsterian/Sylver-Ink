@@ -156,14 +156,12 @@ public static partial class CommonUtils
 
 	public static SearchResult? OpenQuery(NoteRecord record, bool show = true)
 	{
-		var db = GetDatabaseFromRecord(record);
-
 		foreach (SearchResult result in OpenQueries)
 		{
-			if (result.ResultDatabase is not Database rDB)
+			if (result.ResultRecord?.DB is not Database rDB)
 				continue;
 
-			if (!rDB.Equals(db))
+			if (!rDB.Equals(record.DB))
 				continue;
 
 			if (result.ResultRecord is not NoteRecord rNote)
@@ -181,7 +179,6 @@ public static partial class CommonUtils
 
 		SearchResult resultWindow = new()
 		{
-			ResultDatabase = db,
 			ResultRecord = record
 		};
 
@@ -191,7 +188,7 @@ public static partial class CommonUtils
 		resultWindow.Show();
 		OpenQueries.Add(resultWindow);
 		if (!record.Locked)
-			db?.Lock(record.Index, true);
+			record.DB?.Lock(record.Index, true);
 
 		DeferUpdateRecentNotes();
 

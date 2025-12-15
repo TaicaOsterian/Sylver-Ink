@@ -17,7 +17,7 @@ namespace SylverInk.Notes;
 
 public partial class Database : IDisposable
 {
-	private NoteController Controller = new();
+	private NoteController Controller;
 	private StackPanel? HeaderPanel;
 
 	public bool Changed { get => Controller.Changed; set => Controller.Changed = value; }
@@ -35,7 +35,7 @@ public partial class Database : IDisposable
 	public Database()
 	{
 		Client = new(this);
-		Controller = new();
+		Controller = new(this);
 		Loaded = Controller.Loaded;
 		Server = new(this);
 	}
@@ -43,7 +43,7 @@ public partial class Database : IDisposable
 	public Database(string DBFile)
 	{
 		Client = new(this);
-		Controller = new();
+		Controller = new(this);
 		this.DBFile = DBFile;
 		Loaded = Controller.Loaded;
 		Server = new(this);
@@ -277,7 +277,7 @@ public partial class Database : IDisposable
 			return;
 		}
 
-		Controller = new(DBFile = dbFile);
+		Controller = new(DBFile = dbFile, this);
 
 		if (Controller.EnforceNoForwardCompatibility)
 		{

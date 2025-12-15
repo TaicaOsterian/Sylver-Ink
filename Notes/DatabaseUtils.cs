@@ -96,16 +96,6 @@ public static class DatabaseUtils
 		OpenQuery(CurrentDatabase.GetRecord(CurrentDatabase.CreateRecord(string.Empty)));
 	}
 
-	public static Database? GetDatabaseFromRecord(NoteRecord target)
-	{
-		foreach (Database db in Databases)
-			for (int i = 0; i < db.RecordCount; i++)
-				if (db.GetRecord(i).Equals(target))
-					return db;
-
-		return null;
-	}
-
 	public static void RemoveDatabase(Database db)
 	{
 		if (Application.Current.MainWindow.FindName("DatabasesPanel") is not TabControl control)
@@ -127,7 +117,7 @@ public static class DatabaseUtils
 		}
 
 		for (int i = OpenQueries.Count - 1; i > -1; i--)
-			if (OpenQueries[i].ResultDatabase?.Equals(db) is true)
+			if (OpenQueries[i].ResultRecord?.DB?.Equals(db) is true)
 				OpenQueries[i].Close();
 
 		for (int i = Databases.Count - 1; i > -1; i--)

@@ -38,7 +38,7 @@ public static class NoteTabUtils
 		tab.Record.CreateRevision(FlowDocumentToXaml(tab.NoteBox.Document));
 
 		if (!tab.Record.Locked)
-			GetDatabaseFromRecord(tab.Record)?.Unlock(tab.Record.Index, true);
+			tab.Record.DB?.Unlock(tab.Record.Index, true);
 
 		var ChildPanel = GetChildPanel("DatabasesPanel");
 

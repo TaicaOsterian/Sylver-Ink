@@ -35,6 +35,7 @@ public partial class NoteController : IDisposable
 		}
 	}
 
+	public Database? DB { get; set; }
 	public bool EnforceNoForwardCompatibility { get; private set; }
 	public int Format { get; set; } = HighestSIDBFormat;
 	public bool Loaded { get; set; }
@@ -53,14 +54,17 @@ public partial class NoteController : IDisposable
 		set => _nextIndex = value;
 	}
 
-	public NoteController()
+	public NoteController(Database? DB = null)
 	{
+		this.DB = DB;
 		InitializeRecords();
 		Loaded = true;
 	}
 
-	public NoteController(string dbFile)
+	public NoteController(string dbFile, Database? DB = null)
 	{
+		this.DB = DB;
+
 		ReloadSerializer();
 
 		if (!File.Exists(dbFile) || !_serializer?.OpenRead(dbFile) is true)
@@ -92,7 +96,7 @@ public partial class NoteController : IDisposable
 	public int CreateRecord(string entry)
 	{
 		Changed = true;
-		return AddRecord(new(NextIndex, PlaintextToXaml(entry)));
+		return AddRecord(new(NextIndex, PlaintextToXaml(entry), DB));
 	}
 
 	public void CreateRevision(int index, string NewVersion) => CreateRevision(GetRecord(index), NewVersion);
@@ -139,7 +143,7 @@ public partial class NoteController : IDisposable
 		int recordCount = _serializer?.ReadInt32() ?? 0;
 		for (int i = 0; i < recordCount; i++)
 		{
-			NoteRecord record = new();
+			NoteRecord record = new(DB);
 			AddRecord(record.Deserialize(_serializer));
 		}
 
@@ -205,7 +209,7 @@ public partial class NoteController : IDisposable
 
 	public override int GetHashCode() => int.Parse(UUID.Replace("-", string.Empty)[^8..], NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo);
 
-	public NoteRecord GetRecord(int RecordIndex) => RecordIndex < Records.Count && RecordIndex > -1 ? Records[RecordIndex] : new();
+	public NoteRecord GetRecord(int RecordIndex) => RecordIndex < Records.Count && RecordIndex > -1 ? Records[RecordIndex] : new(DB);
 
 	public bool HasRecord(int index)
 	{
@@ -228,7 +232,7 @@ public partial class NoteController : IDisposable
 	public void InitializeRecords(bool newDatabase = true)
 	{
 		for (int i = (OpenQueries ?? []).Count; i > 0; i--)
-			if (UUID.Equals(OpenQueries?[i - 1].ResultDatabase?.UUID))
+			if (UUID.Equals(OpenQueries?[i - 1].ResultRecord?.DB?.UUID))
 				OpenQueries?[i - 1].Close();
 
 		if (newDatabase)

@@ -41,7 +41,6 @@ public partial class SearchResult : Window, IDisposable
 	public int OriginalBlockCount { get; set; } = -1;
 	public int OriginalRevisionCount { get; set; }
 	public string OriginalText { get; set; } = string.Empty;
-	public Database? ResultDatabase { get; set; }
 	public NoteRecord? ResultRecord { get; set; }
 	public double SnapTolerance { get; } = 20.0;
 	public double StartOpacity { get; set; }
@@ -89,7 +88,7 @@ public partial class SearchResult : Window, IDisposable
 		if (Edited)
 			this.SaveRecord();
 
-		ResultDatabase?.Transmit(NetworkUtils.MessageType.RecordUnlock, IntToBytes(ResultRecord?.Index ?? 0));
+		ResultRecord?.DB?.Transmit(NetworkUtils.MessageType.RecordUnlock, IntToBytes(ResultRecord?.Index ?? 0));
 
 		foreach (SearchResult result in OpenQueries)
 		{

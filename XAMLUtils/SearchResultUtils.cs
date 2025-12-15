@@ -36,10 +36,10 @@ public static class SearchResultUtils
 		if (window.ResultRecord is null)
 			return;
 
-		if (window.ResultDatabase is null)
+		if (window.ResultRecord.DB is null)
 			return;
 
-		SwitchDatabase(window.ResultDatabase);
+		SwitchDatabase(window.ResultRecord.DB);
 
 		TabItem item = new()
 		{
@@ -71,7 +71,7 @@ public static class SearchResultUtils
 		else
 		{
 			window.LastChangedLabel.Content = window.ResultRecord?.GetLastChange();
-			window.ResultDatabase?.Transmit(NetworkUtils.MessageType.RecordUnlock, IntToBytes(window.ResultRecord?.Index ?? 0));
+			window.ResultRecord?.DB?.Transmit(NetworkUtils.MessageType.RecordUnlock, IntToBytes(window.ResultRecord?.Index ?? 0));
 		}
 
 		window.Edited = false;
@@ -186,7 +186,7 @@ public static class SearchResultUtils
 		if (window.ResultRecord is null)
 			return;
 
-		window.ResultDatabase?.CreateRevision(window.ResultRecord, FlowDocumentToXaml(window.ResultBlock.Document));
+		window.ResultRecord?.DB?.CreateRevision(window.ResultRecord, FlowDocumentToXaml(window.ResultBlock.Document));
 		window.LastChangedLabel.Content = window.ResultRecord?.GetLastChange();
 		DeferUpdateRecentNotes();
 	}

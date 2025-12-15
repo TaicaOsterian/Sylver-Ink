@@ -26,6 +26,7 @@ public struct NoteRevision(long created = -1, int startIndex = -1, string? subst
 public partial class NoteRecord
 {
 	private long Created = -1;
+	private int _index = -1;
 	private string? Initial = string.Empty;
 	private long LastChange = -1;
 	private DateTime LastChangeObject = DateTime.UtcNow;
@@ -33,11 +34,13 @@ public partial class NoteRecord
 	private readonly List<NoteRevision> Revisions = [];
 	private readonly List<string> Tags = [];
 	private bool TagsDirty = true;
+	private string? _uuid;
 
-	private int index = -1;
+	public Database? DB { get; set; }
+	public int Index { get => _index; set => _index = value; }
 	public int LastMatchCount { get; set; }
 	public bool Locked { get; set; }
-	private string? uuid;
+	public string? UUID { get => _uuid; set => _uuid = value; }
 
 	public string FullDateChange
 	{
@@ -91,12 +94,10 @@ public partial class NoteRecord
 		}
 	}
 
-	public int Index { get => index; set => index = value; }
-	public string? UUID { get => uuid; set => uuid = value; }
-
-	public NoteRecord()
+	public NoteRecord(Database? DB = null)
 	{
 		Created = DateTime.UnixEpoch.ToBinary();
+		this.DB = DB;
 		Index = -1;
 		Initial = string.Empty;
 		LastChange = Created;
@@ -104,9 +105,10 @@ public partial class NoteRecord
 		UUID = MakeUUID();
 	}
 
-	public NoteRecord(int Index, string Initial, long Created = -1, string? UUID = null)
+	public NoteRecord(int Index, string Initial, Database? DB = null, long Created = -1, string? UUID = null)
 	{
 		this.Created = Created == -1 ? DateTime.UtcNow.ToBinary() : Created;
+		this.DB = DB;
 		this.Index = Index;
 		this.Initial = Initial;
 		LastChange = this.Created;
@@ -138,14 +140,11 @@ public partial class NoteRecord
 
 	public void Autosave(FlowDocument document)
 	{
-		if (GetDatabaseFromRecord(this) is not Database db)
-			return;
-
-		var lockFile = GetLockFile(db.DBFile);
+		var lockFile = GetLockFile(DB?.DBFile);
 		Erase(lockFile);
 
 		CreateRevision(FlowDocumentToXaml(document));
-		db.Save(lockFile);
+		DB?.Save(lockFile);
 		DeleteRevision(GetNumRevisions());
 	}
 
@@ -451,10 +450,10 @@ public partial class NoteRecord
 
 		foreach (var query in OpenQueries)
 		{
-			if (!query.ResultRecord?.Equals(Index) is true)
+			if (!query.ResultRecord?.Equals(this) is true)
 				continue;
 
-			query.LastChangedLabel.Content = query.ResultDatabase?.GetRecord(Index).GetLastChange();
+			query.LastChangedLabel.Content = GetLastChange();
 			query.ResultBlock.IsEnabled = true;
 		}
 
