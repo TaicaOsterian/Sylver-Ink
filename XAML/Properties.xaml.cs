@@ -5,7 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 
-namespace SylverInk;
+namespace SylverInk.XAML;
 
 /// <summary>
 /// Interaction logic for Properties.xaml

@@ -1,5 +1,5 @@
 ﻿using SylverInk.Notes;
-using SylverInk.XAML;
+using SylverInk.XAML.Objects;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

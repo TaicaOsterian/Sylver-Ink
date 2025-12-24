@@ -5,7 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using static SylverInk.FileIO.FileUtils;
 
-namespace SylverInk;
+namespace SylverInk.XAML;
 
 public partial class Import : Window
 {

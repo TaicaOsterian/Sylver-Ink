@@ -3,7 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using static SylverInk.XAMLUtils.ReplaceUtils;
 
-namespace SylverInk;
+namespace SylverInk.XAML;
 
 /// <summary>
 /// Interaction logic for Replace.xaml

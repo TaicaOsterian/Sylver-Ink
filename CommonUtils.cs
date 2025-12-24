@@ -1,6 +1,7 @@
 ﻿using SylverInk.Net;
 using SylverInk.Notes;
 using SylverInk.XAML;
+using SylverInk.XAML.Objects;
 using SylverInk.XAMLUtils;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,6 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Media;
-using static SylverInk.Notes.DatabaseUtils;
 using static SylverInk.XAMLUtils.DataUtils;
 
 namespace SylverInk;

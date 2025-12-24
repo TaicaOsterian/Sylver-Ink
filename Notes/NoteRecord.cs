@@ -1,5 +1,5 @@
 ﻿using SylverInk.FileIO;
-using SylverInk.XAML;
+using SylverInk.XAML.Objects;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -102,7 +102,7 @@ public partial class NoteRecord
 		Initial = string.Empty;
 		LastChange = Created;
 		LastChangeObject = DateTime.FromBinary(LastChange);
-		UUID = MakeUUID();
+		UUID = MakeUUID(UUIDType.Record);
 	}
 
 	public NoteRecord(int Index, string Initial, Database? DB = null, long Created = -1, string? UUID = null)
@@ -113,7 +113,7 @@ public partial class NoteRecord
 		this.Initial = Initial;
 		LastChange = this.Created;
 		LastChangeObject = DateTime.FromBinary(LastChange);
-		this.UUID = UUID ?? MakeUUID();
+		this.UUID = UUID ?? MakeUUID(UUIDType.Record);
 	}
 
 	public void Add(NoteRevision revision)
@@ -278,7 +278,7 @@ public partial class NoteRecord
 
 	public DateTime GetCreatedObject() => DateTime.FromBinary(Created);
 
-	public override int GetHashCode() => int.Parse((UUID ??= MakeUUID())[^8..], NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo);
+	public override int GetHashCode() => int.Parse((UUID ??= MakeUUID(UUIDType.Record))[^8..], NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo);
 
 	public DateTime GetLastChangeObject() => DateTime.FromBinary(LastChange);
 

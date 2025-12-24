@@ -1,4 +1,5 @@
-﻿using static SylverInk.Notes.DatabaseUtils;
+﻿using SylverInk.XAML;
+using static SylverInk.Notes.DatabaseUtils;
 using static SylverInk.XAMLUtils.DataUtils;
 
 namespace SylverInk.XAMLUtils;

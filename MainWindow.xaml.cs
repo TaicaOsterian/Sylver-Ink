@@ -1,17 +1,15 @@
-﻿using SylverInk.Net;
+﻿using SylverInk.Interop;
+using SylverInk.Net;
 using SylverInk.Notes;
+using SylverInk.XAML;
 using System;
 using System.ComponentModel;
 using System.IO;
-using System.IO.Pipes;
-using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Interop;
 using static SylverInk.CommonUtils;
 using static SylverInk.FileIO.FileUtils;
 using static SylverInk.Notes.DatabaseUtils;
@@ -22,32 +20,14 @@ namespace SylverInk;
 /// <summary>
 /// Interaction logic for MainWindow.xaml
 /// </summary>
-public partial class MainWindow : Window, IDisposable
+public partial class MainWindow : Window
 {
-	[DllImport("User32.dll")]
-	private static extern bool RegisterHotKey(nint hWnd, int id, uint fsModifiers, uint vk);
-
-	[DllImport("User32.dll")]
-	private static extern bool UnregisterHotKey(nint hWnd, int id);
-
-	private readonly WindowInteropHelper hWndHelper;
-	private Mutex? mutex;
-	private readonly CancellationTokenSource mutexTokenSource = new();
-	private readonly string MutexName = $"SylverInk/{typeof(MainWindow).GUID}";
-	private const int NewNoteHotKeyID = 5911;
-	private const int PreviousNoteHotKeyID = 37193;
 	private bool ShellVerbsPassed;
-	private HwndSource? WindowSource;
 
 	public MainWindow()
 	{
 		InitializeComponent();
 		DataContext = CommonUtils.Settings;
-
-		hWndHelper = new WindowInteropHelper(this);
-		mutex = new Mutex(true, MutexName, out bool mutexCreated);
-
-		HandleMutex(mutexCreated);
 	}
 
 	private void Button_Click(object? sender, RoutedEventArgs e)
@@ -72,13 +52,6 @@ public partial class MainWindow : Window, IDisposable
 				Close();
 				break;
 		}
-	}
-
-	public void Dispose()
-	{
-		WindowSource?.Dispose();
-		mutex?.Dispose();
-		GC.SuppressFinalize(this);
 	}
 
 	private void Drag(object? sender, MouseButtonEventArgs e) => DragMove();
@@ -153,127 +126,6 @@ public partial class MainWindow : Window, IDisposable
 		ResizeMode = ResizeMode.CanResize;
 		CommonUtils.Settings.MainTypeFace = new(CommonUtils.Settings.MainFontFamily, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
 		DeferUpdateRecentNotes();
-	}
-
-	/// <summary>
-	/// Mutex management in Sylver Ink allows passing shell verbs through a named pipe to an existing open instance.
-	/// </summary>
-	private void HandleMutex(bool mutexCreated)
-	{
-		if (mutexCreated)
-		{
-			Thread mutexPipeThread = new(() => HandleMutexPipe(mutexTokenSource.Token));
-			mutexPipeThread.Start();
-			return;
-		}
-
-		mutex = null;
-		var args = Environment.GetCommandLineArgs();
-
-		var client = new NamedPipeClientStream(MutexName);
-		client.Connect();
-
-		using (StreamWriter writer = new(client))
-			writer.Write(string.Join("\t", args));
-
-		if (args.Length > 1)
-			ShellVerbsPassed = true;
-
-		return;
-	}
-
-	private async void HandleMutexPipe(CancellationToken token)
-	{
-		using var server = new NamedPipeServerStream(MutexName);
-
-		while (mutex != null)
-		{
-			try
-			{
-				await server.WaitForConnectionAsync(token);
-			}
-			catch
-			{
-				return;
-			}
-
-			if (token.IsCancellationRequested)
-				return;
-
-			using StreamReader reader = new(server);
-			string[] args = [.. reader.ReadToEnd().Split("\t", StringSplitOptions.RemoveEmptyEntries)];
-			bool activated;
-			var now = DateTime.UtcNow;
-
-			do
-			{
-				activated = Concurrent(Activate);
-				Concurrent(Focus);
-			} while (!activated && !IsFocused && (DateTime.UtcNow - now).Seconds < 1);
-
-			Concurrent(() => HandleShellVerbs(args));
-		}
-	}
-
-	private static void HandleShellVerbs(string[]? args = null)
-	{
-		if ((args ??= Environment.GetCommandLineArgs()).Length < 2)
-			return;
-
-		switch (args[1])
-		{
-			case "open": // &Open
-				HandleVerbOpen(args.Length > 2 ? args[2] : string.Empty);
-				break;
-			default: // &Open
-				HandleVerbOpen(args[1]);
-				break;
-		}
-	}
-
-	private async static void HandleVerbOpen(string filename)
-	{
-		if (string.IsNullOrWhiteSpace(filename))
-			return;
-
-		var wideBreak = string.Empty;
-
-		foreach (string dbFile in InitComplete ? Databases.Select(db => db.DBFile) : CommonUtils.Settings.LastDatabases)
-			if (Path.GetFullPath(dbFile).Equals(Path.GetFullPath(filename)))
-				wideBreak = Path.GetFullPath(dbFile);
-
-		if (string.IsNullOrWhiteSpace(wideBreak))
-		{
-			ShellDB = Path.GetFullPath(filename);
-			await Database.Create(filename);
-			return;
-		}
-
-		ShellDB = wideBreak;
-		SwitchDatabase($"~F:{wideBreak}");
-	}
-
-	private nint HwndHook(nint hwnd, int msg, nint wParam, nint lParam, ref bool handled)
-	{
-		switch (msg)
-		{
-			case 0x0312: // WM_HOTKEY
-				switch (wParam.ToInt32())
-				{
-					case NewNoteHotKeyID:
-						OnNewNoteHotkey();
-						break;
-					case PreviousNoteHotKeyID:
-						OnPreviousNoteHotkey();
-						break;
-				}
-				break;
-			default:
-				return default;
-		}
-
-		handled = true;
-		return default;
 	}
 
 	private static bool IsShuttingDown()
@@ -359,29 +211,21 @@ public partial class MainWindow : Window, IDisposable
 
 	protected override void OnClosed(EventArgs e)
 	{
-		WindowSource?.RemoveHook(HwndHook);
-		WindowSource = null;
-		UnregisterHotKeys();
-		mutexTokenSource.Cancel();
+		HotKeyUtils.Release();
+		MutexUtils.Release();
 		base.OnClosed(e);
 	}
-
-	private static void OnNewNoteHotkey() => CreateNewNote();
-
-	private static void OnPreviousNoteHotkey() => OpenQuery(PreviousOpenNote ?? CurrentDatabase.GetRecord(CurrentDatabase.CreateRecord(string.Empty)));
 
 	protected override async void OnSourceInitialized(EventArgs e)
 	{
 		base.OnSourceInitialized(e);
 
 		// Hotkey registration
-		WindowSource = HwndSource.FromHwnd(hWndHelper.Handle);
-		WindowSource.AddHook(HwndHook);
-		RegisterHotKeys();
+		HotKeyUtils.Init();
 
 		// Database initialization
 		HandleCheckInit();
-		HandleShellVerbs();
+		ShellVerbsPassed = MutexUtils.Init();
 
 		if (InstanceRunning())
 		{
@@ -405,11 +249,6 @@ public partial class MainWindow : Window, IDisposable
 		// Style initialization
 		SetMenuColors(this);
 
-		// Check for updates
-		Erase(UpdateHandler.UpdateLockUri);
-		Erase(UpdateHandler.TempUri);
-		await UpdateHandler.CheckForUpdates();
-
 		// (If initialization was interrupted, prevent marking it as completed)
 		if (!IsShuttingDown())
 			UpdatesChecked = true;
@@ -419,17 +258,13 @@ public partial class MainWindow : Window, IDisposable
 			return;
 
 		await Database.Create(Path.Join(Subfolders["Databases"], DefaultDatabase, $"{DefaultDatabase}.sidb"));
-	}
 
-	private void RegisterHotKeys()
-	{
-		RegisterHotKey(hWndHelper.Handle, NewNoteHotKeyID, 2, (uint)KeyInterop.VirtualKeyFromKey(Key.N));
-		RegisterHotKey(hWndHelper.Handle, PreviousNoteHotKeyID, 2, (uint)KeyInterop.VirtualKeyFromKey(Key.L));
-	}
+		// Refresh the display (checking for updates is a blocking call, so we want to populate the recent notes list beforehand)
+		DeferUpdateRecentNotes();
 
-	private void UnregisterHotKeys()
-	{
-		UnregisterHotKey(hWndHelper.Handle, NewNoteHotKeyID);
-		UnregisterHotKey(hWndHelper.Handle, PreviousNoteHotKeyID);
+		// Check for updates
+		Erase(UpdateHandler.UpdateLockUri);
+		Erase(UpdateHandler.TempUri);
+		await UpdateHandler.CheckForUpdates();
 	}
 }

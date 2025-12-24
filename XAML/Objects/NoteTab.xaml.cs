@@ -15,7 +15,7 @@ using static SylverInk.XAMLUtils.DataUtils;
 using static SylverInk.XAMLUtils.NoteTabUtils;
 using static SylverInk.XAMLUtils.TextUtils;
 
-namespace SylverInk.XAML;
+namespace SylverInk.XAML.Objects;
 
 /// <summary>
 /// Interaction logic for NoteTab.xaml

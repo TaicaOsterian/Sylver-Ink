@@ -34,7 +34,8 @@ static class UpdateHandler
 			if (!httpClient.DefaultRequestHeaders.UserAgent.TryParseAdd("request"))
 				return;
 
-			if (JsonSerializer.Deserialize<JsonArray>(await httpClient.GetStringAsync(GitReleasesURI))?[0]?.AsObject() is not JsonObject release)
+			var jsonString = await httpClient.GetStringAsync(GitReleasesURI);
+			if (JsonSerializer.Deserialize<JsonArray>(jsonString)?[0]?.AsObject() is not JsonObject release)
 				return;
 
 			if (!release.TryGetPropertyValue("tag_name", out var tagNode) || !release.TryGetPropertyValue("assets", out var assetNode))

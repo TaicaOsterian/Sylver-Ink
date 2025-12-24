@@ -263,7 +263,7 @@ public partial class Database : IDisposable
 			if (Controller.EnforceNoForwardCompatibility)
 			{
 				Loaded = false;
-				throw new NotSupportedException($"The program attempted to load a .sidb file with a newer format than it supports.");
+				throw new NotSupportedException($"The program attempted to load a database file with a newer format than it supports.");
 			}
 
 			Loaded = Controller.Loaded = true;
@@ -282,7 +282,7 @@ public partial class Database : IDisposable
 		if (Controller.EnforceNoForwardCompatibility)
 		{
 			Loaded = false;
-			throw new NotSupportedException($"The program attempted to load a .sidb file with a newer format than it supports.");
+			throw new NotSupportedException($"The program attempted to load a database file with a newer format than it supports.");
 		}
 
 		Loaded = Controller.Loaded;
@@ -444,7 +444,7 @@ public partial class Database : IDisposable
 		if (DBFile.Contains(Subfolders["Databases"]))
 			File.WriteAllText(Path.Join(Path.GetDirectoryName(DBFile), "uuid.dat"), UUID);
 
-		SylverInk.FileIO.FileUtils.Erase(GetLockFile(DBFile));
+		FileIO.FileUtils.Erase(GetLockFile(DBFile));
 	}
 
 	public void Save(string targetFile)

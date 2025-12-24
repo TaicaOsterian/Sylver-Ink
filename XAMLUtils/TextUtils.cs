@@ -15,6 +15,7 @@ public static partial class TextUtils
 {
 	private readonly static string FlowDocumentClosing = "</FlowDocument>";
 	private readonly static string FlowDocumentOpening = @"<FlowDocument xmlns=""http://schemas.microsoft.com/winfx/2006/xaml/presentation"">";
+	private const int PreviewLength = 250;
 
 	public static string FlowDocumentPreview(FlowDocument? document)
 	{
@@ -27,7 +28,7 @@ public static partial class TextUtils
 		StringBuilder content = new();
 		var pointer = document.ContentStart;
 
-		while (pointer is not null && document.ContentStart.GetOffsetToPosition(pointer) < 250)
+		while (pointer is not null && document.ContentStart.GetOffsetToPosition(pointer) < PreviewLength)
 			pointer = TranslatePointer(pointer, ref content);
 
 		return content.ToString().Trim();

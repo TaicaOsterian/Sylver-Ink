@@ -14,7 +14,7 @@ using static SylverInk.CommonUtils;
 using static SylverInk.XAMLUtils.DataUtils;
 using static SylverInk.XAMLUtils.TextUtils;
 
-namespace SylverInk;
+namespace SylverInk.XAML;
 
 /// <summary>
 /// Interaction logic for SearchResult.xaml

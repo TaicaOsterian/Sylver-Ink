@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Input;
 
-namespace SylverInk;
+namespace SylverInk.XAML;
 
 /// <summary>
 /// Interaction logic for Help.xaml

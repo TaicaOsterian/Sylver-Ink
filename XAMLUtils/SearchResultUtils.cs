@@ -1,6 +1,7 @@
 ﻿using SylverInk.Net;
 using SylverInk.Notes;
 using SylverInk.XAML;
+using SylverInk.XAML.Objects;
 using System;
 using System.Runtime.InteropServices;
 using System.Windows;

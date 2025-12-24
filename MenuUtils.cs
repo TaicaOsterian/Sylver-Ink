@@ -1,4 +1,5 @@
 ﻿using SylverInk.Notes;
+using SylverInk.XAML;
 using System.IO;
 using System.Linq;
 using System.Windows;

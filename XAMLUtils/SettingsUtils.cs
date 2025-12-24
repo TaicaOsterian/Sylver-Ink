@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SylverInk.XAML;
+using System;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
@@ -46,8 +47,7 @@ public static partial class SettingsUtils
 				}
 
 				// Programmatically clearing a single property on a TextSelection object is convoluted.
-				// We only have the option of clearing all properties and resetting the ones we aren't changing.
-				// Other methods exist, but this is by far the simplest.
+				// Other methods exist, but by far the simplest is to clear all properties and reapply the ones we aren't changing.
 
 				var end = TextTarget.Selection.End;
 				TextPointer next;

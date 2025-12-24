@@ -5,7 +5,7 @@ using System.Windows.Media;
 using static SylverInk.CommonUtils;
 using static SylverInk.XAMLUtils.SettingsUtils;
 
-namespace SylverInk.XAML;
+namespace SylverInk.XAML.Objects;
 
 /// <summary>
 /// Interaction logic for CustomColorPicker.xaml

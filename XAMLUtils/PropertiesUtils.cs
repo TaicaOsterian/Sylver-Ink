@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SylverInk.XAML;
+using System;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
