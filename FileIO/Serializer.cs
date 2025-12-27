@@ -8,7 +8,10 @@ using static SylverInk.FileIO.FileUtils;
 
 namespace SylverInk.FileIO;
 
-public partial class Serializer : IDisposable
+/// <summary>
+/// Encapsulates reading and writing Sylver Ink database objects from and to files.
+/// </summary>
+public class Serializer : IDisposable
 {
 	private byte[] _buffer = [];
 	private Stream? _fileStream;
@@ -117,15 +120,13 @@ public partial class Serializer : IDisposable
 	/// <summary>
 	/// Initialize the serializer's underlying stream for reading.
 	/// </summary>
-	/// <param name="path">The path to a file to encapsulate in the underlying <c>FileStream</c>. May be <see langword="null"/> if and only if <paramref name="inMemory"/> is not <see langword="null"/>.</param>
-	/// <param name="inMemory">If not <see langword="null"/>, the engine will be initialized with an underlying <c>MemoryStream</c> with <paramref name="inMemory"/> as its buffer, instead of a <c>FileStream</c>.</param>
-	public bool OpenRead(string? path, List<byte>? inMemory = null)
+	public bool OpenRead(string path)
 	{
 		Close();
 
 		try
 		{
-			_fileStream = inMemory is null ? new FileStream(path ?? string.Empty, FileMode.Open) : new MemoryStream(inMemory?.ToArray() ?? []);
+			_fileStream = new FileStream(path, FileMode.Open);
 			_isOpen = true;
 			_writing = false;
 
@@ -143,16 +144,13 @@ public partial class Serializer : IDisposable
 	/// <summary>
 	/// Initialize the serializer's underlying stream for writing.
 	/// </summary>
-	/// <param name="path">The path to a file to encapsulate in the underlying <c>FileStream</c>. May be <see langword="null"/> if and only if <paramref name="inMemory"/> is <see langword="true"/>.</param>
-	/// <param name="inMemory">If <see langword="true"/>, the engine will be initialized with an underlying <c>MemoryStream</c>, instead of a <c>FileStream</c>.</param>
-	/// <returns></returns>
-	public bool OpenWrite(string? path, bool inMemory = false)
+	public bool OpenWrite(string? path = null)
 	{
 		Close();
 
 		try
 		{
-			_fileStream = inMemory ? new MemoryStream() : new FileStream(path ?? string.Empty, FileMode.Create);
+			_fileStream = path is null ? new MemoryStream() : new FileStream(path, FileMode.Create);
 			_isOpen = true;
 			_writing = true;
 

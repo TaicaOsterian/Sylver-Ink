@@ -113,13 +113,10 @@ public partial class NoteController : IDisposable
 		Changed = true;
 	}
 
-	public void DeserializeRecords(List<byte>? inMemory = null)
+	public void DeserializeRecords()
 	{
 		if (_serializer is null)
 			ReloadSerializer();
-
-		if (inMemory is not null)
-			_serializer?.OpenRead(string.Empty, inMemory);
 
 		Format = _serializer?.DatabaseFormat ?? HighestSIDBFormat;
 
@@ -378,7 +375,7 @@ public partial class NoteController : IDisposable
 		if (inMemory)
 		{
 			ReloadSerializer();
-			_serializer?.OpenWrite(string.Empty, true);
+			_serializer?.OpenWrite();
 		}
 
 		if (_serializer?.DatabaseFormat >= 7)

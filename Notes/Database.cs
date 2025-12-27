@@ -130,8 +130,6 @@ public partial class Database : IDisposable
 		}
 	}
 
-	public void DeserializeRecords(List<byte>? inMemory = null) => Controller.DeserializeRecords(inMemory);
-
 	public void Dispose()
 	{
 		Controller.Dispose();

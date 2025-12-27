@@ -4,7 +4,7 @@ using System.IO;
 
 namespace SylverInk.FileIO;
 
-public partial class LZW
+public class LZW
 {
 	private readonly List<bool> BitStream = [];
 	private readonly List<byte> ByteStream = [];

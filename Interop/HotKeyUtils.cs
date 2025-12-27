@@ -7,6 +7,9 @@ using static SylverInk.Notes.DatabaseUtils;
 
 namespace SylverInk.Interop;
 
+/// <summary>
+/// Static functions serving global hotkey registration.
+/// </summary>
 public static class HotKeyUtils
 {
 	[DllImport("User32.dll")]
