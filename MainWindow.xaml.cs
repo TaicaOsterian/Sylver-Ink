@@ -254,10 +254,8 @@ public partial class MainWindow : Window
 			UpdatesChecked = true;
 
 		// Create an empty database if and only if we haven't loaded any from files
-		if (!CommonUtils.Settings.FirstRun)
-			return;
-
-		await Database.Create(Path.Join(Subfolders["Databases"], DefaultDatabase, $"{DefaultDatabase}.sidb"));
+		if (CommonUtils.Settings.FirstRun)
+			await Database.Create(Path.Join(Subfolders["Databases"], DefaultDatabase, $"{DefaultDatabase}.sidb"));
 
 		// Refresh the display (checking for updates is a blocking call, so we want to populate the recent notes list beforehand)
 		DeferUpdateRecentNotes();
