@@ -9,8 +9,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using static SylverInk.CommonUtils;
 using static SylverInk.Notes.DatabaseUtils;
-using static SylverInk.XAMLUtils.DataUtils;
-using static SylverInk.XAMLUtils.TextUtils;
+using static SylverInk.Text.FlowDocumentUtils;
+using static SylverInk.XAMLUtils.MainWindowUtils;
 
 namespace SylverInk.XAMLUtils;
 

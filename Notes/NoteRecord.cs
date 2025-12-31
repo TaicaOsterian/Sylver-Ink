@@ -1,4 +1,5 @@
 ﻿using SylverInk.FileIO;
+using SylverInk.Text;
 using SylverInk.XAML.Objects;
 using System;
 using System.Collections.Generic;
@@ -10,8 +11,8 @@ using System.Windows.Documents;
 using static SylverInk.CommonUtils;
 using static SylverInk.FileIO.FileUtils;
 using static SylverInk.Notes.DatabaseUtils;
-using static SylverInk.XAMLUtils.DataUtils;
-using static SylverInk.XAMLUtils.TextUtils;
+using static SylverInk.Text.FlowDocumentUtils;
+using static SylverInk.XAMLUtils.MainWindowUtils;
 
 namespace SylverInk.Notes;
 
@@ -290,7 +291,7 @@ public partial class NoteRecord
 
 	public int GetNumRevisions() => Revisions.Count;
 
-	private string GetPlaintext() => XamlToPlaintext(Reconstruct());
+	private string GetPlaintext() => TextConverter.Convert(Reconstruct(), TextFormat.Xaml, TextFormat.Plaintext);
 
 	public NoteRevision GetRevision(uint index) => Revisions[Revisions.Count - 1 - (int)index];
 
@@ -403,7 +404,7 @@ public partial class NoteRecord
 	private void TargetPlaintext()
 	{
 		List<long> CreatedTags = [];
-		var ParsedInitial = XamlToPlaintext(Initial ??= string.Empty);
+		var ParsedInitial = TextConverter.Convert(Initial ??= string.Empty, TextFormat.Xaml, TextFormat.Plaintext);
 		var RCount = Revisions.Count;
 		List<string> ReconstructedSubstrings = [];
 
@@ -411,7 +412,7 @@ public partial class NoteRecord
 		{
 			var oldText = Reconstruct((uint)i);
 			CreatedTags.Add(Revisions[i].Created);
-			ReconstructedSubstrings.Add(XamlToPlaintext(oldText));
+			ReconstructedSubstrings.Add(TextConverter.Convert(oldText, TextFormat.Xaml, TextFormat.Plaintext));
 		}
 
 		Revisions.Clear();
@@ -423,7 +424,7 @@ public partial class NoteRecord
 	private void TargetXaml()
 	{
 		List<long> CreatedTags = [];
-		var ParsedInitial = PlaintextToXaml(Initial ?? string.Empty);
+		var ParsedInitial = TextConverter.Convert(Initial ?? string.Empty, TextFormat.Plaintext, TextFormat.Xaml);
 		var RCount = Revisions.Count;
 		List<string> ReconstructedSubstrings = [];
 
@@ -431,7 +432,7 @@ public partial class NoteRecord
 		{
 			var oldText = Reconstruct((uint)i);
 			CreatedTags.Add(Revisions[i].Created);
-			ReconstructedSubstrings.Add(PlaintextToXaml(oldText));
+			ReconstructedSubstrings.Add(TextConverter.Convert(oldText, TextFormat.Plaintext, TextFormat.Xaml));
 		}
 
 		Revisions.Clear();

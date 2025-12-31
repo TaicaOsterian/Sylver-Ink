@@ -9,7 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using static SylverInk.CommonUtils;
 using static SylverInk.FileIO.FileUtils;
-using static SylverInk.XAMLUtils.DataUtils;
+using static SylverInk.XAMLUtils.MainWindowUtils;
 
 namespace SylverInk.Notes;
 

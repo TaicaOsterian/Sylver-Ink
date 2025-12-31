@@ -14,7 +14,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Media;
-using static SylverInk.XAMLUtils.DataUtils;
+using static SylverInk.XAMLUtils.MainWindowUtils;
 
 namespace SylverInk;
 

@@ -2,8 +2,8 @@
 using System;
 using System.Windows.Controls;
 using static SylverInk.CommonUtils;
-using static SylverInk.XAMLUtils.DataUtils;
-using static SylverInk.XAMLUtils.TextUtils;
+using static SylverInk.Text.FlowDocumentUtils;
+using static SylverInk.XAMLUtils.MainWindowUtils;
 
 namespace SylverInk.XAMLUtils;
 

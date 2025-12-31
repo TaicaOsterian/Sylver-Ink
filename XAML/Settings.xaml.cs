@@ -5,7 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using static SylverInk.CommonUtils;
-using static SylverInk.XAMLUtils.DataUtils;
+using static SylverInk.XAMLUtils.MainWindowUtils;
 using static SylverInk.XAMLUtils.SettingsUtils;
 
 namespace SylverInk.XAML;

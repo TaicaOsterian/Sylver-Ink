@@ -1,4 +1,5 @@
 ﻿using SylverInk.FileIO;
+using SylverInk.Text;
 using SylverInk.XAMLUtils;
 using System;
 using System.Collections.Generic;
@@ -11,8 +12,8 @@ using System.Windows.Documents;
 using static SylverInk.CommonUtils;
 using static SylverInk.FileIO.FileUtils;
 using static SylverInk.Notes.DatabaseUtils;
-using static SylverInk.XAMLUtils.DataUtils;
-using static SylverInk.XAMLUtils.TextUtils;
+using static SylverInk.Text.FlowDocumentUtils;
+using static SylverInk.XAMLUtils.MainWindowUtils;
 
 namespace SylverInk.Notes;
 
@@ -96,7 +97,7 @@ public partial class NoteController : IDisposable
 	public int CreateRecord(string entry)
 	{
 		Changed = true;
-		return AddRecord(new(NextIndex, PlaintextToXaml(entry), DB));
+		return AddRecord(new(NextIndex, TextConverter.Convert(entry, TextFormat.Plaintext, TextFormat.Xaml), DB));
 	}
 
 	public void CreateRevision(int index, string NewVersion) => CreateRevision(GetRecord(index), NewVersion);

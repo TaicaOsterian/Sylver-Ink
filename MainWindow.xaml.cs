@@ -13,7 +13,7 @@ using System.Windows.Input;
 using static SylverInk.CommonUtils;
 using static SylverInk.FileIO.FileUtils;
 using static SylverInk.Notes.DatabaseUtils;
-using static SylverInk.XAMLUtils.DataUtils;
+using static SylverInk.XAMLUtils.MainWindowUtils;
 
 namespace SylverInk;
 
@@ -242,6 +242,7 @@ public partial class MainWindow : Window
 		await CommonUtils.Settings.Load();
 		SettingsLoaded = true;
 
+		// Documents subdirectory initialization
 		foreach (var folder in Subfolders)
 			if (!Directory.Exists(folder.Value))
 				Directory.CreateDirectory(folder.Value);

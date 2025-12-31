@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using static SylverInk.Notes.DatabaseUtils;
-using static SylverInk.XAMLUtils.DataUtils;
+using static SylverInk.XAMLUtils.MainWindowUtils;
 
 namespace SylverInk.XAMLUtils;
 

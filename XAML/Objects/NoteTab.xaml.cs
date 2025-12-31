@@ -11,9 +11,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using static SylverInk.CommonUtils;
 using static SylverInk.Notes.DatabaseUtils;
-using static SylverInk.XAMLUtils.DataUtils;
+using static SylverInk.Text.FlowDocumentUtils;
+using static SylverInk.XAMLUtils.MainWindowUtils;
 using static SylverInk.XAMLUtils.NoteTabUtils;
-using static SylverInk.XAMLUtils.TextUtils;
 
 namespace SylverInk.XAML.Objects;
 

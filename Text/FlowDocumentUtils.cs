@@ -6,12 +6,12 @@ using System.Windows.Documents;
 using System.Windows.Markup;
 using static SylverInk.XAMLUtils.ImageUtils;
 
-namespace SylverInk.XAMLUtils;
+namespace SylverInk.Text;
 
 /// <summary>
-/// Static functions serving conversion needs across FlowDocument objects, Xaml markup data, and unformatted plaintext.
+/// Static functions serving conversion to and from FlowDocument objects, and operations on those objects.
 /// </summary>
-public static partial class TextUtils
+public static partial class FlowDocumentUtils
 {
 	private readonly static string FlowDocumentClosing = "</FlowDocument>";
 	private readonly static string FlowDocumentOpening = @"<FlowDocument xmlns=""http://schemas.microsoft.com/winfx/2006/xaml/presentation"">";
@@ -101,8 +101,6 @@ public static partial class TextUtils
 		}
 		return document;
 	}
-
-	public static string PlaintextToXaml(string content) => FlowDocumentToXaml(PlaintextToFlowDocument(new(), content));
 
 	public static void ScrollToText(RichTextBox box, string text, LogicalDirection direction = LogicalDirection.Forward)
 	{
@@ -230,7 +228,6 @@ public static partial class TextUtils
 		return document;
 	}
 
-	public static string XamlToPlaintext(string xaml) => FlowDocumentToPlaintext(XamlToFlowDocument(xaml));
 
 	[GeneratedRegex(@"<BlockUIContainer.*?</BlockUIContainer>")]
 	private static partial Regex ContainerRegex();

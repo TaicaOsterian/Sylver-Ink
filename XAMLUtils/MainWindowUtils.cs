@@ -14,7 +14,7 @@ namespace SylverInk.XAMLUtils;
 /// <summary>
 /// Static functions aiding in the display of specific data to the main application window.
 /// </summary>
-public static class DataUtils
+public static class MainWindowUtils
 {
 	public static bool CanResize { get; set; }
 	public static bool DelayVisualUpdates { get; set; }
@@ -132,31 +132,31 @@ public static class DataUtils
 
 	private static async Task UpdateRecentNotes()
 	{
-		if (CommonUtils.Settings.MainTypeFace is null)
+		if (Settings.MainTypeFace is null)
 			return;
 
-		Application.Current.Resources["MainFontFamily"] = CommonUtils.Settings.MainFontFamily;
-		Application.Current.Resources["MainFontSize"] = CommonUtils.Settings.MainFontSize;
+		Application.Current.Resources["MainFontFamily"] = Settings.MainFontFamily;
+		Application.Current.Resources["MainFontSize"] = Settings.MainFontSize;
 
 		if (RecentNotesDirty)
-			Concurrent(CommonUtils.Settings.RecentNotes.Clear);
+			Concurrent(Settings.RecentNotes.Clear);
 
 		await Task.Run(() =>
 		{
 			var DpiInfo = Concurrent(() => VisualTreeHelper.GetDpi(Application.Current.MainWindow));
-			var PixelRatio = CommonUtils.Settings.MainFontSize * DpiInfo.PixelsPerInchY / 72.0;
-			var LineHeight = PixelRatio * CommonUtils.Settings.MainTypeFace.FontFamily.LineSpacing;
+			var PixelRatio = Settings.MainFontSize * DpiInfo.PixelsPerInchY / 72.0;
+			var LineHeight = PixelRatio * Settings.MainTypeFace.FontFamily.LineSpacing;
 			var LineRatio = Math.Max(1.0, (WindowHeight / LineHeight) - 0.5);
 
 			CurrentDatabase.Sort(RecentEntriesSortMode);
 
 			Concurrent(() =>
 			{
-				while (CommonUtils.Settings.RecentNotes.Count < LineRatio && CommonUtils.Settings.RecentNotes.Count < CurrentDatabase.RecordCount)
-					CommonUtils.Settings.RecentNotes.Add(CurrentDatabase.GetRecord(CommonUtils.Settings.RecentNotes.Count));
+				while (Settings.RecentNotes.Count < LineRatio && Settings.RecentNotes.Count < CurrentDatabase.RecordCount)
+					Settings.RecentNotes.Add(CurrentDatabase.GetRecord(Settings.RecentNotes.Count));
 
-				while (CommonUtils.Settings.RecentNotes.Count > LineRatio)
-					CommonUtils.Settings.RecentNotes.RemoveAt(CommonUtils.Settings.RecentNotes.Count - 1);
+				while (Settings.RecentNotes.Count > LineRatio)
+					Settings.RecentNotes.RemoveAt(Settings.RecentNotes.Count - 1);
 			});
 
 			CurrentDatabase.Sort();

@@ -1,5 +1,6 @@
 ﻿using SylverInk.Net;
 using SylverInk.Notes;
+using SylverInk.Text;
 using SylverInk.XAMLUtils;
 using System;
 using System.Runtime.InteropServices;
@@ -11,8 +12,8 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Threading;
 using static SylverInk.CommonUtils;
-using static SylverInk.XAMLUtils.DataUtils;
-using static SylverInk.XAMLUtils.TextUtils;
+using static SylverInk.Text.FlowDocumentUtils;
+using static SylverInk.XAMLUtils.MainWindowUtils;
 
 namespace SylverInk.XAML;
 
@@ -122,7 +123,7 @@ public partial class SearchResult : Window, IDisposable
 		}, TaskCreationOptions.LongRunning);
 	}
 
-	public void ScrollToText(string text) => TextUtils.ScrollToText(ResultBlock, text);
+	public void ScrollToText(string text) => FlowDocumentUtils.ScrollToText(ResultBlock, text);
 
 	private void ViewClick(object? sender, RoutedEventArgs e)
 	{
