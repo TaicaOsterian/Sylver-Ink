@@ -71,7 +71,7 @@ public static partial class CommonUtils
 	public static double WindowHeight { get; set; }
 	public static double WindowWidth { get; set; }
 
-	public static SolidColorBrush? BrushFromBytes(string data)
+	public static SolidColorBrush BrushFromBytes(string data)
 	{
 		if (data.Length == 6)
 			data = "FF" + data;

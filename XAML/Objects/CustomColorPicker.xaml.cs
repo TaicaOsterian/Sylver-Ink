@@ -60,7 +60,7 @@ public partial class CustomColorPicker : UserControl
 			return;
 
 		var text = box.Text.StartsWith('#') ? box.Text[1..] : box.Text;
-		var brush = BrushFromBytes(text) ?? Brushes.Transparent;
+		var brush = BrushFromBytes(text);
 
 		CustomColor.Fill = brush;
 		LastColorSelection = brush;
