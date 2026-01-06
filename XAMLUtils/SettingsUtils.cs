@@ -47,7 +47,7 @@ public static partial class SettingsUtils
 				}
 
 				// Programmatically clearing a single property on a TextSelection object is convoluted.
-				// Other methods exist, but by far the simplest is to clear all properties and reapply the ones we aren't changing.
+				// Other methods exist, but by far the simplest is to clear *all* properties, then reapply the ones we aren't changing.
 
 				var end = TextTarget.Selection.End;
 				TextPointer next;
@@ -70,7 +70,6 @@ public static partial class SettingsUtils
 
 					var fontFamily = TextTarget.Selection.GetPropertyValue(TextElement.FontFamilyProperty);
 					var fontSize = TextTarget.Selection.GetPropertyValue(TextElement.FontSizeProperty);
-					var fontStretch = TextTarget.Selection.GetPropertyValue(TextElement.FontStretchProperty);
 					var fontStyle = TextTarget.Selection.GetPropertyValue(TextElement.FontStyleProperty);
 					var fontWeight = TextTarget.Selection.GetPropertyValue(TextElement.FontWeightProperty);
 
@@ -78,7 +77,6 @@ public static partial class SettingsUtils
 
 					TextTarget.Selection.ApplyPropertyValue(TextElement.FontFamilyProperty, fontFamily);
 					TextTarget.Selection.ApplyPropertyValue(TextElement.FontSizeProperty, fontSize);
-					TextTarget.Selection.ApplyPropertyValue(TextElement.FontStretchProperty, fontStretch);
 					TextTarget.Selection.ApplyPropertyValue(TextElement.FontStyleProperty, fontStyle);
 					TextTarget.Selection.ApplyPropertyValue(TextElement.FontWeightProperty, fontWeight);
 				}
