@@ -1,8 +1,8 @@
-﻿using SylverInk.XAML.Objects;
+﻿using SylverInk.Text;
+using SylverInk.XAML.Objects;
 using System;
 using System.Windows.Controls;
 using static SylverInk.CommonUtils;
-using static SylverInk.Text.FlowDocumentUtils;
 using static SylverInk.XAMLUtils.MainWindowUtils;
 
 namespace SylverInk.XAMLUtils;
@@ -24,7 +24,7 @@ public static class NoteTabUtils
 		tab.NoteBox.Focus();
 
 		tab.OriginalBlockCount = tab.NoteBox.Document.Blocks.Count;
-		tab.OriginalText = FlowDocumentToXaml(tab.NoteBox.Document);
+		tab.OriginalText = TextConverter.Save(tab.NoteBox.Document, TextFormat.Xaml);
 		tab.PreviousButton.IsEnabled = tab.Record.GetNumRevisions() > 0;
 		tab.RevisionLabel.Content = tab.Record.Locked ? "Note locked by another user" : tab.Record.GetNumRevisions() == 0 ? $"Entry created: {tab.Record.GetCreated()}" : $"Entry last modified: {tab.Record.GetLastChange()}";
 		tab.SaveButton.IsEnabled = false;
@@ -34,7 +34,7 @@ public static class NoteTabUtils
 
 	public static void Deconstruct(this NoteTab tab)
 	{
-		tab.Record.CreateRevision(FlowDocumentToXaml(tab.NoteBox.Document));
+		tab.Record.CreateRevision(TextConverter.Save(tab.NoteBox.Document, TextFormat.Xaml));
 
 		if (!tab.Record.Locked)
 			tab.Record.DB?.Unlock(tab.Record.Index, true);

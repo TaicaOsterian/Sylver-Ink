@@ -12,7 +12,6 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Threading;
 using static SylverInk.CommonUtils;
-using static SylverInk.Text.FlowDocumentUtils;
 using static SylverInk.XAMLUtils.MainWindowUtils;
 
 namespace SylverInk.XAML;
@@ -106,7 +105,7 @@ public partial class SearchResult : Window, IDisposable
 		if (!FinishedLoading)
 			return;
 
-		Edited = ResultBlock.Document.Blocks.Count != OriginalBlockCount || !OriginalText.Equals(FlowDocumentToXaml(ResultBlock.Document));
+		Edited = ResultBlock.Document.Blocks.Count != OriginalBlockCount || !OriginalText.Equals(TextConverter.Save(ResultBlock.Document, TextFormat.Xaml));
 		if (Autosaving)
 			return;
 

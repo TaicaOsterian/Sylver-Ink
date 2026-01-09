@@ -1,5 +1,6 @@
 ﻿using SylverInk.Net;
 using SylverInk.Notes;
+using SylverInk.Text;
 using SylverInk.XAMLUtils;
 using System;
 using System.Threading;
@@ -96,7 +97,7 @@ public partial class NoteTab : UserControl
 				case MessageBoxResult.Cancel:
 					return;
 				case MessageBoxResult.Yes:
-					CurrentDatabase.CreateRevision(Record, FlowDocumentToXaml(NoteBox.Document));
+					CurrentDatabase.CreateRevision(Record, TextConverter.Save(NoteBox.Document, TextFormat.Xaml));
 					DeferUpdateRecentNotes();
 					break;
 			}
@@ -111,7 +112,7 @@ public partial class NoteTab : UserControl
 		if (sender is not Button button)
 			return;
 
-		Record.CreateRevision(FlowDocumentToXaml(NoteBox.Document));
+		Record.CreateRevision(TextConverter.Save(NoteBox.Document, TextFormat.Xaml));
 		DeferUpdateRecentNotes();
 
 		NextButton.IsEnabled = false;
@@ -153,7 +154,7 @@ public partial class NoteTab : UserControl
 
 		UpdateTextColorButton();
 
-		SaveButton.IsEnabled = NoteBox.Document.Blocks.Count != OriginalBlockCount || !FlowDocumentToXaml(NoteBox.Document).Equals(OriginalText);
+		SaveButton.IsEnabled = NoteBox.Document.Blocks.Count != OriginalBlockCount || !TextConverter.Save(NoteBox.Document, TextFormat.Xaml).Equals(OriginalText);
 		if (Autosaving)
 			return;
 

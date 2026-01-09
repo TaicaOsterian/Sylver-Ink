@@ -1,5 +1,6 @@
 ﻿using SylverInk.Net;
 using SylverInk.Notes;
+using SylverInk.Text;
 using SylverInk.XAML;
 using SylverInk.XAML.Objects;
 using System;
@@ -9,7 +10,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using static SylverInk.CommonUtils;
 using static SylverInk.Notes.DatabaseUtils;
-using static SylverInk.Text.FlowDocumentUtils;
 using static SylverInk.XAMLUtils.MainWindowUtils;
 
 namespace SylverInk.XAMLUtils;
@@ -81,7 +81,7 @@ public static class SearchResultUtils
 
 		window.OriginalBlockCount = window.ResultBlock.Document.Blocks.Count;
 		window.OriginalRevisionCount = window.ResultRecord?.GetNumRevisions() ?? 0;
-		window.OriginalText = FlowDocumentToXaml(window.ResultBlock.Document);
+		window.OriginalText = TextConverter.Save(window.ResultBlock.Document, TextFormat.Xaml);
 
 		var tabPanel = GetChildPanel("DatabasesPanel");
 		for (int i = tabPanel.Items.Count - 1; i > 0; i--)
@@ -187,7 +187,7 @@ public static class SearchResultUtils
 		if (window.ResultRecord is null)
 			return;
 
-		window.ResultRecord?.DB?.CreateRevision(window.ResultRecord, FlowDocumentToXaml(window.ResultBlock.Document));
+		window.ResultRecord?.DB?.CreateRevision(window.ResultRecord, TextConverter.Save(window.ResultBlock.Document, TextFormat.Xaml));
 		window.LastChangedLabel.Content = window.ResultRecord?.GetLastChange();
 		DeferUpdateRecentNotes();
 	}

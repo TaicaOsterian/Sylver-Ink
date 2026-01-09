@@ -12,7 +12,6 @@ using System.Windows.Documents;
 using static SylverInk.CommonUtils;
 using static SylverInk.FileIO.FileUtils;
 using static SylverInk.Notes.DatabaseUtils;
-using static SylverInk.Text.FlowDocumentUtils;
 using static SylverInk.XAMLUtils.MainWindowUtils;
 
 namespace SylverInk.Notes;
@@ -302,7 +301,7 @@ public partial class NoteController : IDisposable
 				}
 			}
 
-			var document = Concurrent(() => XamlToFlowDocument(recordText));
+			var document = Concurrent(() => TextConverter.Parse(recordText, TextFormat.Xaml));
 			TextPointer? pointer = document.ContentStart;
 			while (pointer is not null && pointer.GetPointerContext(LogicalDirection.Forward) != TextPointerContext.None)
 			{
@@ -323,7 +322,7 @@ public partial class NoteController : IDisposable
 				while (pointer.GetPointerContext(LogicalDirection.Forward) == TextPointerContext.Text)
 					pointer = pointer.GetNextContextPosition(LogicalDirection.Forward);
 			}
-			newVersion = Concurrent(() => FlowDocumentToXaml(document));
+			newVersion = Concurrent(() => TextConverter.Save(document, TextFormat.Xaml));
 			if (!newVersion.Equals(recordText))
 			{
 				CreateRevision(record.Index, newVersion);

@@ -65,7 +65,7 @@ public partial class NoteRecord
 	{
 		get
 		{
-			var _preview = FlowDocumentPreview(XamlToFlowDocument(Reconstruct())).Replace("\r", string.Empty).Replace('\n', ' ').Replace('\t', ' ');
+			var _preview = FlowDocumentPreview(TextConverter.Parse(Reconstruct(), TextFormat.Xaml)).Replace("\r", string.Empty).Replace('\n', ' ').Replace('\t', ' ');
 
 			return string.IsNullOrEmpty(_preview) ? "(empty note)" : _preview;
 		}
@@ -144,7 +144,7 @@ public partial class NoteRecord
 		var lockFile = GetLockFile(DB?.DBFile);
 		Erase(lockFile);
 
-		CreateRevision(FlowDocumentToXaml(document));
+		CreateRevision(TextConverter.Save(document, TextFormat.Xaml));
 		DB?.Save(lockFile);
 		DeleteRevision(GetNumRevisions());
 	}
@@ -285,9 +285,9 @@ public partial class NoteRecord
 
 	public string GetLastChange() => GetLastChangeObject().ToLocalTime().ToString(DateFormat, CultureInfo.InvariantCulture);
 
-	public FlowDocument GetDocument() => XamlToFlowDocument(Reconstruct());
+	public FlowDocument GetDocument() => TextConverter.Parse(Reconstruct(), TextFormat.Xaml);
 
-	public FlowDocument GetDocument(uint backsteps = 0U) => XamlToFlowDocument(Reconstruct(backsteps));
+	public FlowDocument GetDocument(uint backsteps = 0U) => TextConverter.Parse(Reconstruct(backsteps), TextFormat.Xaml);
 
 	public int GetNumRevisions() => Revisions.Count;
 
