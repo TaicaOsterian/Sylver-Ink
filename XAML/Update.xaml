@@ -1,0 +1,25 @@
+﻿<Window x:Class="SylverInk.XAML.Update"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:local="clr-namespace:SylverInk"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance Type=local:ContextSettings}"
+        Background="{Binding MenuBackground}" Foreground="{Binding MenuForeground}" Title="Sylver Ink: Update" Height="150" Width="450">
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="*"/>
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
+
+		<ProgressBar Grid.ColumnSpan="3" Width="375" Height="30" Minimum="0" Maximum="1" Value="0" x:Name="UpdateProgress" />
+
+		<Button Click="UpdateCancel" Grid.Column="2" Content="Cancel" Grid.Row="1" />
+	</Grid>
+</Window>

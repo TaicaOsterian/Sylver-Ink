@@ -25,7 +25,7 @@ public static class TextConverter
 		if (_converters.TryGetValue(from, out var converter))
 			return converter.Parse(text);
 
-		throw new ArgumentException($"No converter registered for {from}");
+		throw new ArgumentException($"No parser registered for {from}");
 	}
 
 	public static string Save(FlowDocument document, TextFormat to)
@@ -33,6 +33,6 @@ public static class TextConverter
 		if (_converters.TryGetValue(to, out var converter))
 			return converter.Save(document);
 
-		throw new ArgumentException($"No converter registered for {to}");
+		throw new ArgumentException($"No saver registered for {to}");
 	}
 }

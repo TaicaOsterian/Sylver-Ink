@@ -1,10 +1,12 @@
-﻿using System;
+﻿using SylverInk.XAML;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using static SylverInk.FileIO.FileUtils;
@@ -16,6 +18,13 @@ static class UpdateHandler
 	private static string GitReleasesURI { get; } = "https://api.github.com/repos/TaicaOsterian/Sylver-Ink/releases?per_page=1&page=1";
 	public static string TempUri { get; } = Path.Join(DocumentsFolder, "SylverInk.msi");
 	public static string UpdateLockUri { get; } = Path.Join(DocumentsFolder, "~si_update.lock");
+	private static CancellationTokenSource UpdateTokenSource { get; } = new();
+	public static Update? UpdateWindow { get; private set; }
+
+	public static void CancelUpdate()
+	{
+		UpdateTokenSource.Cancel();
+	}
 
 	public static async Task CheckForUpdates()
 	{
@@ -74,7 +83,7 @@ static class UpdateHandler
 			return;
 		}
 
-		if (MessageBox.Show($"A new update is available ({assemblyVersion.ToString(3)} → {releaseVersion.ToString(3)}). Would you like to install it now?", "Sylver Ink: Notification", MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.No)
+		if (MessageBox.Show($"A new version of Sylver Ink is available ({assemblyVersion.ToString(3)} → {releaseVersion.ToString(3)}). Would you like to download and install it now?", "Sylver Ink: Notification", MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.No)
 			return;
 
 		await DownloadAndInstallUpdate(httpClient, uriNode);
@@ -89,7 +98,15 @@ static class UpdateHandler
 
 			File.Create(UpdateLockUri, 0).Close();
 
-			await httpClient.DownloadFileTaskAsync(uriNode, TempUri);
+			UpdateWindow = new();
+			UpdateWindow.Show();
+
+			await httpClient.DownloadFileTaskAsync(uriNode, TempUri, UpdateTokenSource);
+
+			UpdateWindow.Close();
+
+			if (UpdateTokenSource.IsCancellationRequested)
+				return;
 
 			CommonUtils.AbortRun = true;
 
