@@ -120,6 +120,7 @@ static class UpdateHandler
 		}
 		catch (Exception ex)
 		{
+			UpdateWindow?.Close();
 			MessageBox.Show($"Unable to update Sylver Ink: {ex.Message}", "Sylver Ink: Error", MessageBoxButton.OK, MessageBoxImage.Error);
 			return;
 		}
