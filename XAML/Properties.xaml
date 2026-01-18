@@ -20,7 +20,7 @@
 			<ColumnDefinition Width="*"/>
 		</Grid.ColumnDefinitions>
 
-		<Popup Height="25" Placement="Mouse" StaysOpen="False" Width="90" x:Name="TimeSelector">
+		<Popup Height="25" Placement="Mouse" PopupAnimation="Fade" StaysOpen="False" Width="90" x:Name="TimeSelector">
 			<Border BorderBrush="{Binding MenuForeground}" BorderThickness="1">
 				<Grid Background="{Binding MenuBackground}" HorizontalAlignment="Center" VerticalAlignment="Center">
 					<Grid.ColumnDefinitions>
