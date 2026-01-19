@@ -181,15 +181,9 @@ public partial class SearchResult : Window, IDisposable
 		if (EnterMonitor?.IsEnabled is true)
 			return;
 
-		if (CommonUtils.Settings.NoteTransparency == 0.0)
-			return;
-
 		LeaveMonitor?.Stop();
 
 		StartOpacity = Opacity;
-
-		if (StartOpacity == 1.0)
-			return;
 
 		EnterTime = DateTime.UtcNow.Ticks;
 		EnterMonitor?.Start();

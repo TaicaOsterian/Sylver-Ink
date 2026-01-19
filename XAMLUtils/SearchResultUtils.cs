@@ -129,7 +129,7 @@ public static class SearchResultUtils
 		{
 			var Seconds = (DateTime.UtcNow.Ticks - window.EnterTime) * 1E-7;
 
-			if (Seconds > CommonUtils.Settings.NoteClickthrough)
+			if (Seconds > CommonUtils.Settings.NoteClickthrough || CommonUtils.Settings.NoteTransparency == 0.0)
 			{
 				Concurrent(window.UnsetWindowExTransparent);
 				window.Opacity = 1.0;
@@ -153,7 +153,7 @@ public static class SearchResultUtils
 		{
 			var Seconds = (DateTime.UtcNow.Ticks - window.LeaveTime) * 1E-7;
 
-			if (Seconds > CommonUtils.Settings.NoteClickthrough)
+			if (Seconds > CommonUtils.Settings.NoteClickthrough || CommonUtils.Settings.NoteTransparency == 0.0)
 			{
 				window.Opacity = 1.0 - (CommonUtils.Settings.NoteTransparency * 0.01);
 				window.LeaveMonitor.Stop();
@@ -169,7 +169,7 @@ public static class SearchResultUtils
 	{
 		window.MouseMonitor = new()
 		{
-			Interval = new TimeSpan(0, 0, 0, 0, 150)
+			Interval = new TimeSpan(0, 0, 0, 0, 100)
 		};
 
 		window.MouseMonitor.Tick += window.WindowMouseMonitor;
