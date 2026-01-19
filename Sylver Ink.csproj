@@ -11,7 +11,7 @@
   <PropertyGroup>
 	<SourceRevisionId>build$([System.DateTime]::UtcNow.ToString("yyyyMMdd"))</SourceRevisionId>
 	<NeutralLanguage>en-US</NeutralLanguage>
-	<Version>1.6.4</Version>
+	<Version>1.6.5</Version>
 	<UseWindowsForms>False</UseWindowsForms>
 	<Title>Sylver Ink</Title>
 	<Authors>taicanium,norvinsk.hunter,milesfarber</Authors>
