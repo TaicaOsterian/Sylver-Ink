@@ -10,7 +10,6 @@ namespace SylverInk.XAML;
 public partial class Update : Window
 {
 	private DateTime lastUpdate;
-	private double progress;
 
 	public Update()
 	{
@@ -20,17 +19,12 @@ public partial class Update : Window
 
 	public void ReportProgress(double percentage)
 	{
-		progress = percentage;
-		
-		if ((DateTime.Now - lastUpdate).Milliseconds > 50)
-		{
-			UpdateProgress.Value = percentage;
-			lastUpdate = DateTime.Now;
-		}
+		if ((DateTime.Now - lastUpdate).Milliseconds <= 50)
+			return;
+
+		UpdateProgress.Value = percentage;
+		lastUpdate = DateTime.Now;
 	}
 
-	private void UpdateCancel(object? sender, RoutedEventArgs e)
-	{
-		UpdateHandler.CancelUpdate();
-	}
+	private void UpdateCancel(object? sender, RoutedEventArgs e) => UpdateHandler.CancelUpdate();
 }
