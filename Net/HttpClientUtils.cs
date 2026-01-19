@@ -3,6 +3,7 @@ using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using static SylverInk.CommonUtils;
 
 namespace SylverInk.Net;
 
@@ -29,6 +30,7 @@ public static class HttpClientUtils
 		ArgumentNullException.ThrowIfNull(source);
 		ArgumentNullException.ThrowIfNull(destination);
 		ArgumentOutOfRangeException.ThrowIfNegative(totalSize);
+
 		if (!destination.CanWrite)
 			return;
 		if (!source.CanRead)
@@ -42,7 +44,7 @@ public static class HttpClientUtils
 		{
 			await destination.WriteAsync(buffer.AsMemory(0, bytesRead), cancellationToken).ConfigureAwait(false);
 			totalBytesRead += bytesRead;
-			UpdateHandler.UpdateWindow?.ReportProgress(totalBytesRead / totalSize);
+			Concurrent(() => UpdateHandler.UpdateWindow?.ReportProgress((double)totalBytesRead / totalSize));
 		}
 	}
 }

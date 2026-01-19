@@ -14,6 +14,7 @@ public partial class Update : Window
 	public Update()
 	{
 		InitializeComponent();
+		DataContext = CommonUtils.Settings;
 		lastUpdate = DateTime.Now;
 	}
 

@@ -9,6 +9,7 @@ using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using static SylverInk.CommonUtils;
 using static SylverInk.FileIO.FileUtils;
 
 namespace SylverInk.Net;
@@ -83,7 +84,7 @@ static class UpdateHandler
 			return;
 		}
 
-		if (MessageBox.Show($"A new version of Sylver Ink is available ({assemblyVersion.ToString(3)} → {releaseVersion.ToString(3)}). Would you like to download and install it now?", "Sylver Ink: Notification", MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.No)
+		if (MessageBox.Show($"A new version of Sylver Ink is available ({assemblyVersion.ToString(3)} → {releaseVersion.ToString(3)}).\n\nWould you like to download and install it now?", "Sylver Ink: Notification", MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.No)
 			return;
 
 		await DownloadAndInstallUpdate(httpClient, uriNode);
@@ -98,17 +99,20 @@ static class UpdateHandler
 
 			File.Create(UpdateLockUri, 0).Close();
 
-			UpdateWindow = new();
-			UpdateWindow.Show();
+			Concurrent(() =>
+			{
+				UpdateWindow = new();
+				UpdateWindow.Show();
+			});
 
 			await httpClient.DownloadFileTaskAsync(uriNode, TempUri, UpdateTokenSource);
 
-			UpdateWindow.Close();
+			Concurrent(() => UpdateWindow?.Close());
 
 			if (UpdateTokenSource.IsCancellationRequested)
 				return;
 
-			CommonUtils.AbortRun = true;
+			AbortRun = true;
 
 			Process.Start(new ProcessStartInfo()
 			{
