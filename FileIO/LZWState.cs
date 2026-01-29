@@ -4,7 +4,10 @@ using System.IO;
 
 namespace SylverInk.FileIO;
 
-public class LZW
+/// <summary>
+/// The LZW state engine handles compressing and decompressiong data into and out of Lempel-Ziv-Welch (LZW) formatted block text.
+/// </summary>
+public class LZWState
 {
 	private readonly List<bool> BitStream = [];
 	private readonly List<byte> ByteStream = [];

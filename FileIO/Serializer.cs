@@ -16,7 +16,7 @@ public class Serializer : IDisposable
 	private byte[] _buffer = [];
 	private Stream? _fileStream;
 	private bool _isOpen;
-	private readonly LZW _lzw = new();
+	private readonly LZWState _lzw = new();
 	private byte[] _testBuffer = [];
 	private bool _writing;
 
