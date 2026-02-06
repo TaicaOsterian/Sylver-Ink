@@ -5,7 +5,7 @@ using System.IO;
 namespace SylverInk.FileIO;
 
 /// <summary>
-/// The LZW state engine handles compressing and decompressiong data into and out of Lempel-Ziv-Welch (LZW) formatted block text.
+/// The LZW state engine handles compressing and decompressing data into and out of Lempel-Ziv-Welch (LZW) formatted block text.
 /// </summary>
 public class LZWState
 {
