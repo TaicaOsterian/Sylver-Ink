@@ -204,36 +204,41 @@ public static class SearchResultUtils
 
 		foreach (SearchResult other in OpenQueries)
 		{
-			if (XSnapped && YSnapped)
-				return Coords;
-
 			if (other.ResultRecord == window.ResultRecord)
 				continue;
 
-			Point LT1 = new(Coords.X, Coords.Y);
-			Point RB1 = new(Coords.X + window.Width, Coords.Y + window.Height);
-			Point LT2 = new(other.Left, other.Top);
-			Point RB2 = new(other.Left + other.Width, other.Top + other.Height);
+			Point LT1 = new(Coords.X, Coords.Y); // Left-top corner of this window
+			Point RB1 = new(Coords.X + window.Width, Coords.Y + window.Height); // Right-bottom corner of this window
+			Point LT2 = new(other.Left, other.Top); // Left-top corner of the other window
+			Point RB2 = new(other.Left + other.Width, other.Top + other.Height); // Right-bottom corner of the other window
 
+			// X-delta and Y-delta values from the left-top corners of each window to the opposite corners of the other.
 			var dLR = Math.Abs(LT1.X - RB2.X);
 			var dRL = Math.Abs(RB1.X - LT2.X);
 			var dTB = Math.Abs(LT1.Y - RB2.Y);
 			var dBT = Math.Abs(RB1.Y - LT2.Y);
 
+			// X-delta and Y-delta values from the left-top and right-bottom corners of each window to the corresponding corners of the other.
 			var dLL = Math.Abs(LT1.X - LT2.X);
 			var dRR = Math.Abs(RB1.X - RB2.X);
 			var dTT = Math.Abs(LT1.Y - LT2.Y);
 			var dBB = Math.Abs(RB1.Y - RB2.Y);
 
-			var XTolerance = (LT1.X >= LT2.X && LT1.X <= RB2.X)
+			// Check for left and right edges of either window being between the edges of the other.
+			bool XTolerance = (LT1.X >= LT2.X && LT1.X <= RB2.X)
 				|| (RB1.X >= LT2.X && RB1.X <= RB2.X)
 				|| (LT2.X >= LT1.X && LT2.X <= RB1.X)
 				|| (RB2.X >= LT1.X && RB2.X <= RB1.X);
 
-			var YTolerance = (LT1.Y >= LT2.Y && LT1.Y <= RB2.Y)
+			// Check for top and bottom edges of either window being between the edges of the other.
+			bool YTolerance = (LT1.Y >= LT2.Y && LT1.Y <= RB2.Y)
 				|| (RB1.Y >= LT2.Y && RB1.Y <= RB2.Y)
 				|| (LT2.Y >= LT1.Y && LT2.Y <= RB1.Y)
 				|| (RB2.Y >= LT1.Y && RB2.Y <= RB1.Y);
+
+			// Opposite-corner snapping:
+			// If the corners' X-delta values are within tolerance, and the windows are overlapping on the Y axis, then snap the windows along their top-bottom edges.
+			// Do the same for the Y-delta values and the left-right edges.
 
 			if (dLR < window.SnapTolerance && YTolerance && !XSnapped)
 			{
@@ -259,28 +264,34 @@ public static class SearchResultUtils
 				YSnapped = true;
 			}
 
+			if (XSnapped && YSnapped)
+				return Coords;
+
+			// Matching-corner snapping:
+			// If the windows are already snapped along one edge, and have now been dragged so that both axes are within tolerance, then snap them along the other edge.
+
 			if (dLL < window.SnapTolerance && !XSnapped && YSnapped)
 			{
 				Coords.X = LT2.X;
-				(XSnapped, YSnapped) = (true, true);
+				return Coords;
 			}
 
 			if (dRR < window.SnapTolerance && !XSnapped && YSnapped)
 			{
 				Coords.X = RB2.X - window.Width;
-				(XSnapped, YSnapped) = (true, true);
+				return Coords;
 			}
 
 			if (dTT < window.SnapTolerance && XSnapped && !YSnapped)
 			{
 				Coords.Y = LT2.Y;
-				(XSnapped, YSnapped) = (true, true);
+				return Coords;
 			}
 
 			if (dBB < window.SnapTolerance && XSnapped && !YSnapped)
 			{
 				Coords.Y = RB2.Y - window.Height;
-				(XSnapped, YSnapped) = (true, true);
+				return Coords;
 			}
 		}
 
