@@ -83,20 +83,19 @@ public static class FileUtils
 			if (File.Exists(uuidFile) && File.ReadAllText(uuidFile).Equals(db.UUID))
 				return dbFile;
 
-			if (!File.Exists(uuidFile))
+			Database tmpDB = new();
+			try
 			{
-				Database tmpDB = new();
-				try
-				{
-					tmpDB.Load(dbFile);
-					if (tmpDB.UUID?.Equals(db.UUID) is true)
-						return dbFile;
-				}
-				catch
-				{
-					tmpDB.Dispose();
-					return string.Empty;
-				}
+				tmpDB.Load(dbFile);
+				if (tmpDB.UUID?.Equals(db.UUID) is true)
+					return dbFile;
+				if (tmpDB.Format < 7) // Addition of Database object UUID in SIDB v7
+					return dbFile;
+			}
+			catch
+			{
+				tmpDB.Dispose();
+				return string.Empty;
 			}
 
 			index++;
