@@ -121,7 +121,8 @@ public partial class ContextSettings : INotifyPropertyChanged
 					break;
 				case "LastActiveNotes":
 					foreach (var note in keyValue[1].Split(';').Distinct())
-						LastActiveNotes.Add(note);
+						if (!string.IsNullOrWhiteSpace(note))
+							LastActiveNotes.Add(note);
 					break;
 				case "LastActiveNotesHeight":
 					foreach (var sHeight in keyValue[1].Split(';').Distinct())

@@ -89,7 +89,7 @@ public static class FileUtils
 				tmpDB.Load(dbFile);
 				if (tmpDB.UUID?.Equals(db.UUID) is true)
 					return dbFile;
-				if (tmpDB.Format < 7) // Addition of Database object UUID in SIDB v7
+				if (tmpDB.Format < 7) // Database object UUID was added in SIDB v7
 					return dbFile;
 			}
 			catch

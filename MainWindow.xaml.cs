@@ -254,9 +254,12 @@ public partial class MainWindow : Window
 		if (!IsShuttingDown())
 			UpdatesChecked = true;
 
-		// Create an empty database if and only if we haven't loaded any from files
-		if (CommonUtils.Settings.FirstRun)
-			await Database.Create(Path.Join(Subfolders["Databases"], DefaultDatabase, $"{DefaultDatabase}.sidb"));
+		// Perform first run operations (or return if this is not the first run)
+		await OnFirstRun();
+
+		// If there are no active notes from last run, open an empty note and focus it.
+		if (LastActiveNotes.Count == 0)
+			CreateNewNote();
 
 		// Refresh the display (checking for updates is a blocking call, so we want to populate the recent notes list beforehand)
 		DeferUpdateRecentNotes();

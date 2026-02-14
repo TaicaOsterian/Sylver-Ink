@@ -9,11 +9,14 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Media;
+using static SylverInk.FileIO.FileUtils;
+using static SylverInk.Notes.DatabaseUtils;
 using static SylverInk.XAMLUtils.MainWindowUtils;
 
 namespace SylverInk;
@@ -152,6 +155,17 @@ public static partial class CommonUtils
 		var uuid = Guid.NewGuid().ToString();
 		uuid = $"{uuid[..^17].ToUpper(CultureInfo.InvariantCulture)}{(byte)(DateTime.UtcNow.Microsecond % 256):X2}{(byte)type:X2}{uuid[23..].ToUpper(CultureInfo.InvariantCulture)}";
 		return uuid;
+	}
+
+	public async static Task OnFirstRun()
+	{
+		if (!Settings.FirstRun)
+			return;
+
+		// Create an empty database if and only if we haven't loaded any from files
+		await Database.Create(Path.Join(Subfolders["Databases"], DefaultDatabase, $"{DefaultDatabase}.sidb"));
+
+		return;
 	}
 
 	public static SearchResult? OpenQuery(NoteRecord record, bool show = true)
