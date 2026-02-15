@@ -81,13 +81,13 @@ public static class DatabaseUtils
 		var firstRecord = CurrentDatabase.GetRecord(0);
 		var lastRecord = CurrentDatabase.GetRecord(CurrentDatabase.RecordCount - 1);
 
-		if (string.IsNullOrEmpty(firstRecord.ToString()))
+		if (string.Empty.Equals(firstRecord?.ToString()))
 		{
 			OpenQuery(firstRecord);
 			return;
 		}
 
-		if (string.IsNullOrEmpty(lastRecord.ToString()))
+		if (string.Empty.Equals(lastRecord?.ToString()))
 		{
 			OpenQuery(lastRecord);
 			return;

@@ -101,7 +101,7 @@ public partial class NoteController : IDisposable
 
 	public void CreateRevision(int index, string NewVersion) => CreateRevision(GetRecord(index), NewVersion);
 
-	public static void CreateRevision(NoteRecord record, string NewVersion) => record.CreateRevision(NewVersion);
+	public static void CreateRevision(NoteRecord? record, string NewVersion) => record?.CreateRevision(NewVersion);
 
 	public void DeleteRecord(int index)
 	{
@@ -206,7 +206,7 @@ public partial class NoteController : IDisposable
 
 	public override int GetHashCode() => int.Parse(UUID.Replace("-", string.Empty)[^8..], NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo);
 
-	public NoteRecord GetRecord(int RecordIndex) => RecordIndex < Records.Count && RecordIndex > -1 ? Records[RecordIndex] : new(DB);
+	public NoteRecord? GetRecord(int RecordIndex) => RecordIndex < Records.Count && RecordIndex > -1 ? Records[RecordIndex] : null;
 
 	public bool HasRecord(int index)
 	{
@@ -340,7 +340,7 @@ public partial class NoteController : IDisposable
 		for (int i = RecordCount - 1; i > -1; i--)
 		{
 			for (int j = OpenQueries.Count - 1; j > -1; j--)
-				if (GetRecord(i).Equals(OpenQueries[j].ResultRecord))
+				if (GetRecord(i)?.Equals(OpenQueries[j].ResultRecord) is true)
 					Concurrent(OpenQueries[j].Close);
 
 			var RecordDate = Records[i].GetCreatedObject().ToLocalTime();

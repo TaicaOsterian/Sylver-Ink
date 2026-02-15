@@ -168,14 +168,14 @@ public static partial class CommonUtils
 		return;
 	}
 
-	public static SearchResult? OpenQuery(NoteRecord record, bool show = true)
+	public static SearchResult? OpenQuery(NoteRecord? record, bool show = true)
 	{
 		foreach (SearchResult result in OpenQueries)
 		{
 			if (result.ResultRecord?.DB is not Database rDB)
 				continue;
 
-			if (!rDB.Equals(record.DB))
+			if (!rDB.Equals(record?.DB))
 				continue;
 
 			if (result.ResultRecord is not NoteRecord rNote)
@@ -201,15 +201,15 @@ public static partial class CommonUtils
 
 		resultWindow.Show();
 		OpenQueries.Add(resultWindow);
-		if (!record.Locked)
-			record.DB?.Lock(record.Index, true);
+		if (!record?.Locked is true)
+			record?.DB?.Lock(record.Index, true);
 
 		DeferUpdateRecentNotes();
 
 		return resultWindow;
 	}
 
-	public static void RemoveRecordTab(NoteRecord record)
+	public static void RemoveRecordTab(NoteRecord? record)
 	{
 		for (int i = OpenTabs.Count - 1; i > -1; i--)
 		{

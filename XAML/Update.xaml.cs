@@ -15,16 +15,16 @@ public partial class Update : Window
 	{
 		InitializeComponent();
 		DataContext = CommonUtils.Settings;
-		lastUpdate = DateTime.Now;
+		lastUpdate = DateTime.UtcNow;
 	}
 
 	public void ReportProgress(double percentage)
 	{
-		if ((DateTime.Now - lastUpdate).Milliseconds <= 50)
+		if ((DateTime.UtcNow - lastUpdate).Milliseconds <= 50)
 			return;
 
 		UpdateProgress.Value = percentage;
-		lastUpdate = DateTime.Now;
+		lastUpdate = DateTime.UtcNow;
 	}
 
 	private void UpdateCancel(object? sender, RoutedEventArgs e) => UpdateHandler.CancelUpdate();

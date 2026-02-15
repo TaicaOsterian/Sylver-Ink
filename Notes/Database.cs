@@ -120,7 +120,7 @@ public partial class Database : IDisposable
 	{
 		for (int index = RecordCount - 1; index > -1; index--)
 		{
-			if (!Controller.GetRecord(index).Equals(record))
+			if (!Controller.GetRecord(index)?.Equals(record) is true)
 				continue;
 
 			Controller.DeleteRecord(index);
@@ -174,18 +174,21 @@ public partial class Database : IDisposable
 	public string GetCreated()
 	{
 		if (Created is not null)
-			return DateTime.FromBinary((long)Created).ToString(DateFormat, CultureInfo.InvariantCulture);
+			return DateTime.FromBinary((long)Created).ToLocalTime().ToString(DateFormat, CultureInfo.InvariantCulture);
 
 		var CreatedObject = DateTime.UtcNow;
 		for (int i = 0; i < RecordCount; i++)
 		{
-			var other = Controller.GetRecord(i).GetCreatedObject();
+			var other = Controller.GetRecord(i)?.GetCreatedObject();
+			if (other is null)
+				continue;
+
 			if (CreatedObject.CompareTo(other) > 0)
-				CreatedObject = other;
+				CreatedObject = (DateTime)other;
 		}
 
 		Created = CreatedObject.ToBinary();
-		return CreatedObject.ToString(DateFormat, CultureInfo.InvariantCulture);
+		return CreatedObject.ToLocalTime().ToString(DateFormat, CultureInfo.InvariantCulture);
 	}
 
 	public override int GetHashCode() => int.Parse(UUID.Replace("-", string.Empty)[^8..], NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo);
@@ -234,7 +237,7 @@ public partial class Database : IDisposable
 		return HeaderPanel;
 	}
 
-	public NoteRecord GetRecord(int index) => Controller.GetRecord(index);
+	public NoteRecord? GetRecord(int index) => Controller.GetRecord(index);
 
 	public bool HasRecord(int index) => Controller.HasRecord(index);
 
@@ -304,7 +307,7 @@ public partial class Database : IDisposable
 			return;
 		}
 
-		record.Lock();
+		record?.Lock();
 	}
 
 	public void MakeBackup(bool auto = false)
@@ -496,7 +499,7 @@ public partial class Database : IDisposable
 			return;
 		}
 
-		Controller.GetRecord(index).Unlock();
+		Controller.GetRecord(index)?.Unlock();
 	}
 
 	public void UpdateWordPercentages() => Controller.UpdateWordPercentages();

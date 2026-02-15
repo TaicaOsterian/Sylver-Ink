@@ -37,13 +37,13 @@ public partial class ContextSettings : INotifyPropertyChanged
 	private Brush? _menuForegound = Brushes.DimGray;
 	private double _noteClickthrough = 0.25;
 	private double _noteClickthroughInverse = 4.0;
-	private double _noteTransparency = 100.0;
+	private double _noteTransparency;
 	private string _numReplacements = string.Empty;
 	public event PropertyChangedEventHandler? PropertyChanged;
 	private bool _readyToReplace;
 	private readonly ObservableCollection<NoteRecord> _recentNotes = [];
 	private readonly ObservableCollection<NoteRecord> _searchResults = [];
-	private bool _searchResultsOnTop;
+	private bool _searchResultsOnTop = true;
 	private bool _searchResultsInTaskbar;
 	private bool _snapSearchResults = true;
 
@@ -95,6 +95,13 @@ public partial class ContextSettings : INotifyPropertyChanged
 		foreach (string setting in File.ReadAllLines(SettingsFile))
 		{
 			var keyValue = setting.Trim().Split(':', 2);
+
+			if (string.IsNullOrWhiteSpace(keyValue[0]))
+				continue;
+
+			if (string.IsNullOrWhiteSpace(keyValue[1]))
+				continue;
+
 			switch (keyValue[0])
 			{
 				case "AccentBackground":
@@ -106,6 +113,7 @@ public partial class ContextSettings : INotifyPropertyChanged
 				case "FirstRun":
 					if (!bool.TryParse(keyValue[1], out var firstRun))
 						firstRun = true;
+
 					FirstRun = firstRun;
 					break;
 				case "FontFamily":
@@ -114,6 +122,7 @@ public partial class ContextSettings : INotifyPropertyChanged
 				case "FontSize":
 					if (!double.TryParse(keyValue[1], CultureInfo.InvariantCulture, out var mainFontSize))
 						mainFontSize = 12;
+
 					MainFontSize = mainFontSize;
 					break;
 				case "LastActiveDatabase":
@@ -130,6 +139,7 @@ public partial class ContextSettings : INotifyPropertyChanged
 						var hSplit = sHeight.Split(':');
 						if (hSplit.Length < 3)
 							continue;
+
 						if (int.TryParse(hSplit[2], out var dHeight))
 							LastActiveNotesHeight.TryAdd(hSplit[0] + ":" + hSplit[1], dHeight);
 					}
@@ -140,6 +150,7 @@ public partial class ContextSettings : INotifyPropertyChanged
 						var lSplit = sLeft.Split(':');
 						if (lSplit.Length < 3)
 							continue;
+
 						if (int.TryParse(lSplit[2], out var dLeft))
 							LastActiveNotesLeft.TryAdd(lSplit[0] + ":" + lSplit[1], dLeft);
 					}
@@ -150,6 +161,7 @@ public partial class ContextSettings : INotifyPropertyChanged
 						var tSplit = sTop.Split(':');
 						if (tSplit.Length < 3)
 							continue;
+
 						if (int.TryParse(tSplit[2], out var dTop))
 							LastActiveNotesTop.TryAdd(tSplit[0] + ":" + tSplit[1], dTop);
 					}
@@ -160,6 +172,7 @@ public partial class ContextSettings : INotifyPropertyChanged
 						var wSplit = sWidth.Split(':');
 						if (wSplit.Length < 3)
 							continue;
+
 						if (int.TryParse(wSplit[2], out var dWidth))
 							LastActiveNotesWidth.TryAdd(wSplit[0] + ":" + wSplit[1], dWidth);
 					}
@@ -169,10 +182,8 @@ public partial class ContextSettings : INotifyPropertyChanged
 					LastDatabases.AddRange(keyValue[1].Replace("?\\", DocumentsFolder).Split(';').Distinct().Where(File.Exists));
 
 					foreach (var file in LastDatabases)
-					{
 						if (!Databases.Any(db => Path.GetFullPath(db.DBFile).Equals(Path.GetFullPath(file))))
 							await Database.Create(file);
-					}
 
 					if (Databases.Count != 0)
 						break;
@@ -194,31 +205,37 @@ public partial class ContextSettings : INotifyPropertyChanged
 				case "NoteClickthrough":
 					if (!double.TryParse(keyValue[1], out var clickthrough))
 						clickthrough = 0.25;
+
 					NoteClickthrough = clickthrough;
 					break;
 				case "NoteTransparency":
 					if (!double.TryParse(keyValue[1], out var transparency))
 						transparency = 95.0;
+
 					NoteTransparency = transparency;
 					break;
 				case "RecentNotesSortMode":
 					if (!int.TryParse(keyValue[1], out var sortMode))
 						sortMode = 0;
+
 					RecentEntriesSortMode = (SortType)sortMode;
 					break;
 				case "RibbonDisplayMode":
 					if (!int.TryParse(keyValue[1], out var displayMode))
 						displayMode = 0;
+
 					RibbonTabContent = (DisplayType)displayMode;
 					break;
 				case "SearchResultsOnTop":
 					if (!bool.TryParse(keyValue[1], out var searchResultsOnTop))
 						searchResultsOnTop = false;
+
 					SearchResultsOnTop = searchResultsOnTop;
 					break;
 				case "SnapSearchResults":
 					if (!bool.TryParse(keyValue[1], out var snapSearchResults))
 						snapSearchResults = false;
+
 					SnapSearchResults = snapSearchResults;
 					break;
 				default:

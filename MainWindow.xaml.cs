@@ -125,6 +125,7 @@ public partial class MainWindow : Window
 		LastActiveNotesWidth.Clear();
 		ResizeMode = ResizeMode.CanResize;
 		CommonUtils.Settings.MainTypeFace = new(CommonUtils.Settings.MainFontFamily, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
+
 		DeferUpdateRecentNotes();
 	}
 
@@ -261,10 +262,10 @@ public partial class MainWindow : Window
 		if (LastActiveNotes.Count == 0)
 			CreateNewNote();
 
-		// Refresh the display (checking for updates is a blocking call, so we want to populate the recent notes list beforehand)
+		// Refresh the display
 		DeferUpdateRecentNotes();
 
-		// Check for updates
+		// Check for updates. This is a blocking call, so it has to be the very last thing that we do on startup.
 		Erase(UpdateHandler.UpdateLockUri);
 		Erase(UpdateHandler.TempUri);
 		await UpdateHandler.CheckForUpdates();

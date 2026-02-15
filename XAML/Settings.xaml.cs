@@ -70,7 +70,7 @@ public partial class Settings : Window
 		CommonUtils.Settings.MenuBackground = Brushes.Beige;
 		CommonUtils.Settings.MenuForeground = Brushes.Black;
 		CommonUtils.Settings.NoteClickthrough = 0.25;
-		CommonUtils.Settings.NoteTransparency = 95.0;
+		CommonUtils.Settings.NoteTransparency = 0.0;
 		RecentEntriesSortMode = SortType.ByChange;
 		RibbonTabContent = DisplayType.Content;
 		CommonUtils.Settings.SearchResultsOnTop = false;

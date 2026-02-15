@@ -49,7 +49,7 @@ public static partial class PropertiesUtils
 		{
 			for (int i = 0; i < window.DB?.RecordCount; i++)
 			{
-				var record = Concurrent(window.DB.GetRecord(i).ToString);
+				var record = Concurrent(() => window.DB.GetRecord(i)?.ToString());
 				var length = record?.Length ?? 0;
 				var wordCount = NotWhitespace().Matches(record ?? string.Empty).Count;
 
@@ -84,7 +84,7 @@ public static partial class PropertiesUtils
 		var hourValue = int.Parse((string)hour.Content, NumberFormatInfo.InvariantInfo);
 		var minuteValue = int.Parse((string)minute.Content, NumberFormatInfo.InvariantInfo);
 
-		DateTime reversion = window.ReversionDate.SelectedDate ?? DateTime.Now;
+		DateTime reversion = window.ReversionDate.SelectedDate ?? DateTime.UtcNow;
 		reversion = reversion.Date.AddHours(hourValue).AddMinutes(minuteValue);
 
 		window.CloseButton.IsEnabled = false;

@@ -153,7 +153,13 @@ public static class MainWindowUtils
 			Concurrent(() =>
 			{
 				while (Settings.RecentNotes.Count < LineRatio && Settings.RecentNotes.Count < CurrentDatabase.RecordCount)
-					Settings.RecentNotes.Add(CurrentDatabase.GetRecord(Settings.RecentNotes.Count));
+				{
+					var record = CurrentDatabase.GetRecord(Settings.RecentNotes.Count);
+					if (record is null)
+						break;
+
+					Settings.RecentNotes.Add(record);
+				}
 
 				while (Settings.RecentNotes.Count > LineRatio)
 					Settings.RecentNotes.RemoveAt(Settings.RecentNotes.Count - 1);
