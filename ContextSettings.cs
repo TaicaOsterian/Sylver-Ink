@@ -80,7 +80,7 @@ public partial class ContextSettings : INotifyPropertyChanged
 		var attr = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>();
 
 		string? value = attr?.InformationalVersion;
-		int index = value?.IndexOf(prefix) ?? 0;
+		int index = value?.IndexOf(prefix, StringComparison.Ordinal) ?? 0;
 		if (index > 0 && DateTime.TryParseExact(value?[(index + prefix.Length)..], "yyyyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var result))
 			return result.Year;
 
@@ -182,7 +182,7 @@ public partial class ContextSettings : INotifyPropertyChanged
 					LastDatabases.AddRange(keyValue[1].Replace("?\\", DocumentsFolder).Split(';').Distinct().Where(File.Exists));
 
 					foreach (var file in LastDatabases)
-						if (!Databases.Any(db => Path.GetFullPath(db.DBFile).Equals(Path.GetFullPath(file))))
+						if (!Databases.Any(db => Path.GetFullPath(db.DBFile).Equals(Path.GetFullPath(file), StringComparison.Ordinal)))
 							await Database.Create(file);
 
 					if (Databases.Count != 0)
@@ -244,7 +244,13 @@ public partial class ContextSettings : INotifyPropertyChanged
 		}
 	}
 
-	protected void OnPropertyChanged([CallerMemberName] string? name = null) => Concurrent(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name)));
+	protected void OnPropertyChanged([CallerMemberName] string? name = null)
+	{
+		if (PropertyChanged is null)
+			return;
+
+		Concurrent(PropertyChanged.Invoke, this, new PropertyChangedEventArgs(name));
+	}
 
 	public void Save() => File.WriteAllLines(SettingsFile, [
 		$"AccentBackground:{BytesFromBrush(AccentBackground)}",

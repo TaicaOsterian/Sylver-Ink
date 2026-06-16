@@ -1,6 +1,7 @@
 ﻿using SylverInk.Net;
 using System;
 using System.Windows;
+using System.Windows.Input;
 
 namespace SylverInk.XAML;
 
@@ -13,10 +14,12 @@ public partial class Update : Window
 
 	public Update()
 	{
-		InitializeComponent();
 		DataContext = CommonUtils.Settings;
+		InitializeComponent();
 		lastUpdate = DateTime.UtcNow;
 	}
+
+	private void Drag(object? sender, MouseButtonEventArgs e) => DragMove();
 
 	public void ReportProgress(double percentage)
 	{

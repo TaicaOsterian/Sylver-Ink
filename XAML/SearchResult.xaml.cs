@@ -41,14 +41,14 @@ public partial class SearchResult : Window, IDisposable
 	public int OriginalBlockCount { get; set; } = -1;
 	public int OriginalRevisionCount { get; set; }
 	public string OriginalText { get; set; } = string.Empty;
-	public NoteRecord? ResultRecord { get; set; }
+	public required NoteRecord ResultRecord { get; set; }
 	public double SnapTolerance { get; } = 20.0;
 	public double StartOpacity { get; set; }
 
 	public SearchResult()
 	{
-		InitializeComponent();
 		DataContext = CommonUtils.Settings;
+		InitializeComponent();
 
 		this.InitMonitors();
 	}
@@ -105,7 +105,7 @@ public partial class SearchResult : Window, IDisposable
 		if (!FinishedLoading)
 			return;
 
-		Edited = ResultBlock.Document.Blocks.Count != OriginalBlockCount || !OriginalText.Equals(TextConverter.Save(ResultBlock.Document, TextFormat.Xaml));
+		Edited = ResultBlock.Document.Blocks.Count != OriginalBlockCount || !OriginalText.Equals(TextConverter.Save(ResultBlock.Document, TextFormat.Xaml), StringComparison.Ordinal);
 		if (Autosaving)
 			return;
 
@@ -114,7 +114,7 @@ public partial class SearchResult : Window, IDisposable
 		{
 			SpinWait.SpinUntil(() => (DateTime.UtcNow - TimeSinceAutosave).Seconds >= 5);
 
-			Concurrent(() => ResultRecord?.Autosave(ResultBlock.Document));
+			Concurrent(ResultRecord.Autosave, ResultBlock.Document);
 			RecentNotesDirty = true;
 			TimeSinceAutosave = DateTime.UtcNow;
 			Autosaving = false;

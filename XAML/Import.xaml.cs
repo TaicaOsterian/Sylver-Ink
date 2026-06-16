@@ -18,8 +18,8 @@ public partial class Import : Window
 
 	public Import()
 	{
-		InitializeComponent();
 		DataContext = CommonUtils.Settings;
+		InitializeComponent();
 	}
 
 	private async void AdaptiveChecked(object? sender, RoutedEventArgs e)

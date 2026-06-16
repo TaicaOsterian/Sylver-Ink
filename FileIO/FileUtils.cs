@@ -80,14 +80,14 @@ public static class FileUtils
 
 		while (File.Exists(dbFile))
 		{
-			if (File.Exists(uuidFile) && File.ReadAllText(uuidFile).Equals(db.UUID))
+			if (File.Exists(uuidFile) && File.ReadAllText(uuidFile).Equals(db.UUID, StringComparison.Ordinal))
 				return dbFile;
 
 			Database tmpDB = new();
 			try
 			{
 				tmpDB.Load(dbFile);
-				if (tmpDB.UUID?.Equals(db.UUID) is true)
+				if (tmpDB.UUID?.Equals(db.UUID, StringComparison.Ordinal) is true)
 					return dbFile;
 				if (tmpDB.Format < 7) // Database object UUID was added in SIDB v7
 					return dbFile;

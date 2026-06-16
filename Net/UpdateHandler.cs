@@ -20,7 +20,7 @@ static class UpdateHandler
 	public static string TempUri { get; } = Path.Join(DocumentsFolder, "SylverInk.msi");
 	public static string UpdateLockUri { get; } = Path.Join(DocumentsFolder, "~si_update.lock");
 	private static CancellationTokenSource UpdateTokenSource { get; } = new();
-	public static Update? UpdateWindow { get; private set; }
+	public static Update UpdateWindow { get; private set; } = new();
 
 	public static void CancelUpdate()
 	{
@@ -72,7 +72,7 @@ static class UpdateHandler
 				if (nValue?.ToString() is not string nString)
 					continue;
 
-				if (nString.EndsWith(".msi"))
+				if (nString.EndsWith(".msi", StringComparison.Ordinal))
 					uriNode = nString;
 			}
 
@@ -99,15 +99,11 @@ static class UpdateHandler
 
 			File.Create(UpdateLockUri, 0).Close();
 
-			Concurrent(() =>
-			{
-				UpdateWindow = new();
-				UpdateWindow.Show();
-			});
+			UpdateWindow.Show();
 
 			await httpClient.DownloadFileTaskAsync(uriNode, TempUri, UpdateTokenSource);
 
-			Concurrent(() => UpdateWindow?.Close());
+			UpdateWindow.Close();
 
 			if (UpdateTokenSource.IsCancellationRequested)
 				return;
@@ -125,7 +121,10 @@ static class UpdateHandler
 		catch (Exception ex)
 		{
 			UpdateWindow?.Close();
-			MessageBox.Show($"Unable to update Sylver Ink: {ex.Message}", "Sylver Ink: Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+			if (ex is not OperationCanceledException)
+				MessageBox.Show($"Unable to update Sylver Ink: {ex.Message}", "Sylver Ink: Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
 			return;
 		}
 	}

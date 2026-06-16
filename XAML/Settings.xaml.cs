@@ -20,8 +20,8 @@ public partial class Settings : Window
 
 	public Settings()
 	{
-		InitializeComponent();
 		DataContext = CommonUtils.Settings;
+		InitializeComponent();
 	}
 
 	private void CloseClick(object? sender, RoutedEventArgs e) => Close();

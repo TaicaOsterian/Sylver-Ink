@@ -11,8 +11,8 @@ public partial class About : Window
 {
 	public About()
 	{
-		InitializeComponent();
 		DataContext = CommonUtils.Settings;
+		InitializeComponent();
 	}
 
 	private void CloseClick(object? sender, RoutedEventArgs e) => Close();

@@ -127,7 +127,7 @@ public static class ImportUtils
 							continue;
 
 						// If the current Regex pattern already ends with the class we're checking, don't duplicate it. Increase the predicate's frequency instead.
-						if (pattern.EndsWith(type))
+						if (pattern.EndsWith(type, StringComparison.Ordinal))
 						{
 							frequencies[pattern] += 1.0;
 							total++;
@@ -175,10 +175,11 @@ public static class ImportUtils
 			while (orderedEnum.Current.Value >= 0.001) // Predicates must occur in at least 0.1% of all lines.
 			{
 				if (orderedEnum.Current.Value >= LastPredicateValue
-					|| (!orderedEnum.Current.Key.StartsWith(classes[0]) && NewPredicate.StartsWith("^" + classes[0]))) // De-prioritize predicates that begin with letters, relative to predicates that do not.
+					// Prioritize predicates that do not begin with letters over predicates that do.
+					|| (!orderedEnum.Current.Key.StartsWith(classes[0], StringComparison.Ordinal) && NewPredicate.StartsWith("^" + classes[0], StringComparison.Ordinal)))
 				{
 					NewPredicate = "^" + orderedEnum.Current.Key;
-					if (window.AdaptivePredicate.Equals(NewPredicate))
+					if (window.AdaptivePredicate.Equals(NewPredicate, StringComparison.Ordinal))
 						break;
 
 					window.AdaptivePredicate = NewPredicate;
@@ -190,7 +191,7 @@ public static class ImportUtils
 					break;
 			}
 
-			if (window.AdaptivePredicate.Equals(NewPredicate))
+			if (window.AdaptivePredicate.Equals(NewPredicate, StringComparison.Ordinal))
 				LastPredicateSequence++;
 
 			if (LastPredicateSequence > 6)
@@ -364,7 +365,7 @@ public static class ImportUtils
 		if (CurrentDatabase is null)
 			return;
 
-		if (CommonUtils.Settings.ImportTarget.EndsWith(".sidb") || CommonUtils.Settings.ImportTarget.EndsWith(".sibk"))
+		if (CommonUtils.Settings.ImportTarget.EndsWith(".sidb", StringComparison.Ordinal) || CommonUtils.Settings.ImportTarget.EndsWith(".sibk", StringComparison.Ordinal))
 		{
 			var result = MessageBox.Show("You have selected an existing Sylver Ink database. Its contents will be merged with your current database.\n\nDo you want to overwrite your current database instead?", "Sylver Ink: Warning", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
 

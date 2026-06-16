@@ -128,6 +128,10 @@ public partial class Database : IDisposable
 			if (local)
 				Transmit(NetworkUtils.MessageType.RecordRemove, IntToBytes(index));
 		}
+
+		for (int index = OpenQueries.Count - 1; index > -1; index--)
+			if (record.Equals(OpenQueries[index]?.ResultRecord))
+				OpenQueries[index]?.Close();
 	}
 
 	public void Dispose()
@@ -140,10 +144,10 @@ public partial class Database : IDisposable
 	{
 		if (obj is Database otherDB)
 		{
-			if (!otherDB.Name?.Equals(Name) is true)
+			if (!otherDB.Name?.Equals(Name, StringComparison.Ordinal) is true)
 				return false;
 
-			if (!otherDB.UUID.Equals(UUID))
+			if (!otherDB.UUID.Equals(UUID, StringComparison.Ordinal))
 				return false;
 
 			return true;
@@ -151,10 +155,10 @@ public partial class Database : IDisposable
 
 		if (obj is NoteController otherController)
 		{
-			if (!otherController.Name?.Equals(Name) is true)
+			if (!otherController.Name?.Equals(Name, StringComparison.Ordinal) is true)
 				return false;
 
-			if (!otherController.UUID.Equals(UUID))
+			if (!otherController.UUID.Equals(UUID, StringComparison.Ordinal))
 				return false;
 
 			return true;
@@ -291,7 +295,7 @@ public partial class Database : IDisposable
 		if (string.IsNullOrWhiteSpace(Name))
 			Name = Path.GetFileNameWithoutExtension(DBFile);
 
-		if (DBFile.EndsWith("sibk"))
+		if (DBFile.EndsWith("sibk", StringComparison.Ordinal))
 			Name = $"Backup: {Name}";
 
 		DeferUpdateRecentNotes();

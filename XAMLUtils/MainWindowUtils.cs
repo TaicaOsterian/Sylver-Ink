@@ -35,7 +35,7 @@ public static class MainWindowUtils
 
 		var panel = GetChildPanel("DatabasesPanel");
 
-		if (panel.Dispatcher.Invoke(() => panel.FindName("RecentNotes")) is not ListBox RecentBox)
+		if (panel.Dispatcher.Invoke(() => panel.FindName("RecentNotesBox")) is not ListBox RecentBox)
 			return;
 
 		try
@@ -68,7 +68,7 @@ public static class MainWindowUtils
 	{
 		var db = (TabControl)Application.Current.MainWindow.FindName(basePanel);
 		var dbItem = (TabItem)db.SelectedItem;
-		return (TabControl)dbItem.Content;
+		return (TabControl)((DatabaseControl)dbItem.Content).Content;
 	});
 
 	public static Label GetRibbonHeader(NoteRecord record)

@@ -35,8 +35,8 @@ public partial class NoteTab : UserControl
 
 	public NoteTab()
 	{
-		InitializeComponent();
 		DataContext = CommonUtils.Settings;
+		InitializeComponent();
 	}
 
 	private void ClickDelete(object sender, RoutedEventArgs e)
@@ -45,7 +45,7 @@ public partial class NoteTab : UserControl
 			return;
 
 		this.Deconstruct();
-		Concurrent(() => CurrentDatabase.DeleteRecord(Record));
+		Concurrent(CurrentDatabase.DeleteRecord, Record, true);
 	}
 
 	private void ClickNext(object sender, RoutedEventArgs e)
@@ -154,7 +154,7 @@ public partial class NoteTab : UserControl
 
 		UpdateTextColorButton();
 
-		SaveButton.IsEnabled = NoteBox.Document.Blocks.Count != OriginalBlockCount || !TextConverter.Save(NoteBox.Document, TextFormat.Xaml).Equals(OriginalText);
+		SaveButton.IsEnabled = NoteBox.Document.Blocks.Count != OriginalBlockCount || !TextConverter.Save(NoteBox.Document, TextFormat.Xaml).Equals(OriginalText, StringComparison.Ordinal);
 		if (Autosaving)
 			return;
 
@@ -163,7 +163,7 @@ public partial class NoteTab : UserControl
 		{
 			SpinWait.SpinUntil(() => (DateTime.UtcNow - TimeSinceAutosave).Seconds >= 5);
 
-			Concurrent(() => Record.Autosave(NoteBox.Document));
+			Concurrent(Record.Autosave, NoteBox.Document);
 			Autosaving = false;
 			RecentNotesDirty = true;
 			TimeSinceAutosave = DateTime.UtcNow;

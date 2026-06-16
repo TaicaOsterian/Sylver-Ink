@@ -1,31 +1,46 @@
 ﻿using SylverInk.Notes;
-using SylverInk.XAMLUtils;
-using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using static SylverInk.CommonUtils;
 using static SylverInk.Notes.DatabaseUtils;
+using static SylverInk.XAMLUtils.MainWindowUtils;
 
-namespace SylverInk.XAML;
+namespace SylverInk.XAML.Objects;
 
 /// <summary>
-/// Interaction logic for Search.xaml
+/// Interaction logic for DatabaseControl.xaml
 /// </summary>
-public partial class Search : Window
+public partial class DatabaseControl : UserControl
 {
-	public string Query { get; private set; } = string.Empty;
-
-	public Search()
-	{
-		DataContext = CommonUtils.Settings;
+    public DatabaseControl()
+    {
 		CreateContextMenu();
-		InitializeComponent();
+        InitializeComponent();
+    }
+
+	public void ButtonClick(object? sender, RoutedEventArgs e)
+	{
+		var senderObject = (Button?)sender;
+
+		switch (senderObject?.Content)
+		{
+			case "Import":
+				ImportWindow = new();
+				break;
+			case "Search":
+				SearchWindow = new();
+				break;
+			case "Settings":
+				SettingsWindow = new();
+				break;
+			case "Exit":
+				Application.Current.MainWindow.Close();
+				break;
+		}
 	}
 
-	private void CloseClick(object? sender, RoutedEventArgs e) => Close();
-
-	public async void ContextDelete(object? sender, RoutedEventArgs e)
+	public void ContextDelete(object? sender, RoutedEventArgs e)
 	{
 		if (RecentSelection is null)
 			return;
@@ -34,8 +49,6 @@ public partial class Search : Window
 			return;
 
 		CurrentDatabase.DeleteRecord(RecentSelection);
-
-		await this.PerformSearch();
 
 		return;
 	}
@@ -49,6 +62,7 @@ public partial class Search : Window
 
 		return;
 	}
+
 	private void CreateContextMenu()
 	{
 		ContextMenu menu = new();
@@ -72,9 +86,7 @@ public partial class Search : Window
 		this.ContextMenu = menu;
 	}
 
-	private void Drag(object? sender, MouseButtonEventArgs e) => DragMove();
-
-	private void ListItemChosen(object? sender, MouseButtonEventArgs e)
+	private void ListItemChosen(object sender, MouseButtonEventArgs e)
 	{
 		if (sender is not ListBox box)
 			return;
@@ -84,34 +96,23 @@ public partial class Search : Window
 
 		RecentSelection = record;
 
+		// We set the recent selection, but only open it on a left-mouse click. This makes it easier for the context menu to grab the affected note when needed.
 		if (e.ChangedButton == MouseButton.Right)
 			return;
 
-		OpenQuery(record)?.ScrollToText(Query);
+		OpenQuery(RecentSelection);
 	}
 
-	private void OnClose(object? sender, EventArgs e)
+	public void NewNoteKeydown(object? sender, KeyEventArgs e)
 	{
-		CommonUtils.Settings.SearchResults.Clear();
-	}
-
-	private async void QueryClick(object? sender, RoutedEventArgs e)
-	{
-		if (sender is not Button button)
+		if (e.Key != Key.Enter)
 			return;
 
-		button.Content = "Querying...";
-		button.IsEnabled = false;
+		if (sender is not TextBox box)
+			return;
 
-		Query = SearchText.Text ?? string.Empty;
-
-		await this.PerformSearch();
-	}
-
-	private async void SearchLoaded(object sender, RoutedEventArgs e)
-	{
-		Query = string.Empty;
-
-		await this.PerformSearch();
+		CurrentDatabase.CreateRecord(box.Text);
+		box.Text = string.Empty;
+		DeferUpdateRecentNotes();
 	}
 }

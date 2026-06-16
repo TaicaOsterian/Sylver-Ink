@@ -4,8 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
-using static SylverInk.CommonUtils;
 using static SylverInk.FileIO.FileUtils;
 using static SylverInk.Notes.DatabaseUtils;
 using static SylverInk.XAMLUtils.MainWindowUtils;
@@ -23,7 +21,7 @@ public static class MenuUtils
 	{
 		if (CurrentDatabase.Changed)
 		{
-			var res = MessageBox.Show("Do you want to save your changes?", "Sylver Ink: Warning", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+			var res = MessageBox.Show("Do you want to save your changes?", "Sylver Ink: Notification", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
 			if (res == MessageBoxResult.Cancel)
 				return;
 			if (res == MessageBoxResult.Yes)
@@ -83,7 +81,7 @@ public static class MenuUtils
 			var items = window.DatabasesPanel.Items.Cast<TabItem>().ToList();
 			var db = items?.FindIndex(new(item => {
 				var innerDB = (Database)item.Tag;
-				return Path.GetFullPath(innerDB.DBFile).Equals(path);
+				return Path.GetFullPath(innerDB.DBFile).Equals(path, System.StringComparison.Ordinal);
 			}));
 
 			window.DatabasesPanel.SelectedIndex = db ?? window.DatabasesPanel.SelectedIndex;
@@ -128,27 +126,12 @@ public static class MenuUtils
 
 	public static void MenuShowAbout(this MainWindow window, object? sender, RoutedEventArgs e) => new About().Show();
 
-	public static void MenuSublistChanged(this MainWindow window, object? sender, RoutedEventArgs e)
-	{
-		if (Mouse.RightButton == MouseButtonState.Pressed)
-			return;
-
-		if (sender is not ListBoxItem box)
-			return;
-
-		if (box.DataContext is not NoteRecord record)
-			return;
-
-		RecentSelection = record;
-		OpenQuery(RecentSelection);
-	}
-
 	public static void MenuTabChanged(this MainWindow window, object? sender, SelectionChangedEventArgs e)
 	{
 		if (sender is not TabControl control)
 			return;
 
-		if (!control.Name.Equals("DatabasesPanel"))
+		if (!control.Name.Equals("DatabasesPanel", System.StringComparison.Ordinal))
 			return;
 
 		if (control.SelectedItem is not TabItem item)

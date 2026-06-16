@@ -44,7 +44,7 @@ public static class HttpClientUtils
 		{
 			await destination.WriteAsync(buffer.AsMemory(0, bytesRead), cancellationToken).ConfigureAwait(false);
 			totalBytesRead += bytesRead;
-			Concurrent(() => UpdateHandler.UpdateWindow?.ReportProgress((double)totalBytesRead / totalSize));
+			Concurrent(UpdateHandler.UpdateWindow.ReportProgress, (double)totalBytesRead / totalSize);
 		}
 	}
 }

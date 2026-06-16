@@ -73,7 +73,7 @@ public static class MutexUtils
 				Concurrent(Application.Current.MainWindow.Focus);
 			} while (!activated && !Application.Current.MainWindow.IsFocused && (DateTime.UtcNow - now).Seconds < 1);
 
-			Concurrent(() => HandleShellVerbs(args));
+			Concurrent(HandleShellVerbs, args);
 		}
 	}
 
@@ -101,7 +101,7 @@ public static class MutexUtils
 		var wideBreak = string.Empty;
 
 		foreach (string dbFile in InitComplete ? Databases.Select(db => db.DBFile) : Settings.LastDatabases)
-			if (Path.GetFullPath(dbFile).Equals(Path.GetFullPath(filename)))
+			if (Path.GetFullPath(dbFile).Equals(Path.GetFullPath(filename), StringComparison.Ordinal))
 				wideBreak = Path.GetFullPath(dbFile);
 
 		if (string.IsNullOrWhiteSpace(wideBreak))

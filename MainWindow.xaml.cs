@@ -8,7 +8,6 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using static SylverInk.CommonUtils;
 using static SylverInk.FileIO.FileUtils;
@@ -26,32 +25,8 @@ public partial class MainWindow : Window
 
 	public MainWindow()
 	{
-		InitializeComponent();
 		DataContext = CommonUtils.Settings;
-	}
-
-	private void Button_Click(object? sender, RoutedEventArgs e)
-	{
-		var senderObject = (Button?)sender;
-
-		switch (senderObject?.Content)
-		{
-			case "Import":
-				ImportWindow = new();
-				break;
-			case "Replace":
-				ReplaceWindow = new();
-				break;
-			case "Search":
-				SearchWindow = new();
-				break;
-			case "Settings":
-				SettingsWindow = new();
-				break;
-			case "Exit":
-				Close();
-				break;
-		}
+		InitializeComponent();
 	}
 
 	private void Drag(object? sender, MouseButtonEventArgs e) => DragMove();
@@ -92,7 +67,7 @@ public partial class MainWindow : Window
 
 			Database? target = null;
 			foreach (Database db in Databases)
-				if (oSplit[0].Equals(db.Name))
+				if (oSplit[0].Equals(db.Name, StringComparison.Ordinal))
 					target = db;
 
 			if (target is null)
@@ -101,7 +76,10 @@ public partial class MainWindow : Window
 			if (!target.HasRecord(iNote))
 				continue;
 
-			if (OpenQuery(target.GetRecord(iNote)) is not SearchResult result)
+			if (target.GetRecord(iNote) is not NoteRecord note)
+				continue;
+
+			if (OpenQuery(note) is not SearchResult result)
 				continue;
 
 			if (LastActiveNotesHeight.TryGetValue($"{target.Name}:{iNote}", out var openHeight))
@@ -157,7 +135,7 @@ public partial class MainWindow : Window
 
 		if (!DatabaseChanged)
 		{
-			switch (MessageBox.Show("Are you sure you wish to exit Sylver Ink?", "Sykver Ink: Notification", MessageBoxButton.YesNo, MessageBoxImage.Question))
+			switch (MessageBox.Show("Are you sure you wish to exit Sylver Ink?", "Sykver Ink: Notification", MessageBoxButton.YesNo, MessageBoxImage.Information))
 			{
 				case MessageBoxResult.No:
 					e.Cancel = true;
@@ -168,7 +146,7 @@ public partial class MainWindow : Window
 			}
 		}
 
-		switch (MessageBox.Show("Do you want to save your work before exiting?", "Sylver Ink: Notification", MessageBoxButton.YesNoCancel, MessageBoxImage.Question))
+		switch (MessageBox.Show("Do you want to save your work before exiting?", "Sylver Ink: Notification", MessageBoxButton.YesNoCancel, MessageBoxImage.Information))
 		{
 			case MessageBoxResult.Cancel:
 				e.Cancel = true;
@@ -196,19 +174,6 @@ public partial class MainWindow : Window
 	}
 
 	private void MainWindow_SizeChanged(object? sender, SizeChangedEventArgs e) => DeferUpdateRecentNotes();
-
-	private void NewNote_Keydown(object? sender, KeyEventArgs e)
-	{
-		if (e.Key != Key.Enter)
-			return;
-
-		if (sender is not TextBox box)
-			return;
-
-		CurrentDatabase.CreateRecord(box.Text);
-		box.Text = string.Empty;
-		DeferUpdateRecentNotes();
-	}
 
 	protected override void OnClosed(EventArgs e)
 	{
@@ -243,19 +208,19 @@ public partial class MainWindow : Window
 		await CommonUtils.Settings.Load();
 		SettingsLoaded = true;
 
+		// Style initialization
+		SetMenuColors(this);
+
 		// Documents subdirectory initialization
 		foreach (var folder in Subfolders)
 			if (!Directory.Exists(folder.Value))
 				Directory.CreateDirectory(folder.Value);
 
-		// Style initialization
-		SetMenuColors(this);
-
 		// (If initialization was interrupted, prevent marking it as completed)
 		if (!IsShuttingDown())
 			UpdatesChecked = true;
 
-		// Perform first run operations (or return if this is not the first run)
+		// Perform first run operations (if needed)
 		await OnFirstRun();
 
 		// If there are no active notes from last run, open an empty note and focus it.

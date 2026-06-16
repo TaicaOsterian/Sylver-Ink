@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SylverInk.XAML.Objects;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -31,16 +32,13 @@ public static class DatabaseUtils
 	{
 		static object PanelLabel(TabItem item) => ((Label)((StackPanel)item.Header).Children[0]).Content;
 
-		if (Application.Current.MainWindow.TryFindResource("DatabaseContentTemplate") is not DataTemplate template)
-			return;
-
 		if (Application.Current.MainWindow.FindName("DatabasesPanel") is not TabControl control)
 			return;
 
-		var tabs = control.Items.Cast<TabItem>();
-
 		if (string.IsNullOrWhiteSpace(db.Name))
 			db.Name = DefaultDatabase;
+
+		var tabs = control.Items.Cast<TabItem>();
 
 		if (tabs.Where(item => PanelLabel(item).Equals(db.Name)).Any())
 		{
@@ -56,19 +54,21 @@ public static class DatabaseUtils
 		if (string.IsNullOrWhiteSpace(db.DBFile))
 			db.DBFile = GetDatabasePath(db);
 
+		var content = new DatabaseControl();
+		var header = db.GetHeader();
+
 		TabItem item = new()
 		{
-			Content = template.LoadContent(),
+			Content = content,
 			Header = db.GetHeader(),
 			Tag = db,
 		};
 
+		item.MouseRightButtonDown += (_, _) => control.SelectedItem = item;
+
 		Databases.Add(db);
 		db.Sort();
 
-		var newControl = (TabControl)item.Content;
-		newControl.Tag = db.Name;
-		item.MouseRightButtonDown += (_, _) => control.SelectedItem = item;
 		control.Items.Add(item);
 		control.SelectedItem = item;
 
@@ -81,19 +81,25 @@ public static class DatabaseUtils
 		var firstRecord = CurrentDatabase.GetRecord(0);
 		var lastRecord = CurrentDatabase.GetRecord(CurrentDatabase.RecordCount - 1);
 
-		if (string.Empty.Equals(firstRecord?.ToString()))
+		// If the database's first note is empty, open it.
+		if (string.Empty.Equals(firstRecord?.ToString(), StringComparison.Ordinal))
 		{
 			OpenQuery(firstRecord);
 			return;
 		}
 
-		if (string.Empty.Equals(lastRecord?.ToString()))
+		// Else, if the database's last note is empty, open it.
+		if (string.Empty.Equals(lastRecord?.ToString(), StringComparison.Ordinal))
 		{
 			OpenQuery(lastRecord);
 			return;
 		}
 
-		OpenQuery(CurrentDatabase.GetRecord(CurrentDatabase.CreateRecord(string.Empty)));
+		// Else, and only then, make a new note entirely.
+		if (CurrentDatabase.GetRecord(CurrentDatabase.CreateRecord(string.Empty)) is not NoteRecord newRecord)
+			return;
+
+		OpenQuery(newRecord);
 	}
 
 	public static void RemoveDatabase(Database db)
@@ -121,7 +127,7 @@ public static class DatabaseUtils
 				OpenQueries[i].Close();
 
 		for (int i = Databases.Count - 1; i > -1; i--)
-			if ((Databases[i].Name ?? string.Empty).Equals(db.Name))
+			if ((Databases[i].Name ?? string.Empty).Equals(db.Name, StringComparison.Ordinal))
 				Databases.RemoveAt(i);
 
 		RecentNotesDirty = true;
@@ -165,7 +171,7 @@ public static class DatabaseUtils
 				_ => string.Empty
 			};
 
-			if (div[1].Equals(tag))
+			if (div[1].Equals(tag, StringComparison.Ordinal))
 				SwitchDatabase(db);
 		}
 	}

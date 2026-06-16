@@ -1,7 +1,9 @@
 ﻿using SylverInk.Notes;
 using SylverInk.XAML;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Windows.Data;
 using System.Windows.Documents;
 using static SylverInk.CommonUtils;
 using static SylverInk.Notes.DatabaseUtils;
@@ -12,28 +14,19 @@ public static class SearchUtils
 {
 	public static async Task PerformSearch(this Search window)
 	{
-		window.DBMatches.Clear();
-
 		foreach (Database db in Databases)
 			await window.SearchDatabase(db);
-
-		window.ResultsList.Sort(new Comparison<NoteRecord>((r1, r2) => r2.MatchTags(window.Query).CompareTo(r1.MatchTags(window.Query))));
-	}
-
-	public static void PostResults(this Search window)
-	{
-		CommonUtils.Settings.SearchResults.Clear();
-
-		for (int i = 0; i < window.ResultsList.Count; i++)
-			CommonUtils.Settings.SearchResults.Add(window.ResultsList[i]);
-
-		window.DoQuery.Content = "Query";
-		window.DoQuery.IsEnabled = true;
 	}
 
 	public static async Task SearchDatabase(this Search window, Database db)
 	{
+		CommonUtils.Settings.SearchResults.Clear();
 		db.UpdateWordPercentages();
+
+		List<NoteRecord> results = [];
+
+		ListCollectionView view = (ListCollectionView)CollectionViewSource.GetDefaultView(CommonUtils.Settings.SearchResults);
+		view.CustomSort ??= Comparer<NoteRecord>.Create(new((r1, r2) => r2.MatchTags(window.Query).CompareTo(r1.MatchTags(window.Query))));
 
 		for (int i = 0; i < db.RecordCount; i++)
 		{
@@ -45,9 +38,14 @@ public static class SearchUtils
 			if (!textFound)
 				continue;
 
-			window.ResultsList.Add(newRecord);
-			window.DBMatches.TryAdd(newRecord, db);
+			results.Add(newRecord);
 		}
+
+		for (int i = 0; i < results.Count; i++)
+			CommonUtils.Settings.SearchResults.Add(results[i]);
+
+		window.DoQuery.Content = "Query";
+		window.DoQuery.IsEnabled = true;
 	}
 
 	private static async Task<bool> SearchRecord(this Search window, NoteRecord record) => await Task.Run(() =>

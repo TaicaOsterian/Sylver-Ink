@@ -18,8 +18,8 @@ public partial class Properties : Window
 
 	public Properties()
 	{
-		InitializeComponent();
 		DataContext = CommonUtils.Settings;
+		InitializeComponent();
 	}
 
 	// Rewriting the calendar's entre control template just to alter the proportions of the header button would violate my religion.

@@ -6,7 +6,7 @@
 		xmlns:local="clr-namespace:SylverInk"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=local:ContextSettings}"
-        Background="{Binding MenuBackground}" Foreground="{Binding MenuForeground}" Title="Sylver Ink: Update" Height="150" Width="450">
+        Background="{Binding MenuBackground}" Foreground="{Binding MenuForeground}" MouseLeftButtonDown="Drag" Title="Sylver Ink: Update" Height="150" Width="450">
 	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="*"/>

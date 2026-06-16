@@ -119,7 +119,7 @@ public static partial class SettingsUtils
 		foreach (var font in Fonts.SystemFontFamilies)
 			window.AvailableFonts.Add(font);
 
-		window.AvailableFonts.Sort(new Comparison<FontFamily>((f1, f2) => f1.Source.CompareTo(f2.Source)));
+		window.AvailableFonts.Sort(new Comparison<FontFamily>((f1, f2) => string.CompareOrdinal(f1.Source, f2.Source)));
 
 		for (int i = 0; i < window.AvailableFonts.Count; i++)
 		{
@@ -131,10 +131,10 @@ public static partial class SettingsUtils
 			};
 			window.MenuFont.Items.Add(item);
 
-			if (font.Source.Equals(CommonUtils.Settings.MainFontFamily?.Source))
+			if (font.Source.Equals(CommonUtils.Settings.MainFontFamily?.Source, StringComparison.Ordinal))
 				window.MenuFont.SelectedItem = item;
 
-			if (font.Source.Equals("Arial"))
+			if (font.Source.Equals("Arial", StringComparison.Ordinal))
 				window.ArialIndex = i;
 		}
 

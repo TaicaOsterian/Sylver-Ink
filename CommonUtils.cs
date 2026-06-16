@@ -49,7 +49,6 @@ public static partial class CommonUtils
 	}
 
 	private static Import? _import;
-	private static Replace? _replace;
 	private static Search? _search;
 	private static Settings? _settings;
 
@@ -65,7 +64,6 @@ public static partial class CommonUtils
 	public static List<SearchResult> OpenQueries { get; } = [];
 	public static NoteRecord? PreviousOpenNote { get; set; }
 	public static NoteRecord? RecentSelection { get; set; }
-	public static Replace? ReplaceWindow { get => _replace; set { _replace?.Close(); _replace = value; _replace?.Show(); } }
 	public static Search? SearchWindow { get => _search; set { _search?.Close(); _search = value; _search?.Show(); } }
 	public static ContextSettings Settings { get; } = new();
 	public static bool SettingsLoaded { get; set; }
@@ -108,10 +106,46 @@ public static partial class CommonUtils
 	public static void Concurrent(Action callback) => Application.Current.Dispatcher.Invoke(callback);
 
 	/// <summary>
+	/// Dispatch an action with one argument and no return value to the main thread for synchronous execution.
+	/// </summary>
+	/// <param name="callback">The function to be executed on the main thread</param>
+	public static void Concurrent<T>(Action<T> callback, T arg) => Application.Current.Dispatcher.Invoke(callback, arg);
+
+	/// <summary>
+	/// Dispatch an action with two arguments and no return value to the main thread for synchronous execution.
+	/// </summary>
+	/// <param name="callback">The function to be executed on the main thread</param>
+	public static void Concurrent<T1, T2>(Action<T1, T2> callback, T1 arg1, T2 arg2) => Application.Current.Dispatcher.Invoke(callback, arg1, arg2);
+
+	/// <summary>
+	/// Dispatch an action with three arguments and no return value to the main thread for synchronous execution.
+	/// </summary>
+	/// <param name="callback">The function to be executed on the main thread</param>
+	public static void Concurrent<T1, T2, T3>(Action<T1, T2, T3> callback, T1 arg1, T2 arg2, T3 arg3) => Application.Current.Dispatcher.Invoke(callback, arg1, arg2, arg3);
+
+	/// <summary>
 	/// Dispatch a function with no arguments to the main thread for synchronous execution, and return the result of that execution.
 	/// </summary>
 	/// <param name="callback">The function to be executed on the main thread</param>
-	public static T Concurrent<T>(Func<T> callback) => Application.Current.Dispatcher.Invoke(callback);
+	public static TResult Concurrent<TResult>(Func<TResult> callback) => Application.Current.Dispatcher.Invoke(callback);
+
+	/// <summary>
+	/// Dispatch a function with one argument to the main thread for synchronous execution, and return the result of that execution.
+	/// </summary>
+	/// <param name="callback">The function to be executed on the main thread</param>
+	public static TResult Concurrent<T, TResult>(Func<T, TResult> callback, T arg) => (TResult)Application.Current.Dispatcher.Invoke(callback, arg);
+
+	/// <summary>
+	/// Dispatch a function with two arguments to the main thread for synchronous execution, and return the result of that execution.
+	/// </summary>
+	/// <param name="callback">The function to be executed on the main thread</param>
+	public static TResult Concurrent<T1, T2, TResult>(Func<T1, T2, TResult> callback, T1 arg1, T2 arg2) => (TResult)Application.Current.Dispatcher.Invoke(callback, arg1, arg2);
+
+	/// <summary>
+	/// Dispatch a function with three arguments to the main thread for synchronous execution, and return the result of that execution.
+	/// </summary>
+	/// <param name="callback">The function to be executed on the main thread</param>
+	public static TResult Concurrent<T1, T2, T3, TResult>(Func<T1, T2, T3, TResult> callback, T1 arg1, T2 arg2, T3 arg3) => (TResult)Application.Current.Dispatcher.Invoke(callback, arg1, arg2, arg3);
 
 	public static T? FindVisualChildByName<T>(DependencyObject? parent, string name) where T : DependencyObject
 	{
@@ -168,14 +202,14 @@ public static partial class CommonUtils
 		return;
 	}
 
-	public static SearchResult? OpenQuery(NoteRecord? record, bool show = true)
+	public static SearchResult? OpenQuery(NoteRecord record, bool show = true)
 	{
 		foreach (SearchResult result in OpenQueries)
 		{
 			if (result.ResultRecord?.DB is not Database rDB)
 				continue;
 
-			if (!rDB.Equals(record?.DB))
+			if (!rDB.Equals(record.DB))
 				continue;
 
 			if (result.ResultRecord is not NoteRecord rNote)

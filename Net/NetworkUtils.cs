@@ -82,7 +82,7 @@ public static class NetworkUtils
 		return new([..convertedList]);
 	}
 
-	public static async Task<byte[]> ReadFromStream(TcpClient client, Database? DB)
+	public static async Task<byte[]> ReadFromStream(TcpClient client, Database DB)
 	{
 		int oldData;
 
@@ -125,14 +125,14 @@ public static class NetworkUtils
 					bufferString = Encoding.UTF8.GetString(textBuffer);
 				}
 
-				Concurrent(() => DB?.CreateRecord(bufferString, false));
+				Concurrent(DB.CreateRecord, bufferString, false);
 				DeferUpdateRecentNotes();
 				break;
 			case MessageType.RecordLock:
-				Concurrent(() => DB?.Lock(recordIndex));
+				Concurrent(DB.Lock, recordIndex, false);
 				break;
 			case MessageType.RecordRemove:
-				Concurrent(() => DB?.DeleteRecord(recordIndex, false));
+				Concurrent(DB.DeleteRecord, recordIndex, false);
 				DeferUpdateRecentNotes();
 				break;
 			case MessageType.RecordReplace:
@@ -155,11 +155,11 @@ public static class NetworkUtils
 				textBuffer = new byte[textCount];
 				stream.ReadExactly(textBuffer, 0, textCount);
 
-				Concurrent(() => DB?.Replace(bufferString, Encoding.UTF8.GetString(textBuffer), false));
+				Concurrent(DB.Replace, bufferString, Encoding.UTF8.GetString(textBuffer), false);
 				DeferUpdateRecentNotes();
 				break;
 			case MessageType.RecordUnlock:
-				Concurrent(() => DB?.Unlock(recordIndex));
+				Concurrent(DB.Unlock, recordIndex, false);
 				break;
 			case MessageType.TextInsert:
 				stream.ReadExactly(intBuffer, 0, 4);
@@ -174,7 +174,7 @@ public static class NetworkUtils
 					bufferString = Encoding.UTF8.GetString(textBuffer);
 				}
 
-				Concurrent(() => DB?.CreateRevision(recordIndex, bufferString, false));
+				Concurrent(DB.CreateRevision, recordIndex, bufferString, false);
 				DeferUpdateRecentNotes();
 				break;
 		}

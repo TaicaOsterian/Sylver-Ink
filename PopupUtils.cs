@@ -35,12 +35,12 @@ public static class PopupUtils
 		if (string.IsNullOrWhiteSpace(window.DatabaseNameBox.Text))
 			return;
 
-		if (window.DatabaseNameBox.Text.Equals(CurrentDatabase.Name))
+		if (window.DatabaseNameBox.Text.Equals(CurrentDatabase.Name, StringComparison.Ordinal))
 			return;
 
 		foreach (Database db in Databases)
 		{
-			if (!window.DatabaseNameBox.Text.Equals(db.Name))
+			if (!window.DatabaseNameBox.Text.Equals(db.Name, StringComparison.Ordinal))
 				continue;
 
 			MessageBox.Show("A database already exists with the provided name.", "Sylver Ink: Error", MessageBoxButton.OK, MessageBoxImage.Error);

@@ -154,7 +154,7 @@ public partial class NoteRecord
 		string Current = ToXaml();
 		int StartIndex = 0;
 
-		if (NewVersion.Equals(Current))
+		if (NewVersion.Equals(Current, StringComparison.Ordinal))
 			return;
 
 		for (int i = 0; i < Math.Min(Current.Length, NewVersion.Length); i++)
@@ -237,8 +237,8 @@ public partial class NoteRecord
 
 		var recordObj = (NoteRecord?)obj;
 		return base.Equals(obj) ||
-			(Created.Equals(recordObj?.Created) && Index.Equals(recordObj?.Index) && Initial?.Equals(recordObj?.Initial) is true && LastChange.Equals(recordObj?.LastChange)) ||
-			(UUID?.Equals(recordObj?.UUID ?? string.Empty) is true);
+			(Created.Equals(recordObj?.Created) && Index.Equals(recordObj?.Index) && Initial?.Equals(recordObj?.Initial, StringComparison.Ordinal) is true && LastChange.Equals(recordObj?.LastChange)) ||
+			(UUID?.Equals(recordObj?.UUID ?? string.Empty, StringComparison.Ordinal) is true);
 	}
 
 	private int ExtractTags()
@@ -305,7 +305,7 @@ public partial class NoteRecord
 	public int MatchTags(string text)
 	{
 		var format = text.Trim();
-		if (!TagsDirty && format.Equals(LastQuery))
+		if (!TagsDirty && format.Equals(LastQuery, StringComparison.Ordinal))
 			return LastMatchCount;
 
 		var matches = Lowercase().Matches(format.ToLowerInvariant());
