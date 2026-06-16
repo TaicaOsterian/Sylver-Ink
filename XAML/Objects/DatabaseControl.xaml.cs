@@ -15,9 +15,9 @@ public partial class DatabaseControl : UserControl
 {
     public DatabaseControl()
     {
-		CreateContextMenu();
         InitializeComponent();
-    }
+		CreateContextMenu();
+	}
 
 	public void ButtonClick(object? sender, RoutedEventArgs e)
 	{
@@ -83,7 +83,7 @@ public partial class DatabaseControl : UserControl
 		menu.Items.Add(itemOpen);
 		menu.Items.Add(itemDelete);
 
-		this.ContextMenu = menu;
+		PlusTab.ContextMenu = menu;
 	}
 
 	private void ListItemChosen(object sender, MouseButtonEventArgs e)

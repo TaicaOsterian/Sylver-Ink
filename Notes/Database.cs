@@ -132,6 +132,9 @@ public partial class Database : IDisposable
 		for (int index = OpenQueries.Count - 1; index > -1; index--)
 			if (record.Equals(OpenQueries[index]?.ResultRecord))
 				OpenQueries[index]?.Close();
+
+		var ChildPanel = GetChildPanel("DatabasesPanel");
+		RemoveRecordTab(record);
 	}
 
 	public void Dispose()

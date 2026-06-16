@@ -19,8 +19,8 @@ public partial class Search : Window
 	public Search()
 	{
 		DataContext = CommonUtils.Settings;
-		CreateContextMenu();
 		InitializeComponent();
+		CreateContextMenu();
 	}
 
 	private void CloseClick(object? sender, RoutedEventArgs e) => Close();
@@ -69,7 +69,7 @@ public partial class Search : Window
 		menu.Items.Add(itemOpen);
 		menu.Items.Add(itemDelete);
 
-		this.ContextMenu = menu;
+		Results.ContextMenu = menu;
 	}
 
 	private void Drag(object? sender, MouseButtonEventArgs e) => DragMove();
