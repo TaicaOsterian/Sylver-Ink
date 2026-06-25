@@ -10,7 +10,7 @@ namespace SylverInk.Net;
 public static class HttpClientUtils
 {
 	/// <summary>
-	/// This method encapsulates the process of asynchronously downloading a file from the internet and saving it to a local path.
+	/// Asynchronously download a file from the internet and save it to a local path.
 	/// </summary>
 	/// <param name="client">An existing HttpClient object.</param>
 	/// <param name="uri">The URI of the file to download.</param>
@@ -36,7 +36,7 @@ public static class HttpClientUtils
 		if (!source.CanRead)
 			return;
 
-		var buffer = new byte[81920];
+		var buffer = new byte[57344];
 		long totalBytesRead = 0;
 		int bytesRead;
 
