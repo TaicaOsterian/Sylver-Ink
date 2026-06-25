@@ -19,7 +19,7 @@ public partial class DatabaseControl : UserControl
 		CreateContextMenu();
 	}
 
-	public void ButtonClick(object? sender, RoutedEventArgs e)
+	private void ButtonClick(object? sender, RoutedEventArgs e)
 	{
 		var senderObject = (Button?)sender;
 
@@ -40,7 +40,7 @@ public partial class DatabaseControl : UserControl
 		}
 	}
 
-	public void ContextDelete(object? sender, RoutedEventArgs e)
+	private void ContextDelete(object? sender, RoutedEventArgs e)
 	{
 		if (RecentSelection is null)
 			return;
@@ -53,7 +53,7 @@ public partial class DatabaseControl : UserControl
 		return;
 	}
 
-	public void ContextOpen(object? sender, RoutedEventArgs e)
+	private void ContextOpen(object? sender, RoutedEventArgs e)
 	{
 		if (RecentSelection is null)
 			return;
@@ -96,14 +96,14 @@ public partial class DatabaseControl : UserControl
 
 		RecentSelection = record;
 
-		// We set the recent selection, but only open it on a left-mouse click. This makes it easier for the context menu to grab the affected note when needed.
+		// We set the recent selection on any click, but only open it on a left button click. This makes it easier for the context menu to grab the affected note when needed.
 		if (e.ChangedButton == MouseButton.Right)
 			return;
 
 		OpenQuery(RecentSelection);
 	}
 
-	public void NewNoteKeydown(object? sender, KeyEventArgs e)
+	private void NewNoteKeydown(object? sender, KeyEventArgs e)
 	{
 		if (e.Key != Key.Enter)
 			return;

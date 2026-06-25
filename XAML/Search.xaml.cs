@@ -25,7 +25,7 @@ public partial class Search : Window
 
 	private void CloseClick(object? sender, RoutedEventArgs e) => Close();
 
-	public async void ContextDelete(object? sender, RoutedEventArgs e)
+	private async void ContextDelete(object? sender, RoutedEventArgs e)
 	{
 		if (RecentSelection is null)
 			return;
@@ -40,7 +40,7 @@ public partial class Search : Window
 		return;
 	}
 
-	public void ContextOpen(object? sender, RoutedEventArgs e)
+	private void ContextOpen(object? sender, RoutedEventArgs e)
 	{
 		if (RecentSelection is null)
 			return;
