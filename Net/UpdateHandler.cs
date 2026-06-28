@@ -14,7 +14,7 @@ using static SylverInk.FileIO.FileUtils;
 
 namespace SylverInk.Net;
 
-static class UpdateHandler
+public static class UpdateHandler
 {
 	private static string GitReleasesURI { get; } = "https://api.github.com/repos/TaicaOsterian/Sylver-Ink/releases?per_page=1&page=1";
 	public static string TempUri { get; } = Path.Join(DocumentsFolder, "SylverInk.msi");

@@ -18,7 +18,7 @@ using static SylverInk.XAMLUtils.MainWindowUtils;
 
 namespace SylverInk;
 
-public partial class ContextSettings : INotifyPropertyChanged
+public class ContextSettings : INotifyPropertyChanged
 {
 	private Brush? _accentBackgound = Brushes.PaleGoldenrod;
 	private Brush? _accentForegound = Brushes.Blue;

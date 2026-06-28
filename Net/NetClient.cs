@@ -13,7 +13,7 @@ using static SylverInk.Notes.DatabaseUtils;
 
 namespace SylverInk.Net;
 
-public partial class NetClient : IDisposable
+public class NetClient : IDisposable
 {
 	private IPAddress? Address;
 	private readonly BackgroundWorker ClientTask = new() { WorkerSupportsCancellation = true };

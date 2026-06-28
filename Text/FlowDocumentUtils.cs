@@ -8,7 +8,7 @@ namespace SylverInk.Text;
 /// <summary>
 /// Static functions serving operations on FlowDocument objects.
 /// </summary>
-public static partial class FlowDocumentUtils
+public static class FlowDocumentUtils
 {
 	private const int PreviewLength = 250;
 

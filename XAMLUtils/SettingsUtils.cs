@@ -6,7 +6,7 @@ using System.Windows.Media;
 
 namespace SylverInk.XAMLUtils;
 
-public static partial class SettingsUtils
+public static class SettingsUtils
 {
 	public static void ColorChanged(string? ColorTag, Brush? ColorSelection, RichTextBox? TextTarget = null)
 	{

@@ -237,7 +237,7 @@ public static class SearchResultUtils
 				|| (RB2.Y >= LT1.Y && RB2.Y <= RB1.Y);
 
 			// Opposite-corner snapping:
-			// If the corners' X-delta values are within tolerance, and the windows are overlapping on the Y axis, then snap the windows along their top-bottom edges.
+			// If the corners' X-delta values are within tolerance, and the windows are overlapping on the Y axis, then snap the windows along their vertical edges.
 			// Do the same for the Y-delta values and the left-right edges.
 
 			if (dLR < window.SnapTolerance && YTolerance && !XSnapped)

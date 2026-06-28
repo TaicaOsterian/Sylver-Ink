@@ -15,7 +15,7 @@ using static SylverInk.Net.NetworkUtils;
 
 namespace SylverInk.Net;
 
-public partial class NetServer : IDisposable
+public class NetServer : IDisposable
 {
 	private IPAddress? Address;
 	private readonly List<TcpClient> Clients = [];

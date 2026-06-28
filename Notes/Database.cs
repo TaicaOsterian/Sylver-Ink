@@ -15,7 +15,7 @@ using static SylverInk.XAMLUtils.MainWindowUtils;
 
 namespace SylverInk.Notes;
 
-public partial class Database : IDisposable
+public class Database : IDisposable
 {
 	private NoteController Controller;
 	private StackPanel? HeaderPanel;
