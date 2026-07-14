@@ -73,7 +73,7 @@ public class Database : IDisposable
 
 		if (local)
 		{
-			var outBuffer = new List<byte>([0, 0, 0, 0, .. IntToBytes(entry.Length)]);
+			var outBuffer = new List<byte>([0, 0, 0, 0, .. entry.Length.ToByteArray()]);
 
 			if (entry.Length > 0)
 				outBuffer.AddRange(Encoding.UTF8.GetBytes(entry));
@@ -94,8 +94,8 @@ public class Database : IDisposable
 			return;
 
 		var outBuffer = new List<byte>([
-			.. IntToBytes(index),
-				.. IntToBytes(newVersion.Length)
+			.. index.ToByteArray(),
+			.. newVersion.Length.ToByteArray()
 		]);
 
 		if (newVersion.Length > 0)
@@ -113,7 +113,7 @@ public class Database : IDisposable
 		Controller.DeleteRecord(index);
 
 		if (local)
-			Transmit(NetworkUtils.MessageType.RecordRemove, IntToBytes(index));
+			Transmit(NetworkUtils.MessageType.RecordRemove, index.ToByteArray());
 	}
 
 	public void DeleteRecord(NoteRecord record, bool local = true)
@@ -126,14 +126,13 @@ public class Database : IDisposable
 			Controller.DeleteRecord(index);
 
 			if (local)
-				Transmit(NetworkUtils.MessageType.RecordRemove, IntToBytes(index));
+				Transmit(NetworkUtils.MessageType.RecordRemove, index.ToByteArray());
 		}
 
 		for (int index = OpenQueries.Count - 1; index > -1; index--)
 			if (record.Equals(OpenQueries[index]?.ResultRecord))
 				OpenQueries[index]?.Close();
 
-		var ChildPanel = GetChildPanel("DatabasesPanel");
 		RemoveRecordTab(record);
 	}
 
@@ -310,7 +309,7 @@ public class Database : IDisposable
 
 		if (local)
 		{
-			Transmit(NetworkUtils.MessageType.RecordLock, [.. IntToBytes(index)]);
+			Transmit(NetworkUtils.MessageType.RecordLock, [.. index.ToByteArray()]);
 			return;
 		}
 
@@ -413,8 +412,8 @@ public class Database : IDisposable
 
 			List<byte> outBuffer = [
 				0, 0, 0, 0,
-				.. IntToBytes(oldLength),
-				.. IntToBytes(newLength),
+				.. oldLength.ToByteArray(),
+				.. newLength.ToByteArray(),
 			];
 
 			outBuffer.InsertRange(8, Encoding.UTF8.GetBytes(oldText));
@@ -486,8 +485,11 @@ public class Database : IDisposable
 		Controller.Sort(type);
 	}
 
-	public void Transmit(NetworkUtils.MessageType type, byte[] data)
+	public void Transmit(NetworkUtils.MessageType type, byte[]? data)
 	{
+		if (data is null)
+			return;
+
 		if (Client.Connected)
 			Client.Send(type, data);
 
@@ -502,7 +504,7 @@ public class Database : IDisposable
 
 		if (local)
 		{
-			Transmit(NetworkUtils.MessageType.RecordUnlock, [.. IntToBytes(index)]);
+			Transmit(NetworkUtils.MessageType.RecordUnlock, [.. index.ToByteArray()]);
 			return;
 		}
 

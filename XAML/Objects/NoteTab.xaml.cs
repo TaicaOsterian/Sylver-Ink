@@ -102,7 +102,7 @@ public partial class NoteTab : UserControl
 					break;
 			}
 		}
-		CurrentDatabase.Transmit(NetworkUtils.MessageType.RecordUnlock, IntToBytes(Record.Index));
+		CurrentDatabase.Transmit(NetworkUtils.MessageType.RecordUnlock, Record.Index.ToByteArray());
 		PreviousOpenNote = Record;
 		this.Deconstruct();
 	}

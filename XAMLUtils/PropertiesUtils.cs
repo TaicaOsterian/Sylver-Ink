@@ -49,9 +49,16 @@ public static partial class PropertiesUtils
 		{
 			for (int i = 0; i < window.DB?.RecordCount; i++)
 			{
-				var record = Concurrent(() => window.DB.GetRecord(i)?.ToString());
-				var length = record?.Length ?? 0;
-				var wordCount = NotWhitespace().Matches(record ?? string.Empty).Count;
+				var record = window.DB.GetRecord(i);
+				if (record is null)
+					continue;
+
+				var recordText = Concurrent(record.ToString);
+				var length = recordText.Length;
+				if (length == 0)
+					continue;
+
+				var wordCount = NotWhitespace().Matches(recordText).Count;
 
 				noteAvgC += length;
 				noteAvgW += wordCount;

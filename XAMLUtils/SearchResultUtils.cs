@@ -72,7 +72,7 @@ public static class SearchResultUtils
 		else
 		{
 			window.LastChangedLabel.Content = window.ResultRecord?.GetLastChange();
-			window.ResultRecord?.DB?.Transmit(NetworkUtils.MessageType.RecordUnlock, IntToBytes(window.ResultRecord?.Index ?? 0));
+			window.ResultRecord?.DB?.Transmit(NetworkUtils.MessageType.RecordUnlock, window.ResultRecord?.Index.ToByteArray());
 		}
 
 		window.Edited = false;
@@ -180,6 +180,12 @@ public static class SearchResultUtils
 		InitEnterMonitor(window);
 		InitLeaveMonitor(window);
 		InitMouseMonitor(window);
+	}
+
+	private static double Lerp(double x, double y, double a)
+	{
+		a = a > 1.0 ? 1.0 : a < 0.0 ? 0.0 : a;
+		return (a * y) + ((1.0 - a) * x);
 	}
 
 	public static void SaveRecord(this SearchResult window)

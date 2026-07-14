@@ -1,8 +1,6 @@
 ﻿using SylverInk.Net;
 using SylverInk.Notes;
 using SylverInk.XAML;
-using SylverInk.XAML.Objects;
-using SylverInk.XAMLUtils;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,13 +9,8 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Media;
 using static SylverInk.FileIO.FileUtils;
 using static SylverInk.Notes.DatabaseUtils;
-using static SylverInk.XAMLUtils.MainWindowUtils;
 
 namespace SylverInk;
 
@@ -72,33 +65,6 @@ public static partial class CommonUtils
 	public static double WindowHeight { get; set; }
 	public static double WindowWidth { get; set; }
 
-	public static SolidColorBrush BrushFromBytes(string data)
-	{
-		if (data.Length == 6)
-			data = "FF" + data;
-
-		if (data.Length != 8)
-			return Brushes.Transparent;
-
-		try
-		{
-			return new(new()
-			{
-				A = byte.Parse(data[..2], NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo),
-				R = byte.Parse(data[2..4], NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo),
-				G = byte.Parse(data[4..6], NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo),
-				B = byte.Parse(data[6..8], NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo)
-			});
-		}
-		catch { return Brushes.Transparent; }
-	}
-
-	public static string BytesFromBrush(Brush? brush)
-	{
-		var scb = brush as SolidColorBrush;
-		return $"{scb?.Color.A:X2}{scb?.Color.R:X2}{scb?.Color.G:X2}{scb?.Color.B:X2}";
-	}
-
 	/// <summary>
 	/// Dispatch an action to the main thread for synchronous execution.
 	/// </summary>
@@ -147,48 +113,27 @@ public static partial class CommonUtils
 	/// <param name="callback">The function to be executed on the main thread</param>
 	public static TResult Concurrent<T1, T2, T3, TResult>(Func<T1, T2, T3, TResult> callback, T1 arg1, T2 arg2, T3 arg3) => (TResult)Application.Current.Dispatcher.Invoke(callback, arg1, arg2, arg3);
 
-	public static T? FindVisualChildByName<T>(DependencyObject? parent, string name) where T : DependencyObject
-	{
-		for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
-		{
-			var child = VisualTreeHelper.GetChild(parent, i);
-
-			if (child is T typedChild && child.GetValue(FrameworkElement.NameProperty) as string == name)
-				return typedChild;
-			
-			if (FindVisualChildByName<T>(child, name) is T result)
-				return result;
-		}
-
-		return null;
-	}
-
 	public static bool InstanceRunning() => Process.GetProcessesByName("Sylver Ink").Length > 1 && !File.Exists(UpdateHandler.UpdateLockUri);
 
-	public static int IntFromBytes(byte[] data) =>
-		(data[0] << 24)
-		+ (data[1] << 16)
-		+ (data[2] << 8)
-		+ data[3];
-
-	public static byte[] IntToBytes(int data) => [
+	public static byte[] ToByteArray(this int data) => [
 		(byte)((data >> 24) & 0xFF),
 		(byte)((data >> 16) & 0xFF),
 		(byte)((data >> 8) & 0xFF),
 		(byte)(data & 0xFF)
 	];
 
-	public static double Lerp(double x, double y, double a)
-	{
-		a = a > 1.0 ? 1.0 : a < 0.0 ? 0.0 : a;
-		return (a * y) + ((1.0 - a) * x);
-	}
+	public static byte[] ToByteArray(this uint data) => [
+		(byte)((data >> 24) & 0xFF),
+		(byte)((data >> 16) & 0xFF),
+		(byte)((data >> 8) & 0xFF),
+		(byte)(data & 0xFF)
+	];
 
 	public static string MakeUUID(UUIDType type = UUIDType.Record)
 	{
-		var uuid = Guid.NewGuid().ToString();
-		uuid = $"{uuid[..^17].ToUpper(CultureInfo.InvariantCulture)}{(byte)(DateTime.UtcNow.Microsecond % 256):X2}{(byte)type:X2}{uuid[23..].ToUpper(CultureInfo.InvariantCulture)}";
-		return uuid;
+		var uuid = Guid.NewGuid().ToString("N");
+		uuid = $"{uuid[..14]}{(byte)type:X2}{uuid[16..]}";
+		return uuid.ToUpper(CultureInfo.InvariantCulture);
 	}
 
 	public async static Task OnFirstRun()
@@ -201,121 +146,6 @@ public static partial class CommonUtils
 
 		return;
 	}
-
-	public static SearchResult? OpenQuery(NoteRecord record, bool show = true)
-	{
-		foreach (SearchResult result in OpenQueries)
-		{
-			if (result.ResultRecord?.DB is not Database rDB)
-				continue;
-
-			if (!rDB.Equals(record.DB))
-				continue;
-
-			if (result.ResultRecord is not NoteRecord rNote)
-				continue;
-
-			if (!rNote.Equals(record))
-				continue;
-
-			result.Activate();
-			result.Focus();
-			return result;
-		}
-
-		RemoveRecordTab(record);
-
-		SearchResult resultWindow = new()
-		{
-			ResultRecord = record
-		};
-
-		if (!show)
-			return resultWindow;
-
-		resultWindow.Show();
-		OpenQueries.Add(resultWindow);
-		if (!record?.Locked is true)
-			record?.DB?.Lock(record.Index, true);
-
-		DeferUpdateRecentNotes();
-
-		return resultWindow;
-	}
-
-	public static void RemoveRecordTab(NoteRecord? record)
-	{
-		for (int i = OpenTabs.Count - 1; i > -1; i--)
-		{
-			var item = OpenTabs[i];
-
-			if (item.Content is not NoteTab tab)
-				continue;
-
-			if (!tab.Record.Equals(record))
-				continue;
-
-			OpenTabs.RemoveAt(i);
-			tab.Deconstruct();
-		}
-	}
-
-	/// <summary>
-	/// Recursively iterate through a visual tree to change the style of a Menu object and its items.
-	/// </summary>
-	public static void SetMenuColors(DependencyObject parent)
-	{
-		for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
-			SetMenuColors(VisualTreeHelper.GetChild(parent, i));
-
-		if (parent.GetType() != typeof(MenuItem))
-			return;
-
-		if (VisualTreeHelper.GetChild(parent, 0) is not Border itemBorder)
-			return;
-
-		if (itemBorder.Child is not Grid itemGrid)
-			return;
-
-		foreach (var itemChild in itemGrid.Children)
-		{
-			if (itemChild is not Popup popup)
-				continue;
-
-			if (popup.Child is not Border popupBorder)
-				continue;
-
-			BindingOperations.SetBinding(popupBorder, Control.BackgroundProperty, new Binding("MenuBackground"));
-			BindingOperations.SetBinding(popupBorder, Control.BorderBrushProperty, new Binding("AccentBackground"));
-			BindingOperations.SetBinding(popupBorder, Control.ForegroundProperty, new Binding("MenuForeground"));
-			popupBorder.BorderThickness = new(1);
-
-			if (popupBorder.Child is not ScrollViewer viewer)
-				continue;
-
-			if (viewer.Content is not Grid viewerGrid)
-				continue;
-
-			foreach (var viewerChild in viewerGrid.Children)
-			{
-				if (viewerChild is not System.Windows.Shapes.Rectangle rect)
-					continue;
-
-				BindingOperations.SetBinding(rect, System.Windows.Shapes.Shape.FillProperty, new Binding("MenuBackground"));
-			}
-
-			return;
-		}
-	}
-
-	public static int ShortFromBytes(byte[] data) =>
-		(data[0] << 8)
-		+ data[1];
-
-	public static byte[] ShortToBytes(short data) => [
-		(byte)((data >> 8) & 0xFF),
-		(byte)(data & 0xFF)
-	];
 
 	[GeneratedRegex(@"\((\p{Nd}+)\)$")]
 	public static partial Regex IndexDigits();

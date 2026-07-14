@@ -82,6 +82,12 @@ public static class NetworkUtils
 		return new([..convertedList]);
 	}
 
+	private static int IntFromBytes(byte[] data) =>
+		(data[0] << 24)
+		+ (data[1] << 16)
+		+ (data[2] << 8)
+		+ data[3];
+
 	public static async Task<byte[]> ReadFromStream(TcpClient client, Database DB)
 	{
 		int oldData;

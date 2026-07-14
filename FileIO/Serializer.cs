@@ -2,7 +2,6 @@
 using System.Globalization;
 using System.IO;
 using System.Text;
-using static SylverInk.CommonUtils;
 using static SylverInk.FileIO.FileUtils;
 
 namespace SylverInk.FileIO;
@@ -294,9 +293,20 @@ public class Serializer : IDisposable
 		}
 	}
 
-	private ushort ReadUInt16() => (ushort)ShortFromBytes(ReadBytes(2));
+	private ushort ReadUInt16()
+	{
+		var data = ReadBytes(2);
+		return (ushort)((data[0] << 8) + data[1]);
+	}
 
-	private uint ReadUInt32() => (uint)IntFromBytes(ReadBytes(4));
+	private uint ReadUInt32()
+	{
+		var data = ReadBytes(4);
+		return (uint)((data[0] << 24)
+		+ (data[1] << 16)
+		+ (data[2] << 8)
+		+ data[3]);
+	}
 
 	public void WriteByte(byte data)
 	{
@@ -381,7 +391,10 @@ public class Serializer : IDisposable
 		WriteBytes(_buffer);
 	}
 
-	private void WriteUInt16(ushort data) => WriteBytes(ShortToBytes((short)data));
+	private void WriteUInt16(ushort data) => WriteBytes([
+		(byte)((data >> 8) & 0xFF),
+		(byte)(data & 0xFF)
+	]);
 
-	private void WriteUInt32(uint data) => WriteBytes(IntToBytes((int)data));
+	private void WriteUInt32(uint data) => WriteBytes(data.ToByteArray());
 }

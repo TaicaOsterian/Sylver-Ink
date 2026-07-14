@@ -2,7 +2,7 @@
 using SylverInk.XAML.Objects;
 using System;
 using System.Windows.Controls;
-using static SylverInk.CommonUtils;
+using static SylverInk.Notes.DatabaseUtils;
 using static SylverInk.XAMLUtils.MainWindowUtils;
 
 namespace SylverInk.XAMLUtils;

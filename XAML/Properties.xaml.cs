@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using static SylverInk.Interop.VisualUtils;
 
 namespace SylverInk.XAML;
 
@@ -25,9 +26,9 @@ public partial class Properties : Window
 	// Rewriting the calendar's entre control template just to alter the proportions of the header button would violate my religion.
 	private void CalendarOpened(object sender, RoutedEventArgs e)
 	{
-		var popup = CommonUtils.FindVisualChildByName<Popup>(sender as DependencyObject, "PART_Popup");
+		var popup = FindVisualChildByName<Popup>(sender as DependencyObject, "PART_Popup");
 		var calendar = popup?.Child;
-		var headerButton = CommonUtils.FindVisualChildByName<Button>(calendar, "PART_HeaderButton");
+		var headerButton = FindVisualChildByName<Button>(calendar, "PART_HeaderButton");
 
 		if (headerButton is null)
 			return;

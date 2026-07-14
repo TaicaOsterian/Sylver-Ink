@@ -1,4 +1,6 @@
-﻿using SylverInk.XAML.Objects;
+﻿using SylverInk.XAML;
+using SylverInk.XAML.Objects;
+using SylverInk.XAMLUtils;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -102,6 +104,47 @@ public static class DatabaseUtils
 		OpenQuery(newRecord);
 	}
 
+	public static SearchResult? OpenQuery(NoteRecord record, bool show = true)
+	{
+		foreach (SearchResult result in OpenQueries)
+		{
+			if (result.ResultRecord?.DB is not Database rDB)
+				continue;
+
+			if (!rDB.Equals(record.DB))
+				continue;
+
+			if (result.ResultRecord is not NoteRecord rNote)
+				continue;
+
+			if (!rNote.Equals(record))
+				continue;
+
+			result.Activate();
+			result.Focus();
+			return result;
+		}
+
+		RemoveRecordTab(record);
+
+		SearchResult resultWindow = new()
+		{
+			ResultRecord = record
+		};
+
+		if (!show)
+			return resultWindow;
+
+		resultWindow.Show();
+		OpenQueries.Add(resultWindow);
+		if (!record?.Locked is true)
+			record?.DB?.Lock(record.Index, true);
+
+		DeferUpdateRecentNotes();
+
+		return resultWindow;
+	}
+
 	public static void RemoveDatabase(Database db)
 	{
 		if (Application.Current.MainWindow.FindName("DatabasesPanel") is not TabControl control)
@@ -132,6 +175,23 @@ public static class DatabaseUtils
 
 		RecentNotesDirty = true;
 		DeferUpdateRecentNotes();
+	}
+
+	public static void RemoveRecordTab(NoteRecord? record)
+	{
+		for (int i = OpenTabs.Count - 1; i > -1; i--)
+		{
+			var item = OpenTabs[i];
+
+			if (item.Content is not NoteTab tab)
+				continue;
+
+			if (!tab.Record.Equals(record))
+				continue;
+
+			OpenTabs.RemoveAt(i);
+			tab.Deconstruct();
+		}
 	}
 
 	public static async Task SaveDatabases()

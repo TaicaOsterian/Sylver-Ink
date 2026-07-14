@@ -13,6 +13,7 @@ using System.Windows;
 using System.Windows.Media;
 using static SylverInk.CommonUtils;
 using static SylverInk.FileIO.FileUtils;
+using static SylverInk.Interop.VisualUtils;
 using static SylverInk.Notes.DatabaseUtils;
 using static SylverInk.XAMLUtils.MainWindowUtils;
 

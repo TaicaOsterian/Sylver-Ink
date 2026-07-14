@@ -2,7 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using static SylverInk.CommonUtils;
+using static SylverInk.Interop.VisualUtils;
 using static SylverInk.XAMLUtils.SettingsUtils;
 
 namespace SylverInk.XAML.Objects;

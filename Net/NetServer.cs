@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using static SylverInk.CommonUtils;
 using static SylverInk.Net.NetworkUtils;
 
 namespace SylverInk.Net;
@@ -96,7 +95,7 @@ public class NetServer : IDisposable
 				var data = DB.SerializeRecords(true) ?? [];
 				int dataLength = data.Length;
 
-				data = [(byte)MessageType.DatabaseInit, 0, 0, 0, 0, .. IntToBytes(dataLength), .. data];
+				data = [(byte)MessageType.DatabaseInit, 0, 0, 0, 0, .. dataLength.ToByteArray(), .. data];
 
 				if (dataLength > 0)
 					stream.WriteAsync(data).AsTask().Wait();

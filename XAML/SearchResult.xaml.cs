@@ -88,7 +88,7 @@ public partial class SearchResult : Window, IDisposable
 		if (Edited)
 			this.SaveRecord();
 
-		ResultRecord?.DB?.Transmit(NetworkUtils.MessageType.RecordUnlock, IntToBytes(ResultRecord?.Index ?? 0));
+		ResultRecord?.DB?.Transmit(NetworkUtils.MessageType.RecordUnlock, ResultRecord?.Index.ToByteArray());
 
 		foreach (SearchResult result in OpenQueries)
 		{
