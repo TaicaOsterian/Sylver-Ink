@@ -139,31 +139,28 @@ public static class MainWindowUtils
 		Application.Current.Resources["MainFontSize"] = Settings.MainFontSize;
 
 		if (RecentNotesDirty)
-			Concurrent(Settings.RecentNotes.Clear);
+			Settings.RecentNotes.Clear();
 
 		await Task.Run(() =>
 		{
-			var DpiInfo = Concurrent(() => VisualTreeHelper.GetDpi(Application.Current.MainWindow));
+			var DpiInfo = VisualTreeHelper.GetDpi(Concurrent(() => Application.Current.MainWindow));
 			var PixelRatio = Settings.MainFontSize * DpiInfo.PixelsPerInchY / 72.0;
 			var LineHeight = PixelRatio * Settings.MainTypeFace.FontFamily.LineSpacing;
 			var LineRatio = Math.Max(1.0, (WindowHeight / LineHeight) - 0.5);
 
 			CurrentDatabase.Sort(RecentEntriesSortMode);
 
-			Concurrent(() =>
+			while (Settings.RecentNotes.Count < LineRatio && Settings.RecentNotes.Count < CurrentDatabase.RecordCount)
 			{
-				while (Settings.RecentNotes.Count < LineRatio && Settings.RecentNotes.Count < CurrentDatabase.RecordCount)
-				{
-					var record = CurrentDatabase.GetRecord(Settings.RecentNotes.Count);
-					if (record is null)
-						break;
+				var record = CurrentDatabase.GetRecord(Settings.RecentNotes.Count);
+				if (record is null)
+					break;
 
-					Settings.RecentNotes.Add(record);
-				}
+				Concurrent(Settings.RecentNotes.Add, record);
+			}
 
-				while (Settings.RecentNotes.Count > LineRatio)
-					Settings.RecentNotes.RemoveAt(Settings.RecentNotes.Count - 1);
-			});
+			while (Settings.RecentNotes.Count > LineRatio)
+				Concurrent(Settings.RecentNotes.RemoveAt, Settings.RecentNotes.Count - 1);
 
 			CurrentDatabase.Sort();
 		});

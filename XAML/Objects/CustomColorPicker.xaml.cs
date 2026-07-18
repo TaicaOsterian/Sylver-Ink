@@ -65,4 +65,12 @@ public partial class CustomColorPicker : UserControl
 		CustomColor.Fill = brush;
 		LastColorSelection = brush;
 	}
+
+	private void PopupKeyDown(object? sender, KeyEventArgs e)
+	{
+		if (e.Key is not Key.Escape)
+			return;
+
+		CustomColorSelection.IsOpen = false;
+	}
 }

@@ -9,7 +9,7 @@
 			 d:DataContext="{d:DesignInstance Type=sylverink:ContextSettings}">
 	<Grid>
 		<local:CustomColorPicker x:Name="CustomColorPicker"/>
-		<Popup Height="400" IsOpen="False" Placement="Mouse" PopupAnimation="Fade" StaysOpen="False" Width="265" x:Name="ColorSelection">
+		<Popup Focusable="True" Height="400" IsOpen="False" KeyDown="PopupKeyDown" Placement="Mouse" PopupAnimation="Fade" StaysOpen="False" Width="265" x:Name="ColorSelection">
 			<Border BorderBrush="{Binding MenuForeground}" BorderThickness="1">
 				<Grid Background="{Binding MenuBackground}" x:Name="ColorGrid"/>
 			</Border>

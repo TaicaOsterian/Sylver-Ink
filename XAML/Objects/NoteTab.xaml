@@ -43,8 +43,8 @@
 					<ColumnDefinition Width="*"/>
 					<ColumnDefinition Width="*"/>
 				</Grid.ColumnDefinitions>
-				<Button Style="{StaticResource ToolbarButton}" Command="ApplicationCommands.Undo" Content="↶" ToolTip="Undo"/>
-				<Button Style="{StaticResource ToolbarButton}" Command="ApplicationCommands.Redo" Content="↷" Grid.Column="1" ToolTip="Redo"/>
+				<Button Style="{StaticResource ToolbarButton}" Command="ApplicationCommands.Undo" Content="↶" TabIndex="0" ToolTip="Undo"/>
+				<Button Style="{StaticResource ToolbarButton}" Command="ApplicationCommands.Redo" Content="↷" Grid.Column="1" TabIndex="1" ToolTip="Redo"/>
 			</Grid>
 			<Grid Grid.Column="2">
 				<Grid.ColumnDefinitions>
@@ -52,13 +52,13 @@
 					<ColumnDefinition Width="*"/>
 					<ColumnDefinition Width="*"/>
 				</Grid.ColumnDefinitions>
-				<Button Style="{StaticResource ToolbarButton}" Command="EditingCommands.ToggleBold" ToolTip="Bold">
+				<Button Style="{StaticResource ToolbarButton}" Command="EditingCommands.ToggleBold" TabIndex="2" ToolTip="Bold">
 					<TextBlock FontWeight="Bold">B</TextBlock>
 				</Button>
-				<Button Style="{StaticResource ToolbarButton}" Command="EditingCommands.ToggleItalic" Grid.Column="1" ToolTip="Italic">
+				<Button Style="{StaticResource ToolbarButton}" Command="EditingCommands.ToggleItalic" Grid.Column="1" TabIndex="3" ToolTip="Italic">
 					<TextBlock FontStyle="Italic" FontWeight="Bold">I</TextBlock>
 				</Button>
-				<Button Style="{StaticResource ToolbarButton}" Command="EditingCommands.ToggleUnderline" Grid.Column="2" ToolTip="Underline">
+				<Button Style="{StaticResource ToolbarButton}" Command="EditingCommands.ToggleUnderline" Grid.Column="2" TabIndex="4" ToolTip="Underline">
 					<TextBlock TextDecorations="Underline" FontWeight="Bold">U</TextBlock>
 				</Button>
 			</Grid>
@@ -69,7 +69,7 @@
 					<ColumnDefinition Width="*"/>
 					<ColumnDefinition Width="*"/>
 				</Grid.ColumnDefinitions>
-				<Button Style="{StaticResource ToolbarButton}" Command="EditingCommands.AlignLeft" ToolTip="Left">
+				<Button Style="{StaticResource ToolbarButton}" Command="EditingCommands.AlignLeft" TabIndex="5" ToolTip="Left">
 					<StackPanel>
 						<Line Stroke="{Binding ListForeground}" StrokeThickness="1" X1="0" X2="16" Y1="2" Y2="2"/>
 						<Line Stroke="{Binding ListForeground}" StrokeThickness="1" X1="0" X2="8" Y1="3" Y2="3"/>
@@ -77,7 +77,7 @@
 						<Line Stroke="{Binding ListForeground}" StrokeThickness="1" X1="0" X2="8" Y1="3" Y2="3"/>
 					</StackPanel>
 				</Button>
-				<Button Style="{StaticResource ToolbarButton}" Command="EditingCommands.AlignCenter" Grid.Column="1" ToolTip="Center">
+				<Button Style="{StaticResource ToolbarButton}" Command="EditingCommands.AlignCenter" Grid.Column="1" TabIndex="6" ToolTip="Center">
 					<StackPanel>
 						<Line Stroke="{Binding ListForeground}" StrokeThickness="1" X1="0" X2="16" Y1="2" Y2="2"/>
 						<Line Stroke="{Binding ListForeground}" StrokeThickness="1" X1="4" X2="12" Y1="3" Y2="3"/>
@@ -85,7 +85,7 @@
 						<Line Stroke="{Binding ListForeground}" StrokeThickness="1" X1="4" X2="12" Y1="3" Y2="3"/>
 					</StackPanel>
 				</Button>
-				<Button Style="{StaticResource ToolbarButton}" Command="EditingCommands.AlignRight" Grid.Column="2" ToolTip="Right">
+				<Button Style="{StaticResource ToolbarButton}" Command="EditingCommands.AlignRight" Grid.Column="2" TabIndex="7" ToolTip="Right">
 					<StackPanel>
 						<Line Stroke="{Binding ListForeground}" StrokeThickness="1" X1="0" X2="16" Y1="2" Y2="2"/>
 						<Line Stroke="{Binding ListForeground}" StrokeThickness="1" X1="8" X2="16" Y1="3" Y2="3"/>
@@ -93,7 +93,7 @@
 						<Line Stroke="{Binding ListForeground}" StrokeThickness="1" X1="8" X2="16" Y1="3" Y2="3"/>
 					</StackPanel>
 				</Button>
-				<Button Style="{StaticResource ToolbarButton}" Command="EditingCommands.AlignJustify" Grid.Column="3" ToolTip="Justify">
+				<Button Style="{StaticResource ToolbarButton}" Command="EditingCommands.AlignJustify" Grid.Column="3" TabIndex="8" ToolTip="Justify">
 					<StackPanel>
 						<Line Stroke="{Binding ListForeground}" StrokeThickness="1" X1="0" X2="16" Y1="2" Y2="2"/>
 						<Line Stroke="{Binding ListForeground}" StrokeThickness="1" X1="0" X2="16" Y1="3" Y2="3"/>
@@ -107,15 +107,15 @@
 					<ColumnDefinition Width="*"/>
 					<ColumnDefinition Width="*"/>
 				</Grid.ColumnDefinitions>
-				<Button Style="{StaticResource ToolbarButton}" Command="EditingCommands.IncreaseFontSize" ToolTip="Increase Font Size">
+				<Button Style="{StaticResource ToolbarButton}" Command="EditingCommands.IncreaseFontSize" TabIndex="9" ToolTip="Increase Font Size">
 					<TextBlock FontWeight="Bold">A↑</TextBlock>
 				</Button>
-				<Button Style="{StaticResource ToolbarButton}" Command="EditingCommands.DecreaseFontSize" Grid.Column="1" ToolTip="Decrease Font Size">
+				<Button Style="{StaticResource ToolbarButton}" Command="EditingCommands.DecreaseFontSize" Grid.Column="1" TabIndex="10" ToolTip="Decrease Font Size">
 					<TextBlock FontWeight="Bold">a↓</TextBlock>
 				</Button>
 			</Grid>
 			<Grid Grid.Column="8">
-				<Button Style="{StaticResource ToolbarButton}" Click="SelectColor" ToolTip="Text color..." x:Name="TextColorButton">
+				<Button Style="{StaticResource ToolbarButton}" Click="SelectColor" TabIndex="11" ToolTip="Text color..." x:Name="TextColorButton">
 					<Path Fill="Black" Stroke="White" StrokeThickness="0.5" Data="M13.354.646a1.207 1.207 0 0 0-1.708 0L8.5 3.793l-.646-.647a.5.5 0 1 0-.708.708L8.293 5l-7.147 7.146A.5.5 0 0 0 1 12.5v1.793l-.854.853a.5.5 0 1 0 .708.707L1.707 15H3.5a.5.5 0 0 0 .354-.146L11 7.707l1.146 1.147a.5.5 0 0 0 .708-.708l-.647-.646 3.147-3.146a1.207 1.207 0 0 0 0-1.708zM2 12.707l7-7L10.293 7l-7 7H2z"/>
 				</Button>
 			</Grid>
@@ -123,7 +123,7 @@
 
 		<local:ColorPicker x:Name="TextColorPicker"/>
 
-		<Popup Height="75" IsOpen="False" StaysOpen="True" Width="300" x:Name="InternalSearchPopup">
+		<Popup Focusable="True" Height="75" IsOpen="False" StaysOpen="True" Width="300" x:Name="InternalSearchPopup">
 			<Border BorderBrush="{Binding MenuForeground}" BorderThickness="1">
 				<Grid Background="{Binding MenuBackground}">
 					<Grid.ColumnDefinitions>
@@ -145,7 +145,7 @@
 			</Border>
 		</Popup>
 
-		<RichTextBox AcceptsReturn="True" Grid.Row="2" SelectionChanged="NoteBox_SelectionChanged" TextChanged="NoteBox_TextChanged" UndoLimit="10"
+		<RichTextBox AcceptsReturn="True" Grid.Row="2" SelectionChanged="NoteBox_SelectionChanged" TabIndex="12" TextChanged="NoteBox_TextChanged" UndoLimit="10"
 					VerticalScrollBarVisibility="Auto"
 					x:Name="NoteBox"/>
 
@@ -160,12 +160,13 @@
 				<RowDefinition Height="15"/>
 				<RowDefinition Height="Auto"/>
 			</Grid.RowDefinitions>
-			<Button Click="ClickPrevious" Grid.ColumnSpan="2" Content="←" Width="50" x:Name="PreviousButton"/>
-			<Button Click="ClickNext" Grid.Column="1" Grid.ColumnSpan="2" Content="→" Width="50" x:Name="NextButton"/>
 
-			<Button Click="ClickDelete" Content="Delete" Grid.Row="2" x:Name="DeleteButton"/>
-			<Button Click="ClickSave" Grid.Column="1" Content="Save" Margin="20,0" Grid.Row="2" x:Name="SaveButton"/>
-			<Button Click="ClickReturn" Grid.Column="2" Content="Return" Grid.Row="2" x:Name="ReturnButton"/>
+			<Button Click="ClickPrevious" Grid.ColumnSpan="2" Content="←" TabIndex="13" Width="50" x:Name="PreviousButton"/>
+			<Button Click="ClickNext" Grid.Column="1" Grid.ColumnSpan="2" Content="→" TabIndex="14" Width="50" x:Name="NextButton"/>
+
+			<Button Click="ClickDelete" Content="Delete" Grid.Row="2" TabIndex="15" x:Name="DeleteButton"/>
+			<Button Click="ClickSave" Grid.Column="1" Content="Save" Margin="20,0" Grid.Row="2" TabIndex="16" x:Name="SaveButton"/>
+			<Button Click="ClickReturn" Grid.Column="2" Content="Return" Grid.Row="2" TabIndex="17" x:Name="ReturnButton"/>
 		</Grid>
 	</Grid>
 </UserControl>

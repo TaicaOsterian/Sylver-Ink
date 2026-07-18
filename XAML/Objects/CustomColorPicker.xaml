@@ -7,7 +7,7 @@
 			 xmlns:sylverink="clr-namespace:SylverInk"
 			 mc:Ignorable="d"
 			 d:DataContext="{d:DesignInstance Type=sylverink:ContextSettings}">
-	<Popup Closed="CustomColorFinished" Height="40" IsOpen="False" Opened="CustomColorOpened" Placement="Mouse" PopupAnimation="Fade" StaysOpen="False" Width="130" x:Name="CustomColorSelection">
+	<Popup Closed="CustomColorFinished" Focusable="True" Height="40" IsOpen="False" KeyDown="PopupKeyDown" Opened="CustomColorOpened" Placement="Mouse" PopupAnimation="Fade" StaysOpen="False" Width="130" x:Name="CustomColorSelection">
 		<Border BorderBrush="{Binding MenuForeground}" BorderThickness="1">
 			<Grid Background="{Binding MenuBackground}">
 				<Grid.ColumnDefinitions>

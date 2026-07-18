@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using static SylverInk.XAMLUtils.SettingsUtils;
 
@@ -73,6 +74,7 @@ public partial class ColorPicker : UserControl
 				Content = colorRect,
 				Height = 20,
 				Margin = new(2.5),
+				TabIndex = i,
 				Width = 20,
 			};
 
@@ -165,6 +167,14 @@ public partial class ColorPicker : UserControl
 		ColorGrid.Children.Add(clearOption);
 
 		Grid.SetColumn(customOption, 1);
+	}
+
+	private void PopupKeyDown(object sender, KeyEventArgs e)
+	{
+		if (e.Key is not Key.Escape)
+			return;
+
+		ColorSelection.IsOpen = false;
 	}
 
 	[GeneratedRegex(@"\p{Lu}")]
