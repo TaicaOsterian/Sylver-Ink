@@ -15,6 +15,8 @@ public class Serializer : IDisposable
 	private Stream? _fileStream;
 	private bool _isOpen;
 	private readonly LZWState _lzw = new();
+	private string _path = string.Empty;
+	private string _pathTmp = string.Empty;
 	private byte[] _testBuffer = [];
 	private bool _writing;
 
@@ -23,6 +25,7 @@ public class Serializer : IDisposable
 	/// </summary>
 	public required byte DatabaseFormat { get; set; }
 	public bool Headless { get; private set; }
+	public bool Hidden { get; set; }
 	public bool UseLZW { get; private set; }
 
 	/// <summary>
@@ -44,7 +47,7 @@ public class Serializer : IDisposable
 	/// </summary>
 	public void ClearCompressionTest()
 	{
-		Close();
+		Close(true);
 
 		_fileStream = null;
 		_testBuffer = [];
@@ -60,11 +63,23 @@ public class Serializer : IDisposable
 
 		_lzw.Close();
 		_fileStream?.Flush();
-
-		if (!testing)
-			_fileStream?.Dispose();
-
 		_isOpen = false;
+
+		if (testing)
+			return;
+
+		_fileStream?.Dispose();
+
+		if (!_writing)
+			return;
+
+		File.Move(_pathTmp, _path, true);
+
+		if (!Hidden)
+			return;
+
+		var attributes = File.GetAttributes(_path);
+		File.SetAttributes(_path, attributes | FileAttributes.Hidden);
 	}
 
 	public void Dispose()
@@ -126,6 +141,7 @@ public class Serializer : IDisposable
 		{
 			_fileStream = new FileStream(path, FileMode.Open);
 			_isOpen = true;
+			_path = path;
 			_writing = false;
 
 			ReadHeader();
@@ -148,7 +164,10 @@ public class Serializer : IDisposable
 
 		try
 		{
-			_fileStream = path is null ? new MemoryStream() : new FileStream(path, FileMode.Create);
+			_path = path ?? string.Empty;
+			_pathTmp = $"{_path}.tmp";
+
+			_fileStream = string.IsNullOrWhiteSpace(_path) ? new MemoryStream() : new FileStream(_pathTmp, FileMode.Create, FileAccess.Write, FileShare.None, 4096);
 			_isOpen = true;
 			_writing = true;
 
@@ -156,6 +175,9 @@ public class Serializer : IDisposable
 		}
 		catch
 		{
+			if (File.Exists(_pathTmp))
+				File.Delete(_pathTmp);
+
 			_fileStream?.Dispose();
 			return false;
 		}

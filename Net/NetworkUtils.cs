@@ -32,7 +32,6 @@ public static class NetworkUtils
 		RecordAdd,
 		RecordLock,
 		RecordRemove,
-		RecordReplace,
 		RecordUnlock,
 		TextInsert
 	}
@@ -139,29 +138,6 @@ public static class NetworkUtils
 				break;
 			case MessageType.RecordRemove:
 				Concurrent(DB.DeleteRecord, recordIndex, false);
-				DeferUpdateRecentNotes();
-				break;
-			case MessageType.RecordReplace:
-				stream.ReadExactly(intBuffer, 0, 4);
-				textCount = IntFromBytes(intBuffer);
-
-				if (textCount <= 0)
-					break;
-
-				textBuffer = new byte[textCount];
-				stream.ReadExactly(textBuffer, 0, textCount);
-				bufferString = Encoding.UTF8.GetString(textBuffer);
-
-				stream.ReadExactly(intBuffer, 0, 4);
-				textCount = IntFromBytes(intBuffer);
-
-				if (textCount <= 0)
-					break;
-
-				textBuffer = new byte[textCount];
-				stream.ReadExactly(textBuffer, 0, textCount);
-
-				Concurrent(DB.Replace, bufferString, Encoding.UTF8.GetString(textBuffer), false);
 				DeferUpdateRecentNotes();
 				break;
 			case MessageType.RecordUnlock:

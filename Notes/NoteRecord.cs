@@ -9,7 +9,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using static SylverInk.CommonUtils;
-using static SylverInk.FileIO.FileUtils;
 using static SylverInk.Notes.DatabaseUtils;
 using static SylverInk.Text.FlowDocumentUtils;
 using static SylverInk.XAMLUtils.MainWindowUtils;
@@ -141,11 +140,8 @@ public partial class NoteRecord
 
 	public void Autosave(FlowDocument document)
 	{
-		var lockFile = GetLockFile(DB?.DBFile);
-		Erase(lockFile);
-
 		CreateRevision(TextConverter.Save(document, TextFormat.Xaml));
-		DB?.Save(lockFile);
+		DB?.Autosave();
 		DeleteRevision(GetNumRevisions());
 	}
 
@@ -171,6 +167,11 @@ public partial class NoteRecord
 			Substring = StartIndex >= NewVersion.Length ? string.Empty : NewVersion[StartIndex..],
 			Uuid = MakeUUID(UUIDType.Revision)
 		});
+
+		if (DB is null)
+			return;
+
+		DB.Changed = true;
 
 		return;
 	}

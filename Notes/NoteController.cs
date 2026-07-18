@@ -1,6 +1,5 @@
 ﻿using SylverInk.FileIO;
 using SylverInk.Text;
-using SylverInk.XAMLUtils;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -8,7 +7,6 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
-using System.Windows.Documents;
 using static SylverInk.CommonUtils;
 using static SylverInk.FileIO.FileUtils;
 using static SylverInk.Notes.DatabaseUtils;
@@ -91,6 +89,31 @@ public partial class NoteController : IDisposable
 		RecentNotesDirty = true;
 		Records.Add(record);
 		return record.Index;
+	}
+
+	public void Autosave(string filename)
+	{
+		PropagateIndices();
+		ReloadSerializer();
+
+		if (!Open(filename, true, true))
+			return;
+
+		if (_serializer?.DatabaseFormat >= 7)
+			_serializer?.WriteShortString(UUID);
+
+		if (!_serializer?.Headless is true)
+			_serializer?.WriteShortString(Name);
+
+		if (_serializer?.DatabaseFormat >= 9)
+			_serializer?.WriteByte(Structure ??= 0);
+
+		_serializer?.WriteInt32(Records.Count);
+		for (int i = 0; i < Records.Count; i++)
+			Records[i].Serialize(_serializer);
+
+		Changed = false;
+		ReloadSerializer();
 	}
 
 	public int CreateRecord(string entry)
@@ -252,9 +275,13 @@ public partial class NoteController : IDisposable
 		ReloadSerializer();
 	}
 	
-	public bool Open(string path, bool writing = false)
+	public bool Open(string path, bool writing = false, bool hidden = false)
 	{
-		_serializer = new() { DatabaseFormat = (byte)Format };
+		_serializer = new()
+		{
+			DatabaseFormat = (byte)Format,
+			Hidden = hidden,
+		};
 
 		if (writing)
 			return _serializer.OpenWrite(path);
@@ -273,66 +300,13 @@ public partial class NoteController : IDisposable
 	public void ReloadSerializer()
 	{
 		_serializer?.Close();
-		_serializer = new() { DatabaseFormat = (byte)Format };
+		_serializer = new()
+		{
+			DatabaseFormat = (byte)Format
+		};
 
 		if (_canCompress == -1 || (_canCompress == 0 && !TestCanCompress()))
 			_serializer.DatabaseFormat--;
-	}
-
-	public (int, int) Replace(string oldText, string newText)
-	{
-		var newVersion = string.Empty;
-		int NoteCount = 0;
-		int ReplaceCount = 0;
-
-		for (int i = 0; i < Records.Count; i++)
-		{
-			var record = Records[i];
-			var recordText = record.ToXaml();
-			if (!recordText.Contains(oldText, StringComparison.OrdinalIgnoreCase))
-				continue;
-
-			for (int j = OpenQueries.Count - 1; j > -1; j--)
-			{
-				if (record.Equals(OpenQueries[j].ResultRecord))
-				{
-					Concurrent(OpenQueries[j].SaveRecord);
-					Concurrent(OpenQueries[j].Close);
-				}
-			}
-
-			var document = Concurrent(() => TextConverter.Parse(recordText, TextFormat.Xaml));
-			TextPointer? pointer = document.ContentStart;
-			while (pointer is not null && pointer.GetPointerContext(LogicalDirection.Forward) != TextPointerContext.None)
-			{
-				while (pointer is not null && pointer?.GetPointerContext(LogicalDirection.Forward) != TextPointerContext.Text)
-					pointer = pointer?.GetNextContextPosition(LogicalDirection.Forward);
-
-				if (pointer is null)
-					continue;
-
-				var text = pointer.GetTextInRun(LogicalDirection.Forward);
-				var textLength = pointer.GetTextRunLength(LogicalDirection.Forward);
-				newVersion = text.Replace(oldText, newText, StringComparison.OrdinalIgnoreCase);
-				Concurrent(() =>
-				{
-					pointer.DeleteTextInRun(textLength);
-					pointer.InsertTextInRun(newVersion);
-				});
-				while (pointer.GetPointerContext(LogicalDirection.Forward) == TextPointerContext.Text)
-					pointer = pointer.GetNextContextPosition(LogicalDirection.Forward);
-			}
-			newVersion = Concurrent(() => TextConverter.Save(document, TextFormat.Xaml));
-			if (!newVersion.Equals(recordText, StringComparison.Ordinal))
-			{
-				CreateRevision(record.Index, newVersion);
-				NoteCount++;
-				ReplaceCount += (recordText.Length - recordText.Replace(oldText, string.Empty, StringComparison.OrdinalIgnoreCase).Length) / oldText.Length;
-			}
-		}
-
-		Changed = Changed || ReplaceCount > 0;
-		return (ReplaceCount, NoteCount);
 	}
 
 	public void Revert(DateTime targetDate)

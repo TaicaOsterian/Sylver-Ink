@@ -26,10 +26,6 @@ Opening a note will create a tiny sticky note window from which the note can be 
 
 The Import window allows the user to import multiple notes from plaintext files. Sylver Ink divides newly imported notes based on the number of empty lines between paragraphs in the text file. The Import window may also be used to import existing Sylver Ink databases, allowing the user to overwrite their currently open database or merge the two.
 
-### "Replace"
-
-The Replace window allows the user to mass-replace occurrences of a text string with another across the entire database. Care must be taken when using this function, as it cannot be automatically undone; if a mistake is made while replacing, the user may close the database or the program and reopen it to prevent the change from being saved.
-
 ### "Search"
 
 The Search window allows the user to search for occurrences of a text string across the database, and display the results in a list. Sylver Ink uses a tagging system to assist in sorting search results: Notes are prioritized if they match words in the search query with an overall low occurrence rate in the database at large.

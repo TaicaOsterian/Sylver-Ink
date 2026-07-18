@@ -39,9 +39,7 @@ public class ContextSettings : INotifyPropertyChanged
 	private double _noteClickthrough = 0.25;
 	private double _noteClickthroughInverse = 4.0;
 	private double _noteTransparency;
-	private string _numReplacements = string.Empty;
 	public event PropertyChangedEventHandler? PropertyChanged;
-	private bool _readyToReplace;
 	private readonly ObservableCollection<NoteRecord> _recentNotes = [];
 	private readonly ObservableCollection<NoteRecord> _searchResults = [];
 	private bool _searchResultsOnTop = true;
@@ -66,8 +64,6 @@ public class ContextSettings : INotifyPropertyChanged
 	public double NoteClickthrough { get => _noteClickthrough; set { _noteClickthrough = value; NoteClickthroughInverse = 1.0 / value; OnPropertyChanged(); } }
 	public double NoteClickthroughInverse { get => _noteClickthroughInverse; set { _noteClickthroughInverse = value; OnPropertyChanged(); } }
 	public double NoteTransparency { get => _noteTransparency; set { _noteTransparency = value; OnPropertyChanged(); } }
-	public string NumReplacements { get => _numReplacements; set { _numReplacements = value; OnPropertyChanged(); } }
-	public bool ReadyToReplace { get => _readyToReplace; set { _readyToReplace = value; OnPropertyChanged(); } }
 	public ObservableCollection<NoteRecord> RecentNotes { get => _recentNotes; }
 	public ObservableCollection<NoteRecord> SearchResults { get => _searchResults; }
 	public bool SearchResultsOnTop { get => _searchResultsOnTop; set { _searchResultsOnTop = value; SearchResultsInTaskbar = !value; OnPropertyChanged(); } }

@@ -49,6 +49,25 @@ public class Database : IDisposable
 		Server = new(this);
 	}
 
+	public void Autosave()
+	{
+		if (!Changed)
+			return;
+
+		if (string.IsNullOrWhiteSpace(DBFile))
+			DBFile = GetDatabasePath(this);
+
+		if (string.IsNullOrWhiteSpace(UUID))
+			UUID = MakeUUID(UUIDType.Database);
+
+		var lockFile = GetLockFile(DBFile);
+
+		if (!Directory.Exists(Path.GetDirectoryName(lockFile)))
+			Directory.CreateDirectory(Path.GetDirectoryName(lockFile) ?? lockFile);
+
+		Controller.Autosave(lockFile);
+	}
+
 	public static async Task Create(string dbFile)
 	{
 		Database? db = null;
@@ -330,7 +349,7 @@ public class Database : IDisposable
 		for (int i = 2; i > 0; i--)
 		{
 			if (File.Exists($"{BKPath}_{i}.sibk"))
-				File.Copy($"{BKPath}_{i}.sibk", $"{BKPath}_{i + 1}.sibk", true);
+				File.Move($"{BKPath}_{i}.sibk", $"{BKPath}_{i + 1}.sibk", true);
 		}
 
 		if (File.Exists($"{DBPath}"))
@@ -403,31 +422,17 @@ public class Database : IDisposable
 		File.Move(adjustedPath, newFile);
 	}
 
-	public (int, int) Replace(string oldText, string newText, bool local = true)
-	{
-		if (local)
-		{
-			var oldLength = oldText.Length;
-			var newLength = newText.Length;
-
-			List<byte> outBuffer = [
-				0, 0, 0, 0,
-				.. oldLength.ToByteArray(),
-				.. newLength.ToByteArray(),
-			];
-
-			outBuffer.InsertRange(8, Encoding.UTF8.GetBytes(oldText));
-			outBuffer.AddRange(Encoding.UTF8.GetBytes(newText));
-
-			Transmit(NetworkUtils.MessageType.RecordReplace, [.. outBuffer]);
-		}
-
-		return Controller.Replace(oldText, newText);
-	}
-
 	public void Revert(DateTime targetDate) => Controller.Revert(targetDate);
 
-	public void Save()
+	/// <summary>
+	/// Write the database object to a file using its systemic filename.
+	/// </summary>
+	public void Save() => Save(DBFile);
+
+	/// <summary>
+	/// Write the database object to a file using a provided filename.
+	/// </summary>
+	public void Save(string? targetFile = null)
 	{
 		if (!Changed)
 			return;
@@ -438,42 +443,25 @@ public class Database : IDisposable
 		if (string.IsNullOrWhiteSpace(UUID))
 			UUID = MakeUUID(UUIDType.Database);
 
-		MakeBackup(true);
-
-		if (!Directory.Exists(Path.GetDirectoryName(DBFile)))
-			Directory.CreateDirectory(Path.GetDirectoryName(DBFile) ?? DBFile);
-
-		if (!Controller.Open($"{DBFile}", true))
-			return;
-
-		Controller.SerializeRecords();
-
-		if (DBFile.Contains(Subfolders["Databases"]))
-			File.WriteAllText(Path.Join(Path.GetDirectoryName(DBFile), "uuid.dat"), UUID);
-
-		FileIO.FileUtils.Erase(GetLockFile(DBFile));
-	}
-
-	public void Save(string targetFile)
-	{
 		if (string.IsNullOrWhiteSpace(targetFile))
 			targetFile = DBFile;
 
-		if (string.IsNullOrWhiteSpace(UUID))
-			UUID = MakeUUID(UUIDType.Database);
+		if (DBFile.Equals(targetFile, StringComparison.Ordinal))
+			MakeBackup(true);
 
 		if (!Directory.Exists(Path.GetDirectoryName(targetFile)))
 			Directory.CreateDirectory(Path.GetDirectoryName(targetFile) ?? targetFile);
-
-		File.Create(targetFile, 1).Dispose();
 
 		if (!Controller.Open($"{targetFile}", true))
 			return;
 
 		Controller.SerializeRecords();
 
-		File.SetAttributes(targetFile, File.GetAttributes(targetFile) | FileAttributes.Hidden);
-		Changed = true;
+		if (targetFile.Contains(Subfolders["Databases"]))
+			File.WriteAllText(Path.Join(Path.GetDirectoryName(targetFile), "uuid.dat"), UUID);
+
+		var lockFile = GetLockFile(targetFile);
+		FileIO.FileUtils.Erase(lockFile);
 	}
 
 	public byte[]? SerializeRecords(bool inMemory = false) => Controller.SerializeRecords(inMemory);
