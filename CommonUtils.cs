@@ -7,10 +7,12 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using static SylverInk.FileIO.FileUtils;
 using static SylverInk.Notes.DatabaseUtils;
+using static SylverInk.XAMLUtils.MainWindowUtils;
 
 namespace SylverInk;
 
@@ -113,21 +115,41 @@ public static partial class CommonUtils
 	/// <param name="callback">The function to be executed on the main thread</param>
 	public static TResult Concurrent<T1, T2, T3, TResult>(Func<T1, T2, T3, TResult> callback, T1 arg1, T2 arg2, T3 arg3) => (TResult)Application.Current.Dispatcher.Invoke(callback, arg1, arg2, arg3);
 
+	public static async void HandleCheckInit()
+	{
+		using var tokenSource = new CancellationTokenSource();
+		var token = tokenSource.Token;
+
+		var initTask = Task.Run(() =>
+		{
+			do
+			{
+				InitComplete = Databases.Count > 0
+					&& SettingsLoaded
+					&& UpdatesChecked;
+
+				if (Concurrent(() => Application.Current.MainWindow.FindName("DatabasesPanel")) is null)
+					InitComplete = false;
+			} while (!InitComplete && !token.IsCancellationRequested);
+		}, token);
+
+		await initTask;
+
+		if (string.IsNullOrEmpty(ShellDB))
+			SwitchDatabase($"~N:{Settings.LastActiveDatabase}");
+		else
+			SwitchDatabase($"~F:{ShellDB}");
+
+		RestoreActiveNotes();
+		Settings.MainTypeFace = new(Settings.MainFontFamily, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
+
+		CanResize = true;
+		Application.Current.MainWindow.ResizeMode = ResizeMode.CanResize;
+
+		DeferUpdateRecentNotes();
+	}
+
 	public static bool InstanceRunning() => Process.GetProcessesByName("Sylver Ink").Length > 1 && !File.Exists(UpdateHandler.UpdateLockUri);
-
-	public static byte[] ToByteArray(this int data) => [
-		(byte)((data >> 24) & 0xFF),
-		(byte)((data >> 16) & 0xFF),
-		(byte)((data >> 8) & 0xFF),
-		(byte)(data & 0xFF)
-	];
-
-	public static byte[] ToByteArray(this uint data) => [
-		(byte)((data >> 24) & 0xFF),
-		(byte)((data >> 16) & 0xFF),
-		(byte)((data >> 8) & 0xFF),
-		(byte)(data & 0xFF)
-	];
 
 	public static string MakeUUID(UUIDType type = UUIDType.Record)
 	{
@@ -146,6 +168,68 @@ public static partial class CommonUtils
 
 		return;
 	}
+
+	private static void RestoreActiveNotes()
+	{
+		foreach (var openNote in LastActiveNotes)
+		{
+			var oSplit = openNote.Split(':');
+			if (oSplit.Length < 2)
+				continue;
+
+			if (!int.TryParse(oSplit[1], out var iNote))
+				continue;
+
+			Database? target = null;
+			foreach (Database db in Databases)
+				if (oSplit[0].Equals(db.Name, StringComparison.Ordinal))
+					target = db;
+
+			if (target is null)
+				continue;
+
+			if (!target.HasRecord(iNote))
+				continue;
+
+			if (target.GetRecord(iNote) is not NoteRecord note)
+				continue;
+
+			if (OpenQuery(note) is not SearchResult result)
+				continue;
+
+			if (LastActiveNotesHeight.TryGetValue($"{target.Name}:{iNote}", out var openHeight))
+				result.Height = openHeight;
+
+			if (LastActiveNotesLeft.TryGetValue($"{target.Name}:{iNote}", out var openLeft))
+				result.Left = openLeft;
+
+			if (LastActiveNotesTop.TryGetValue($"{target.Name}:{iNote}", out var openTop))
+				result.Top = openTop;
+
+			if (LastActiveNotesWidth.TryGetValue($"{target.Name}:{iNote}", out var openWidth))
+				result.Width = openWidth;
+		}
+
+		LastActiveNotes.Clear();
+		LastActiveNotesHeight.Clear();
+		LastActiveNotesLeft.Clear();
+		LastActiveNotesTop.Clear();
+		LastActiveNotesWidth.Clear();
+	}
+
+	public static byte[] ToByteArray(this int data) => [
+		(byte)((data >> 24) & 0xFF),
+		(byte)((data >> 16) & 0xFF),
+		(byte)((data >> 8) & 0xFF),
+		(byte)(data & 0xFF)
+	];
+
+	public static byte[] ToByteArray(this uint data) => [
+		(byte)((data >> 24) & 0xFF),
+		(byte)((data >> 16) & 0xFF),
+		(byte)((data >> 8) & 0xFF),
+		(byte)(data & 0xFF)
+	];
 
 	[GeneratedRegex(@"\((\p{Nd}+)\)$")]
 	public static partial Regex IndexDigits();

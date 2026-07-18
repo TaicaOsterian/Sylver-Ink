@@ -1,12 +1,9 @@
 ﻿using SylverInk.Interop;
 using SylverInk.Net;
 using SylverInk.Notes;
-using SylverInk.XAML;
 using System;
 using System.ComponentModel;
 using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using static SylverInk.CommonUtils;
@@ -31,82 +28,6 @@ public partial class MainWindow : Window
 	}
 
 	private void Drag(object? sender, MouseButtonEventArgs e) => DragMove();
-
-	private async void HandleCheckInit()
-	{
-		using var tokenSource = new CancellationTokenSource();
-		var token = tokenSource.Token;
-
-		var initTask = Task.Run(() =>
-		{
-			do
-			{
-				InitComplete = Databases.Count > 0
-					&& SettingsLoaded
-					&& UpdatesChecked;
-
-				if (Concurrent(() => Application.Current.MainWindow.FindName("DatabasesPanel")) is null)
-					InitComplete = false;
-			} while (!InitComplete && !token.IsCancellationRequested);
-		}, token);
-
-		await initTask;
-
-		if (string.IsNullOrEmpty(ShellDB))
-			SwitchDatabase($"~N:{CommonUtils.Settings.LastActiveDatabase}");
-		else
-			SwitchDatabase($"~F:{ShellDB}");
-
-		foreach (var openNote in LastActiveNotes)
-		{
-			var oSplit = openNote.Split(':');
-			if (oSplit.Length < 2)
-				continue;
-
-			if (!int.TryParse(oSplit[1], out var iNote))
-				continue;
-
-			Database? target = null;
-			foreach (Database db in Databases)
-				if (oSplit[0].Equals(db.Name, StringComparison.Ordinal))
-					target = db;
-
-			if (target is null)
-				continue;
-
-			if (!target.HasRecord(iNote))
-				continue;
-
-			if (target.GetRecord(iNote) is not NoteRecord note)
-				continue;
-
-			if (OpenQuery(note) is not SearchResult result)
-				continue;
-
-			if (LastActiveNotesHeight.TryGetValue($"{target.Name}:{iNote}", out var openHeight))
-				result.Height = openHeight;
-
-			if (LastActiveNotesLeft.TryGetValue($"{target.Name}:{iNote}", out var openLeft))
-				result.Left = openLeft;
-
-			if (LastActiveNotesTop.TryGetValue($"{target.Name}:{iNote}", out var openTop))
-				result.Top = openTop;
-
-			if (LastActiveNotesWidth.TryGetValue($"{target.Name}:{iNote}", out var openWidth))
-				result.Width = openWidth;
-		}
-
-		CanResize = true;
-		LastActiveNotes.Clear();
-		LastActiveNotesHeight.Clear();
-		LastActiveNotesLeft.Clear();
-		LastActiveNotesTop.Clear();
-		LastActiveNotesWidth.Clear();
-		ResizeMode = ResizeMode.CanResize;
-		CommonUtils.Settings.MainTypeFace = new(CommonUtils.Settings.MainFontFamily, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
-
-		DeferUpdateRecentNotes();
-	}
 
 	private static bool IsShuttingDown()
 	{
