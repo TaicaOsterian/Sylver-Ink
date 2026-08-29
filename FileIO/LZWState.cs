@@ -96,7 +96,9 @@ public class LZWState
 		{
 			LastCode = ReadCode();
 			if (LastCode == 257U)
+			{
 				break;
+			}
 			else if (LastCode == 256U && Format >= 11)
 			{
 				InitDictionary();
@@ -172,11 +174,11 @@ public class LZWState
 
 			byte b = (byte)(n ?? 0);
 			for (int i = 0; i++ < 8;)
-				BitStream.Add((b >> 8 - i & 1) == 1);
+				BitStream.Add(((b >> (8 - i)) & 1) == 1);
 		}
 
 		for (int i = 0; i++ < Range;)
-			code += (uint)(BitToByte(BitStream[i - 1]) << Range - i);
+			code += (uint)(BitToByte(BitStream[i - 1]) << (Range - i));
 		BitStream.RemoveRange(0, Range);
 
 		return code;
@@ -217,13 +219,13 @@ public class LZWState
 	private void WriteCode(uint code)
 	{
 		for (int i = 0; i++ < Range;)
-			BitStream.Add((code >> Range - i & 1) == 1);
+			BitStream.Add(((code >> (Range - i)) & 1) == 1);
 
 		byte b = 0;
 		int j = 1;
 		while (BitStream.Count >= 8)
 		{
-			b += (byte)(BitToByte(BitStream[j - 1]) << 8 - j);
+			b += (byte)(BitToByte(BitStream[j - 1]) << (8 - j));
 			if (j++ != 8)
 				continue;
 

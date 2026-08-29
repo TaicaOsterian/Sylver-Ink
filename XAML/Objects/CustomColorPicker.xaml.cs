@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SylverInk.XAML.Objects.ViewModels;
+using System;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -18,6 +19,7 @@ public partial class CustomColorPicker : UserControl
 
 	public CustomColorPicker()
 	{
+		DataContext = new CustomColorPickerViewModel();
 		InitializeComponent();
 	}
 

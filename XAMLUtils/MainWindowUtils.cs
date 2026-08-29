@@ -85,7 +85,7 @@ public static class MainWindowUtils
 		return new()
 		{
 			Content = content,
-			Margin = new(0),
+			Margin = new(0, -4, 0, 0),
 			ToolTip = tooltip[..Math.Min(40, tooltip.Length)]
 		};
 	}
@@ -175,7 +175,7 @@ public static class MainWindowUtils
 			if (item.Content is not NoteTab tab)
 				continue;
 
-			item.Header = GetRibbonHeader(tab.Record);
+			item.Header = GetRibbonHeader(tab.ViewModel.Record);
 		}
 	}
 }

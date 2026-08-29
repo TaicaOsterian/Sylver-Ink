@@ -4,9 +4,10 @@
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:local="clr-namespace:SylverInk"
+		xmlns:vm="clr-namespace:SylverInk.XAML.ViewModels"
+		d:DataContext="{d:DesignInstance Type=vm:ImportViewModel}"
 		mc:Ignorable="d"
-		d:DataContext="{d:DesignInstance Type=local:ContextSettings}"
-		Background="{Binding MenuBackground}" Foreground="{Binding MenuForeground}" Height="375" MinHeight="325" MinWidth="225" MouseLeftButtonDown="Drag" ResizeMode="CanResize" ShowInTaskbar="False" Title="Sylver Ink: Import" Topmost="True" Width="325">
+		Background="{Binding AppSettings.MenuBackground}" Foreground="{Binding AppSettings.MenuForeground}" Height="375" MinHeight="325" MinWidth="225" MouseLeftButtonDown="Drag" ResizeMode="CanResize" ShowInTaskbar="False" Title="Sylver Ink: Import" Topmost="True" Width="325">
 	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="*"/>
@@ -23,8 +24,8 @@
 					<ColumnDefinition Width="Auto"/>
 					<ColumnDefinition Width="*"/>
 				</Grid.ColumnDefinitions>
-				<Button Click="Open_Click" Content="..." Height="20" HorizontalAlignment="Right" Margin="5,5,5,5" Width="20"/>
-				<TextBox Grid.Column="1" IsReadOnly="True" Margin="5,5,5,5" Text="{Binding ImportTarget}" TextChanged="Target_TextChanged"/>
+				<Button Command="{Binding OpenCommand}" Content="..." Height="20" HorizontalAlignment="Right" Margin="5,5,5,5" Width="20"/>
+				<TextBox Grid.Column="1" IsReadOnly="True" Margin="5,5,5,5" Text="{Binding ImportTarget, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 			</Grid>
 			<Grid Margin="0,25,0,0">
 				<Grid.ColumnDefinitions>
@@ -32,10 +33,11 @@
 					<ColumnDefinition Width="*"/>
 				</Grid.ColumnDefinitions>
 
-				<Button Click="Finalize_Click" Content="Import" IsEnabled="False" x:Name="DoImport"/>
-				<Button Click="CloseClick" Content="Close" Grid.Column="1" x:Name="CloseButton"/>
+				<Button Command="{Binding ImportCommand}" Content="Import" IsEnabled="{Binding CanImport, UpdateSourceTrigger=PropertyChanged}"/>
+				<Button Command="{Binding CloseCommand}" Content="Close" Grid.Column="1"/>
 			</Grid>
 		</StackPanel>
+		
 		<Grid HorizontalAlignment="Center" Margin="0,20" Grid.Row="1">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto"/>
@@ -48,20 +50,20 @@
 				<RowDefinition Height="*"/>
 			</Grid.RowDefinitions>
 			<Label Content="Adaptive notes:"/>
-			<CheckBox Grid.Column="1" IsChecked="False" Checked="AdaptiveChecked" HorizontalAlignment="Center" Unchecked="AdaptiveChecked" VerticalAlignment="Center" x:Name="AdaptiveCheckBox"/>
-			<Label Grid.Column="2" Content="(?)" Foreground="{Binding AccentForeground}" ToolTip="Attempt to automatically detect boundaries between notes."/>
+			<CheckBox Grid.Column="1" Command="{Binding ToggleAdaptiveCommand}" IsChecked="{Binding AdaptiveImport, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+			<Label Grid.Column="2" Content="(?)" Foreground="{Binding AppSettings.AccentForeground}" ToolTip="Attempt to automatically detect boundaries between notes."/>
 			<Label Content="Line tolerance:" Grid.Row="2"/>
-			<StackPanel Grid.Column="1" HorizontalAlignment="Center" Orientation="Horizontal" Grid.Row="2" x:Name="LTPanel">
-				<Button Click="LineToleranceChanged" Content="-" Width="20" x:Name="LTLess"/>
+			<StackPanel Grid.Column="1" HorizontalAlignment="Center" IsEnabled="{Binding ManualImport}" Orientation="Horizontal" Grid.Row="2">
+				<Button Command="{Binding LineToleranceChangeCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}" Content="-" Width="20"/>
 				<TextBox HorizontalContentAlignment="Center" IsReadOnly="True" Text="{Binding LineTolerance}" Width="20"/>
-				<Button Click="LineToleranceChanged" Content="+" Width="20" x:Name="LTMore"/>
+				<Button Command="{Binding LineToleranceChangeCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}" Content="+" Width="20"/>
 			</StackPanel>
-			<Label Grid.Column="2" Content="(?)" Foreground="{Binding AccentForeground}" Grid.Row="2" ToolTip="The number of blank lines to look for when separating the file into different notes."/>
+			<Label Grid.Column="2" Content="(?)" Foreground="{Binding AppSettings.AccentForeground}" Grid.Row="2" ToolTip="The number of blank lines to look for when separating the file into different notes."/>
 		</Grid>
-		<Border BorderBrush="{Binding MenuForeground}" BorderThickness="1" Grid.Row="2" Margin="20,5,20,20">
+		<Border BorderBrush="{Binding AppSettings.MenuForeground}" BorderThickness="1" Grid.Row="2" Margin="20,5,20,20">
 			<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-				<TextBlock Background="{Binding ListBackground}" FontFamily="{Binding MainFontFamily}" FontSize="{Binding MainFontSize}" Foreground="{Binding ListForeground}"
-						   Text="{Binding ImportData}" TextWrapping="WrapWithOverflow"/>
+				<TextBlock Background="{Binding AppSettings.ListBackground}" FontFamily="{Binding AppSettings.MainFontFamily}" FontSize="{Binding AppSettings.MainFontSize}" Foreground="{Binding AppSettings.ListForeground}"
+						   Text="{Binding StatusText}" TextWrapping="WrapWithOverflow"/>
 			</ScrollViewer>
 		</Border>
 	</Grid>

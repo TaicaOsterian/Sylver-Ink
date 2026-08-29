@@ -6,12 +6,14 @@
 	<Nullable>enable</Nullable>
 	<UseWPF>True</UseWPF>
 	<Platforms>AnyCPU;x64</Platforms>
+	<EnableWindowsTargeting>True</EnableWindowsTargeting>
+	<RuntimeIdentifier>win-x64</RuntimeIdentifier>
   </PropertyGroup>
   
   <PropertyGroup>
 	<SourceRevisionId>build$([System.DateTime]::UtcNow.ToString("yyyyMMdd"))</SourceRevisionId>
 	<NeutralLanguage>en-US</NeutralLanguage>
-	<Version>1.7.0</Version>
+	<Version>1.8.0</Version>
 	<UseWindowsForms>False</UseWindowsForms>
 	<Title>Sylver Ink</Title>
 	<Authors>taicanium,norvinsk.hunter,milesfarber</Authors>
@@ -38,7 +40,7 @@
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <DebugType>embedded</DebugType>
+	<DebugType>embedded</DebugType>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -46,14 +48,14 @@
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <DebugType>embedded</DebugType>
+	<DebugType>embedded</DebugType>
   </PropertyGroup>
   
   <ItemGroup>
-    <Compile Remove="publish\**" />
-    <EmbeddedResource Remove="publish\**" />
-    <None Remove="publish\**" />
-    <Page Remove="publish\**" />
+	<Compile Remove="publish\**" />
+	<EmbeddedResource Remove="publish\**" />
+	<None Remove="publish\**" />
+	<Page Remove="publish\**" />
   </ItemGroup>
   
   <ItemGroup>
@@ -90,6 +92,6 @@
   </ItemGroup>
   
   <ItemGroup>
-    <Page Include="App.xaml" />
+	<Page Include="App.xaml" />
   </ItemGroup>
 </Project>

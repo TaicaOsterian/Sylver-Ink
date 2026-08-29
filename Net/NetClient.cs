@@ -23,7 +23,7 @@ public class NetClient : IDisposable
 
 	public bool Active { get; private set; }
 	public bool Connected { get; private set; }
-	public System.Windows.Shapes.Ellipse? Indicator { get; private set; }
+	public System.Windows.Shapes.Ellipse? Indicator { get; }
 
 	public NetClient(Database DB)
 	{

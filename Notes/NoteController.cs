@@ -112,7 +112,6 @@ public partial class NoteController : IDisposable
 		for (int i = 0; i < Records.Count; i++)
 			Records[i].Serialize(_serializer);
 
-		Changed = false;
 		ReloadSerializer();
 	}
 
@@ -147,7 +146,7 @@ public partial class NoteController : IDisposable
 		{
 			EnforceNoForwardCompatibility = true;
 			_serializer?.Close();
-			MessageBox.Show($"This database was created in a newer format than the current version of Sylver Ink supports. Please update your installation before opening this database.", "Sylver Ink: Error", MessageBoxButton.OK, MessageBoxImage.Error);
+			MessageBox.Show("This database was created in a newer format than the current version of Sylver Ink supports. Please update your installation before opening this database.", "Sylver Ink: Error", MessageBoxButton.OK, MessageBoxImage.Error);
 			return;
 		}
 
@@ -241,7 +240,7 @@ public partial class NoteController : IDisposable
 			if (index >= Records.Count)
 				return false;
 
-			return Records.ElementAt(index) != null;	
+			return Records[index] != null;
 		}
 		catch
 		{
@@ -252,8 +251,7 @@ public partial class NoteController : IDisposable
 	public void InitializeRecords(bool newDatabase = true)
 	{
 		for (int i = (OpenQueries ?? []).Count; i > 0; i--)
-			if (UUID.Equals(OpenQueries?[i - 1].ResultRecord?.DB?.UUID, StringComparison.Ordinal))
-				OpenQueries?[i - 1].Close();
+			OpenQueries?[i - 1].RequestClose();
 
 		if (newDatabase)
 			Records.Clear();
@@ -274,7 +272,7 @@ public partial class NoteController : IDisposable
 		SerializeRecords();
 		ReloadSerializer();
 	}
-	
+
 	public bool Open(string path, bool writing = false, bool hidden = false)
 	{
 		_serializer = new()
@@ -314,8 +312,7 @@ public partial class NoteController : IDisposable
 		for (int i = RecordCount - 1; i > -1; i--)
 		{
 			for (int j = OpenQueries.Count - 1; j > -1; j--)
-				if (GetRecord(i)?.Equals(OpenQueries[j].ResultRecord) is true)
-					Concurrent(OpenQueries[j].Close);
+				Concurrent(OpenQueries[j].RequestClose, GetRecord(i));
 
 			var RecordDate = Records[i].GetCreatedObject().ToLocalTime();
 			var comparison = RecordDate.CompareTo(targetDate);

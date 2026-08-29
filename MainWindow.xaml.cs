@@ -1,10 +1,12 @@
 ﻿using SylverInk.Interop;
 using SylverInk.Net;
 using SylverInk.Notes;
+using SylverInk.XAML.ViewModels;
 using System;
 using System.ComponentModel;
 using System.IO;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using static SylverInk.CommonUtils;
 using static SylverInk.FileIO.FileUtils;
@@ -21,9 +23,12 @@ public partial class MainWindow : Window
 {
 	private bool ShellVerbsPassed;
 
+	public MainWindowViewModel ViewModel => (MainWindowViewModel)DataContext;
+
 	public MainWindow()
 	{
-		DataContext = CommonUtils.Settings;
+		DataContext = new MainWindowViewModel();
+		ViewModel.RequestSelectDatabase += SelectDatabaseTab;
 		InitializeComponent();
 	}
 
@@ -63,6 +68,7 @@ public partial class MainWindow : Window
 					e.Cancel = true;
 					return;
 				case MessageBoxResult.Yes:
+					ViewModel.GridEnabled = false;
 					Application.Current.Shutdown();
 					return;
 			}
@@ -75,7 +81,7 @@ public partial class MainWindow : Window
 				return;
 			case MessageBoxResult.Yes:
 				e.Cancel = true;
-				MainGrid.IsEnabled = false;
+				ViewModel.GridEnabled = false;
 
 				foreach (Database db in Databases)
 					Erase(GetLockFile(db.DBFile));
@@ -95,7 +101,24 @@ public partial class MainWindow : Window
 		}
 	}
 
-	private void MainWindow_SizeChanged(object? sender, SizeChangedEventArgs e) => DeferUpdateRecentNotes();
+	private void MainWindow_SizeChanged(object? sender, SizeChangedEventArgs e)
+	{
+		MainWindowViewModel.OnSizeChanged();
+	}
+
+	private void MenuTabChanged(object? sender, SelectionChangedEventArgs e)
+	{
+		if (sender is not TabControl control)
+			return;
+
+		if (control.SelectedItem is TabItem item && item.Tag is Database newDB && !newDB.Equals(CurrentDatabase))
+		{
+			CurrentDatabase = newDB;
+			RecentNotesDirty = true;
+			CommonUtils.Settings.SearchResults.Clear();
+			DeferUpdateRecentNotes();
+		}
+	}
 
 	protected override void OnClosed(EventArgs e)
 	{
@@ -135,8 +158,10 @@ public partial class MainWindow : Window
 
 		// Documents subdirectory initialization
 		foreach (var folder in Subfolders)
+		{
 			if (!Directory.Exists(folder.Value))
 				Directory.CreateDirectory(folder.Value);
+		}
 
 		// (If initialization was interrupted, prevent marking it as completed)
 		if (!IsShuttingDown())
@@ -156,5 +181,18 @@ public partial class MainWindow : Window
 		Erase(UpdateHandler.UpdateLockUri);
 		Erase(UpdateHandler.TempUri);
 		await UpdateHandler.CheckForUpdates();
+	}
+
+	private void SelectDatabaseTab(string filePath)
+	{
+		// Find the tab with the matching file path and select it
+		foreach (TabItem item in DatabasesPanel.Items)
+		{
+			if (item.Tag is Database db && Path.GetFullPath(db.DBFile) == filePath)
+			{
+				DatabasesPanel.SelectedItem = item;
+				break;
+			}
+		}
 	}
 }

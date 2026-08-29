@@ -28,9 +28,14 @@ public static class FlowDocumentUtils
 
 		return content.ToString().Trim();
 	}
-	
-	public static void ScrollToText(RichTextBox box, string text, LogicalDirection direction = LogicalDirection.Forward)
+
+	public static void ScrollToText(FlowDocument? document, string text, LogicalDirection direction = LogicalDirection.Forward)
 	{
+		if (document is null)
+			return;
+
+		var box = (RichTextBox)document.Parent;
+
 		int index = 0;
 		string plaintext = (direction == LogicalDirection.Forward
 			? new TextRange(box.CaretPosition, box.Document.ContentEnd)
@@ -105,7 +110,9 @@ public static class FlowDocumentUtils
 					content.AppendLine();
 				}
 				else if (element is LineBreak)
+				{
 					content.AppendLine();
+				}
 
 				return textPointer.GetNextContextPosition(LogicalDirection.Forward);
 			default:

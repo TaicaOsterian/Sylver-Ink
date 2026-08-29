@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SylverInk.XAML.Objects.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -18,6 +19,7 @@ public partial class ColorPicker : UserControl
 
 	public ColorPicker()
 	{
+		DataContext = new ColorPickerViewModel();
 		InitializeComponent();
 	}
 

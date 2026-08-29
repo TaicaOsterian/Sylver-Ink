@@ -5,8 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text.RegularExpressions;
-using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Documents;
 using static SylverInk.CommonUtils;
 using static SylverInk.Notes.DatabaseUtils;
@@ -56,7 +54,7 @@ public partial class NoteRecord
 
 			dtObject = dtObject.ToLocalTime();
 
-			return $"{dtObject.ToShortDateString()} {dtObject.ToShortTimeString()}";
+			return $"{dtObject:d} {dtObject:t}";
 		}
 	}
 
@@ -142,7 +140,7 @@ public partial class NoteRecord
 	{
 		CreateRevision(TextConverter.Save(document, TextFormat.Xaml));
 		DB?.Autosave();
-		DeleteRevision(GetNumRevisions());
+		DeleteRevision(GetNumRevisions() - 1);
 	}
 
 	public void CreateRevision(string NewVersion)
@@ -194,7 +192,8 @@ public partial class NoteRecord
 		if (index >= GetNumRevisions())
 			return;
 
-		Revisions.RemoveAt(index);
+		if (GetNumRevisions() > 0)
+			Revisions.RemoveAt(index);
 
 		LastChange = GetNumRevisions() == 0 ? Created : Revisions[GetNumRevisions() - 1].Created;
 		LastChangeObject = DateTime.FromBinary(LastChange);
@@ -315,9 +314,13 @@ public partial class NoteRecord
 		ExtractTags();
 
 		foreach (Match match in matches)
+		{
 			foreach (Group group in match.Groups.Values)
+			{
 				if (Tags.Contains(group.Value.ToLowerInvariant()))
 					outCount++;
+			}
+		}
 
 		LastQuery = format;
 		return LastMatchCount = outCount;
@@ -451,31 +454,14 @@ public partial class NoteRecord
 		Locked = false;
 
 		foreach (var query in OpenQueries)
-		{
-			if (!query.ResultRecord?.Equals(this) is true)
-				continue;
-
-			query.LastChangedLabel.Content = GetLastChange();
-			query.ResultBlock.IsEnabled = true;
-		}
+			query.RequestUnlock(this);
 
 		foreach (var item in OpenTabs)
 		{
-			if (!item.Tag.Equals(this))
-				continue;
-
 			if (item.Content is not NoteTab tab)
 				continue;
 
-			if (tab.Content is not Grid grid)
-				continue;
-
-			foreach (UIElement child in grid.Children)
-			{
-				child.SetValue(UIElement.IsEnabledProperty, true);
-				if (child is Label label)
-					label.Content = "Entry last modified: " + GetLastChange();
-			}
+			tab.RequestUnlock(this);
 		}
 	}
 

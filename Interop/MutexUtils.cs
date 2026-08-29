@@ -38,15 +38,12 @@ public static class MutexUtils
 		using (StreamWriter writer = new(client))
 			writer.Write(string.Join("\t", args));
 
-		if (args.Length > 1)
-			return true;
-
-		return false;
+		return args.Length > 1;
 	}
 
 	private async static void HandleMutexPipe(CancellationToken token)
 	{
-		using var server = new NamedPipeServerStream(MutexName);
+		await using var server = new NamedPipeServerStream(MutexName);
 
 		while (mutex != null)
 		{
@@ -101,8 +98,10 @@ public static class MutexUtils
 		var wideBreak = string.Empty;
 
 		foreach (string dbFile in InitComplete ? Databases.Select(db => db.DBFile) : Settings.LastDatabases)
+		{
 			if (Path.GetFullPath(dbFile).Equals(Path.GetFullPath(filename), StringComparison.Ordinal))
 				wideBreak = Path.GetFullPath(dbFile);
+		}
 
 		if (string.IsNullOrWhiteSpace(wideBreak))
 		{

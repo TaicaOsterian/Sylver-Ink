@@ -78,7 +78,7 @@ public static class NetworkUtils
 
 		Flags = (byte?)(workingList[5] & 15);
 
-		return new([..convertedList]);
+		return new([.. convertedList]);
 	}
 
 	private static int IntFromBytes(byte[] data) =>

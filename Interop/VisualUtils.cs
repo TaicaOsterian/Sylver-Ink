@@ -10,7 +10,7 @@ namespace SylverInk.Interop;
 /// <summary>
 /// Helper functions serving visual tree and Drawing type-conversion needs.
 /// </summary>
-public class VisualUtils
+public static class VisualUtils
 {
 	public static SolidColorBrush BrushFromBytes(string data)
 	{
@@ -80,9 +80,9 @@ public class VisualUtils
 			if (popup.Child is not Border popupBorder)
 				continue;
 
-			BindingOperations.SetBinding(popupBorder, Control.BackgroundProperty, new Binding("MenuBackground"));
-			BindingOperations.SetBinding(popupBorder, Control.BorderBrushProperty, new Binding("AccentBackground"));
-			BindingOperations.SetBinding(popupBorder, Control.ForegroundProperty, new Binding("MenuForeground"));
+			BindingOperations.SetBinding(popupBorder, Control.BackgroundProperty, new Binding("AppSettings.MenuBackground"));
+			BindingOperations.SetBinding(popupBorder, Control.BorderBrushProperty, new Binding("AppSettings.AccentBackground"));
+			BindingOperations.SetBinding(popupBorder, Control.ForegroundProperty, new Binding("AppSettings.MenuForeground"));
 			popupBorder.BorderThickness = new(1);
 
 			if (popupBorder.Child is not ScrollViewer viewer)
@@ -96,7 +96,7 @@ public class VisualUtils
 				if (viewerChild is not System.Windows.Shapes.Rectangle rect)
 					continue;
 
-				BindingOperations.SetBinding(rect, System.Windows.Shapes.Shape.FillProperty, new Binding("MenuBackground"));
+				BindingOperations.SetBinding(rect, System.Windows.Shapes.Shape.FillProperty, new Binding("AppSettings.MenuBackground"));
 			}
 
 			return;

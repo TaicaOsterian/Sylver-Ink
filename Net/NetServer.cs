@@ -30,12 +30,13 @@ public class NetServer : IDisposable
 
 	public bool Active { get; private set; }
 	public string? AddressCode { get; private set; }
-	public System.Windows.Shapes.Ellipse? Indicator { get; private set; }
+	public System.Windows.Shapes.Ellipse? Indicator { get; }
 	public bool Serving { get; private set; }
 
 	public NetServer(Database DB)
 	{
-		Indicator = new() {
+		Indicator = new()
+		{
 			StrokeThickness = 1.0,
 			Tag = DB
 		};
@@ -172,7 +173,7 @@ public class NetServer : IDisposable
 		Address = IPAddress.Loopback;
 		Serving = false;
 		UpdateIndicator(Indicator, IndicatorStatus.Inactive);
-		
+
 		this.Flags = Math.Min((byte)15, Flags);
 
 		for (int i = 0; i < DNSAddresses.Length; i++)

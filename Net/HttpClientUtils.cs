@@ -18,10 +18,10 @@ public static class HttpClientUtils
 	/// <returns>An awaitable <c>Task</c> representing the download operation.</returns>
 	public static async Task DownloadFileTaskAsync(this HttpClient client, string uri, string FileName, CancellationTokenSource tokenSource)
 	{
-		using var fs = new FileStream(FileName, FileMode.Create);
+		await using var fs = new FileStream(FileName, FileMode.Create);
 		using var response = await client.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead);
 
-		using var download = await response.Content.ReadAsStreamAsync(tokenSource.Token);
+		await using var download = await response.Content.ReadAsStreamAsync(tokenSource.Token);
 		await CopyToAsync(download, fs, response.Content.Headers.ContentLength ?? 0, tokenSource.Token);
 	}
 
@@ -44,7 +44,8 @@ public static class HttpClientUtils
 		{
 			await destination.WriteAsync(buffer.AsMemory(0, bytesRead), cancellationToken).ConfigureAwait(false);
 			totalBytesRead += bytesRead;
-			Concurrent(UpdateHandler.UpdateWindow.ReportProgress, (double)totalBytesRead / totalSize);
+
+			Concurrent(() => UpdateHandler.UpdateWindow.ViewModel.Progress = (double)totalBytesRead / totalSize);
 		}
 	}
 }

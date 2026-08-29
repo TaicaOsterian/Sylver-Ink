@@ -1,5 +1,5 @@
 ﻿using SylverInk.Notes;
-using SylverInk.XAMLUtils;
+using SylverInk.XAML.ViewModels;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,17 +15,17 @@ namespace SylverInk.XAML;
 public partial class Search : Window
 {
 	public string Query { get; private set; } = string.Empty;
+	public SearchViewModel ViewModel => (SearchViewModel)DataContext;
 
 	public Search()
 	{
-		DataContext = CommonUtils.Settings;
+		DataContext = new SearchViewModel();
+		ViewModel.RequestClose += (_, _) => Close();
 		InitializeComponent();
 		CreateContextMenu();
 	}
 
-	private void CloseClick(object? sender, RoutedEventArgs e) => Close();
-
-	private async void ContextDelete(object? sender, RoutedEventArgs e)
+	private void ContextDelete(object? sender, RoutedEventArgs e)
 	{
 		if (RecentSelection is null)
 			return;
@@ -34,8 +34,6 @@ public partial class Search : Window
 			return;
 
 		CurrentDatabase.DeleteRecord(RecentSelection);
-
-		await this.PerformSearch();
 
 		return;
 	}
@@ -51,7 +49,10 @@ public partial class Search : Window
 	}
 	private void CreateContextMenu()
 	{
-		ContextMenu menu = new();
+		ContextMenu menu = new()
+		{
+			DataContext = CommonUtils.Settings
+		};
 
 		MenuItem itemOpen = new()
 		{
@@ -87,31 +88,11 @@ public partial class Search : Window
 		if (e.ChangedButton == MouseButton.Right)
 			return;
 
-		OpenQuery(record)?.ScrollToText(Query);
+		OpenQuery(record)?.ViewModel.ScrollToText(Query);
 	}
 
 	private void OnClose(object? sender, EventArgs e)
 	{
 		CommonUtils.Settings.SearchResults.Clear();
-	}
-
-	private async void QueryClick(object? sender, RoutedEventArgs e)
-	{
-		if (sender is not Button button)
-			return;
-
-		button.Content = "Querying...";
-		button.IsEnabled = false;
-
-		Query = SearchText.Text ?? string.Empty;
-
-		await this.PerformSearch();
-	}
-
-	private async void SearchLoaded(object sender, RoutedEventArgs e)
-	{
-		Query = string.Empty;
-
-		await this.PerformSearch();
 	}
 }

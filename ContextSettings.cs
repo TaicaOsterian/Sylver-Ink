@@ -1,4 +1,5 @@
 ﻿using SylverInk.Notes;
+using SylverInk.XAML;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -26,8 +27,6 @@ public class ContextSettings : INotifyPropertyChanged
 	private bool _firstRun = true;
 	private string _importData = string.Empty;
 	private string _importTarget = string.Empty;
-	private string _lastActiveDatabase = string.Empty;
-	private readonly List<string> _lastDatabases = [];
 	private int _lineTolerance;
 	private Brush? _listBackgound = Brushes.White;
 	private Brush? _listForegound = Brushes.Black;
@@ -40,35 +39,194 @@ public class ContextSettings : INotifyPropertyChanged
 	private double _noteClickthroughInverse = 4.0;
 	private double _noteTransparency;
 	public event PropertyChangedEventHandler? PropertyChanged;
-	private readonly ObservableCollection<NoteRecord> _recentNotes = [];
-	private readonly ObservableCollection<NoteRecord> _searchResults = [];
 	private bool _searchResultsOnTop = true;
 	private bool _searchResultsInTaskbar;
 	private bool _snapSearchResults = true;
 
-	public Brush? AccentBackground { get => _accentBackgound; set { _accentBackgound = value; OnPropertyChanged(); } }
-	public Brush? AccentForeground { get => _accentForegound; set { _accentForegound = value; OnPropertyChanged(); } }
-	public bool FirstRun { get => _firstRun; set { _firstRun = value; OnPropertyChanged(); } }
-	public string ImportData { get => _importData; set { _importData = value; OnPropertyChanged(); } }
-	public string ImportTarget { get => _importTarget; set { _importTarget = value; OnPropertyChanged(); } }
-	public string LastActiveDatabase { get => _lastActiveDatabase; set => _lastActiveDatabase = value; }
-	public List<string> LastDatabases { get => _lastDatabases; }
-	public int LineTolerance { get => _lineTolerance; set { _lineTolerance = Math.Min(36, Math.Max(0, value)); OnPropertyChanged(); } }
-	public Brush? ListBackground { get => _listBackgound; set { _listBackgound = value; OnPropertyChanged(); } }
-	public Brush? ListForeground { get => _listForegound; set { _listForegound = value; OnPropertyChanged(); } }
-	public FontFamily? MainFontFamily { get => _mainFontFamily; set { _mainFontFamily = value; MainTypeFace = new(value, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal); OnPropertyChanged(); } }
-	public double MainFontSize { get => _mainFontSize; set { _mainFontSize = Math.Min(24.0, Math.Max(10.0, value)); OnPropertyChanged(); } }
-	public Typeface? MainTypeFace { get => _mainTypeFace; set { _mainTypeFace = value; OnPropertyChanged(); } }
-	public Brush? MenuBackground { get => _menuBackgound; set { _menuBackgound = value; OnPropertyChanged(); } }
-	public Brush? MenuForeground { get => _menuForegound; set { _menuForegound = value; OnPropertyChanged(); } }
-	public double NoteClickthrough { get => _noteClickthrough; set { _noteClickthrough = value; NoteClickthroughInverse = 1.0 / value; OnPropertyChanged(); } }
-	public double NoteClickthroughInverse { get => _noteClickthroughInverse; set { _noteClickthroughInverse = value; OnPropertyChanged(); } }
-	public double NoteTransparency { get => _noteTransparency; set { _noteTransparency = value; OnPropertyChanged(); } }
-	public ObservableCollection<NoteRecord> RecentNotes { get => _recentNotes; }
-	public ObservableCollection<NoteRecord> SearchResults { get => _searchResults; }
-	public bool SearchResultsOnTop { get => _searchResultsOnTop; set { _searchResultsOnTop = value; SearchResultsInTaskbar = !value; OnPropertyChanged(); } }
-	public bool SearchResultsInTaskbar { get => _searchResultsInTaskbar; private set { _searchResultsInTaskbar = value; OnPropertyChanged(); } }
-	public bool SnapSearchResults { get => _snapSearchResults; set { _snapSearchResults = value; OnPropertyChanged(); } }
+	public Brush? AccentBackground
+	{
+		get => _accentBackgound;
+		set
+		{
+			_accentBackgound = value;
+			OnPropertyChanged();
+		}
+	}
+	public Brush? AccentForeground
+	{
+		get => _accentForegound;
+		set
+		{
+			_accentForegound = value;
+			OnPropertyChanged();
+		}
+	}
+	public List<FontFamily> AvailableFonts { get; } = [];
+	public FontFamily? DefaultFont { get; private set; }
+	private string[] DefaultFonts { get; } = ["Segoe UI", "Helvetica Neue", "Arial", "Noto Sans", "Liberation Sans", "DejaVu Sans", "sans‑serif"];
+	public bool FirstRun
+	{
+		get => _firstRun;
+		set
+		{
+			_firstRun = value;
+			OnPropertyChanged();
+		}
+	}
+	public string ImportData
+	{
+		get => _importData;
+		set
+		{
+			_importData = value;
+			OnPropertyChanged();
+		}
+	}
+	public string ImportTarget
+	{
+		get => _importTarget;
+		set
+		{
+			_importTarget = value;
+			OnPropertyChanged();
+		}
+	}
+	public string LastActiveDatabase { get; set; } = string.Empty;
+	public List<string> LastDatabases { get; } = [];
+	public int LineTolerance
+	{
+		get => _lineTolerance;
+		set
+		{
+			_lineTolerance = Math.Min(36, Math.Max(0, value));
+			OnPropertyChanged();
+		}
+	}
+	public Brush? ListBackground
+	{
+		get => _listBackgound;
+		set
+		{
+			_listBackgound = value;
+			OnPropertyChanged();
+		}
+	}
+	public Brush? ListForeground
+	{
+		get => _listForegound;
+		set
+		{
+			_listForegound = value;
+			OnPropertyChanged();
+		}
+	}
+	public FontFamily? MainFontFamily
+	{
+		get => _mainFontFamily;
+		set
+		{
+			_mainFontFamily = value; MainTypeFace = new(value, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
+			OnPropertyChanged();
+		}
+	}
+	public double MainFontSize
+	{
+		get => _mainFontSize;
+		set
+		{
+			_mainFontSize = Math.Min(24.0, Math.Max(10.0, value));
+			OnPropertyChanged();
+		}
+	}
+	public Typeface? MainTypeFace
+	{
+		get => _mainTypeFace;
+		set
+		{
+			_mainTypeFace = value;
+			OnPropertyChanged();
+		}
+	}
+	public Brush? MenuBackground
+	{
+		get => _menuBackgound;
+		set
+		{
+			_menuBackgound = value;
+			OnPropertyChanged();
+		}
+	}
+	public Brush? MenuForeground
+	{
+		get => _menuForegound;
+		set
+		{
+			_menuForegound = value;
+			OnPropertyChanged();
+		}
+	}
+	public double NoteClickthrough
+	{
+		get => _noteClickthrough;
+		set
+		{
+			_noteClickthrough = value; NoteClickthroughInverse = 1.0 / value;
+			OnPropertyChanged();
+		}
+	}
+	public double NoteClickthroughInverse
+	{
+		get => _noteClickthroughInverse;
+		set
+		{
+			_noteClickthroughInverse = value;
+			OnPropertyChanged();
+		}
+	}
+	public double NoteTransparency
+	{
+		get => _noteTransparency;
+		set
+		{
+			_noteTransparency = value;
+
+			foreach (SearchResult note in OpenQueries)
+			{
+				if (!note.IsActive)
+					note.Opacity = 1.0 - (value * 0.01);
+			}
+
+			OnPropertyChanged();
+		}
+	}
+	public ObservableCollection<NoteRecord> RecentNotes { get; } = [];
+	public ObservableCollection<NoteRecord> SearchResults { get; } = [];
+	public bool SearchResultsOnTop
+	{
+		get => _searchResultsOnTop;
+		set
+		{
+			_searchResultsOnTop = value; SearchResultsInTaskbar = !value;
+			OnPropertyChanged();
+		}
+	}
+	public bool SearchResultsInTaskbar
+	{
+		get => _searchResultsInTaskbar; private set
+		{
+			_searchResultsInTaskbar = value;
+			OnPropertyChanged();
+		}
+	}
+	public bool SnapSearchResults
+	{
+		get => _snapSearchResults;
+		set
+		{
+			_snapSearchResults = value;
+			OnPropertyChanged();
+		}
+	}
 	public string VersionString { get; } = $"v. {Assembly.GetExecutingAssembly().GetName().Version?.ToString(3)} © Taica, {GetBuildYear(Assembly.GetExecutingAssembly())}";
 
 	private static int GetBuildYear(Assembly assembly)
@@ -84,8 +242,23 @@ public class ContextSettings : INotifyPropertyChanged
 		return default;
 	}
 
+	private void InitFonts()
+	{
+		AvailableFonts.Clear();
+		AvailableFonts.AddRange(Fonts.SystemFontFamilies);
+		AvailableFonts.Sort(new Comparison<FontFamily>((f1, f2) => string.CompareOrdinal(f1.Source, f2.Source)));
+
+		for (int i = 0; i < AvailableFonts.Count && DefaultFont is null; i++)
+		{
+			if (DefaultFonts.Contains(AvailableFonts[i].Source))
+				DefaultFont ??= AvailableFonts[i];
+		}
+	}
+
 	public async Task Load()
 	{
+		InitFonts();
+
 		if (!File.Exists(SettingsFile))
 			return;
 
@@ -127,8 +300,11 @@ public class ContextSettings : INotifyPropertyChanged
 					break;
 				case "LastActiveNotes":
 					foreach (var note in keyValue[1].Split(';').Distinct())
+					{
 						if (!string.IsNullOrWhiteSpace(note))
 							LastActiveNotes.Add(note);
+					}
+
 					break;
 				case "LastActiveNotesHeight":
 					foreach (var sHeight in keyValue[1].Split(';').Distinct())
@@ -179,8 +355,10 @@ public class ContextSettings : INotifyPropertyChanged
 					LastDatabases.AddRange(keyValue[1].Replace("?\\", DocumentsFolder).Split(';').Distinct().Where(File.Exists));
 
 					foreach (var file in LastDatabases)
+					{
 						if (!Databases.Any(db => Path.GetFullPath(db.DBFile).Equals(Path.GetFullPath(file), StringComparison.Ordinal)))
 							await Database.Create(file);
+					}
 
 					if (Databases.Count != 0)
 						break;
@@ -256,11 +434,11 @@ public class ContextSettings : INotifyPropertyChanged
 		$"FontFamily:{MainFontFamily?.Source}",
 		$"FontSize:{MainFontSize}",
 		$"LastActiveDatabase:{CurrentDatabase.Name}",
-		$"LastActiveNotes:{string.Join(';', OpenQueries.Select(query => query.ResultRecord?.DB?.Name + ":" + query.ResultRecord?.Index))}",
-		$"LastActiveNotesHeight:{string.Join(';', OpenQueries.Select(query => query.ResultRecord?.DB?.Name + ":" + $"{query.ResultRecord?.Index}:{query.Height}"))}",
-		$"LastActiveNotesLeft:{string.Join(';', OpenQueries.Select(query => query.ResultRecord?.DB?.Name + ":" + $"{query.ResultRecord?.Index}:{query.Left}"))}",
-		$"LastActiveNotesTop:{string.Join(';', OpenQueries.Select(query => query.ResultRecord?.DB?.Name + ":" + $"{query.ResultRecord?.Index}:{query.Top}"))}",
-		$"LastActiveNotesWidth:{string.Join(';', OpenQueries.Select(query => query.ResultRecord?.DB?.Name + ":" + $"{query.ResultRecord?.Index}:{query.Width}"))}",
+		$"LastActiveNotes:{string.Join(';', OpenQueries.Select(query => query.ViewModel.Record.DB?.Name + ":" + query.ViewModel.Record.Index))}",
+		$"LastActiveNotesHeight:{string.Join(';', OpenQueries.Select(query => query.ViewModel.Record.DB?.Name + ":" + $"{query.ViewModel.Record.Index}:{query.Height}"))}",
+		$"LastActiveNotesLeft:{string.Join(';', OpenQueries.Select(query => query.ViewModel.Record.DB?.Name + ":" + $"{query.ViewModel.Record.Index}:{query.Left}"))}",
+		$"LastActiveNotesTop:{string.Join(';', OpenQueries.Select(query => query.ViewModel.Record.DB?.Name + ":" + $"{query.ViewModel.Record.Index}:{query.Top}"))}",
+		$"LastActiveNotesWidth:{string.Join(';', OpenQueries.Select(query => query.ViewModel.Record.DB?.Name + ":" + $"{query.ViewModel.Record.Index}:{query.Width}"))}",
 		$"LastDatabases:{string.Join(';', DatabaseFiles.Distinct().Where(File.Exists)).Replace(DocumentsFolder, "?\\")}",
 		$"ListBackground:{BytesFromBrush(ListBackground)}",
 		$"ListForeground:{BytesFromBrush(ListForeground)}",

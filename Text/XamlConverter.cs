@@ -9,8 +9,8 @@ namespace SylverInk.Text;
 
 public partial class XamlConverter : ITextConverter
 {
-	private readonly static string FlowDocumentClosing = "</FlowDocument>";
-	private readonly static string FlowDocumentOpening = @"<FlowDocument xmlns=""http://schemas.microsoft.com/winfx/2006/xaml/presentation"">";
+	private const string FlowDocumentClosing = "</FlowDocument>";
+	private const string FlowDocumentOpening = @"<FlowDocument xmlns=""http://schemas.microsoft.com/winfx/2006/xaml/presentation"">";
 
 	public string Convert(string text, TextFormat sourceFormat) => sourceFormat switch
 	{

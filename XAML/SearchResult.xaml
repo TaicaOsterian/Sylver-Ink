@@ -4,11 +4,13 @@
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:local="clr-namespace:SylverInk"
+		xmlns:utils="clr-namespace:SylverInk.XAMLUtils"
+		xmlns:vm="clr-namespace:SylverInk.XAML.ViewModels"
 		mc:Ignorable="d"
-		d:DataContext="{d:DesignInstance Type=local:ContextSettings}"
+		d:DataContext="{d:DesignInstance Type=vm:SearchResultViewModel}"
 		Activated="WindowActivated" AllowsTransparency="True"
-		Background="{x:Null}" Closed="Result_Closed" Deactivated="WindowDeactivated" Height="225" Loaded="WindowLoaded" MinHeight="125" MinWidth="175" MouseDown="WindowMouseDown" MouseEnter="WindowMouseEnter" MouseLeave="WindowMouseLeave" MouseMove="WindowMove" MouseUp="WindowMouseUp" ResizeMode="CanResizeWithGrip" ShowInTaskbar="{Binding SearchResultsInTaskbar}" Title="Sylver Ink: Sticky Note" Topmost="{Binding SearchResultsOnTop}" Width="225" WindowStyle="None">
-	<Border Background="{Binding MenuBackground}" BorderBrush="{Binding AccentBackground}" BorderThickness="1.5" CornerRadius="6">
+		Background="{x:Null}" Closed="Result_Closed" Deactivated="WindowDeactivated" Height="225" Loaded="WindowLoaded" MinHeight="125" MinWidth="175" MouseDown="WindowMouseDown" MouseEnter="WindowMouseEnter" MouseLeave="WindowMouseLeave" MouseMove="WindowMove" MouseUp="WindowMouseUp" ResizeMode="CanResizeWithGrip" ShowInTaskbar="{Binding AppSettings.SearchResultsInTaskbar}" Title="Sylver Ink: Sticky Note" Topmost="{Binding AppSettings.SearchResultsOnTop}" Width="225" WindowStyle="None">
+	<Border Background="{Binding AppSettings.MenuBackground}" BorderBrush="{Binding AppSettings.AccentBackground}" BorderThickness="1.5" CornerRadius="6">
 		<Grid>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="*"/>
@@ -19,15 +21,21 @@
 				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="Auto"/>
 			</Grid.RowDefinitions>
-			<RichTextBox AcceptsReturn="True" Grid.ColumnSpan="2" Height="Auto"
+			<RichTextBox AcceptsReturn="True"
+						 utils:RichTextBoxUtils.BoundCaret="{Binding CaretPosition, Mode=TwoWay}"
+						 Grid.ColumnSpan="2"
+						 utils:RichTextBoxUtils.Document="{Binding Document, Mode=TwoWay}"
+						 Height="Auto"
+						 IsEnabled="{Binding IsEnabled}"
 						 Margin="5,5,5,0"
-						 ScrollViewer.VerticalScrollBarVisibility="Auto" TextChanged="ResultBlock_TextChanged"
-						 UndoLimit="10"
-						 x:Name="ResultBlock">
+						 utils:RichTextBoxUtils.ObserveCaret="True"
+						 ScrollViewer.VerticalScrollBarVisibility="Auto"
+						 TextChanged="ResultBlock_TextChanged"
+						 UndoLimit="20">
 			</RichTextBox>
-			<Label Grid.ColumnSpan="2" FontStyle="Italic" HorizontalAlignment="Center" Grid.Row="1" x:Name="LastChangedLabel"/>
-			<Button Click="ViewClick" Content="View..." Margin="0,2" Grid.Row="2" Width="50" x:Name="ViewButton"/>
-			<Button Click="CloseClick" Grid.Column="1" Content="Close" Margin="0,2" Grid.Row="2" Width="50" x:Name="CloseButton"/>
+			<Label Content="{Binding LastChange}" Grid.ColumnSpan="2" FontStyle="Italic" HorizontalAlignment="Center" Grid.Row="1"/>
+			<Button Command="{Binding ViewCommand}" Content="View..." IsEnabled="{Binding IsFocused}" Margin="0,2" Grid.Row="2" Width="50"/>
+			<Button Command="{Binding CloseCommand}" Grid.Column="1" Content="Close" IsEnabled="{Binding IsFocused}" Margin="0,2" Grid.Row="2" Width="50"/>
 		</Grid>
 	</Border>
 </Window>

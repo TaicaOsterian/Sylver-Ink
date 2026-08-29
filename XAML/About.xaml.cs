@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using SylverInk.XAML.ViewModels;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 
@@ -9,13 +10,14 @@ namespace SylverInk.XAML;
 /// </summary>
 public partial class About : Window
 {
+	public AboutViewModel ViewModel => (AboutViewModel)DataContext;
+
 	public About()
 	{
-		DataContext = CommonUtils.Settings;
+		DataContext = new AboutViewModel();
+		ViewModel.RequestClose += (_, _) => Close();
 		InitializeComponent();
 	}
-
-	private void CloseClick(object? sender, RoutedEventArgs e) => Close();
 
 	private void Drag(object? sender, MouseButtonEventArgs e) => DragMove();
 

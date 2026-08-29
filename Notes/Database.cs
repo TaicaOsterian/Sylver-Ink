@@ -21,14 +21,14 @@ public class Database : IDisposable
 	private StackPanel? HeaderPanel;
 
 	public bool Changed { get => Controller.Changed; set => Controller.Changed = value; }
-	public NetClient Client { get; private set; }
+	public NetClient Client { get; }
 	public long? Created { get; private set; }
 	public string DBFile { get; set; } = string.Empty;
 	public int Format { get => Controller.Format; set => Controller.Format = value; }
 	public bool Loaded { get; private set; }
 	public string? Name { get => Controller.Name; set => Controller.Name = value; }
 	public int RecordCount => Controller.RecordCount;
-	public NetServer Server { get; private set; }
+	public NetServer Server { get; }
 	public string UUID { get => Controller.UUID; set => Controller.UUID = value; }
 	public Dictionary<string, double> WordPercentages => Controller.WordPercentages;
 
@@ -149,8 +149,7 @@ public class Database : IDisposable
 		}
 
 		for (int index = OpenQueries.Count - 1; index > -1; index--)
-			if (record.Equals(OpenQueries[index]?.ResultRecord))
-				OpenQueries[index]?.Close();
+			OpenQueries[index].RequestClose();
 
 		RemoveRecordTab(record);
 	}
@@ -218,7 +217,7 @@ public class Database : IDisposable
 
 	public override int GetHashCode() => int.Parse(UUID.Replace("-", string.Empty)[^8..], NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo);
 
-	public object GetHeader()
+	public StackPanel GetHeader()
 	{
 		string? headerContent;
 		Label label;
@@ -251,7 +250,7 @@ public class Database : IDisposable
 
 		HeaderPanel = new StackPanel()
 		{
-			Margin = new(0),
+			Margin = new(0, -4, 0, 0),
 			Orientation = Orientation.Horizontal,
 			ToolTip = Name,
 		};
@@ -289,7 +288,7 @@ public class Database : IDisposable
 			if (Controller.EnforceNoForwardCompatibility)
 			{
 				Loaded = false;
-				throw new NotSupportedException($"The program attempted to load a database file with a newer format than it supports.");
+				throw new NotSupportedException("The program attempted to load a database file with a newer format than it supports.");
 			}
 
 			Loaded = Controller.Loaded = true;
@@ -308,7 +307,7 @@ public class Database : IDisposable
 		if (Controller.EnforceNoForwardCompatibility)
 		{
 			Loaded = false;
-			throw new NotSupportedException($"The program attempted to load a database file with a newer format than it supports.");
+			throw new NotSupportedException("The program attempted to load a database file with a newer format than it supports.");
 		}
 
 		Loaded = Controller.Loaded;
@@ -396,7 +395,9 @@ public class Database : IDisposable
 				overwrite = true;
 			}
 			else
+			{
 				Directory.Move(oldPath, newPath);
+			}
 		}
 
 		var adjustedPath = Path.Join(Path.GetDirectoryName(newFile), Path.GetFileName(oldFile));

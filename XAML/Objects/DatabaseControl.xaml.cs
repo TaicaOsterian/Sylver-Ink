@@ -1,4 +1,5 @@
 ﻿using SylverInk.Notes;
+using SylverInk.XAML.Objects.ViewModels;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -13,31 +14,11 @@ namespace SylverInk.XAML.Objects;
 /// </summary>
 public partial class DatabaseControl : UserControl
 {
-    public DatabaseControl()
-    {
-        InitializeComponent();
-		CreateContextMenu();
-	}
-
-	private void ButtonClick(object? sender, RoutedEventArgs e)
+	public DatabaseControl()
 	{
-		var senderObject = (Button?)sender;
-
-		switch (senderObject?.Content)
-		{
-			case "Import":
-				ImportWindow = new();
-				break;
-			case "Search":
-				SearchWindow = new();
-				break;
-			case "Settings":
-				SettingsWindow = new();
-				break;
-			case "Exit":
-				Application.Current.MainWindow.Close();
-				break;
-		}
+		DataContext = new DatabaseControlViewModel();
+		InitializeComponent();
+		CreateContextMenu();
 	}
 
 	private void ContextDelete(object? sender, RoutedEventArgs e)
@@ -65,7 +46,10 @@ public partial class DatabaseControl : UserControl
 
 	private void CreateContextMenu()
 	{
-		ContextMenu menu = new();
+		ContextMenu menu = new()
+		{
+			DataContext = CommonUtils.Settings
+		};
 
 		MenuItem itemOpen = new()
 		{

@@ -49,7 +49,14 @@ public static partial class CommonUtils
 
 	public static bool AbortRun { get; set; }
 	public static string DateFormat { get; } = "yyyy-MM-dd HH:mm:ss";
-	public static Import? ImportWindow { get => _import; set { _import?.Close(); _import = value; _import?.Show(); } }
+	public static Import? ImportWindow
+	{
+		get => _import;
+		set
+		{
+			_import?.Close(); _import = value; _import?.Show();
+		}
+	}
 	public static bool InitComplete { get; set; }
 	public static List<string> LastActiveNotes { get; } = [];
 	public static Dictionary<string, double> LastActiveNotesHeight { get; } = [];
@@ -59,10 +66,24 @@ public static partial class CommonUtils
 	public static List<SearchResult> OpenQueries { get; } = [];
 	public static NoteRecord? PreviousOpenNote { get; set; }
 	public static NoteRecord? RecentSelection { get; set; }
-	public static Search? SearchWindow { get => _search; set { _search?.Close(); _search = value; _search?.Show(); } }
+	public static Search? SearchWindow
+	{
+		get => _search;
+		set
+		{
+			_search?.Close(); _search = value; _search?.Show();
+		}
+	}
 	public static ContextSettings Settings { get; } = new();
 	public static bool SettingsLoaded { get; set; }
-	public static Settings? SettingsWindow { get => _settings; set { _settings?.Close(); _settings = value; _settings?.Show(); } }
+	public static Settings? SettingsWindow
+	{
+		get => _settings;
+		set
+		{
+			_settings?.Close(); _settings = value; _settings?.Show();
+		}
+	}
 	public static bool UpdatesChecked { get; set; }
 	public static double WindowHeight { get; set; }
 	public static double WindowWidth { get; set; }
@@ -151,6 +172,12 @@ public static partial class CommonUtils
 
 	public static bool InstanceRunning() => Process.GetProcessesByName("Sylver Ink").Length > 1 && !File.Exists(UpdateHandler.UpdateLockUri);
 
+	public static double Lerp(double x, double y, double a)
+	{
+		a = a > 1.0 ? 1.0 : a < 0.0 ? 0.0 : a;
+		return (a * y) + ((1.0 - a) * x);
+	}
+
 	public static string MakeUUID(UUIDType type = UUIDType.Record)
 	{
 		var uuid = Guid.NewGuid().ToString("N");
@@ -182,8 +209,10 @@ public static partial class CommonUtils
 
 			Database? target = null;
 			foreach (Database db in Databases)
+			{
 				if (oSplit[0].Equals(db.Name, StringComparison.Ordinal))
 					target = db;
+			}
 
 			if (target is null)
 				continue;
