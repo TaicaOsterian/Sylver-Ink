@@ -377,7 +377,7 @@ public class ImportViewModel : ViewModelBase
                 recordData.AppendLine();
             recordData.Append(line);
 
-            if (line.Trim().Length == 0)
+            if (line.Length == 0)
                 blankCount++;
             else
                 blankCount = 0;
@@ -532,7 +532,7 @@ public class ImportViewModel : ViewModelBase
             if (reader.EndOfStream)
                 return false;
             string content = reader.ReadToEnd();
-            DataLines = [.. content.Split('\n')];
+            DataLines = [.. content.ReplaceLineEndings().Split(Environment.NewLine)];
             return true;
         }
         catch
