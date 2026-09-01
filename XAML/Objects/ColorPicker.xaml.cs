@@ -1,12 +1,3 @@
-﻿using SylverInk.XAML.Objects.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
 using static SylverInk.Interop.VisualUtils;
 using static SylverInk.XAMLUtils.SettingsUtils;
 

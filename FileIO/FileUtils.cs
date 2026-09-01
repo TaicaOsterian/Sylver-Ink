@@ -1,10 +1,5 @@
 ﻿using Microsoft.Win32;
-using SylverInk.Notes;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
-using System.Text.RegularExpressions;
 using static SylverInk.CommonUtils;
 using static SylverInk.Notes.DatabaseUtils;
 

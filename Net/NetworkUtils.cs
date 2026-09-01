@@ -1,12 +1,7 @@
-﻿using SylverInk.Notes;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Media;
 using System.Windows.Shapes;
 using static SylverInk.CommonUtils;
 using static SylverInk.XAMLUtils.MainWindowUtils;

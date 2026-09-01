@@ -1,11 +1,6 @@
 ﻿using SylverInk.FileIO;
-using SylverInk.Text;
 using SylverInk.XAML.Objects;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Text.RegularExpressions;
-using System.Windows.Documents;
 using static SylverInk.CommonUtils;
 using static SylverInk.Notes.DatabaseUtils;
 using static SylverInk.Text.FlowDocumentUtils;

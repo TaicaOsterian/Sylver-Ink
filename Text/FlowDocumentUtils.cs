@@ -1,7 +1,4 @@
-﻿using System;
-using System.Text;
-using System.Windows.Controls;
-using System.Windows.Documents;
+﻿using System.Text;
 
 namespace SylverInk.Text;
 

@@ -1,8 +1,3 @@
-﻿using SylverInk.XAMLUtils;
-using System;
-using System.Diagnostics;
-using System.Windows.Input;
-
 namespace SylverInk.XAML.ViewModels;
 
 public class AboutViewModel : ViewModelBase

@@ -1,8 +1,3 @@
-﻿using SylverInk.XAMLUtils;
-using System;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media;
 using static SylverInk.CommonUtils;
 using static SylverInk.XAMLUtils.MainWindowUtils;
 

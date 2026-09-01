@@ -1,13 +1,6 @@
-﻿using SylverInk.Net;
-using SylverInk.Notes;
-using SylverInk.Text;
-using SylverInk.XAMLUtils;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Documents;
 using static SylverInk.CommonUtils;
 using static SylverInk.XAMLUtils.MainWindowUtils;
+using System.Threading;
 
 namespace SylverInk.XAML.Objects.ViewModels;
 

@@ -1,12 +1,7 @@
-﻿using SylverInk.Notes;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
 using static SylverInk.CommonUtils;
 using static SylverInk.Net.NetworkUtils;
 using static SylverInk.Notes.DatabaseUtils;

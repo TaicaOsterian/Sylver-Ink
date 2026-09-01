@@ -1,15 +1,7 @@
-﻿using SylverInk.Notes;
-using SylverInk.Text;
-using SylverInk.XAML.Objects;
-using SylverInk.XAML.Objects.ViewModels;
-using SylverInk.XAMLUtils;
-using System;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
 using static SylverInk.CommonUtils;
 using static SylverInk.Notes.DatabaseUtils;
 using static SylverInk.XAMLUtils.MainWindowUtils;
+using SylverInk.XAML.Objects;
 
 namespace SylverInk.XAML.ViewModels;
 

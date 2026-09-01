@@ -1,5 +1,3 @@
-﻿using SylverInk.XAMLUtils;
-using System.Windows.Media;
 using static SylverInk.Interop.VisualUtils;
 
 namespace SylverInk.XAML.Objects.ViewModels;

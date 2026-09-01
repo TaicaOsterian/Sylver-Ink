@@ -1,11 +1,3 @@
-﻿using SylverInk.Net;
-using SylverInk.Text;
-using SylverInk.XAMLUtils;
-using System;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Input;
 using static SylverInk.CommonUtils;
 using static SylverInk.Notes.DatabaseUtils;
 using static SylverInk.XAMLUtils.MainWindowUtils;

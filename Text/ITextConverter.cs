@@ -1,6 +1,4 @@
-﻿using System.Windows.Documents;
-
-namespace SylverInk.Text;
+﻿namespace SylverInk.Text;
 
 public enum TextFormat
 {

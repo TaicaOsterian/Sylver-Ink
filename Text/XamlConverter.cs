@@ -1,8 +1,4 @@
-﻿using System;
-using System.Text.RegularExpressions;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Markup;
+﻿using System.Windows.Markup;
 using static SylverInk.XAMLUtils.ImageUtils;
 
 namespace SylverInk.Text;

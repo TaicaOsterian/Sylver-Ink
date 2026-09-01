@@ -1,9 +1,4 @@
-﻿using System;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-
-namespace SylverInk.XAMLUtils;
+﻿namespace SylverInk.XAMLUtils;
 
 /// <summary>
 /// Custom dependency property handlers for specific needs in regards to bindings that require special support.

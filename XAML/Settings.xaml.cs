@@ -1,10 +1,6 @@
-﻿using SylverInk.XAML.ViewModels;
-using System.ComponentModel;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
 using static SylverInk.CommonUtils;
 using static SylverInk.XAMLUtils.MainWindowUtils;
+using System.ComponentModel;
 
 namespace SylverInk.XAML;
 

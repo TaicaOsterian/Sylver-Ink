@@ -1,14 +1,8 @@
-﻿using SylverInk.Notes;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using static SylverInk.Net.NetworkUtils;
 

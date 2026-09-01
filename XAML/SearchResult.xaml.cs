@@ -1,16 +1,8 @@
-﻿using SylverInk.Net;
-using SylverInk.Notes;
-using SylverInk.Text;
-using SylverInk.XAML.ViewModels;
-using System;
-using System.Runtime.InteropServices;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Interop;
-using System.Windows.Threading;
 using static SylverInk.CommonUtils;
 using static SylverInk.XAMLUtils.MainWindowUtils;
+using System.Runtime.InteropServices;
+using System.Windows.Interop;
+using System.Windows.Threading;
 
 namespace SylverInk.XAML;
 

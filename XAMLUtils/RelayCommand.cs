@@ -1,8 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using System.Windows.Input;
-
-namespace SylverInk.XAMLUtils;
+﻿namespace SylverInk.XAMLUtils;
 
 public class RelayCommand : ICommand
 {

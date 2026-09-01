@@ -1,10 +1,5 @@
-﻿using SylverInk.Notes;
-using System;
-using System.IO;
-using System.IO.Pipes;
-using System.Linq;
+﻿using System.IO.Pipes;
 using System.Threading;
-using System.Windows;
 using static SylverInk.CommonUtils;
 using static SylverInk.Notes.DatabaseUtils;
 

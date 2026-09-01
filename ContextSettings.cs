@@ -1,17 +1,9 @@
-﻿using SylverInk.Notes;
-using SylverInk.XAML;
-using System;
-using System.Collections.Generic;
+﻿using SylverInk.XAML;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
-using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Media;
 using static SylverInk.CommonUtils;
 using static SylverInk.FileIO.FileUtils;
 using static SylverInk.Interop.VisualUtils;

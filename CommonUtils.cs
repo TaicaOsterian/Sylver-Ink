@@ -1,16 +1,6 @@
-﻿using SylverInk.Net;
-using SylverInk.Notes;
-using SylverInk.XAML;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
-using System.Text.RegularExpressions;
+﻿using System.Globalization;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
+using SylverInk.XAML;
 using static SylverInk.FileIO.FileUtils;
 using static SylverInk.Notes.DatabaseUtils;
 using static SylverInk.XAMLUtils.MainWindowUtils;

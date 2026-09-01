@@ -1,7 +1,3 @@
-﻿using SylverInk.Net;
-using SylverInk.XAMLUtils;
-using System.Windows.Input;
-
 namespace SylverInk.XAML.ViewModels;
 
 public class UpdateViewModel : ViewModelBase
