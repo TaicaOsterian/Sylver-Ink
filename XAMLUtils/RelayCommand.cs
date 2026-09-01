@@ -1,5 +1,8 @@
 ﻿namespace SylverInk.XAMLUtils;
 
+/// <summary>
+/// Encodes the MVVM design flow of requests made from the View to the ViewModel.
+/// </summary>
 public class RelayCommand : ICommand
 {
     private readonly Func<object?, Task>? _asyncExecute;

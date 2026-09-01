@@ -75,6 +75,13 @@ public static class DatabaseUtils
 
         RecentNotesDirty = true;
         DeferUpdateRecentNotes();
+
+        PathItem recentItem = new() { FullPath = db.DBFile };
+
+        if (!CommonUtils.Settings.RecentDatabases.Contains(recentItem))
+            return;
+
+        CommonUtils.Settings.RecentDatabases.Remove(recentItem);
     }
 
     public static void CreateNewNote()
@@ -163,6 +170,14 @@ public static class DatabaseUtils
 
         RecentNotesDirty = true;
         DeferUpdateRecentNotes();
+
+        if (!Path.Exists(db.DBFile))
+            return;
+
+        var recentItem = new PathItem() { FullPath = db.DBFile };
+
+        if (!CommonUtils.Settings.RecentDatabases.Contains(recentItem))
+            CommonUtils.Settings.RecentDatabases.Insert(0, recentItem);
     }
 
     public static void RemoveRecordTab(NoteRecord? record)

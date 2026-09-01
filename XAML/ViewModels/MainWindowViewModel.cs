@@ -100,6 +100,7 @@ public class MainWindowViewModel : ViewModelBase
     public ICommand DisconnectCommand { get; }
     public ICommand NewDatabaseCommand { get; }
     public ICommand OpenDatabaseCommand { get; }
+    public ICommand OpenRecentFileCommand { get; }
     public ICommand PropertiesCommand { get; }
     public ICommand RenameDatabaseCommand { get; }
     public ICommand RenamePopupEnterCommand { get; }
@@ -115,46 +116,47 @@ public class MainWindowViewModel : ViewModelBase
 
     public MainWindowViewModel()
     {
-        AboutCommand = new RelayCommand(_ => MenuShowAbout());
-        BackupDatabaseCommand = new RelayCommand(_ => MenuBackup());
+        AboutCommand = new RelayCommand(MenuShowAbout);
+        BackupDatabaseCommand = new RelayCommand(MenuBackup);
         CancelConnectCommand = new RelayCommand(_ => ConnectPopupVisible = false);
         CancelRenameCommand = new RelayCommand(_ => RenamePopupVisible = false);
         CloseCodePopupCommand = new RelayCommand(_ => CodePopupVisible = false);
-        CloseDatabaseCommand = new RelayCommand(_ => MenuClose(), _ => CanCloseDatabase());
-        ConnectCommand = new RelayCommand(_ => MenuConnect(), _ => CanConnect());
-        ConnectPopupEnterCommand = new RelayCommand(_ => PopupSaveAddress());
+        CloseDatabaseCommand = new RelayCommand(MenuClose, CanCloseDatabase);
+        ConnectCommand = new RelayCommand(MenuConnect, CanConnect);
+        ConnectPopupEnterCommand = new RelayCommand(PopupSaveAddress);
         ConnectPopupEscapeCommand = new RelayCommand(_ => ConnectPopupVisible = false);
-        CopyAddressCodeCommand = new RelayCommand(_ => PopupCodeClosed());
-        CopyCodeCommand = new RelayCommand(_ => MenuCopyCode(), _ => CanCopyCode());
-        DeleteDatabaseCommand = new RelayCommand(_ => MenuDelete(), _ => CanDeleteDatabase());
-        DisconnectCommand = new RelayCommand(_ => MenuDisconnect(), _ => CanDisconnect());
-        NewDatabaseCommand = new RelayCommand(_ => MenuCreate());
-        OpenDatabaseCommand = new RelayCommand(_ => MenuOpen());
-        PropertiesCommand = new RelayCommand(_ => MenuProperties());
-        RenameDatabaseCommand = new RelayCommand(_ => MenuRename());
-        RenamePopupEnterCommand = new RelayCommand(_ => PopupRenameClosed());
+        CopyAddressCodeCommand = new RelayCommand(PopupCodeClosed);
+        CopyCodeCommand = new RelayCommand(MenuCopyCode, CanCopyCode);
+        DeleteDatabaseCommand = new RelayCommand(MenuDelete, CanDeleteDatabase);
+        DisconnectCommand = new RelayCommand(MenuDisconnect, CanDisconnect);
+        NewDatabaseCommand = new RelayCommand(MenuCreate);
+        OpenDatabaseCommand = new RelayCommand(MenuOpen);
+        OpenRecentFileCommand = new RelayCommand(MenuOpenRecent);
+        PropertiesCommand = new RelayCommand(MenuProperties);
+        RenameDatabaseCommand = new RelayCommand(MenuRename);
+        RenamePopupEnterCommand = new RelayCommand(PopupRenameClosed);
         RenamePopupEscapeCommand = new RelayCommand(_ => RenamePopupVisible = false);
-        SaveAsCommand = new RelayCommand(_ => MenuSaveAs());
-        SaveConnectCommand = new RelayCommand(_ => PopupSaveAddress());
-        SaveLocalCommand = new RelayCommand(_ => MenuSaveLocal());
-        SaveRenameCommand = new RelayCommand(_ => PopupRenameClosed());
-        ServeCommand = new RelayCommand(_ => MenuServe(), _ => CanServe());
-        UnserveCommand = new RelayCommand(_ => MenuUnserve(), _ => CanUnserve());
+        SaveAsCommand = new RelayCommand(MenuSaveAs);
+        SaveConnectCommand = new RelayCommand(PopupSaveAddress);
+        SaveLocalCommand = new RelayCommand(MenuSaveLocal);
+        SaveRenameCommand = new RelayCommand(PopupRenameClosed);
+        ServeCommand = new RelayCommand(MenuServe, CanServe);
+        UnserveCommand = new RelayCommand(MenuUnserve, CanUnserve);
     }
 
-    private static bool CanCloseDatabase() => Databases.Count > 1;
+    private static bool CanCloseDatabase(object? param) => Databases.Count > 1;
 
-    private static bool CanConnect() => CurrentDatabase?.Client?.Connected is not true;
+    private static bool CanConnect(object? param) => CurrentDatabase?.Client?.Connected is not true;
 
-    private static bool CanCopyCode() => CurrentDatabase?.Server?.Serving is true;
+    private static bool CanCopyCode(object? param) => CurrentDatabase?.Server?.Serving is true;
 
-    private static bool CanDeleteDatabase() => Databases.Count > 1;
+    private static bool CanDeleteDatabase(object? param) => Databases.Count > 1;
 
-    private static bool CanDisconnect() => CurrentDatabase?.Client?.Connected is true;
+    private static bool CanDisconnect(object? param) => CurrentDatabase?.Client?.Connected is true;
 
-    private static bool CanServe() => CurrentDatabase?.Server?.Serving is not true;
+    private static bool CanServe(object? param) => CurrentDatabase?.Server?.Serving is not true;
 
-    private static bool CanUnserve() => CurrentDatabase?.Server?.Serving is true;
+    private static bool CanUnserve(object? param) => CurrentDatabase?.Server?.Serving is true;
 
     private static void CopyCode()
     {
@@ -168,9 +170,9 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
-    private static void MenuBackup() => CurrentDatabase.MakeBackup();
+    private static void MenuBackup(object? param) => CurrentDatabase.MakeBackup();
 
-    private static void MenuClose()
+    private static void MenuClose(object? param)
     {
         if (CurrentDatabase.Changed)
         {
@@ -185,24 +187,24 @@ public class MainWindowViewModel : ViewModelBase
         DeferUpdateRecentNotes();
     }
 
-    private void MenuConnect()
+    private void MenuConnect(object? param)
     {
         ConnectPopupVisible = true;
         AddressCode = string.Empty;
     }
 
-    private static void MenuCopyCode()
+    private static void MenuCopyCode(object? param)
     {
         CopyCode();
     }
 
-    private static void MenuCreate()
+    private static void MenuCreate(object? param)
     {
         AddDatabase(new Database());
         DeferUpdateRecentNotes();
     }
 
-    private static void MenuDelete()
+    private static void MenuDelete(object? param)
     {
         if (MessageBox.Show("Are you sure you want to permanently delete this database?", "Sylver Ink: Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
             return;
@@ -216,13 +218,13 @@ public class MainWindowViewModel : ViewModelBase
         DeferUpdateRecentNotes();
     }
 
-    private static void MenuDisconnect()
+    private static void MenuDisconnect(object? param)
     {
         CurrentDatabase.Client.Disconnect();
         CurrentDatabase.Changed = true;
     }
 
-    private void MenuOpen()
+    private async void MenuOpen(object? param)
     {
         string dbFile = DialogFileSelect(filterIndex: 2);
         if (string.IsNullOrWhiteSpace(dbFile))
@@ -236,22 +238,50 @@ public class MainWindowViewModel : ViewModelBase
             return;
         }
 
-        Database.Create(dbFile).Wait();
+        await Database.Create(dbFile);
         DeferUpdateRecentNotes();
     }
 
-    private static void MenuProperties()
+    private async void MenuOpenRecent(object? param)
+    {
+        if (param is not string dbFile)
+            return;
+
+        var path = Path.GetFullPath(dbFile);
+
+        if (DatabaseFiles.Contains(path))
+        {
+            RequestSelectDatabase?.Invoke(path);
+            return;
+        }
+
+        if (!Path.Exists(path))
+        {
+            if (MessageBox.Show($"The file {path} has been either moved or deleted.\n\nDo you want to remove it from the list?", $"Sylver Ink: Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+            {
+                CommonUtils.Settings.RecentDatabases.Remove(new() { FullPath = path });
+                DeferUpdateRecentNotes();
+            }
+
+            return;
+        }
+
+        await Database.Create(dbFile);
+        DeferUpdateRecentNotes();
+    }
+
+    private static void MenuProperties(object? param)
     {
         new Properties().Show();
     }
 
-    private void MenuRename()
+    private void MenuRename(object? param)
     {
         RenameDatabaseName = CurrentDatabase.Name ?? string.Empty;
         RenamePopupVisible = true;
     }
 
-    private static void MenuSaveAs()
+    private static void MenuSaveAs(object? param)
     {
         var newPath = DialogFileSelect(true, 2, CurrentDatabase.Name);
         if (!string.IsNullOrWhiteSpace(newPath))
@@ -259,7 +289,7 @@ public class MainWindowViewModel : ViewModelBase
         CurrentDatabase.Format = HighestSIDBFormat;
     }
 
-    private static void MenuSaveLocal()
+    private static void MenuSaveLocal(object? param)
     {
         CurrentDatabase.Changed = true;
         CurrentDatabase.DBFile = Path.Join(Subfolders["Databases"], Path.GetFileNameWithoutExtension(CurrentDatabase.DBFile), Path.GetFileName(CurrentDatabase.DBFile));
@@ -267,18 +297,18 @@ public class MainWindowViewModel : ViewModelBase
         CurrentDatabase.Save();
     }
 
-    private static void MenuServe() => CurrentDatabase.Server.Serve(0);
+    private static void MenuServe(object? param) => CurrentDatabase.Server.Serve(0);
 
-    private static void MenuShowAbout() => new About().Show();
+    private static void MenuShowAbout(object? param) => new About().Show();
 
-    private static void MenuUnserve() => CurrentDatabase.Server.Close();
+    private static void MenuUnserve(object? param) => CurrentDatabase.Server.Close();
 
     public static void OnSizeChanged()
     {
         DeferUpdateRecentNotes();
     }
 
-    private void PopupCodeClosed()
+    private void PopupCodeClosed(object? param)
     {
         if (CurrentDatabase == null)
             return;
@@ -287,7 +317,7 @@ public class MainWindowViewModel : ViewModelBase
         CodePopupVisible = false;
     }
 
-    private void PopupRenameClosed()
+    private void PopupRenameClosed(object? param)
     {
         if (CurrentDatabase == null)
             return;
@@ -320,7 +350,7 @@ public class MainWindowViewModel : ViewModelBase
         RenamePopupVisible = false;
     }
 
-    private async void PopupSaveAddress()
+    private async void PopupSaveAddress(object? param)
     {
         ConnectPopupVisible = false;
 

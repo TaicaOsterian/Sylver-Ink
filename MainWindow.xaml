@@ -101,25 +101,40 @@
             <MenuItem Header="File" Height="25">
                 <MenuItem Command="{Binding NewDatabaseCommand}" Header="New" Tag="Always"/>
                 <MenuItem Command="{Binding OpenDatabaseCommand}" Header="Open..." Tag="Always"/>
-                <MenuItem Command="{Binding SaveAsCommand}" Header="Save as..." Tag="Always"/>
+                <MenuItem Header="Open recent" ItemsSource="{Binding AppSettings.RecentDatabases}" Tag="Recents">
+                    <MenuItem.ItemContainerStyle>
+                        <Style TargetType="MenuItem">
+                            <Setter Property="Header" Value="{Binding}" />
+                            <Setter Property="Command"
+                                    Value="{Binding DataContext.OpenRecentFileCommand,
+                                            RelativeSource={RelativeSource AncestorType=Menu}}" />
+                            <Setter Property="CommandParameter" Value="{Binding FullPath}" />
+                        </Style>
+                    </MenuItem.ItemContainerStyle>
+                </MenuItem>
+                <Separator/>
                 <MenuItem Command="{Binding SaveLocalCommand}" Header="Save to Documents" Tag="Always"/>
+                <MenuItem Command="{Binding SaveAsCommand}" Header="Save as..." Tag="Always"/>
+                <MenuItem Command="{Binding BackupDatabaseCommand}" Header="Backup..." Tag="Always"/>
+                <Separator/>
                 <MenuItem Command="{Binding DeleteDatabaseCommand}" Header="Delete"/>
             </MenuItem>
             <MenuItem Header="Database" Height="25">
                 <MenuItem Command="{Binding CloseDatabaseCommand}" Header="Close"/>
-                <MenuItem Command="{Binding BackupDatabaseCommand}" Header="Backup..." Tag="Always"/>
                 <MenuItem Command="{Binding RenameDatabaseCommand}" Header="Rename" Tag="Always"/>
+                <Separator/>
                 <MenuItem Command="{Binding PropertiesCommand}" Header="Properties" Tag="Always"/>
             </MenuItem>
             <MenuItem Header="Network" Height="25">
-                <MenuItem Command="{Binding UnserveCommand}" Header="Close to Network" Tag="Serving"/>
                 <MenuItem Command="{Binding ConnectCommand}" Header="Connect" Tag="NotConnected"/>
                 <MenuItem Command="{Binding DisconnectCommand}" Header="Disconnect" Tag="Connected"/>
-                <MenuItem Command="{Binding ServeCommand}" Header="Open to Network" Tag="NotServing"/>
-                <MenuItem Command="{Binding CopyCodeCommand}" Header="Copy Address Code" Tag="Serving"/>
+                <Separator/>
+                <MenuItem Command="{Binding UnserveCommand}" Header="Close to network" Tag="Serving"/>
+                <MenuItem Command="{Binding ServeCommand}" Header="Open to network" Tag="NotServing"/>
+                <MenuItem Command="{Binding CopyCodeCommand}" Header="Copy address code" Tag="Serving"/>
             </MenuItem>
             <MenuItem Header="Help" Height="25">
-                <MenuItem Command="{Binding AboutCommand}" Header="About..." Tag="Always"/>
+                <MenuItem Command="{Binding AboutCommand}" Header="About" Tag="Always"/>
             </MenuItem>
         </Menu>
 

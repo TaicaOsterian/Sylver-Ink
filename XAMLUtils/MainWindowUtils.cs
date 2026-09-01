@@ -113,12 +113,12 @@ public static class MainWindowUtils
                     "Connected" => client && !server,
                     "NotConnected" => !client && !server,
                     "NotServing" => !client && !server,
+                    "Recents" => CommonUtils.Settings.RecentDatabases.Count > 0,
                     "Serving" => !client && server,
                     _ => control.Items.Count != 1
                 };
 
                 mItem.SetValue(UIElement.IsEnabledProperty, enable);
-                mItem.SetValue(UIElement.VisibilityProperty, enable ? Visibility.Visible : Visibility.Collapsed);
             }
         }
     }

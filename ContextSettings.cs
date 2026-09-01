@@ -192,6 +192,7 @@ public class ContextSettings : INotifyPropertyChanged
             OnPropertyChanged();
         }
     }
+    public ObservableCollection<PathItem> RecentDatabases { get; } = [];
     public ObservableCollection<NoteRecord> RecentNotes { get; } = [];
     public ObservableCollection<NoteRecord> SearchResults { get; } = [];
     public bool SearchResultsOnTop
@@ -382,6 +383,13 @@ public class ContextSettings : INotifyPropertyChanged
 
                     NoteTransparency = transparency;
                     break;
+                case "RecentDatabases":
+                    FirstRun = false;
+
+                    foreach (var path in keyValue[1].Replace("?\\", DocumentsFolder).Split(';').Distinct())
+                        RecentDatabases.Add(new() { FullPath = path });
+
+                    break;
                 case "RecentNotesSortMode":
                     if (!int.TryParse(keyValue[1], out var sortMode))
                         sortMode = 0;
@@ -439,6 +447,7 @@ public class ContextSettings : INotifyPropertyChanged
         $"MenuForeground:{BytesFromBrush(MenuForeground)}",
         $"NoteClickthrough:{(double)NoteClickthrough}",
         $"NoteTransparency:{(double)NoteTransparency}",
+        $"RecentDatabases:{string.Join(';', RecentDatabases.Distinct()).Replace(DocumentsFolder, "?\\")}",
         $"RecentNotesSortMode:{(int)RecentEntriesSortMode}",
         $"RibbonDisplayMode:{(int)RibbonTabContent}",
         $"SearchResultsOnTop:{SearchResultsOnTop}",
