@@ -53,7 +53,7 @@ public class SettingsViewModel : ViewModelBase
         CommonUtils.Settings.MainFontSize = 11.0;
         CommonUtils.Settings.MenuBackground = Brushes.Beige;
         CommonUtils.Settings.MenuForeground = Brushes.Black;
-        CommonUtils.Settings.NoteClickthrough = 0.25;
+        CommonUtils.Settings.NoteClickthrough = 0.0;
         CommonUtils.Settings.NoteTransparency = 0.0;
         RecentEntriesSortMode = SortType.ByChange;
         RibbonTabContent = DisplayType.Content;

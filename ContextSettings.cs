@@ -35,7 +35,7 @@ public class ContextSettings : INotifyPropertyChanged
     private Typeface? _mainTypeFace;
     private Brush? _menuBackgound = Brushes.Beige;
     private Brush? _menuForegound = Brushes.DimGray;
-    private double _noteClickthrough = 0.25;
+    private double _noteClickthrough;
     private double _noteClickthroughInverse = 4.0;
     private double _noteTransparency;
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -170,7 +170,8 @@ public class ContextSettings : INotifyPropertyChanged
         get => _noteClickthrough;
         set
         {
-            _noteClickthrough = value; NoteClickthroughInverse = 1.0 / value;
+            _noteClickthrough = value;
+            NoteClickthroughInverse = value == 0.0 ? -1.0 : 1.0 / value;
             OnPropertyChanged();
         }
     }
