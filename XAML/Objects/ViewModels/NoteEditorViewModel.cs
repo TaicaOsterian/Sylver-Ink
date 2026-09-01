@@ -21,6 +21,7 @@ public class NoteEditorViewModel : ViewModelBase
     private bool _isEnabled = true;
     private string? _lastChange;
     private int _originalBlockCount;
+    private string _originalPlaintext = string.Empty;
     private int _originalRevisionCount;
     private string _originalText = string.Empty;
     private NoteRecord _record;
@@ -116,6 +117,16 @@ public class NoteEditorViewModel : ViewModelBase
         }
     }
 
+    public string OriginalPlaintext
+    {
+        get => _originalPlaintext;
+        set
+        {
+            _originalPlaintext = value;
+            OnPropertyChanged();
+        }
+    }
+
     public string OriginalText
     {
         get => _originalText;
@@ -153,15 +164,13 @@ public class NoteEditorViewModel : ViewModelBase
         _caretPosition = _document.ContentStart;
     }
 
-    public void Autosave()
+    private void Autosave()
     {
         if (!FinishedLoading)
             return;
 
         if (Autosaving)
             return;
-
-        Edited = Document.Blocks.Count != OriginalBlockCount || !OriginalText.Equals(TextConverter.Save(Document, TextFormat.Xaml), StringComparison.Ordinal);
 
         if (!Edited)
             return;
@@ -177,6 +186,17 @@ public class NoteEditorViewModel : ViewModelBase
             Autosaving = false;
             return;
         }, TaskCreationOptions.LongRunning);
+    }
+
+    public bool CalculateIsEdited()
+    {
+        if (Document.Blocks.Count != OriginalBlockCount)
+            return true;
+
+        if (!new TextRange(Document.ContentStart, Document.ContentEnd).Text.Equals(OriginalPlaintext, StringComparison.Ordinal))
+            return true;
+
+        return !OriginalText.Equals(TextConverter.Save(Document, TextFormat.Xaml), StringComparison.Ordinal);
     }
 
     public virtual void Construct()
@@ -200,6 +220,7 @@ public class NoteEditorViewModel : ViewModelBase
         Document.Focus();
 
         OriginalBlockCount = Document.Blocks.Count;
+        OriginalPlaintext = new TextRange(Document.ContentStart, Document.ContentEnd).Text;
         OriginalRevisionCount = Record.GetNumRevisions();
         OriginalText = TextConverter.Save(Document, TextFormat.Xaml);
 
@@ -216,4 +237,14 @@ public class NoteEditorViewModel : ViewModelBase
     }
 
     public void ScrollToText(string text) => FlowDocumentUtils.ScrollToText(Document, text);
+
+    public virtual void TextChanged()
+    {
+        if (!FinishedLoading)
+            return;
+
+        // This base class contains no save function, so it's up to an inheritor (e.g. NoteTab or SearchResult) to reset the Edited variable when needed.
+        Edited = Edited || CalculateIsEdited();
+        Autosave();
+    }
 }

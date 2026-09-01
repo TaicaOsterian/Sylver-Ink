@@ -148,7 +148,7 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     <Label Content="Search:"/>
-                    <TextBox Grid.Column="1" Grid.ColumnSpan="3" Text="{Binding SearchText}" Width="200" x:Name="ISPText"/>
+                    <TextBox Grid.Column="1" Grid.ColumnSpan="3" KeyDown="ISPText_KeyDown" Text="{Binding SearchText}" Width="200" x:Name="ISPText"/>
                     <Button Command="{Binding FindPreviousCommand}" Content="Previous..." Grid.ColumnSpan="2" Grid.Row="1"/>
                     <Button Command="{Binding FindNextCommand}" Content="Next..." Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1"/>
                     <Button Command="{Binding CloseSearchPopupCommand}" Content="Close" Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="1"/>
@@ -157,6 +157,7 @@
         </Popup>
 
         <RichTextBox AcceptsReturn="True"
+                     IsInactiveSelectionHighlightEnabled="True"
                      utils:RichTextBoxUtils.BoundCaret="{Binding CaretPosition, Mode=TwoWay}"
                      utils:RichTextBoxUtils.Document="{Binding Document, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                      utils:RichTextBoxUtils.ObserveCaret="True"
@@ -184,7 +185,7 @@
             <Button Command="{Binding NavigateNextCommand}" Grid.Column="1" Grid.ColumnSpan="2" Content="→" IsEnabled="{Binding CanNavigateNext}" TabIndex="14" Width="50" x:Name="NextButton"/>
 
             <Button Command="{Binding DeleteCommand}" Content="Delete" Grid.Row="2" TabIndex="15" x:Name="DeleteButton"/>
-            <Button Command="{Binding SaveCommand}" Grid.Column="1" Content="{Binding SaveLabel}" IsEnabled="{Binding CanSave}" Margin="20,0" Grid.Row="2" TabIndex="16" x:Name="SaveButton"/>
+            <Button Command="{Binding SaveCommand}" Grid.Column="1" Content="{Binding SaveLabel}" IsEnabled="{Binding Edited}" Margin="20,0" Grid.Row="2" TabIndex="16" x:Name="SaveButton"/>
             <Button Command="{Binding ReturnCommand}" Grid.Column="2" Content="Return" Grid.Row="2" TabIndex="17" x:Name="ReturnButton"/>
         </Grid>
     </Grid>

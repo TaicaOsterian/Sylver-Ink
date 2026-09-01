@@ -1,4 +1,5 @@
 ﻿using SylverInk.Notes;
+using SylverInk.Text;
 using SylverInk.XAML.Objects;
 using SylverInk.XAML.Objects.ViewModels;
 using SylverInk.XAMLUtils;
@@ -53,6 +54,15 @@ public class SearchResultViewModel : NoteEditorViewModel
             if (record.Equals(Record))
                 tabPanel.Items.RemoveAt(i);
         }
+    }
+
+    public void SaveRecord()
+    {
+        if (Record is null)
+            return;
+
+        Record?.DB?.CreateRevision(Record, TextConverter.Save(Document, TextFormat.Xaml));
+        LastChange = Record?.GetLastChange();
     }
 
     private void View(object? param)

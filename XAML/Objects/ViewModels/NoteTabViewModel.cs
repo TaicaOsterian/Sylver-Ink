@@ -16,10 +16,9 @@ public class NoteTabViewModel : NoteEditorViewModel
 {
     private bool _canNavigateNext;
     private bool _canNavigatePrevious;
-    private bool _canSave;
+    private string _currentRevision = string.Empty;
     private TextPointer _initialPointer;
-    private bool _isReadOnly;
-    private uint _revisionIndex;
+    private int _revisionIndex;
     private bool _revisionView;
     private string _saveLabel = "Save";
     private string _searchText = string.Empty;
@@ -42,12 +41,12 @@ public class NoteTabViewModel : NoteEditorViewModel
             OnPropertyChanged();
         }
     }
-    public bool CanSave
+    public string CurrentRevision
     {
-        get => _canSave;
+        get => _currentRevision;
         set
         {
-            _canSave = value;
+            _currentRevision = value;
             OnPropertyChanged();
         }
     }
@@ -60,16 +59,7 @@ public class NoteTabViewModel : NoteEditorViewModel
             OnPropertyChanged();
         }
     }
-    public bool IsReadOnly
-    {
-        get => _isReadOnly;
-        set
-        {
-            _isReadOnly = value;
-            OnPropertyChanged();
-        }
-    }
-    public uint RevisionIndex
+    public int RevisionIndex
     {
         get => _revisionIndex;
         set
@@ -131,11 +121,6 @@ public class NoteTabViewModel : NoteEditorViewModel
         _initialPointer = Document.ContentStart;
     }
 
-    private void CalculateCanSave()
-    {
-        CanSave = RevisionIndex != 0 || Document.Blocks.Count != OriginalBlockCount || !TextConverter.Save(Document, TextFormat.Xaml).Equals(OriginalText, StringComparison.Ordinal);
-    }
-
     public override void Construct()
     {
         if (FinishedLoading)
@@ -151,7 +136,7 @@ public class NoteTabViewModel : NoteEditorViewModel
 
         CanNavigateNext = false;
         CanNavigatePrevious = Record.GetNumRevisions() > 0;
-        CanSave = false;
+        Edited = false;
         LastChange = Record.Locked ? "Note locked by another user" : Record.GetNumRevisions() == 0 ? $"Entry created: {Record.GetCreated()}" : $"Entry last modified: {Record.GetLastChange()}";
     }
 
@@ -203,37 +188,35 @@ public class NoteTabViewModel : NoteEditorViewModel
     private void NavigateNext(object? param)
     {
         RevisionIndex--;
-        string revisionTime = RevisionIndex == 0U ? Record.GetLastChange() : Record.GetRevisionTime(RevisionIndex);
+        string revisionTime = RevisionIndex == 0 ? Record.GetLastChange() : Record.GetRevisionTime(RevisionIndex);
 
-        CanNavigateNext = RevisionIndex > 0;
-        CanNavigatePrevious = RevisionIndex < Record.GetNumRevisions();
-        Document = Record.GetDocument(RevisionIndex);
-        IsReadOnly = RevisionIndex != 0;
-        LastChange = (RevisionIndex == 0U ? "Entry last modified: " : $"Revision {Record.GetNumRevisions() - RevisionIndex} from ") + revisionTime;
-        RevisionView = true;
+        SetNavigation();
+        Document = RevisionIndex != 0 ? Record.GetDocument(RevisionIndex) : TextConverter.Parse(CurrentRevision, TextFormat.Xaml);
+        Edited = RevisionIndex != 0 || CalculateIsEdited();
+        LastChange = (RevisionIndex != 0 ? $"Revision {Record.GetNumRevisions() - RevisionIndex} from " : "Entry last modified: ") + revisionTime;
+        RevisionView = RevisionIndex != 0;
         SaveLabel = RevisionIndex != 0 ? "Restore" : "Save";
-        CalculateCanSave();
     }
 
     private void NavigatePrevious(object? param)
     {
+        if (RevisionIndex == 0)
+            CurrentRevision = TextConverter.Save(Document, TextFormat.Xaml);
+
         RevisionIndex++;
         string revisionTime = RevisionIndex == Record.GetNumRevisions() ? Record.GetCreated() : Record.GetRevisionTime(RevisionIndex);
 
-        RevisionView = true;
-
-        CanNavigateNext = RevisionIndex > 0;
-        CanNavigatePrevious = RevisionIndex + 1 <= Record.GetNumRevisions();
-        CanSave = true;
+        SetNavigation();
         Document = Record.GetDocument(RevisionIndex);
-        IsReadOnly = RevisionIndex != 0;
+        Edited = true;
         LastChange = (RevisionIndex == Record.GetNumRevisions() ? "Entry created " : $"Revision {Record.GetNumRevisions() - RevisionIndex} from ") + revisionTime;
+        RevisionView = true;
         SaveLabel = "Restore";
     }
 
     private void Return(object? param)
     {
-        if (CanSave && SaveLabel.Equals("Save", StringComparison.Ordinal))
+        if (Edited)
         {
             switch (MessageBox.Show("You have unsaved changes. Save before closing this note?", "Sylver Ink: Notification", MessageBoxButton.YesNoCancel, MessageBoxImage.Information))
             {
@@ -258,24 +241,28 @@ public class NoteTabViewModel : NoteEditorViewModel
 
         CanNavigateNext = false;
         CanNavigatePrevious = true;
-        CanSave = false;
+        Edited = false;
         IsEnabled = true;
         LastChange = "Entry last modified: " + Record.GetLastChange();
         OriginalBlockCount = Document.Blocks.Count;
+        OriginalPlaintext = new TextRange(Document.ContentStart, Document.ContentEnd).Text;
         OriginalRevisionCount = Record.GetNumRevisions();
         OriginalText = newText;
-        RevisionIndex = 0U;
+        RevisionView = false;
+        RevisionIndex = 0;
     }
 
-    public void TextChanged()
+    private void SetNavigation()
     {
-        if (!FinishedLoading)
-            return;
+        CanNavigateNext = RevisionIndex > 0;
+        CanNavigatePrevious = RevisionIndex + 1 <= Record.GetNumRevisions();
+    }
 
+    public override void TextChanged()
+    {
         if (RevisionView)
             return;
 
-        CalculateCanSave();
-        Autosave();
+        base.TextChanged();
     }
 }

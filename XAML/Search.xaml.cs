@@ -30,7 +30,7 @@ public partial class Search : Window
         if (RecentSelection is null)
             return;
 
-        if (MessageBox.Show("Are you sure you want to delete this note?", "Sylver Ink: Notification", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+        if (MessageBox.Show("Are you sure you want to permanently delete this note?", "Sylver Ink: Notification", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
             return;
 
         CurrentDatabase.DeleteRecord(RecentSelection);

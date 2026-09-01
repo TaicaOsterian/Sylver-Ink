@@ -199,7 +199,7 @@ public class ImportViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Failed to import: {ex.Message}", "Sylver Ink: Error", MessageBoxButton.OK);
+            MessageBox.Show($"Failed to import the selected file: {ex.Message}", "Sylver Ink: Error", MessageBoxButton.OK);
         }
         finally
         {

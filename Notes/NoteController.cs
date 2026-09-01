@@ -324,7 +324,7 @@ public partial class NoteController : IDisposable
 
             for (int j = Records[i].GetNumRevisions(); j > 0; j--)
             {
-                var RevisionDate = DateTime.FromBinary(Records[i].GetRevision((uint)j - 1U).Created).ToLocalTime();
+                var RevisionDate = DateTime.FromBinary(Records[i].GetRevision(j - 1).Created).ToLocalTime();
                 comparison = RevisionDate.CompareTo(targetDate);
                 if (comparison <= 0)
                     continue;

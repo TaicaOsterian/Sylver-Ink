@@ -18,7 +18,30 @@ public partial class NoteTab : UserControl
     public NoteTab()
     {
         DataContext = new NoteTabViewModel();
+        ViewModel.RequestCloseSearchPopup += (_, _) => InternalSearchPopup.IsOpen = false;
         InitializeComponent();
+    }
+
+    private void ISPText_KeyDown(object sender, KeyEventArgs e)
+    {
+        switch (e.Key)
+        {
+            case Key.Enter:
+                if ((Keyboard.Modifiers & ModifierKeys.Control) != 0 ||
+                    (Keyboard.Modifiers & ModifierKeys.Shift) != 0)
+                {
+                    ViewModel.FindPreviousCommand.Execute(null);
+                    ISPText.Focus();
+                    break;
+                }
+
+                ViewModel.FindNextCommand.Execute(null);
+                ISPText.Focus();
+                break;
+            case Key.Escape:
+                InternalSearchPopup.IsOpen = false;
+                break;
+        }
     }
 
     private void NoteBox_TextChanged(object sender, TextChangedEventArgs e)

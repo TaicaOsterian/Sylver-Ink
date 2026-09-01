@@ -84,8 +84,8 @@ public static class FlowDocumentUtils
                 return;
         }
 
-        box.Focus();
         box.Selection.Select(pointer, box.CaretPosition);
+        box.Focus();
     }
 
     public static TextPointer? TranslatePointer(TextPointer textPointer, ref StringBuilder content)

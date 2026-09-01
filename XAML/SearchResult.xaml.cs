@@ -66,6 +66,12 @@ public partial class SearchResult : Window, IDisposable
         ViewModel.Construct();
     }
 
+    public void Dispose()
+    {
+        StopMonitors();
+        GC.SuppressFinalize(this);
+    }
+
     public void Drag(object? sender, MouseEventArgs e)
     {
         if (!Dragging)
@@ -85,6 +91,27 @@ public partial class SearchResult : Window, IDisposable
         Top = newCoords.Y;
     }
 
+    private void HandleClose(bool force = false)
+    {
+        if (ViewModel.Edited && !force)
+        {
+            switch (MessageBox.Show("You have unsaved changes. Save before closing this note?", "Sylver Ink: Notification", MessageBoxButton.YesNoCancel, MessageBoxImage.Information))
+            {
+                case MessageBoxResult.Cancel:
+                    return;
+                case MessageBoxResult.No:
+                    ViewModel.Edited = false;
+                    for (int i = (ViewModel.Record?.GetNumRevisions() ?? 1) - 1; i >= OriginalRevisionCount; i--)
+                        ViewModel.Record?.DeleteRevision(i);
+                    RecentNotesDirty = true;
+                    DeferUpdateRecentNotes();
+                    break;
+            }
+        }
+
+        Close();
+    }
+
     private void InitEnterMonitor()
     {
         EnterMonitor = new()
@@ -96,7 +123,7 @@ public partial class SearchResult : Window, IDisposable
         {
             var Seconds = (DateTime.UtcNow.Ticks - EnterTime) * 1E-7;
 
-            if (Seconds > CommonUtils.Settings.NoteClickthrough || CommonUtils.Settings.NoteTransparency == 0.0)
+            if (Seconds > CommonUtils.Settings.NoteClickthrough || CommonUtils.Settings.NoteClickthrough == 0.0 || CommonUtils.Settings.NoteTransparency == 0.0)
             {
                 Concurrent(UnsetWindowExTransparent);
                 Opacity = 1.0;
@@ -120,7 +147,7 @@ public partial class SearchResult : Window, IDisposable
         {
             var Seconds = (DateTime.UtcNow.Ticks - LeaveTime) * 1E-7;
 
-            if (Seconds > CommonUtils.Settings.NoteClickthrough || CommonUtils.Settings.NoteTransparency == 0.0)
+            if (Seconds > CommonUtils.Settings.NoteClickthrough || CommonUtils.Settings.NoteClickthrough == 0.0 || CommonUtils.Settings.NoteTransparency == 0.0)
             {
                 Opacity = 1.0 - (CommonUtils.Settings.NoteTransparency * 0.01);
                 LeaveMonitor.Stop();
@@ -149,6 +176,31 @@ public partial class SearchResult : Window, IDisposable
         InitMouseMonitor();
     }
 
+    private void Result_Closed(object? sender, EventArgs e)
+    {
+        StopMonitors();
+        PreviousOpenNote = ViewModel.Record;
+
+        if (ViewModel.Edited)
+            SaveRecord();
+
+        ViewModel.Record?.DB?.Transmit(NetworkUtils.MessageType.RecordUnlock, ViewModel.Record?.Index.ToByteArray());
+
+        foreach (SearchResult result in OpenQueries)
+        {
+            if (result.ViewModel.Record != ViewModel.Record)
+                continue;
+
+            OpenQueries.Remove(result);
+            return;
+        }
+    }
+
+    private void ResultBlock_TextChanged(object? sender, TextChangedEventArgs e)
+    {
+        ViewModel.TextChanged();
+    }
+
     public void RequestClose(NoteRecord? source = null)
     {
         if (source is null || !ViewModel.Record.Equals(source))
@@ -172,11 +224,7 @@ public partial class SearchResult : Window, IDisposable
 
     public void SaveRecord()
     {
-        if (ViewModel.Record is null)
-            return;
-
-        ViewModel.Record?.DB?.CreateRevision(ViewModel.Record, TextConverter.Save(ViewModel.Document, TextFormat.Xaml));
-        ViewModel.LastChange = ViewModel.Record?.GetLastChange();
+        ViewModel.SaveRecord();
         DeferUpdateRecentNotes();
     }
 
@@ -292,62 +340,11 @@ public partial class SearchResult : Window, IDisposable
         LeaveMonitor?.Stop();
         MouseMonitor?.Stop();
     }
+    
     public bool UnsetWindowExTransparent()
     {
         int extendedStyle = GetWindowLong(HWnd, GWL_EXSTYLE);
         return SetWindowLong(HWnd, GWL_EXSTYLE, extendedStyle & ~WS_EX_LAYERED & ~WS_EX_TRANSPARENT) != 0;
-    }
-
-    public void Dispose()
-    {
-        StopMonitors();
-        GC.SuppressFinalize(this);
-    }
-
-    private void HandleClose(bool force = false)
-    {
-        if (ViewModel.Edited && !force)
-        {
-            switch (MessageBox.Show("You have unsaved changes. Save before closing this note?", "Sylver Ink: Notification", MessageBoxButton.YesNoCancel, MessageBoxImage.Information))
-            {
-                case MessageBoxResult.Cancel:
-                    return;
-                case MessageBoxResult.No:
-                    ViewModel.Edited = false;
-                    for (int i = (ViewModel.Record?.GetNumRevisions() ?? 1) - 1; i >= OriginalRevisionCount; i--)
-                        ViewModel.Record?.DeleteRevision(i);
-                    RecentNotesDirty = true;
-                    DeferUpdateRecentNotes();
-                    break;
-            }
-        }
-
-        Close();
-    }
-
-    private void Result_Closed(object? sender, EventArgs e)
-    {
-        StopMonitors();
-        PreviousOpenNote = ViewModel.Record;
-
-        if (ViewModel.Edited)
-            SaveRecord();
-
-        ViewModel.Record?.DB?.Transmit(NetworkUtils.MessageType.RecordUnlock, ViewModel.Record?.Index.ToByteArray());
-
-        foreach (SearchResult result in OpenQueries)
-        {
-            if (result.ViewModel.Record != ViewModel.Record)
-                continue;
-
-            OpenQueries.Remove(result);
-            return;
-        }
-    }
-
-    private void ResultBlock_TextChanged(object? sender, TextChangedEventArgs e)
-    {
-        ViewModel.Autosave();
     }
 
     private void WindowActivated(object? sender, EventArgs e)
@@ -373,8 +370,6 @@ public partial class SearchResult : Window, IDisposable
         HWnd = new WindowInteropHelper(this).Handle;
         MouseMonitor?.Start();
     }
-
-    private void WindowMove(object? sender, MouseEventArgs e) => Drag(sender, e);
 
     private void WindowMouseDown(object? sender, MouseButtonEventArgs e)
     {
@@ -469,4 +464,6 @@ public partial class SearchResult : Window, IDisposable
         DragMouseCoords = new(0, 0);
         Dragging = false;
     }
+
+    private void WindowMove(object? sender, MouseEventArgs e) => Drag(sender, e);
 }

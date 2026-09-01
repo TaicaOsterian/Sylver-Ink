@@ -114,7 +114,7 @@ public partial class NoteRecord
         this.UUID = UUID ?? MakeUUID(UUIDType.Record);
     }
 
-    public void Add(NoteRevision revision)
+    private void Add(NoteRevision revision)
     {
         if (revision.Created == -1)
             revision.Created = DateTime.UtcNow.ToBinary();
@@ -287,15 +287,15 @@ public partial class NoteRecord
 
     public FlowDocument GetDocument() => TextConverter.Parse(Reconstruct(), TextFormat.Xaml);
 
-    public FlowDocument GetDocument(uint backsteps = 0U) => TextConverter.Parse(Reconstruct(backsteps), TextFormat.Xaml);
+    public FlowDocument GetDocument(int backsteps = 0) => TextConverter.Parse(Reconstruct(backsteps), TextFormat.Xaml);
 
     public int GetNumRevisions() => Revisions.Count;
 
     private string GetPlaintext() => TextConverter.Convert(Reconstruct(), TextFormat.Xaml, TextFormat.Plaintext);
 
-    public NoteRevision GetRevision(uint index) => Revisions[Revisions.Count - 1 - (int)index];
+    public NoteRevision GetRevision(int index) => Revisions[Revisions.Count - 1 - index];
 
-    public string GetRevisionTime(uint index) => DateTime.FromBinary(GetRevision(index).Created).ToLocalTime().ToString(DateFormat, CultureInfo.InvariantCulture);
+    public string GetRevisionTime(int index) => DateTime.FromBinary(GetRevision(index).Created).ToLocalTime().ToString(DateFormat, CultureInfo.InvariantCulture);
 
     public void Lock()
     {
@@ -333,8 +333,11 @@ public partial class NoteRecord
     /// </summary>
     /// <param name="backsteps">The number of revisions to undo, or 0 for the current state of the record.</param>
     /// <returns>The text of this record after undoing the requested number of revisions.</returns>
-    public string Reconstruct(uint backsteps = 0U)
+    public string Reconstruct(int backsteps = 0)
     {
+        // We don't use an unsigned int here because the number of upstream conversions would increase exponentially if we did.
+        backsteps = Math.Max(backsteps, 0);
+
         var latest = Initial ?? string.Empty;
         if (Revisions.Count == 0)
             return latest;
@@ -414,7 +417,7 @@ public partial class NoteRecord
 
         for (int i = RCount - 1; i > -1; i--)
         {
-            var oldText = Reconstruct((uint)i);
+            var oldText = Reconstruct(i);
             CreatedTags.Add(Revisions[i].Created);
             ReconstructedSubstrings.Add(TextConverter.Convert(oldText, TextFormat.Xaml, TextFormat.Plaintext));
         }
@@ -434,7 +437,7 @@ public partial class NoteRecord
 
         for (int i = RCount - 1; i > -1; i--)
         {
-            var oldText = Reconstruct((uint)i);
+            var oldText = Reconstruct(i);
             CreatedTags.Add(Revisions[i].Created);
             ReconstructedSubstrings.Add(TextConverter.Convert(oldText, TextFormat.Plaintext, TextFormat.Xaml));
         }
@@ -447,7 +450,7 @@ public partial class NoteRecord
 
     public override string ToString() => GetPlaintext();
 
-    public string ToXaml() => Reconstruct(0U);
+    public string ToXaml() => Reconstruct(0);
 
     public void Unlock()
     {
