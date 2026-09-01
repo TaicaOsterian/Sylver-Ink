@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
+using static SylverInk.CommonUtils;
 using static SylverInk.FileIO.FileUtils;
 using static SylverInk.Notes.DatabaseUtils;
 using static SylverInk.XAMLUtils.MainWindowUtils;
@@ -161,6 +162,18 @@ public class MainWindowViewModel : ViewModelBase
 
     private static bool CanUnserve() => CurrentDatabase?.Server?.Serving is true;
 
+    private static void CopyCode()
+    {
+        try
+        {
+            Clipboard.SetText(CurrentDatabase.Server?.AddressCode);
+        }
+        catch
+        {
+            ShowTooltip("Failed to copy the address code to the clipboard");
+        }
+    }
+
     private static void MenuBackup() => CurrentDatabase.MakeBackup();
 
     private static void MenuClose()
@@ -184,7 +197,10 @@ public class MainWindowViewModel : ViewModelBase
         AddressCode = string.Empty;
     }
 
-    private static void MenuCopyCode() => Clipboard.SetText(CurrentDatabase.Server?.AddressCode);
+    private static void MenuCopyCode()
+    {
+        CopyCode();
+    }
 
     private static void MenuCreate()
     {
@@ -268,6 +284,15 @@ public class MainWindowViewModel : ViewModelBase
         DeferUpdateRecentNotes();
     }
 
+    private void PopupCodeClosed()
+    {
+        if (CurrentDatabase == null)
+            return;
+
+        CopyCode();
+        CodePopupVisible = false;
+    }
+
     private void PopupRenameClosed()
     {
         if (CurrentDatabase == null)
@@ -314,14 +339,5 @@ public class MainWindowViewModel : ViewModelBase
         Database newDB = new();
         AddDatabase(newDB);
         await newDB.Client.Connect(AddressCode);
-    }
-
-    private void PopupCodeClosed()
-    {
-        if (CurrentDatabase == null)
-            return;
-
-        Clipboard.SetText(CurrentDatabase.Server?.AddressCode);
-        CodePopupVisible = false;
     }
 }

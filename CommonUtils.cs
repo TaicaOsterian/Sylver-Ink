@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using static SylverInk.FileIO.FileUtils;
 using static SylverInk.Notes.DatabaseUtils;
 using static SylverInk.XAMLUtils.MainWindowUtils;
@@ -244,6 +245,24 @@ public static partial class CommonUtils
         LastActiveNotesLeft.Clear();
         LastActiveNotesTop.Clear();
         LastActiveNotesWidth.Clear();
+    }
+
+    public static void ShowTooltip(string text)
+    {
+        var tooltip = new ToolTip
+        {
+            Background = Settings.MenuBackground,
+            Content = text,
+            FontFamily = Settings.MainFontFamily,
+            FontSize = Settings.MainFontSize,
+            Foreground = Settings.MenuForeground,
+            Placement = System.Windows.Controls.Primitives.PlacementMode.Mouse,
+            PlacementTarget = Application.Current.MainWindow,
+            StaysOpen = false,
+        };
+
+        tooltip.IsOpen = true;
+        return;
     }
 
     public static byte[] ToByteArray(this int data) => [
