@@ -16,439 +16,439 @@ namespace SylverInk.Notes;
 
 public partial class NoteController : IDisposable
 {
-	private short _canCompress; // -1 = Cannot compress, 1 = Can compress, 0 = Not tested.
-	private bool _changed;
-	private int _nextIndex;
-	private readonly List<NoteRecord> Records = [];
-	private Serializer? _serializer;
-	private byte? Structure;
-
-	public bool Changed
-	{
-		get => _changed;
-		set
-		{
-			_changed = value;
-			DatabaseChanged = DatabaseChanged || value;
-		}
-	}
-
-	public Database? DB { get; set; }
-	public bool EnforceNoForwardCompatibility { get; private set; }
-	public int Format { get; set; } = HighestSIDBFormat;
-	public bool Loaded { get; set; }
-	public string? Name { get; set; }
-	public int RecordCount => Records.Count;
-	public string UUID { get; set; } = MakeUUID(UUIDType.Database);
-	public Dictionary<string, double> WordPercentages { get; } = [];
-
-	private int NextIndex
-	{
-		get
-		{
-			_nextIndex++;
-			return _nextIndex - 1;
-		}
-		set => _nextIndex = value;
-	}
-
-	public NoteController(Database? DB = null)
-	{
-		this.DB = DB;
-		InitializeRecords();
-		Loaded = true;
-	}
-
-	public NoteController(string dbFile, Database? DB = null)
-	{
-		this.DB = DB;
-
-		ReloadSerializer();
-
-		if (!File.Exists(dbFile) || !_serializer?.OpenRead(dbFile) is true)
-		{
-			string backup = FindBackup(dbFile);
-			if (!string.IsNullOrWhiteSpace(backup))
-			{
-				ReloadSerializer();
-				if (!_serializer?.OpenRead(backup) is true)
-				{
-					MessageBox.Show($"Unable to load database file: {dbFile}", "Sylver Ink: Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
-					return;
-				}
-			}
-		}
-
-		InitializeRecords();
-		ReloadSerializer();
-		Loaded = true;
-	}
-
-	private int AddRecord(NoteRecord record)
-	{
-		RecentNotesDirty = true;
-		Records.Add(record);
-		return record.Index;
-	}
-
-	public void Autosave(string filename)
-	{
-		PropagateIndices();
-		ReloadSerializer();
-
-		if (!Open(filename, true, true))
-			return;
-
-		if (_serializer?.DatabaseFormat >= 7)
-			_serializer?.WriteShortString(UUID);
-
-		if (!_serializer?.Headless is true)
-			_serializer?.WriteShortString(Name);
-
-		if (_serializer?.DatabaseFormat >= 9)
-			_serializer?.WriteByte(Structure ??= 0);
-
-		_serializer?.WriteInt32(Records.Count);
-		for (int i = 0; i < Records.Count; i++)
-			Records[i].Serialize(_serializer);
-
-		ReloadSerializer();
-	}
-
-	public int CreateRecord(string entry)
-	{
-		Changed = true;
-		return AddRecord(new(NextIndex, TextConverter.Convert(entry, TextFormat.Plaintext, TextFormat.Xaml), DB));
-	}
-
-	public void CreateRevision(int index, string NewVersion) => CreateRevision(GetRecord(index), NewVersion);
-
-	public static void CreateRevision(NoteRecord? record, string NewVersion) => record?.CreateRevision(NewVersion);
-
-	public void DeleteRecord(int index)
-	{
-		var recordIndex = Records.FindIndex(new(record => record.Index == index));
-		Records[recordIndex].Delete();
-		Records.RemoveAt(recordIndex);
-
-		PropagateIndices();
-		Changed = true;
-	}
-
-	public void DeserializeRecords()
-	{
-		if (_serializer is null)
-			ReloadSerializer();
-
-		Format = _serializer?.DatabaseFormat ?? HighestSIDBFormat;
-
-		if (Format > HighestSIDBFormat)
-		{
-			EnforceNoForwardCompatibility = true;
-			_serializer?.Close();
-			MessageBox.Show("This database was created in a newer format than the current version of Sylver Ink supports. Please update your installation before opening this database.", "Sylver Ink: Error", MessageBoxButton.OK, MessageBoxImage.Error);
-			return;
-		}
-
-		if (Format >= 7)
-			UUID = _serializer?.ReadShortString() ?? MakeUUID(UUIDType.Database);
-
-		if (!_serializer?.Headless is true)
-			Name = _serializer?.ReadShortString();
-
-		if (Format >= 9)
-			Structure = _serializer?.ReadByte();
-
-		int recordCount = _serializer?.ReadInt32() ?? 0;
-		for (int i = 0; i < recordCount; i++)
-		{
-			NoteRecord record = new(DB);
-			AddRecord(record.Deserialize(_serializer));
-		}
-
-		_serializer?.Close();
-		PropagateIndices();
-		Changed = false;
-	}
-
-	public void Dispose()
-	{
-		_serializer?.Dispose();
-		GC.SuppressFinalize(this);
-	}
-
-	public override bool Equals(object? obj)
-	{
-		if (obj is Database otherDB)
-		{
-			if (!otherDB.Name?.Equals(Name, StringComparison.Ordinal) is true)
-				return false;
-
-			if (!otherDB.UUID.Equals(UUID, StringComparison.Ordinal))
-				return false;
-
-			return true;
-		}
-
-		if (obj is NoteController otherController)
-		{
-			if (!otherController.Name?.Equals(Name, StringComparison.Ordinal) is true)
-				return false;
-
-			if (!otherController.UUID.Equals(UUID, StringComparison.Ordinal))
-				return false;
-
-			return true;
-		}
-
-		return false;
-	}
-
-	public void EraseDatabase()
-	{
-		PropagateIndices();
-		while (RecordCount > 0)
-			DeleteRecord(0);
-
-		DeferUpdateRecentNotes();
-	}
-
-	private static string FindBackup(string dbFile)
-	{
-		var Extensionless = Path.GetFileNameWithoutExtension(dbFile);
-		for (int i = 1; i < 4; i++)
-		{
-			string backup = Path.Join(Path.GetDirectoryName(dbFile), $"{Extensionless}_{i}.sibk");
-			if (File.Exists(backup))
-				return backup;
-		}
-
-		return string.Empty;
-	}
-
-	public override int GetHashCode() => int.Parse(UUID.Replace("-", string.Empty)[^8..], NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo);
-
-	public NoteRecord? GetRecord(int RecordIndex) => RecordIndex < Records.Count && RecordIndex > -1 ? Records[RecordIndex] : null;
-
-	public bool HasRecord(int index)
-	{
-		try
-		{
-			if (index < 0)
-				return false;
-
-			if (index >= Records.Count)
-				return false;
-
-			return Records[index] != null;
-		}
-		catch
-		{
-			return false;
-		}
-	}
-
-	public void InitializeRecords(bool newDatabase = true)
-	{
-		for (int i = (OpenQueries ?? []).Count; i > 0; i--)
-			OpenQueries?[i - 1].RequestClose();
-
-		if (newDatabase)
-			Records.Clear();
-
-		DeserializeRecords();
-		return;
-	}
-
-	public void MakeBackup()
-	{
-		ReloadSerializer();
-
-		string file = DialogFileSelect(true, 1, Name);
-
-		if (!_serializer?.OpenWrite($"{file}") is true)
-			return;
-
-		SerializeRecords();
-		ReloadSerializer();
-	}
-
-	public bool Open(string path, bool writing = false, bool hidden = false)
-	{
-		_serializer = new()
-		{
-			DatabaseFormat = (byte)Format,
-			Hidden = hidden,
-		};
-
-		if (writing)
-			return _serializer.OpenWrite(path);
-
-		return _serializer.OpenRead(path);
-	}
-
-	public void PropagateIndices()
-	{
-		for (int i = 0; i < RecordCount; i++)
-			Records[i].OverwriteIndex(i);
-
-		_nextIndex = RecordCount;
-	}
-
-	public void ReloadSerializer()
-	{
-		_serializer?.Close();
-		_serializer = new()
-		{
-			DatabaseFormat = (byte)Format
-		};
-
-		if (_canCompress == -1 || (_canCompress == 0 && !TestCanCompress()))
-			_serializer.DatabaseFormat--;
-	}
-
-	public void Revert(DateTime targetDate)
-	{
-		for (int i = RecordCount - 1; i > -1; i--)
-		{
-			for (int j = OpenQueries.Count - 1; j > -1; j--)
-				Concurrent(OpenQueries[j].RequestClose, GetRecord(i));
-
-			var RecordDate = Records[i].GetCreatedObject().ToLocalTime();
-			var comparison = RecordDate.CompareTo(targetDate);
-			if (comparison > 0)
-			{
-				DeleteRecord(i);
-				continue;
-			}
-
-			for (int j = Records[i].GetNumRevisions(); j > 0; j--)
-			{
-				var RevisionDate = DateTime.FromBinary(Records[i].GetRevision((uint)j - 1U).Created).ToLocalTime();
-				comparison = RevisionDate.CompareTo(targetDate);
-				if (comparison <= 0)
-					continue;
-
-				Records[i].DeleteRevision(j - 1);
-				Changed = true;
-			}
-		}
-
-		RecentNotesDirty = true;
-		PropagateIndices();
-		DeferUpdateRecentNotes();
-	}
-
-	public byte[]? SerializeRecords(bool inMemory = false)
-	{
-		PropagateIndices();
-
-		if (inMemory)
-		{
-			ReloadSerializer();
-			_serializer?.OpenWrite();
-		}
-
-		if (_serializer?.DatabaseFormat >= 7)
-			_serializer?.WriteShortString(UUID);
-
-		if (!_serializer?.Headless is true)
-			_serializer?.WriteShortString(Name);
-
-		if (_serializer?.DatabaseFormat >= 9)
-			_serializer?.WriteByte(Structure ??= 0);
-
-		_serializer?.WriteInt32(Records.Count);
-		for (int i = 0; i < Records.Count; i++)
-			Records[i].Serialize(_serializer);
-
-		if (inMemory)
-			return _serializer?.GetOutgoingStream();
-
-		Changed = false;
-		ReloadSerializer();
-		return null;
-	}
-
-	public void Sort(SortType type = SortType.ByIndex) => Records.Sort(new Comparison<NoteRecord>((_rev1, _rev2) => type switch
-	{
-		SortType.ByChange => _rev2.GetLastChangeObject().CompareTo(_rev1.GetLastChangeObject()),
-		SortType.ByCreation => _rev2.GetCreatedObject().CompareTo(_rev1.GetCreatedObject()),
-		SortType.ByIndex => _rev1.Index.CompareTo(_rev2.Index),
-		_ => _rev1.Index.CompareTo(_rev2.Index),
-	}));
-
-	public bool TestCanCompress()
-	{
-		if (Changed)
-			_canCompress = 0;
-
-		if (_canCompress != 0)
-			return _canCompress == 1;
-
-		try
-		{
-			string? _name = Name;
-			byte? _structure = Structure;
-			int recordCount = 0;
-
-			_serializer?.BeginCompressionTest();
-
-			_serializer?.WriteInt32(Records.Count);
-			for (int i = 0; i < Records.Count; i++)
-				Records[i].Serialize(_serializer);
-			_serializer?.WriteString(_name);
-			_serializer?.WriteByte(_structure ??= 1);
-
-			_serializer?.EndCompressionTest();
-
-			recordCount = _serializer?.ReadInt32() ?? 0;
-			for (int i = 0; i < recordCount; i++)
-				new NoteRecord().Deserialize(_serializer);
-			_serializer?.ReadString();
-			_structure = _serializer?.ReadByte();
-		}
-		catch
-		{
-			_serializer?.ClearCompressionTest();
-			_canCompress = -1;
-			ReloadSerializer();
-			return false;
-		}
-
-		_serializer?.ClearCompressionTest();
-		_canCompress = 1;
-		ReloadSerializer();
-		return true;
-	}
-
-	public void UpdateWordPercentages()
-	{
-		uint total = 0U;
-		WordPercentages.Clear();
-
-		foreach (NoteRecord record in Records)
-		{
-			string recordText = record.ToString();
-			var matches = Lowercase().Matches(recordText.ToLowerInvariant());
-			foreach (Match m in matches)
-			{
-				foreach (Group group in m.Groups.Values)
-				{
-					WordPercentages.TryAdd(group.Value, 0.0);
-					WordPercentages[group.Value]++;
-					total++;
-				}
-			}
-		}
-
-		foreach (string key in WordPercentages.Keys.ToList())
-		{
-			double value = WordPercentages[key];
-			WordPercentages[key] = 100.0 * value / total;
-		}
-	}
-
-	[GeneratedRegex(@"(\p{Ll}+)")]
-	private partial Regex Lowercase();
+    private short _canCompress; // -1 = Cannot compress, 1 = Can compress, 0 = Not tested.
+    private bool _changed;
+    private int _nextIndex;
+    private readonly List<NoteRecord> Records = [];
+    private Serializer? _serializer;
+    private byte? Structure;
+
+    public bool Changed
+    {
+        get => _changed;
+        set
+        {
+            _changed = value;
+            DatabaseChanged = DatabaseChanged || value;
+        }
+    }
+
+    public Database? DB { get; set; }
+    public bool EnforceNoForwardCompatibility { get; private set; }
+    public int Format { get; set; } = HighestSIDBFormat;
+    public bool Loaded { get; set; }
+    public string? Name { get; set; }
+    public int RecordCount => Records.Count;
+    public string UUID { get; set; } = MakeUUID(UUIDType.Database);
+    public Dictionary<string, double> WordPercentages { get; } = [];
+
+    private int NextIndex
+    {
+        get
+        {
+            _nextIndex++;
+            return _nextIndex - 1;
+        }
+        set => _nextIndex = value;
+    }
+
+    public NoteController(Database? DB = null)
+    {
+        this.DB = DB;
+        InitializeRecords();
+        Loaded = true;
+    }
+
+    public NoteController(string dbFile, Database? DB = null)
+    {
+        this.DB = DB;
+
+        ReloadSerializer();
+
+        if (!File.Exists(dbFile) || !_serializer?.OpenRead(dbFile) is true)
+        {
+            string backup = FindBackup(dbFile);
+            if (!string.IsNullOrWhiteSpace(backup))
+            {
+                ReloadSerializer();
+                if (!_serializer?.OpenRead(backup) is true)
+                {
+                    MessageBox.Show($"Unable to load database file: {dbFile}", "Sylver Ink: Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+            }
+        }
+
+        InitializeRecords();
+        ReloadSerializer();
+        Loaded = true;
+    }
+
+    private int AddRecord(NoteRecord record)
+    {
+        RecentNotesDirty = true;
+        Records.Add(record);
+        return record.Index;
+    }
+
+    public void Autosave(string filename)
+    {
+        PropagateIndices();
+        ReloadSerializer();
+
+        if (!Open(filename, true, true))
+            return;
+
+        if (_serializer?.DatabaseFormat >= 7)
+            _serializer?.WriteShortString(UUID);
+
+        if (!_serializer?.Headless is true)
+            _serializer?.WriteShortString(Name);
+
+        if (_serializer?.DatabaseFormat >= 9)
+            _serializer?.WriteByte(Structure ??= 0);
+
+        _serializer?.WriteInt32(Records.Count);
+        for (int i = 0; i < Records.Count; i++)
+            Records[i].Serialize(_serializer);
+
+        ReloadSerializer();
+    }
+
+    public int CreateRecord(string entry)
+    {
+        Changed = true;
+        return AddRecord(new(NextIndex, TextConverter.Convert(entry, TextFormat.Plaintext, TextFormat.Xaml), DB));
+    }
+
+    public void CreateRevision(int index, string NewVersion) => CreateRevision(GetRecord(index), NewVersion);
+
+    public static void CreateRevision(NoteRecord? record, string NewVersion) => record?.CreateRevision(NewVersion);
+
+    public void DeleteRecord(int index)
+    {
+        var recordIndex = Records.FindIndex(new(record => record.Index == index));
+        Records[recordIndex].Delete();
+        Records.RemoveAt(recordIndex);
+
+        PropagateIndices();
+        Changed = true;
+    }
+
+    public void DeserializeRecords()
+    {
+        if (_serializer is null)
+            ReloadSerializer();
+
+        Format = _serializer?.DatabaseFormat ?? HighestSIDBFormat;
+
+        if (Format > HighestSIDBFormat)
+        {
+            EnforceNoForwardCompatibility = true;
+            _serializer?.Close();
+            MessageBox.Show("This database was created in a newer format than the current version of Sylver Ink supports. Please update your installation before opening this database.", "Sylver Ink: Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            return;
+        }
+
+        if (Format >= 7)
+            UUID = _serializer?.ReadShortString() ?? MakeUUID(UUIDType.Database);
+
+        if (!_serializer?.Headless is true)
+            Name = _serializer?.ReadShortString();
+
+        if (Format >= 9)
+            Structure = _serializer?.ReadByte();
+
+        int recordCount = _serializer?.ReadInt32() ?? 0;
+        for (int i = 0; i < recordCount; i++)
+        {
+            NoteRecord record = new(DB);
+            AddRecord(record.Deserialize(_serializer));
+        }
+
+        _serializer?.Close();
+        PropagateIndices();
+        Changed = false;
+    }
+
+    public void Dispose()
+    {
+        _serializer?.Dispose();
+        GC.SuppressFinalize(this);
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj is Database otherDB)
+        {
+            if (!otherDB.Name?.Equals(Name, StringComparison.Ordinal) is true)
+                return false;
+
+            if (!otherDB.UUID.Equals(UUID, StringComparison.Ordinal))
+                return false;
+
+            return true;
+        }
+
+        if (obj is NoteController otherController)
+        {
+            if (!otherController.Name?.Equals(Name, StringComparison.Ordinal) is true)
+                return false;
+
+            if (!otherController.UUID.Equals(UUID, StringComparison.Ordinal))
+                return false;
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public void EraseDatabase()
+    {
+        PropagateIndices();
+        while (RecordCount > 0)
+            DeleteRecord(0);
+
+        DeferUpdateRecentNotes();
+    }
+
+    private static string FindBackup(string dbFile)
+    {
+        var Extensionless = Path.GetFileNameWithoutExtension(dbFile);
+        for (int i = 1; i < 4; i++)
+        {
+            string backup = Path.Join(Path.GetDirectoryName(dbFile), $"{Extensionless}_{i}.sibk");
+            if (File.Exists(backup))
+                return backup;
+        }
+
+        return string.Empty;
+    }
+
+    public override int GetHashCode() => int.Parse(UUID.Replace("-", string.Empty)[^8..], NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo);
+
+    public NoteRecord? GetRecord(int RecordIndex) => RecordIndex < Records.Count && RecordIndex > -1 ? Records[RecordIndex] : null;
+
+    public bool HasRecord(int index)
+    {
+        try
+        {
+            if (index < 0)
+                return false;
+
+            if (index >= Records.Count)
+                return false;
+
+            return Records[index] != null;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    public void InitializeRecords(bool newDatabase = true)
+    {
+        for (int i = (OpenQueries ?? []).Count; i > 0; i--)
+            OpenQueries?[i - 1].RequestClose();
+
+        if (newDatabase)
+            Records.Clear();
+
+        DeserializeRecords();
+        return;
+    }
+
+    public void MakeBackup()
+    {
+        ReloadSerializer();
+
+        string file = DialogFileSelect(true, 1, Name);
+
+        if (!_serializer?.OpenWrite($"{file}") is true)
+            return;
+
+        SerializeRecords();
+        ReloadSerializer();
+    }
+
+    public bool Open(string path, bool writing = false, bool hidden = false)
+    {
+        _serializer = new()
+        {
+            DatabaseFormat = (byte)Format,
+            Hidden = hidden,
+        };
+
+        if (writing)
+            return _serializer.OpenWrite(path);
+
+        return _serializer.OpenRead(path);
+    }
+
+    public void PropagateIndices()
+    {
+        for (int i = 0; i < RecordCount; i++)
+            Records[i].OverwriteIndex(i);
+
+        _nextIndex = RecordCount;
+    }
+
+    public void ReloadSerializer()
+    {
+        _serializer?.Close();
+        _serializer = new()
+        {
+            DatabaseFormat = (byte)Format
+        };
+
+        if (_canCompress == -1 || (_canCompress == 0 && !TestCanCompress()))
+            _serializer.DatabaseFormat--;
+    }
+
+    public void Revert(DateTime targetDate)
+    {
+        for (int i = RecordCount - 1; i > -1; i--)
+        {
+            for (int j = OpenQueries.Count - 1; j > -1; j--)
+                Concurrent(OpenQueries[j].RequestClose, GetRecord(i));
+
+            var RecordDate = Records[i].GetCreatedObject().ToLocalTime();
+            var comparison = RecordDate.CompareTo(targetDate);
+            if (comparison > 0)
+            {
+                DeleteRecord(i);
+                continue;
+            }
+
+            for (int j = Records[i].GetNumRevisions(); j > 0; j--)
+            {
+                var RevisionDate = DateTime.FromBinary(Records[i].GetRevision((uint)j - 1U).Created).ToLocalTime();
+                comparison = RevisionDate.CompareTo(targetDate);
+                if (comparison <= 0)
+                    continue;
+
+                Records[i].DeleteRevision(j - 1);
+                Changed = true;
+            }
+        }
+
+        RecentNotesDirty = true;
+        PropagateIndices();
+        DeferUpdateRecentNotes();
+    }
+
+    public byte[]? SerializeRecords(bool inMemory = false)
+    {
+        PropagateIndices();
+
+        if (inMemory)
+        {
+            ReloadSerializer();
+            _serializer?.OpenWrite();
+        }
+
+        if (_serializer?.DatabaseFormat >= 7)
+            _serializer?.WriteShortString(UUID);
+
+        if (!_serializer?.Headless is true)
+            _serializer?.WriteShortString(Name);
+
+        if (_serializer?.DatabaseFormat >= 9)
+            _serializer?.WriteByte(Structure ??= 0);
+
+        _serializer?.WriteInt32(Records.Count);
+        for (int i = 0; i < Records.Count; i++)
+            Records[i].Serialize(_serializer);
+
+        if (inMemory)
+            return _serializer?.GetOutgoingStream();
+
+        Changed = false;
+        ReloadSerializer();
+        return null;
+    }
+
+    public void Sort(SortType type = SortType.ByIndex) => Records.Sort(new Comparison<NoteRecord>((_rev1, _rev2) => type switch
+    {
+        SortType.ByChange => _rev2.GetLastChangeObject().CompareTo(_rev1.GetLastChangeObject()),
+        SortType.ByCreation => _rev2.GetCreatedObject().CompareTo(_rev1.GetCreatedObject()),
+        SortType.ByIndex => _rev1.Index.CompareTo(_rev2.Index),
+        _ => _rev1.Index.CompareTo(_rev2.Index),
+    }));
+
+    public bool TestCanCompress()
+    {
+        if (Changed)
+            _canCompress = 0;
+
+        if (_canCompress != 0)
+            return _canCompress == 1;
+
+        try
+        {
+            string? _name = Name;
+            byte? _structure = Structure;
+            int recordCount = 0;
+
+            _serializer?.BeginCompressionTest();
+
+            _serializer?.WriteInt32(Records.Count);
+            for (int i = 0; i < Records.Count; i++)
+                Records[i].Serialize(_serializer);
+            _serializer?.WriteString(_name);
+            _serializer?.WriteByte(_structure ??= 1);
+
+            _serializer?.EndCompressionTest();
+
+            recordCount = _serializer?.ReadInt32() ?? 0;
+            for (int i = 0; i < recordCount; i++)
+                new NoteRecord().Deserialize(_serializer);
+            _serializer?.ReadString();
+            _structure = _serializer?.ReadByte();
+        }
+        catch
+        {
+            _serializer?.ClearCompressionTest();
+            _canCompress = -1;
+            ReloadSerializer();
+            return false;
+        }
+
+        _serializer?.ClearCompressionTest();
+        _canCompress = 1;
+        ReloadSerializer();
+        return true;
+    }
+
+    public void UpdateWordPercentages()
+    {
+        uint total = 0U;
+        WordPercentages.Clear();
+
+        foreach (NoteRecord record in Records)
+        {
+            string recordText = record.ToString();
+            var matches = Lowercase().Matches(recordText.ToLowerInvariant());
+            foreach (Match m in matches)
+            {
+                foreach (Group group in m.Groups.Values)
+                {
+                    WordPercentages.TryAdd(group.Value, 0.0);
+                    WordPercentages[group.Value]++;
+                    total++;
+                }
+            }
+        }
+
+        foreach (string key in WordPercentages.Keys.ToList())
+        {
+            double value = WordPercentages[key];
+            WordPercentages[key] = 100.0 * value / total;
+        }
+    }
+
+    [GeneratedRegex(@"(\p{Ll}+)")]
+    private partial Regex Lowercase();
 }

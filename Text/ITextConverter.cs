@@ -4,9 +4,9 @@ namespace SylverInk.Text;
 
 public enum TextFormat
 {
-	Plaintext,
-	Xaml,
-	//Markdown,
+    Plaintext,
+    Xaml,
+    //Markdown,
 }
 
 /// <summary>
@@ -14,18 +14,18 @@ public enum TextFormat
 /// </summary>
 public interface ITextConverter
 {
-	/// <summary>
-	/// Convert from one text format to another.
-	/// </summary>
-	abstract string Convert(string text, TextFormat sourceFormat);
+    /// <summary>
+    /// Convert from one text format to another.
+    /// </summary>
+    abstract string Convert(string text, TextFormat sourceFormat);
 
-	/// <summary>
-	/// Convert from text to a WPF FlowDocument object.
-	/// </summary>
-	abstract FlowDocument Parse(string text);
+    /// <summary>
+    /// Convert from text to a WPF FlowDocument object.
+    /// </summary>
+    abstract FlowDocument Parse(string text);
 
-	/// <summary>
-	/// Convert from a WPF FlowDocument object to text.
-	/// </summary>
-	abstract string Save(FlowDocument document);
+    /// <summary>
+    /// Convert from a WPF FlowDocument object to text.
+    /// </summary>
+    abstract string Save(FlowDocument document);
 }

@@ -14,85 +14,85 @@ namespace SylverInk.XAML;
 /// </summary>
 public partial class Search : Window
 {
-	public string Query { get; private set; } = string.Empty;
-	public SearchViewModel ViewModel => (SearchViewModel)DataContext;
+    public string Query { get; private set; } = string.Empty;
+    public SearchViewModel ViewModel => (SearchViewModel)DataContext;
 
-	public Search()
-	{
-		DataContext = new SearchViewModel();
-		ViewModel.RequestClose += (_, _) => Close();
-		InitializeComponent();
-		CreateContextMenu();
-	}
+    public Search()
+    {
+        DataContext = new SearchViewModel();
+        ViewModel.RequestClose += (_, _) => Close();
+        InitializeComponent();
+        CreateContextMenu();
+    }
 
-	private void ContextDelete(object? sender, RoutedEventArgs e)
-	{
-		if (RecentSelection is null)
-			return;
+    private void ContextDelete(object? sender, RoutedEventArgs e)
+    {
+        if (RecentSelection is null)
+            return;
 
-		if (MessageBox.Show("Are you sure you want to delete this note?", "Sylver Ink: Notification", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
-			return;
+        if (MessageBox.Show("Are you sure you want to delete this note?", "Sylver Ink: Notification", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+            return;
 
-		CurrentDatabase.DeleteRecord(RecentSelection);
+        CurrentDatabase.DeleteRecord(RecentSelection);
 
-		return;
-	}
+        return;
+    }
 
-	private void ContextOpen(object? sender, RoutedEventArgs e)
-	{
-		if (RecentSelection is null)
-			return;
+    private void ContextOpen(object? sender, RoutedEventArgs e)
+    {
+        if (RecentSelection is null)
+            return;
 
-		OpenQuery(RecentSelection);
+        OpenQuery(RecentSelection);
 
-		return;
-	}
-	private void CreateContextMenu()
-	{
-		ContextMenu menu = new()
-		{
-			DataContext = CommonUtils.Settings
-		};
+        return;
+    }
+    private void CreateContextMenu()
+    {
+        ContextMenu menu = new()
+        {
+            DataContext = CommonUtils.Settings
+        };
 
-		MenuItem itemOpen = new()
-		{
-			Header = "Open",
-		};
+        MenuItem itemOpen = new()
+        {
+            Header = "Open",
+        };
 
-		MenuItem itemDelete = new()
-		{
-			Header = "Delete",
-		};
+        MenuItem itemDelete = new()
+        {
+            Header = "Delete",
+        };
 
-		itemOpen.Click += ContextOpen;
-		itemDelete.Click += ContextDelete;
+        itemOpen.Click += ContextOpen;
+        itemDelete.Click += ContextDelete;
 
-		menu.Items.Add(itemOpen);
-		menu.Items.Add(itemDelete);
+        menu.Items.Add(itemOpen);
+        menu.Items.Add(itemDelete);
 
-		Results.ContextMenu = menu;
-	}
+        Results.ContextMenu = menu;
+    }
 
-	private void Drag(object? sender, MouseButtonEventArgs e) => DragMove();
+    private void Drag(object? sender, MouseButtonEventArgs e) => DragMove();
 
-	private void ListItemChosen(object? sender, MouseButtonEventArgs e)
-	{
-		if (sender is not ListBox box)
-			return;
+    private void ListItemChosen(object? sender, MouseButtonEventArgs e)
+    {
+        if (sender is not ListBox box)
+            return;
 
-		if (box.SelectedItem is not NoteRecord record)
-			return;
+        if (box.SelectedItem is not NoteRecord record)
+            return;
 
-		RecentSelection = record;
+        RecentSelection = record;
 
-		if (e.ChangedButton == MouseButton.Right)
-			return;
+        if (e.ChangedButton == MouseButton.Right)
+            return;
 
-		OpenQuery(record)?.ViewModel.ScrollToText(Query);
-	}
+        OpenQuery(record)?.ViewModel.ScrollToText(Query);
+    }
 
-	private void OnClose(object? sender, EventArgs e)
-	{
-		CommonUtils.Settings.SearchResults.Clear();
-	}
+    private void OnClose(object? sender, EventArgs e)
+    {
+        CommonUtils.Settings.SearchResults.Clear();
+    }
 }

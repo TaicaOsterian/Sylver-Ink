@@ -9,13 +9,13 @@ namespace SylverInk.XAML;
 /// </summary>
 public partial class Update : Window
 {
-	public UpdateViewModel ViewModel => (UpdateViewModel)DataContext;
+    public UpdateViewModel ViewModel => (UpdateViewModel)DataContext;
 
-	public Update()
-	{
-		DataContext = new UpdateViewModel();
-		InitializeComponent();
-	}
+    public Update()
+    {
+        DataContext = new UpdateViewModel();
+        InitializeComponent();
+    }
 
-	private void Drag(object? sender, MouseButtonEventArgs e) => DragMove();
+    private void Drag(object? sender, MouseButtonEventArgs e) => DragMove();
 }

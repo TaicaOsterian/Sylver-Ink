@@ -21,178 +21,178 @@ namespace SylverInk;
 /// </summary>
 public partial class MainWindow : Window
 {
-	private bool ShellVerbsPassed;
+    private bool ShellVerbsPassed;
 
-	public MainWindowViewModel ViewModel => (MainWindowViewModel)DataContext;
+    public MainWindowViewModel ViewModel => (MainWindowViewModel)DataContext;
 
-	public MainWindow()
-	{
-		DataContext = new MainWindowViewModel();
-		ViewModel.RequestSelectDatabase += SelectDatabaseTab;
-		InitializeComponent();
-	}
+    public MainWindow()
+    {
+        DataContext = new MainWindowViewModel();
+        ViewModel.RequestSelectDatabase += SelectDatabaseTab;
+        InitializeComponent();
+    }
 
-	private void Drag(object? sender, MouseButtonEventArgs e) => DragMove();
+    private void Drag(object? sender, MouseButtonEventArgs e) => DragMove();
 
-	private static bool IsShuttingDown()
-	{
-		try
-		{
-			Application.Current.ShutdownMode = Application.Current.ShutdownMode;
-			return false;
-		}
-		catch
-		{
-			return true;
-		}
-	}
+    private static bool IsShuttingDown()
+    {
+        try
+        {
+            Application.Current.ShutdownMode = Application.Current.ShutdownMode;
+            return false;
+        }
+        catch
+        {
+            return true;
+        }
+    }
 
-	private async void MainWindow_Closing(object? sender, CancelEventArgs e)
-	{
-		if (IsShuttingDown()) // Prevent redundant event handling.
-			return;
+    private async void MainWindow_Closing(object? sender, CancelEventArgs e)
+    {
+        if (IsShuttingDown()) // Prevent redundant event handling.
+            return;
 
-		if (AbortRun)
-		{
-			Application.Current.Shutdown();
-			return;
-		}
+        if (AbortRun)
+        {
+            Application.Current.Shutdown();
+            return;
+        }
 
-		CommonUtils.Settings.Save();
+        CommonUtils.Settings.Save();
 
-		if (!DatabaseChanged)
-		{
-			switch (MessageBox.Show("Are you sure you wish to exit Sylver Ink?", "Sykver Ink: Notification", MessageBoxButton.YesNo, MessageBoxImage.Information))
-			{
-				case MessageBoxResult.No:
-					e.Cancel = true;
-					return;
-				case MessageBoxResult.Yes:
-					ViewModel.GridEnabled = false;
-					Application.Current.Shutdown();
-					return;
-			}
-		}
+        if (!DatabaseChanged)
+        {
+            switch (MessageBox.Show("Are you sure you wish to exit Sylver Ink?", "Sykver Ink: Notification", MessageBoxButton.YesNo, MessageBoxImage.Information))
+            {
+                case MessageBoxResult.No:
+                    e.Cancel = true;
+                    return;
+                case MessageBoxResult.Yes:
+                    ViewModel.GridEnabled = false;
+                    Application.Current.Shutdown();
+                    return;
+            }
+        }
 
-		switch (MessageBox.Show("Do you want to save your work before exiting?", "Sylver Ink: Notification", MessageBoxButton.YesNoCancel, MessageBoxImage.Information))
-		{
-			case MessageBoxResult.Cancel:
-				e.Cancel = true;
-				return;
-			case MessageBoxResult.Yes:
-				e.Cancel = true;
-				ViewModel.GridEnabled = false;
+        switch (MessageBox.Show("Do you want to save your work before exiting?", "Sylver Ink: Notification", MessageBoxButton.YesNoCancel, MessageBoxImage.Information))
+        {
+            case MessageBoxResult.Cancel:
+                e.Cancel = true;
+                return;
+            case MessageBoxResult.Yes:
+                e.Cancel = true;
+                ViewModel.GridEnabled = false;
 
-				foreach (Database db in Databases)
-					Erase(GetLockFile(db.DBFile));
+                foreach (Database db in Databases)
+                    Erase(GetLockFile(db.DBFile));
 
-				await SaveDatabases();
+                await SaveDatabases();
 
-				DatabaseChanged = false;
-				CommonUtils.Settings.Save();
-				Application.Current.Shutdown();
-				return;
-			case MessageBoxResult.No:
-				foreach (Database db in Databases)
-					Erase(GetLockFile(db.DBFile));
+                DatabaseChanged = false;
+                CommonUtils.Settings.Save();
+                Application.Current.Shutdown();
+                return;
+            case MessageBoxResult.No:
+                foreach (Database db in Databases)
+                    Erase(GetLockFile(db.DBFile));
 
-				Application.Current.Shutdown();
-				return;
-		}
-	}
+                Application.Current.Shutdown();
+                return;
+        }
+    }
 
-	private void MainWindow_SizeChanged(object? sender, SizeChangedEventArgs e)
-	{
-		MainWindowViewModel.OnSizeChanged();
-	}
+    private void MainWindow_SizeChanged(object? sender, SizeChangedEventArgs e)
+    {
+        MainWindowViewModel.OnSizeChanged();
+    }
 
-	private void MenuTabChanged(object? sender, SelectionChangedEventArgs e)
-	{
-		if (sender is not TabControl control)
-			return;
+    private void MenuTabChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        if (sender is not TabControl control)
+            return;
 
-		if (control.SelectedItem is TabItem item && item.Tag is Database newDB && !newDB.Equals(CurrentDatabase))
-		{
-			CurrentDatabase = newDB;
-			RecentNotesDirty = true;
-			CommonUtils.Settings.SearchResults.Clear();
-			DeferUpdateRecentNotes();
-		}
-	}
+        if (control.SelectedItem is TabItem item && item.Tag is Database newDB && !newDB.Equals(CurrentDatabase))
+        {
+            CurrentDatabase = newDB;
+            RecentNotesDirty = true;
+            CommonUtils.Settings.SearchResults.Clear();
+            DeferUpdateRecentNotes();
+        }
+    }
 
-	protected override void OnClosed(EventArgs e)
-	{
-		HotKeyUtils.Release();
-		MutexUtils.Release();
-		base.OnClosed(e);
-	}
+    protected override void OnClosed(EventArgs e)
+    {
+        HotKeyUtils.Release();
+        MutexUtils.Release();
+        base.OnClosed(e);
+    }
 
-	protected override async void OnSourceInitialized(EventArgs e)
-	{
-		base.OnSourceInitialized(e);
+    protected override async void OnSourceInitialized(EventArgs e)
+    {
+        base.OnSourceInitialized(e);
 
-		// Hotkey registration
-		HotKeyUtils.Init();
+        // Hotkey registration
+        HotKeyUtils.Init();
 
-		// Database initialization
-		HandleCheckInit();
-		ShellVerbsPassed = MutexUtils.Init();
+        // Database initialization
+        HandleCheckInit();
+        ShellVerbsPassed = MutexUtils.Init();
 
-		if (InstanceRunning())
-		{
-			if (!ShellVerbsPassed)
-				MessageBox.Show("Another instance of Sylver Ink is already running.", "Sylver Ink: Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        if (InstanceRunning())
+        {
+            if (!ShellVerbsPassed)
+                MessageBox.Show("Another instance of Sylver Ink is already running.", "Sylver Ink: Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
-			// If shell verbs were passed to an existing instance, close this instance silently before a head is established.
-			AbortRun = true;
-			Close();
-			return;
-		}
+            // If shell verbs were passed to an existing instance, close this instance silently before a head is established.
+            AbortRun = true;
+            Close();
+            return;
+        }
 
-		// Settings initialization
-		await CommonUtils.Settings.Load();
-		SettingsLoaded = true;
+        // Settings initialization
+        await CommonUtils.Settings.Load();
+        SettingsLoaded = true;
 
-		// Style initialization
-		SetMenuColors(this);
+        // Style initialization
+        SetMenuColors(this);
 
-		// Documents subdirectory initialization
-		foreach (var folder in Subfolders)
-		{
-			if (!Directory.Exists(folder.Value))
-				Directory.CreateDirectory(folder.Value);
-		}
+        // Documents subdirectory initialization
+        foreach (var folder in Subfolders)
+        {
+            if (!Directory.Exists(folder.Value))
+                Directory.CreateDirectory(folder.Value);
+        }
 
-		// (If initialization was interrupted, prevent marking it as completed)
-		if (!IsShuttingDown())
-			UpdatesChecked = true;
+        // (If initialization was interrupted, prevent marking it as completed)
+        if (!IsShuttingDown())
+            UpdatesChecked = true;
 
-		// Perform first run operations (if needed)
-		await OnFirstRun();
+        // Perform first run operations (if needed)
+        await OnFirstRun();
 
-		// If there are no active notes from last run, open an empty note and focus it.
-		if (LastActiveNotes.Count == 0)
-			CreateNewNote();
+        // If there are no active notes from last run, open an empty note and focus it.
+        if (LastActiveNotes.Count == 0)
+            CreateNewNote();
 
-		// Refresh the display
-		DeferUpdateRecentNotes();
+        // Refresh the display
+        DeferUpdateRecentNotes();
 
-		// Check for updates. This is a blocking call, so it has to be the very last thing that we do on startup.
-		Erase(UpdateHandler.UpdateLockUri);
-		Erase(UpdateHandler.TempUri);
-		await UpdateHandler.CheckForUpdates();
-	}
+        // Check for updates. This is a blocking call, so it has to be the very last thing that we do on startup.
+        Erase(UpdateHandler.UpdateLockUri);
+        Erase(UpdateHandler.TempUri);
+        await UpdateHandler.CheckForUpdates();
+    }
 
-	private void SelectDatabaseTab(string filePath)
-	{
-		// Find the tab with the matching file path and select it
-		foreach (TabItem item in DatabasesPanel.Items)
-		{
-			if (item.Tag is Database db && Path.GetFullPath(db.DBFile) == filePath)
-			{
-				DatabasesPanel.SelectedItem = item;
-				break;
-			}
-		}
-	}
+    private void SelectDatabaseTab(string filePath)
+    {
+        // Find the tab with the matching file path and select it
+        foreach (TabItem item in DatabasesPanel.Items)
+        {
+            if (item.Tag is Database db && Path.GetFullPath(db.DBFile) == filePath)
+            {
+                DatabasesPanel.SelectedItem = item;
+                break;
+            }
+        }
+    }
 }

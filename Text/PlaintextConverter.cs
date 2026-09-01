@@ -7,57 +7,57 @@ namespace SylverInk.Text;
 
 public class PlaintextConverter : ITextConverter
 {
-	public string Convert(string text, TextFormat sourceFormat) => sourceFormat switch
-	{
-		TextFormat.Plaintext => text,
-		TextFormat.Xaml => ToPlaintextFromXaml(text),
-		_ => throw new NotSupportedException()
-	};
+    public string Convert(string text, TextFormat sourceFormat) => sourceFormat switch
+    {
+        TextFormat.Plaintext => text,
+        TextFormat.Xaml => ToPlaintextFromXaml(text),
+        _ => throw new NotSupportedException()
+    };
 
-	public FlowDocument Parse(string text)
-	{
-		FlowDocument document = new();
-		TextPointer pointer = document.ContentStart;
+    public FlowDocument Parse(string text)
+    {
+        FlowDocument document = new();
+        TextPointer pointer = document.ContentStart;
 
-		var lineSplit = text.Replace("\r", string.Empty).Split('\n') ?? [];
-		for (int i = 0; i < lineSplit.Length; i++)
-		{
-			var line = lineSplit[i];
-			if (string.IsNullOrEmpty(line))
-				continue;
+        var lineSplit = text.Replace("\r", string.Empty).Split('\n') ?? [];
+        for (int i = 0; i < lineSplit.Length; i++)
+        {
+            var line = lineSplit[i];
+            if (string.IsNullOrEmpty(line))
+                continue;
 
-			pointer.InsertTextInRun(line);
-			while (pointer.GetPointerContext(LogicalDirection.Forward) != TextPointerContext.ElementEnd)
-				pointer = pointer.GetNextContextPosition(LogicalDirection.Forward);
+            pointer.InsertTextInRun(line);
+            while (pointer.GetPointerContext(LogicalDirection.Forward) != TextPointerContext.ElementEnd)
+                pointer = pointer.GetNextContextPosition(LogicalDirection.Forward);
 
-			if (i >= lineSplit.Length - 1)
-				continue;
+            if (i >= lineSplit.Length - 1)
+                continue;
 
-			if (string.IsNullOrEmpty(lineSplit[i + 1]))
-				pointer = pointer.InsertParagraphBreak();
-			else
-				pointer = pointer.InsertLineBreak();
-		}
+            if (string.IsNullOrEmpty(lineSplit[i + 1]))
+                pointer = pointer.InsertParagraphBreak();
+            else
+                pointer = pointer.InsertLineBreak();
+        }
 
-		return document;
-	}
+        return document;
+    }
 
-	public string Save(FlowDocument document)
-	{
-		if (document is null)
-			return string.Empty;
+    public string Save(FlowDocument document)
+    {
+        if (document is null)
+            return string.Empty;
 
-		if (!document.IsInitialized)
-			return string.Empty;
+        if (!document.IsInitialized)
+            return string.Empty;
 
-		StringBuilder content = new();
-		var pointer = document.ContentStart;
+        StringBuilder content = new();
+        var pointer = document.ContentStart;
 
-		while (pointer is not null)
-			pointer = TranslatePointer(pointer, ref content);
+        while (pointer is not null)
+            pointer = TranslatePointer(pointer, ref content);
 
-		return content.ToString().Trim();
-	}
+        return content.ToString().Trim();
+    }
 
-	private string ToPlaintextFromXaml(string text) => Save(TextConverter.Parse(text, TextFormat.Xaml));
+    private string ToPlaintextFromXaml(string text) => Save(TextConverter.Parse(text, TextFormat.Xaml));
 }

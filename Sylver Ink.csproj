@@ -1,97 +1,97 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	<OutputType>WinExe</OutputType>
-	<RootNamespace>SylverInk</RootNamespace>
-	<Nullable>enable</Nullable>
-	<UseWPF>True</UseWPF>
-	<Platforms>AnyCPU;x64</Platforms>
-	<EnableWindowsTargeting>True</EnableWindowsTargeting>
-	<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>SylverInk</RootNamespace>
+    <Nullable>enable</Nullable>
+    <UseWPF>True</UseWPF>
+    <Platforms>AnyCPU;x64</Platforms>
+    <EnableWindowsTargeting>True</EnableWindowsTargeting>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
   </PropertyGroup>
   
   <PropertyGroup>
-	<SourceRevisionId>build$([System.DateTime]::UtcNow.ToString("yyyyMMdd"))</SourceRevisionId>
-	<NeutralLanguage>en-US</NeutralLanguage>
-	<Version>1.8.0</Version>
-	<UseWindowsForms>False</UseWindowsForms>
-	<Title>Sylver Ink</Title>
-	<Authors>taicanium,norvinsk.hunter,milesfarber</Authors>
-	<PackageIcon>glasses.png</PackageIcon>
-	<ApplicationIcon>res\glasses.ico</ApplicationIcon>
-	<PackageReadmeFile>README.md</PackageReadmeFile>
-	<Company>Taica</Company>
-	<PackageProjectUrl></PackageProjectUrl>
-	<AllowUnsafeBlocks>False</AllowUnsafeBlocks>
-	<RepositoryUrl></RepositoryUrl>
-	<IncludeSymbols>False</IncludeSymbols>
-	<AnalysisLevel>latest-recommended</AnalysisLevel>
-	<ProduceReferenceAssembly>True</ProduceReferenceAssembly>
-	<PackageLicenseFile>LICENSE</PackageLicenseFile>
-	<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-	<TargetFramework>net8.0-windows7.0</TargetFramework>
-	<PlatformTarget>x64</PlatformTarget>
-	<ErrorReport>none</ErrorReport>
-	<SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
+    <SourceRevisionId>build$([System.DateTime]::UtcNow.ToString("yyyyMMdd"))</SourceRevisionId>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <Version>1.8.0</Version>
+    <UseWindowsForms>False</UseWindowsForms>
+    <Title>Sylver Ink</Title>
+    <Authors>taicanium,norvinsk.hunter,milesfarber</Authors>
+    <PackageIcon>glasses.png</PackageIcon>
+    <ApplicationIcon>res\glasses.ico</ApplicationIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Company>Taica</Company>
+    <PackageProjectUrl></PackageProjectUrl>
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <RepositoryUrl></RepositoryUrl>
+    <IncludeSymbols>False</IncludeSymbols>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <ProduceReferenceAssembly>True</ProduceReferenceAssembly>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <TargetFramework>net8.0-windows7.0</TargetFramework>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>none</ErrorReport>
+    <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-	<DebugType>embedded</DebugType>
+    <DebugType>embedded</DebugType>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-	<DebugType>embedded</DebugType>
+    <DebugType>embedded</DebugType>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-	<DebugType>embedded</DebugType>
+    <DebugType>embedded</DebugType>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-	<DebugType>embedded</DebugType>
+    <DebugType>embedded</DebugType>
   </PropertyGroup>
   
   <ItemGroup>
-	<Compile Remove="publish\**" />
-	<EmbeddedResource Remove="publish\**" />
-	<None Remove="publish\**" />
-	<Page Remove="publish\**" />
+    <Compile Remove="publish\**" />
+    <EmbeddedResource Remove="publish\**" />
+    <None Remove="publish\**" />
+    <Page Remove="publish\**" />
   </ItemGroup>
   
   <ItemGroup>
-	<Content Include="res\glasses.ico">
-	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	</Content>
+    <Content Include="res\glasses.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   
   <ItemGroup>
-	<None Update="res\glasses.png">
-	  <Pack>True</Pack>
-	  <PackagePath>\</PackagePath>
-	</None>
-	<None Update="LICENSE">
-	  <Pack>True</Pack>
-	  <PackagePath>\</PackagePath>
-	</None>
-	<None Update="license.rtf">
-	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	</None>
-	<None Update="README.md">
-	  <Pack>True</Pack>
-	  <PackagePath>\</PackagePath>
-	</None>
-	<None Update="readme.rtf">
-	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	</None>
-	<None Update="res\sibk.ico">
-	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	</None>
-	<None Update="res\sidb.ico">
-	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	</None>
+    <None Update="res\glasses.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Update="LICENSE">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Update="license.rtf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Update="readme.rtf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="res\sibk.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="res\sidb.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   
   <ItemGroup>
-	<Page Include="App.xaml" />
+    <Page Include="App.xaml" />
   </ItemGroup>
 </Project>

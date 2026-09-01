@@ -1,139 +1,139 @@
 ﻿<Window x:Class="SylverInk.XAML.Settings"
-		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		xmlns:local="clr-namespace:SylverInk"
-		xmlns:objects="clr-namespace:SylverInk.XAML.Objects"
-		xmlns:vm="clr-namespace:SylverInk.XAML.ViewModels"
-		mc:Ignorable="d"
-		d:DataContext="{d:DesignInstance Type=vm:SettingsViewModel}"
-		Background="{Binding AppSettings.MenuBackground}" Foreground="{Binding AppSettings.MenuForeground}" Height="500" Loaded="Settings_Loaded" MinHeight="525" MinWidth="300" MouseLeftButtonDown="Drag" ShowInTaskbar="False" Title="Sylver Ink: Settings" Topmost="True" Width="325">
-	<Grid>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="*"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="*"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-		</Grid.RowDefinitions>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="*"/>
-			<ColumnDefinition Width="*"/>
-		</Grid.ColumnDefinitions>
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SylverInk"
+        xmlns:objects="clr-namespace:SylverInk.XAML.Objects"
+        xmlns:vm="clr-namespace:SylverInk.XAML.ViewModels"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance Type=vm:SettingsViewModel}"
+        Background="{Binding AppSettings.MenuBackground}" Foreground="{Binding AppSettings.MenuForeground}" Height="500" Loaded="Settings_Loaded" MinHeight="525" MinWidth="300" MouseLeftButtonDown="Drag" ShowInTaskbar="False" Title="Sylver Ink: Settings" Topmost="True" Width="325">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
 
-		<objects:ColorPicker x:Name="SettingsColorPicker"/>
+        <objects:ColorPicker x:Name="SettingsColorPicker"/>
 
-		<Grid Background="{Binding AppSettings.MenuBackground}" Grid.ColumnSpan="2" Margin="0,5">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="*"/>
-				<ColumnDefinition Width="*"/>
-			</Grid.ColumnDefinitions>
-			<Grid.RowDefinitions>
-				<RowDefinition Height="*"/>
-				<RowDefinition Height="*"/>
-				<RowDefinition Height="*"/>
-				<RowDefinition Height="*"/>
-				<RowDefinition Height="*"/>
-			</Grid.RowDefinitions>
-			<Label FontStyle="Italic" Foreground="{Binding AppSettings.MenuForeground}" HorizontalAlignment="Right" Margin="10,0">
-				<TextBlock TextAlignment="Right">Ribbon tabs<LineBreak/>display...</TextBlock>
-			</Label>
-			<Label FontStyle="Italic" Foreground="{Binding AppSettings.MenuForeground}" HorizontalAlignment="Right" Margin="10,0" Grid.Row="1">
-				<TextBlock TextAlignment="Right">Recent notes<LineBreak/>sort by...</TextBlock>
-			</Label>
-			<Label FontStyle="Italic" Foreground="{Binding AppSettings.MenuForeground}" HorizontalAlignment="Right" Margin="10,0" Grid.Row="2">
-				<TextBlock TextAlignment="Right">Sticky notes<LineBreak/>stay on top</TextBlock>
-			</Label>
-			<Label FontStyle="Italic" Foreground="{Binding AppSettings.AccentForeground}" HorizontalAlignment="Right" Margin="10,0" Grid.Row="3" ToolTip="The duration of time (in seconds) a transparent sticky note must be hovered over before it activates.">
-				<TextBlock TextAlignment="Right">Note<LineBreak/>clickthrough</TextBlock>
-			</Label>
-			<Label FontStyle="Italic" Foreground="{Binding AppSettings.MenuForeground}" HorizontalAlignment="Right" Margin="10,0" Grid.Row="4">
-				<TextBlock TextAlignment="Right">Note<LineBreak/>transparency</TextBlock>
-			</Label>
-			<ComboBox Grid.Column="1" SelectionChanged="StickyRibbonChanged" VerticalAlignment="Center" Width="125" x:Name="RibbonBox">
-				<ComboBoxItem Content="Content preview" Tag="Content"/>
-				<ComboBoxItem Content="Last changed date" Tag="Change"/>
-				<ComboBoxItem Content="Created date" Tag="Creation"/>
-				<ComboBoxItem Content="Index number" Tag="Index"/>
-			</ComboBox>
-			<ComboBox Grid.Column="1" Grid.Row="1" SelectionChanged="SortRibbonChanged" VerticalAlignment="Center" Width="125" x:Name="SortBox">
-				<ComboBoxItem Content="Created date" Tag="ByCreation"/>
-				<ComboBoxItem Content="Last changed date" Tag="ByChange"/>
-			</ComboBox>
-			<CheckBox Grid.Column="1" IsChecked="{Binding AppSettings.SearchResultsOnTop}" Margin="20,10" Grid.Row="2"/>
-			<Slider x:Name="NoteClickthroughSlider" Grid.Column="1" IsSnapToTickEnabled="True" LargeChange="1" Margin="0,5" Maximum="2" Minimum="0.25" Grid.Row="3" SmallChange="0.25" TickFrequency="0.25" TickPlacement="BottomRight" ToolTip="{Binding AppSettings.NoteClickthrough}" Value="{Binding AppSettings.NoteClickthrough}" VerticalAlignment="Center" Width="125"/>
-			<Slider x:Name="NoteTransparentSlider" Grid.Column="1" IsSnapToTickEnabled="True" LargeChange="10" Margin="0,5" Maximum="95" Minimum="0" Grid.Row="4" SmallChange="5" TickFrequency="5" TickPlacement="BottomRight" ToolTip="{Binding AppSettings.NoteTransparency}" Value="{Binding AppSettings.NoteTransparency}" VerticalAlignment="Center" Width="125"/>
-		</Grid>
-		<Separator Grid.ColumnSpan="2" Grid.Row="1"/>
-		<Grid Background="{Binding AppSettings.MenuBackground}" Grid.ColumnSpan="2" Grid.Row="2">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="*"/>
-				<ColumnDefinition Width="*"/>
-			</Grid.ColumnDefinitions>
-			<Grid.RowDefinitions>
-				<RowDefinition Height="*"/>
-				<RowDefinition Height="*"/>
-				<RowDefinition Height="*"/>
-				<RowDefinition Height="*"/>
-				<RowDefinition Height="*"/>
-			</Grid.RowDefinitions>
+        <Grid Background="{Binding AppSettings.MenuBackground}" Grid.ColumnSpan="2" Margin="0,5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Label FontStyle="Italic" Foreground="{Binding AppSettings.MenuForeground}" HorizontalAlignment="Right" Margin="10,0">
+                <TextBlock TextAlignment="Right">Ribbon tabs<LineBreak/>display...</TextBlock>
+            </Label>
+            <Label FontStyle="Italic" Foreground="{Binding AppSettings.MenuForeground}" HorizontalAlignment="Right" Margin="10,0" Grid.Row="1">
+                <TextBlock TextAlignment="Right">Recent notes<LineBreak/>sort by...</TextBlock>
+            </Label>
+            <Label FontStyle="Italic" Foreground="{Binding AppSettings.MenuForeground}" HorizontalAlignment="Right" Margin="10,0" Grid.Row="2">
+                <TextBlock TextAlignment="Right">Sticky notes<LineBreak/>stay on top</TextBlock>
+            </Label>
+            <Label FontStyle="Italic" Foreground="{Binding AppSettings.AccentForeground}" HorizontalAlignment="Right" Margin="10,0" Grid.Row="3" ToolTip="The duration of time (in seconds) a transparent sticky note must be hovered over before it activates.">
+                <TextBlock TextAlignment="Right">Note<LineBreak/>clickthrough</TextBlock>
+            </Label>
+            <Label FontStyle="Italic" Foreground="{Binding AppSettings.MenuForeground}" HorizontalAlignment="Right" Margin="10,0" Grid.Row="4">
+                <TextBlock TextAlignment="Right">Note<LineBreak/>transparency</TextBlock>
+            </Label>
+            <ComboBox Grid.Column="1" SelectionChanged="StickyRibbonChanged" VerticalAlignment="Center" Width="125" x:Name="RibbonBox">
+                <ComboBoxItem Content="Content preview" Tag="Content"/>
+                <ComboBoxItem Content="Last changed date" Tag="Change"/>
+                <ComboBoxItem Content="Created date" Tag="Creation"/>
+                <ComboBoxItem Content="Index number" Tag="Index"/>
+            </ComboBox>
+            <ComboBox Grid.Column="1" Grid.Row="1" SelectionChanged="SortRibbonChanged" VerticalAlignment="Center" Width="125" x:Name="SortBox">
+                <ComboBoxItem Content="Created date" Tag="ByCreation"/>
+                <ComboBoxItem Content="Last changed date" Tag="ByChange"/>
+            </ComboBox>
+            <CheckBox Grid.Column="1" IsChecked="{Binding AppSettings.SearchResultsOnTop}" Margin="20,10" Grid.Row="2"/>
+            <Slider x:Name="NoteClickthroughSlider" Grid.Column="1" IsSnapToTickEnabled="True" LargeChange="1" Margin="0,5" Maximum="2" Minimum="0.25" Grid.Row="3" SmallChange="0.25" TickFrequency="0.25" TickPlacement="BottomRight" ToolTip="{Binding AppSettings.NoteClickthrough}" Value="{Binding AppSettings.NoteClickthrough}" VerticalAlignment="Center" Width="125"/>
+            <Slider x:Name="NoteTransparentSlider" Grid.Column="1" IsSnapToTickEnabled="True" LargeChange="10" Margin="0,5" Maximum="95" Minimum="0" Grid.Row="4" SmallChange="5" TickFrequency="5" TickPlacement="BottomRight" ToolTip="{Binding AppSettings.NoteTransparency}" Value="{Binding AppSettings.NoteTransparency}" VerticalAlignment="Center" Width="125"/>
+        </Grid>
+        <Separator Grid.ColumnSpan="2" Grid.Row="1"/>
+        <Grid Background="{Binding AppSettings.MenuBackground}" Grid.ColumnSpan="2" Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-			<Label Content="Display Font" FontStyle="Italic" HorizontalAlignment="Right" Margin="10,0"/>
-			<Label Content="Font Size" FontStyle="Italic" HorizontalAlignment="Right" Margin="10,0" Grid.Row="1"/>
-			<Label Content="Menu Colors" FontStyle="Italic" HorizontalAlignment="Right" Margin="10,0" Grid.Row="2"/>
-			<Label Content="Text Colors" FontStyle="Italic" HorizontalAlignment="Right" Margin="10,0" Grid.Row="3"/>
-			<Label Content="Accent Colors" FontStyle="Italic" HorizontalAlignment="Right" Margin="10,0" Grid.Row="4"/>
+            <Label Content="Display Font" FontStyle="Italic" HorizontalAlignment="Right" Margin="10,0"/>
+            <Label Content="Font Size" FontStyle="Italic" HorizontalAlignment="Right" Margin="10,0" Grid.Row="1"/>
+            <Label Content="Menu Colors" FontStyle="Italic" HorizontalAlignment="Right" Margin="10,0" Grid.Row="2"/>
+            <Label Content="Text Colors" FontStyle="Italic" HorizontalAlignment="Right" Margin="10,0" Grid.Row="3"/>
+            <Label Content="Accent Colors" FontStyle="Italic" HorizontalAlignment="Right" Margin="10,0" Grid.Row="4"/>
 
-			<ComboBox Grid.Column="1" Foreground="Black" HorizontalAlignment="Center" ItemsSource="{Binding AppSettings.AvailableFonts}" SelectedItem="{Binding AppSettings.MainFontFamily}" VerticalAlignment="Center" Width="125" x:Name="MenuFont">
-				<ComboBox.ItemTemplate>
-					<DataTemplate>
-						<TextBlock Text="{Binding}" FontFamily="{Binding}" />
-					</DataTemplate>
-				</ComboBox.ItemTemplate>
-			</ComboBox>
-			
-			<StackPanel Grid.Column="1" HorizontalAlignment="Center" Orientation="Horizontal" Grid.Row="1" VerticalAlignment="Center">
-				<Button Command="{Binding FontSizeChangedCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}" Content="-" Width="20"/>
-				<TextBox HorizontalContentAlignment="Center" IsReadOnly="True" Text="{Binding AppSettings.MainFontSize}" Width="40"/>
-				<Button Command="{Binding FontSizeChangedCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}" Content="+" Width="20"/>
-			</StackPanel>
-			
-			<StackPanel Grid.Column="1" HorizontalAlignment="Center" Orientation="Horizontal" Grid.Row="2" VerticalAlignment="Center">
-				<Button BorderBrush="Black" BorderThickness="1" Click="ColorPopup" Margin="20,0" Tag="P1B" Width="20">
-					<Rectangle Fill="{Binding AppSettings.MenuBackground}" Margin="-1" Stretch="UniformToFill" ToolTip="Background"/>
-				</Button>
-				<Button BorderBrush="Black" BorderThickness="1" Click="ColorPopup" Margin="20,0" Tag="P1F" Width="20">
-					<Rectangle Fill="{Binding AppSettings.MenuForeground}" Margin="-1" Stretch="UniformToFill" ToolTip="Foreground"/>
-				</Button>
-			</StackPanel>
-			
-			<StackPanel Grid.Column="1" HorizontalAlignment="Center" Orientation="Horizontal" Grid.Row="3" VerticalAlignment="Center">
-				<Button BorderBrush="Black" BorderThickness="1" Click="ColorPopup" Margin="20,0" Tag="P2B" Width="20">
-					<Rectangle Fill="{Binding AppSettings.ListBackground}" Margin="-1" Stretch="UniformToFill" ToolTip="Background"/>
-				</Button>
-				<Button BorderBrush="Black" BorderThickness="1" Click="ColorPopup" Margin="20,0" Tag="P2F" Width="20">
-					<Rectangle Fill="{Binding AppSettings.ListForeground}" Margin="-1" Stretch="UniformToFill" ToolTip="Foreground"/>
-				</Button>
-			</StackPanel>
-			
-			<StackPanel Grid.Column="1" HorizontalAlignment="Center" Orientation="Horizontal" Grid.Row="4" VerticalAlignment="Center">
-				<Button BorderBrush="Black" BorderThickness="1" Click="ColorPopup" Margin="20,0" Tag="P3B" Width="20">
-					<Rectangle Fill="{Binding AppSettings.AccentBackground}" Margin="-1" Stretch="UniformToFill" ToolTip="Background"/>
-				</Button>
-				<Button BorderBrush="Black" BorderThickness="1" Click="ColorPopup" Margin="20,0" Tag="P3F" Width="20">
-					<Rectangle Fill="{Binding AppSettings.AccentForeground}" Margin="-1" Stretch="UniformToFill" ToolTip="Foreground"/>
-				</Button>
-			</StackPanel>
-		</Grid>
-		<Separator Grid.ColumnSpan="2" Grid.Row="3"/>
-		<Grid Background="{Binding AppSettings.MenuBackground}" Margin="0,20" Grid.ColumnSpan="2" Grid.Row="4">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="*"/>
-				<ColumnDefinition Width="*"/>
-			</Grid.ColumnDefinitions>
-			<Button Command="{Binding ResetCommand}" Content="Reset" HorizontalAlignment="Right" Margin="10,0"/>
-			<Button Command="{Binding CloseCommand}" Grid.Column="1" Content="Close" HorizontalAlignment="Left" Margin="10,0"/>
-		</Grid>
-	</Grid>
+            <ComboBox Grid.Column="1" Foreground="Black" HorizontalAlignment="Center" ItemsSource="{Binding AppSettings.AvailableFonts}" SelectedItem="{Binding AppSettings.MainFontFamily}" VerticalAlignment="Center" Width="125" x:Name="MenuFont">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}" FontFamily="{Binding}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            
+            <StackPanel Grid.Column="1" HorizontalAlignment="Center" Orientation="Horizontal" Grid.Row="1" VerticalAlignment="Center">
+                <Button Command="{Binding FontSizeChangedCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}" Content="-" Width="20"/>
+                <TextBox HorizontalContentAlignment="Center" IsReadOnly="True" Text="{Binding AppSettings.MainFontSize}" Width="40"/>
+                <Button Command="{Binding FontSizeChangedCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}" Content="+" Width="20"/>
+            </StackPanel>
+            
+            <StackPanel Grid.Column="1" HorizontalAlignment="Center" Orientation="Horizontal" Grid.Row="2" VerticalAlignment="Center">
+                <Button BorderBrush="Black" BorderThickness="1" Click="ColorPopup" Margin="20,0" Tag="P1B" Width="20">
+                    <Rectangle Fill="{Binding AppSettings.MenuBackground}" Margin="-1" Stretch="UniformToFill" ToolTip="Background"/>
+                </Button>
+                <Button BorderBrush="Black" BorderThickness="1" Click="ColorPopup" Margin="20,0" Tag="P1F" Width="20">
+                    <Rectangle Fill="{Binding AppSettings.MenuForeground}" Margin="-1" Stretch="UniformToFill" ToolTip="Foreground"/>
+                </Button>
+            </StackPanel>
+            
+            <StackPanel Grid.Column="1" HorizontalAlignment="Center" Orientation="Horizontal" Grid.Row="3" VerticalAlignment="Center">
+                <Button BorderBrush="Black" BorderThickness="1" Click="ColorPopup" Margin="20,0" Tag="P2B" Width="20">
+                    <Rectangle Fill="{Binding AppSettings.ListBackground}" Margin="-1" Stretch="UniformToFill" ToolTip="Background"/>
+                </Button>
+                <Button BorderBrush="Black" BorderThickness="1" Click="ColorPopup" Margin="20,0" Tag="P2F" Width="20">
+                    <Rectangle Fill="{Binding AppSettings.ListForeground}" Margin="-1" Stretch="UniformToFill" ToolTip="Foreground"/>
+                </Button>
+            </StackPanel>
+            
+            <StackPanel Grid.Column="1" HorizontalAlignment="Center" Orientation="Horizontal" Grid.Row="4" VerticalAlignment="Center">
+                <Button BorderBrush="Black" BorderThickness="1" Click="ColorPopup" Margin="20,0" Tag="P3B" Width="20">
+                    <Rectangle Fill="{Binding AppSettings.AccentBackground}" Margin="-1" Stretch="UniformToFill" ToolTip="Background"/>
+                </Button>
+                <Button BorderBrush="Black" BorderThickness="1" Click="ColorPopup" Margin="20,0" Tag="P3F" Width="20">
+                    <Rectangle Fill="{Binding AppSettings.AccentForeground}" Margin="-1" Stretch="UniformToFill" ToolTip="Foreground"/>
+                </Button>
+            </StackPanel>
+        </Grid>
+        <Separator Grid.ColumnSpan="2" Grid.Row="3"/>
+        <Grid Background="{Binding AppSettings.MenuBackground}" Margin="0,20" Grid.ColumnSpan="2" Grid.Row="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Button Command="{Binding ResetCommand}" Content="Reset" HorizontalAlignment="Right" Margin="10,0"/>
+            <Button Command="{Binding CloseCommand}" Grid.Column="1" Content="Close" HorizontalAlignment="Left" Margin="10,0"/>
+        </Grid>
+    </Grid>
 </Window>

@@ -22,433 +22,433 @@ namespace SylverInk;
 
 public class ContextSettings : INotifyPropertyChanged
 {
-	private Brush? _accentBackgound = Brushes.PaleGoldenrod;
-	private Brush? _accentForegound = Brushes.Blue;
-	private bool _firstRun = true;
-	private string _importData = string.Empty;
-	private string _importTarget = string.Empty;
-	private int _lineTolerance;
-	private Brush? _listBackgound = Brushes.White;
-	private Brush? _listForegound = Brushes.Black;
-	private FontFamily? _mainFontFamily = new("Arial");
-	private double _mainFontSize = 11.0;
-	private Typeface? _mainTypeFace;
-	private Brush? _menuBackgound = Brushes.Beige;
-	private Brush? _menuForegound = Brushes.DimGray;
-	private double _noteClickthrough = 0.25;
-	private double _noteClickthroughInverse = 4.0;
-	private double _noteTransparency;
-	public event PropertyChangedEventHandler? PropertyChanged;
-	private bool _searchResultsOnTop = true;
-	private bool _searchResultsInTaskbar;
-	private bool _snapSearchResults = true;
+    private Brush? _accentBackgound = Brushes.PaleGoldenrod;
+    private Brush? _accentForegound = Brushes.Blue;
+    private bool _firstRun = true;
+    private string _importData = string.Empty;
+    private string _importTarget = string.Empty;
+    private int _lineTolerance;
+    private Brush? _listBackgound = Brushes.White;
+    private Brush? _listForegound = Brushes.Black;
+    private FontFamily? _mainFontFamily = new("Arial");
+    private double _mainFontSize = 11.0;
+    private Typeface? _mainTypeFace;
+    private Brush? _menuBackgound = Brushes.Beige;
+    private Brush? _menuForegound = Brushes.DimGray;
+    private double _noteClickthrough = 0.25;
+    private double _noteClickthroughInverse = 4.0;
+    private double _noteTransparency;
+    public event PropertyChangedEventHandler? PropertyChanged;
+    private bool _searchResultsOnTop = true;
+    private bool _searchResultsInTaskbar;
+    private bool _snapSearchResults = true;
 
-	public Brush? AccentBackground
-	{
-		get => _accentBackgound;
-		set
-		{
-			_accentBackgound = value;
-			OnPropertyChanged();
-		}
-	}
-	public Brush? AccentForeground
-	{
-		get => _accentForegound;
-		set
-		{
-			_accentForegound = value;
-			OnPropertyChanged();
-		}
-	}
-	public List<FontFamily> AvailableFonts { get; } = [];
-	public FontFamily? DefaultFont { get; private set; }
-	private string[] DefaultFonts { get; } = ["Segoe UI", "Helvetica Neue", "Arial", "Noto Sans", "Liberation Sans", "DejaVu Sans", "sans‑serif"];
-	public bool FirstRun
-	{
-		get => _firstRun;
-		set
-		{
-			_firstRun = value;
-			OnPropertyChanged();
-		}
-	}
-	public string ImportData
-	{
-		get => _importData;
-		set
-		{
-			_importData = value;
-			OnPropertyChanged();
-		}
-	}
-	public string ImportTarget
-	{
-		get => _importTarget;
-		set
-		{
-			_importTarget = value;
-			OnPropertyChanged();
-		}
-	}
-	public string LastActiveDatabase { get; set; } = string.Empty;
-	public List<string> LastDatabases { get; } = [];
-	public int LineTolerance
-	{
-		get => _lineTolerance;
-		set
-		{
-			_lineTolerance = Math.Min(36, Math.Max(0, value));
-			OnPropertyChanged();
-		}
-	}
-	public Brush? ListBackground
-	{
-		get => _listBackgound;
-		set
-		{
-			_listBackgound = value;
-			OnPropertyChanged();
-		}
-	}
-	public Brush? ListForeground
-	{
-		get => _listForegound;
-		set
-		{
-			_listForegound = value;
-			OnPropertyChanged();
-		}
-	}
-	public FontFamily? MainFontFamily
-	{
-		get => _mainFontFamily;
-		set
-		{
-			_mainFontFamily = value; MainTypeFace = new(value, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
-			OnPropertyChanged();
-		}
-	}
-	public double MainFontSize
-	{
-		get => _mainFontSize;
-		set
-		{
-			_mainFontSize = Math.Min(24.0, Math.Max(10.0, value));
-			OnPropertyChanged();
-		}
-	}
-	public Typeface? MainTypeFace
-	{
-		get => _mainTypeFace;
-		set
-		{
-			_mainTypeFace = value;
-			OnPropertyChanged();
-		}
-	}
-	public Brush? MenuBackground
-	{
-		get => _menuBackgound;
-		set
-		{
-			_menuBackgound = value;
-			OnPropertyChanged();
-		}
-	}
-	public Brush? MenuForeground
-	{
-		get => _menuForegound;
-		set
-		{
-			_menuForegound = value;
-			OnPropertyChanged();
-		}
-	}
-	public double NoteClickthrough
-	{
-		get => _noteClickthrough;
-		set
-		{
-			_noteClickthrough = value; NoteClickthroughInverse = 1.0 / value;
-			OnPropertyChanged();
-		}
-	}
-	public double NoteClickthroughInverse
-	{
-		get => _noteClickthroughInverse;
-		set
-		{
-			_noteClickthroughInverse = value;
-			OnPropertyChanged();
-		}
-	}
-	public double NoteTransparency
-	{
-		get => _noteTransparency;
-		set
-		{
-			_noteTransparency = value;
+    public Brush? AccentBackground
+    {
+        get => _accentBackgound;
+        set
+        {
+            _accentBackgound = value;
+            OnPropertyChanged();
+        }
+    }
+    public Brush? AccentForeground
+    {
+        get => _accentForegound;
+        set
+        {
+            _accentForegound = value;
+            OnPropertyChanged();
+        }
+    }
+    public List<FontFamily> AvailableFonts { get; } = [];
+    public FontFamily? DefaultFont { get; private set; }
+    private string[] DefaultFonts { get; } = ["Segoe UI", "Helvetica Neue", "Arial", "Noto Sans", "Liberation Sans", "DejaVu Sans", "sans‑serif"];
+    public bool FirstRun
+    {
+        get => _firstRun;
+        set
+        {
+            _firstRun = value;
+            OnPropertyChanged();
+        }
+    }
+    public string ImportData
+    {
+        get => _importData;
+        set
+        {
+            _importData = value;
+            OnPropertyChanged();
+        }
+    }
+    public string ImportTarget
+    {
+        get => _importTarget;
+        set
+        {
+            _importTarget = value;
+            OnPropertyChanged();
+        }
+    }
+    public string LastActiveDatabase { get; set; } = string.Empty;
+    public List<string> LastDatabases { get; } = [];
+    public int LineTolerance
+    {
+        get => _lineTolerance;
+        set
+        {
+            _lineTolerance = Math.Min(36, Math.Max(0, value));
+            OnPropertyChanged();
+        }
+    }
+    public Brush? ListBackground
+    {
+        get => _listBackgound;
+        set
+        {
+            _listBackgound = value;
+            OnPropertyChanged();
+        }
+    }
+    public Brush? ListForeground
+    {
+        get => _listForegound;
+        set
+        {
+            _listForegound = value;
+            OnPropertyChanged();
+        }
+    }
+    public FontFamily? MainFontFamily
+    {
+        get => _mainFontFamily;
+        set
+        {
+            _mainFontFamily = value; MainTypeFace = new(value, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
+            OnPropertyChanged();
+        }
+    }
+    public double MainFontSize
+    {
+        get => _mainFontSize;
+        set
+        {
+            _mainFontSize = Math.Min(24.0, Math.Max(10.0, value));
+            OnPropertyChanged();
+        }
+    }
+    public Typeface? MainTypeFace
+    {
+        get => _mainTypeFace;
+        set
+        {
+            _mainTypeFace = value;
+            OnPropertyChanged();
+        }
+    }
+    public Brush? MenuBackground
+    {
+        get => _menuBackgound;
+        set
+        {
+            _menuBackgound = value;
+            OnPropertyChanged();
+        }
+    }
+    public Brush? MenuForeground
+    {
+        get => _menuForegound;
+        set
+        {
+            _menuForegound = value;
+            OnPropertyChanged();
+        }
+    }
+    public double NoteClickthrough
+    {
+        get => _noteClickthrough;
+        set
+        {
+            _noteClickthrough = value; NoteClickthroughInverse = 1.0 / value;
+            OnPropertyChanged();
+        }
+    }
+    public double NoteClickthroughInverse
+    {
+        get => _noteClickthroughInverse;
+        set
+        {
+            _noteClickthroughInverse = value;
+            OnPropertyChanged();
+        }
+    }
+    public double NoteTransparency
+    {
+        get => _noteTransparency;
+        set
+        {
+            _noteTransparency = value;
 
-			foreach (SearchResult note in OpenQueries)
-			{
-				if (!note.IsActive)
-					note.Opacity = 1.0 - (value * 0.01);
-			}
+            foreach (SearchResult note in OpenQueries)
+            {
+                if (!note.IsActive)
+                    note.Opacity = 1.0 - (value * 0.01);
+            }
 
-			OnPropertyChanged();
-		}
-	}
-	public ObservableCollection<NoteRecord> RecentNotes { get; } = [];
-	public ObservableCollection<NoteRecord> SearchResults { get; } = [];
-	public bool SearchResultsOnTop
-	{
-		get => _searchResultsOnTop;
-		set
-		{
-			_searchResultsOnTop = value; SearchResultsInTaskbar = !value;
-			OnPropertyChanged();
-		}
-	}
-	public bool SearchResultsInTaskbar
-	{
-		get => _searchResultsInTaskbar; private set
-		{
-			_searchResultsInTaskbar = value;
-			OnPropertyChanged();
-		}
-	}
-	public bool SnapSearchResults
-	{
-		get => _snapSearchResults;
-		set
-		{
-			_snapSearchResults = value;
-			OnPropertyChanged();
-		}
-	}
-	public string VersionString { get; } = $"v. {Assembly.GetExecutingAssembly().GetName().Version?.ToString(3)} © Taica, {GetBuildYear(Assembly.GetExecutingAssembly())}";
+            OnPropertyChanged();
+        }
+    }
+    public ObservableCollection<NoteRecord> RecentNotes { get; } = [];
+    public ObservableCollection<NoteRecord> SearchResults { get; } = [];
+    public bool SearchResultsOnTop
+    {
+        get => _searchResultsOnTop;
+        set
+        {
+            _searchResultsOnTop = value; SearchResultsInTaskbar = !value;
+            OnPropertyChanged();
+        }
+    }
+    public bool SearchResultsInTaskbar
+    {
+        get => _searchResultsInTaskbar; private set
+        {
+            _searchResultsInTaskbar = value;
+            OnPropertyChanged();
+        }
+    }
+    public bool SnapSearchResults
+    {
+        get => _snapSearchResults;
+        set
+        {
+            _snapSearchResults = value;
+            OnPropertyChanged();
+        }
+    }
+    public string VersionString { get; } = $"v. {Assembly.GetExecutingAssembly().GetName().Version?.ToString(3)} © Taica, {GetBuildYear(Assembly.GetExecutingAssembly())}";
 
-	private static int GetBuildYear(Assembly assembly)
-	{
-		const string prefix = "+build";
-		var attr = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>();
+    private static int GetBuildYear(Assembly assembly)
+    {
+        const string prefix = "+build";
+        var attr = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>();
 
-		string? value = attr?.InformationalVersion;
-		int index = value?.IndexOf(prefix, StringComparison.Ordinal) ?? 0;
-		if (index > 0 && DateTime.TryParseExact(value?[(index + prefix.Length)..], "yyyyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var result))
-			return result.Year;
+        string? value = attr?.InformationalVersion;
+        int index = value?.IndexOf(prefix, StringComparison.Ordinal) ?? 0;
+        if (index > 0 && DateTime.TryParseExact(value?[(index + prefix.Length)..], "yyyyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var result))
+            return result.Year;
 
-		return default;
-	}
+        return default;
+    }
 
-	private void InitFonts()
-	{
-		AvailableFonts.Clear();
-		AvailableFonts.AddRange(Fonts.SystemFontFamilies);
-		AvailableFonts.Sort(new Comparison<FontFamily>((f1, f2) => string.CompareOrdinal(f1.Source, f2.Source)));
+    private void InitFonts()
+    {
+        AvailableFonts.Clear();
+        AvailableFonts.AddRange(Fonts.SystemFontFamilies);
+        AvailableFonts.Sort(new Comparison<FontFamily>((f1, f2) => string.CompareOrdinal(f1.Source, f2.Source)));
 
-		for (int i = 0; i < AvailableFonts.Count && DefaultFont is null; i++)
-		{
-			if (DefaultFonts.Contains(AvailableFonts[i].Source))
-				DefaultFont ??= AvailableFonts[i];
-		}
-	}
+        for (int i = 0; i < AvailableFonts.Count && DefaultFont is null; i++)
+        {
+            if (DefaultFonts.Contains(AvailableFonts[i].Source))
+                DefaultFont ??= AvailableFonts[i];
+        }
+    }
 
-	public async Task Load()
-	{
-		InitFonts();
+    public async Task Load()
+    {
+        InitFonts();
 
-		if (!File.Exists(SettingsFile))
-			return;
+        if (!File.Exists(SettingsFile))
+            return;
 
-		foreach (string setting in File.ReadAllLines(SettingsFile))
-		{
-			var keyValue = setting.Trim().Split(':', 2);
+        foreach (string setting in File.ReadAllLines(SettingsFile))
+        {
+            var keyValue = setting.Trim().Split(':', 2);
 
-			if (string.IsNullOrWhiteSpace(keyValue[0]))
-				continue;
+            if (string.IsNullOrWhiteSpace(keyValue[0]))
+                continue;
 
-			if (string.IsNullOrWhiteSpace(keyValue[1]))
-				continue;
+            if (string.IsNullOrWhiteSpace(keyValue[1]))
+                continue;
 
-			switch (keyValue[0])
-			{
-				case "AccentBackground":
-					AccentBackground = BrushFromBytes(keyValue[1]);
-					break;
-				case "AccentForeground":
-					AccentForeground = BrushFromBytes(keyValue[1]);
-					break;
-				case "FirstRun":
-					if (!bool.TryParse(keyValue[1], out var firstRun))
-						firstRun = true;
+            switch (keyValue[0])
+            {
+                case "AccentBackground":
+                    AccentBackground = BrushFromBytes(keyValue[1]);
+                    break;
+                case "AccentForeground":
+                    AccentForeground = BrushFromBytes(keyValue[1]);
+                    break;
+                case "FirstRun":
+                    if (!bool.TryParse(keyValue[1], out var firstRun))
+                        firstRun = true;
 
-					FirstRun = firstRun;
-					break;
-				case "FontFamily":
-					MainFontFamily = new(keyValue[1]);
-					break;
-				case "FontSize":
-					if (!double.TryParse(keyValue[1], CultureInfo.InvariantCulture, out var mainFontSize))
-						mainFontSize = 12;
+                    FirstRun = firstRun;
+                    break;
+                case "FontFamily":
+                    MainFontFamily = new(keyValue[1]);
+                    break;
+                case "FontSize":
+                    if (!double.TryParse(keyValue[1], CultureInfo.InvariantCulture, out var mainFontSize))
+                        mainFontSize = 12;
 
-					MainFontSize = mainFontSize;
-					break;
-				case "LastActiveDatabase":
-					LastActiveDatabase = keyValue[1];
-					break;
-				case "LastActiveNotes":
-					foreach (var note in keyValue[1].Split(';').Distinct())
-					{
-						if (!string.IsNullOrWhiteSpace(note))
-							LastActiveNotes.Add(note);
-					}
+                    MainFontSize = mainFontSize;
+                    break;
+                case "LastActiveDatabase":
+                    LastActiveDatabase = keyValue[1];
+                    break;
+                case "LastActiveNotes":
+                    foreach (var note in keyValue[1].Split(';').Distinct())
+                    {
+                        if (!string.IsNullOrWhiteSpace(note))
+                            LastActiveNotes.Add(note);
+                    }
 
-					break;
-				case "LastActiveNotesHeight":
-					foreach (var sHeight in keyValue[1].Split(';').Distinct())
-					{
-						var hSplit = sHeight.Split(':');
-						if (hSplit.Length < 3)
-							continue;
+                    break;
+                case "LastActiveNotesHeight":
+                    foreach (var sHeight in keyValue[1].Split(';').Distinct())
+                    {
+                        var hSplit = sHeight.Split(':');
+                        if (hSplit.Length < 3)
+                            continue;
 
-						if (int.TryParse(hSplit[2], out var dHeight))
-							LastActiveNotesHeight.TryAdd(hSplit[0] + ":" + hSplit[1], dHeight);
-					}
-					break;
-				case "LastActiveNotesLeft":
-					foreach (var sLeft in keyValue[1].Split(';').Distinct())
-					{
-						var lSplit = sLeft.Split(':');
-						if (lSplit.Length < 3)
-							continue;
+                        if (int.TryParse(hSplit[2], out var dHeight))
+                            LastActiveNotesHeight.TryAdd(hSplit[0] + ":" + hSplit[1], dHeight);
+                    }
+                    break;
+                case "LastActiveNotesLeft":
+                    foreach (var sLeft in keyValue[1].Split(';').Distinct())
+                    {
+                        var lSplit = sLeft.Split(':');
+                        if (lSplit.Length < 3)
+                            continue;
 
-						if (int.TryParse(lSplit[2], out var dLeft))
-							LastActiveNotesLeft.TryAdd(lSplit[0] + ":" + lSplit[1], dLeft);
-					}
-					break;
-				case "LastActiveNotesTop":
-					foreach (var sTop in keyValue[1].Split(';').Distinct())
-					{
-						var tSplit = sTop.Split(':');
-						if (tSplit.Length < 3)
-							continue;
+                        if (int.TryParse(lSplit[2], out var dLeft))
+                            LastActiveNotesLeft.TryAdd(lSplit[0] + ":" + lSplit[1], dLeft);
+                    }
+                    break;
+                case "LastActiveNotesTop":
+                    foreach (var sTop in keyValue[1].Split(';').Distinct())
+                    {
+                        var tSplit = sTop.Split(':');
+                        if (tSplit.Length < 3)
+                            continue;
 
-						if (int.TryParse(tSplit[2], out var dTop))
-							LastActiveNotesTop.TryAdd(tSplit[0] + ":" + tSplit[1], dTop);
-					}
-					break;
-				case "LastActiveNotesWidth":
-					foreach (var sWidth in keyValue[1].Split(';').Distinct())
-					{
-						var wSplit = sWidth.Split(':');
-						if (wSplit.Length < 3)
-							continue;
+                        if (int.TryParse(tSplit[2], out var dTop))
+                            LastActiveNotesTop.TryAdd(tSplit[0] + ":" + tSplit[1], dTop);
+                    }
+                    break;
+                case "LastActiveNotesWidth":
+                    foreach (var sWidth in keyValue[1].Split(';').Distinct())
+                    {
+                        var wSplit = sWidth.Split(':');
+                        if (wSplit.Length < 3)
+                            continue;
 
-						if (int.TryParse(wSplit[2], out var dWidth))
-							LastActiveNotesWidth.TryAdd(wSplit[0] + ":" + wSplit[1], dWidth);
-					}
-					break;
-				case "LastDatabases":
-					FirstRun = false;
-					LastDatabases.AddRange(keyValue[1].Replace("?\\", DocumentsFolder).Split(';').Distinct().Where(File.Exists));
+                        if (int.TryParse(wSplit[2], out var dWidth))
+                            LastActiveNotesWidth.TryAdd(wSplit[0] + ":" + wSplit[1], dWidth);
+                    }
+                    break;
+                case "LastDatabases":
+                    FirstRun = false;
+                    LastDatabases.AddRange(keyValue[1].Replace("?\\", DocumentsFolder).Split(';').Distinct().Where(File.Exists));
 
-					foreach (var file in LastDatabases)
-					{
-						if (!Databases.Any(db => Path.GetFullPath(db.DBFile).Equals(Path.GetFullPath(file), StringComparison.Ordinal)))
-							await Database.Create(file);
-					}
+                    foreach (var file in LastDatabases)
+                    {
+                        if (!Databases.Any(db => Path.GetFullPath(db.DBFile).Equals(Path.GetFullPath(file), StringComparison.Ordinal)))
+                            await Database.Create(file);
+                    }
 
-					if (Databases.Count != 0)
-						break;
+                    if (Databases.Count != 0)
+                        break;
 
-					await Database.Create(Path.Join(Subfolders["Databases"], DefaultDatabase, $"{DefaultDatabase}.sidb"));
-					break;
-				case "ListBackground":
-					ListBackground = BrushFromBytes(keyValue[1]);
-					break;
-				case "ListForeground":
-					ListForeground = BrushFromBytes(keyValue[1]);
-					break;
-				case "MenuBackground":
-					MenuBackground = BrushFromBytes(keyValue[1]);
-					break;
-				case "MenuForeground":
-					MenuForeground = BrushFromBytes(keyValue[1]);
-					break;
-				case "NoteClickthrough":
-					if (!double.TryParse(keyValue[1], out var clickthrough))
-						clickthrough = 0.25;
+                    await Database.Create(Path.Join(Subfolders["Databases"], DefaultDatabase, $"{DefaultDatabase}.sidb"));
+                    break;
+                case "ListBackground":
+                    ListBackground = BrushFromBytes(keyValue[1]);
+                    break;
+                case "ListForeground":
+                    ListForeground = BrushFromBytes(keyValue[1]);
+                    break;
+                case "MenuBackground":
+                    MenuBackground = BrushFromBytes(keyValue[1]);
+                    break;
+                case "MenuForeground":
+                    MenuForeground = BrushFromBytes(keyValue[1]);
+                    break;
+                case "NoteClickthrough":
+                    if (!double.TryParse(keyValue[1], out var clickthrough))
+                        clickthrough = 0.25;
 
-					NoteClickthrough = clickthrough;
-					break;
-				case "NoteTransparency":
-					if (!double.TryParse(keyValue[1], out var transparency))
-						transparency = 95.0;
+                    NoteClickthrough = clickthrough;
+                    break;
+                case "NoteTransparency":
+                    if (!double.TryParse(keyValue[1], out var transparency))
+                        transparency = 95.0;
 
-					NoteTransparency = transparency;
-					break;
-				case "RecentNotesSortMode":
-					if (!int.TryParse(keyValue[1], out var sortMode))
-						sortMode = 0;
+                    NoteTransparency = transparency;
+                    break;
+                case "RecentNotesSortMode":
+                    if (!int.TryParse(keyValue[1], out var sortMode))
+                        sortMode = 0;
 
-					RecentEntriesSortMode = (SortType)sortMode;
-					break;
-				case "RibbonDisplayMode":
-					if (!int.TryParse(keyValue[1], out var displayMode))
-						displayMode = 0;
+                    RecentEntriesSortMode = (SortType)sortMode;
+                    break;
+                case "RibbonDisplayMode":
+                    if (!int.TryParse(keyValue[1], out var displayMode))
+                        displayMode = 0;
 
-					RibbonTabContent = (DisplayType)displayMode;
-					break;
-				case "SearchResultsOnTop":
-					if (!bool.TryParse(keyValue[1], out var searchResultsOnTop))
-						searchResultsOnTop = false;
+                    RibbonTabContent = (DisplayType)displayMode;
+                    break;
+                case "SearchResultsOnTop":
+                    if (!bool.TryParse(keyValue[1], out var searchResultsOnTop))
+                        searchResultsOnTop = false;
 
-					SearchResultsOnTop = searchResultsOnTop;
-					break;
-				case "SnapSearchResults":
-					if (!bool.TryParse(keyValue[1], out var snapSearchResults))
-						snapSearchResults = false;
+                    SearchResultsOnTop = searchResultsOnTop;
+                    break;
+                case "SnapSearchResults":
+                    if (!bool.TryParse(keyValue[1], out var snapSearchResults))
+                        snapSearchResults = false;
 
-					SnapSearchResults = snapSearchResults;
-					break;
-				default:
-					break;
-			}
-		}
-	}
+                    SnapSearchResults = snapSearchResults;
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 
-	protected void OnPropertyChanged([CallerMemberName] string? name = null)
-	{
-		if (PropertyChanged is null)
-			return;
+    protected void OnPropertyChanged([CallerMemberName] string? name = null)
+    {
+        if (PropertyChanged is null)
+            return;
 
-		Concurrent(PropertyChanged.Invoke, this, new PropertyChangedEventArgs(name));
-	}
+        Concurrent(PropertyChanged.Invoke, this, new PropertyChangedEventArgs(name));
+    }
 
-	public void Save() => File.WriteAllLines(SettingsFile, [
-		$"AccentBackground:{BytesFromBrush(AccentBackground)}",
-		$"AccentForeground:{BytesFromBrush(AccentForeground)}",
-		$"FirstRun:{FirstRun}",
-		$"FontFamily:{MainFontFamily?.Source}",
-		$"FontSize:{MainFontSize}",
-		$"LastActiveDatabase:{CurrentDatabase.Name}",
-		$"LastActiveNotes:{string.Join(';', OpenQueries.Select(query => query.ViewModel.Record.DB?.Name + ":" + query.ViewModel.Record.Index))}",
-		$"LastActiveNotesHeight:{string.Join(';', OpenQueries.Select(query => query.ViewModel.Record.DB?.Name + ":" + $"{query.ViewModel.Record.Index}:{query.Height}"))}",
-		$"LastActiveNotesLeft:{string.Join(';', OpenQueries.Select(query => query.ViewModel.Record.DB?.Name + ":" + $"{query.ViewModel.Record.Index}:{query.Left}"))}",
-		$"LastActiveNotesTop:{string.Join(';', OpenQueries.Select(query => query.ViewModel.Record.DB?.Name + ":" + $"{query.ViewModel.Record.Index}:{query.Top}"))}",
-		$"LastActiveNotesWidth:{string.Join(';', OpenQueries.Select(query => query.ViewModel.Record.DB?.Name + ":" + $"{query.ViewModel.Record.Index}:{query.Width}"))}",
-		$"LastDatabases:{string.Join(';', DatabaseFiles.Distinct().Where(File.Exists)).Replace(DocumentsFolder, "?\\")}",
-		$"ListBackground:{BytesFromBrush(ListBackground)}",
-		$"ListForeground:{BytesFromBrush(ListForeground)}",
-		$"MenuBackground:{BytesFromBrush(MenuBackground)}",
-		$"MenuForeground:{BytesFromBrush(MenuForeground)}",
-		$"NoteClickthrough:{(double)NoteClickthrough}",
-		$"NoteTransparency:{(double)NoteTransparency}",
-		$"RecentNotesSortMode:{(int)RecentEntriesSortMode}",
-		$"RibbonDisplayMode:{(int)RibbonTabContent}",
-		$"SearchResultsOnTop:{SearchResultsOnTop}",
-		$"SnapSearchResults:{SnapSearchResults}",
-	]);
+    public void Save() => File.WriteAllLines(SettingsFile, [
+        $"AccentBackground:{BytesFromBrush(AccentBackground)}",
+        $"AccentForeground:{BytesFromBrush(AccentForeground)}",
+        $"FirstRun:{FirstRun}",
+        $"FontFamily:{MainFontFamily?.Source}",
+        $"FontSize:{MainFontSize}",
+        $"LastActiveDatabase:{CurrentDatabase.Name}",
+        $"LastActiveNotes:{string.Join(';', OpenQueries.Select(query => query.ViewModel.Record.DB?.Name + ":" + query.ViewModel.Record.Index))}",
+        $"LastActiveNotesHeight:{string.Join(';', OpenQueries.Select(query => query.ViewModel.Record.DB?.Name + ":" + $"{query.ViewModel.Record.Index}:{query.Height}"))}",
+        $"LastActiveNotesLeft:{string.Join(';', OpenQueries.Select(query => query.ViewModel.Record.DB?.Name + ":" + $"{query.ViewModel.Record.Index}:{query.Left}"))}",
+        $"LastActiveNotesTop:{string.Join(';', OpenQueries.Select(query => query.ViewModel.Record.DB?.Name + ":" + $"{query.ViewModel.Record.Index}:{query.Top}"))}",
+        $"LastActiveNotesWidth:{string.Join(';', OpenQueries.Select(query => query.ViewModel.Record.DB?.Name + ":" + $"{query.ViewModel.Record.Index}:{query.Width}"))}",
+        $"LastDatabases:{string.Join(';', DatabaseFiles.Distinct().Where(File.Exists)).Replace(DocumentsFolder, "?\\")}",
+        $"ListBackground:{BytesFromBrush(ListBackground)}",
+        $"ListForeground:{BytesFromBrush(ListForeground)}",
+        $"MenuBackground:{BytesFromBrush(MenuBackground)}",
+        $"MenuForeground:{BytesFromBrush(MenuForeground)}",
+        $"NoteClickthrough:{(double)NoteClickthrough}",
+        $"NoteTransparency:{(double)NoteTransparency}",
+        $"RecentNotesSortMode:{(int)RecentEntriesSortMode}",
+        $"RibbonDisplayMode:{(int)RibbonTabContent}",
+        $"SearchResultsOnTop:{SearchResultsOnTop}",
+        $"SnapSearchResults:{SnapSearchResults}",
+    ]);
 }

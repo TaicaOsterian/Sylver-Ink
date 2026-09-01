@@ -15,456 +15,456 @@ namespace SylverInk.Notes;
 
 public struct NoteRevision(long created = -1, int startIndex = -1, string? substring = null, string? uuid = null)
 {
-	public long Created { get; set; } = created;
-	public int StartIndex { get; set; } = startIndex;
-	public string? Substring { get; set; } = substring;
-	public string? Uuid { get; set; } = uuid ?? MakeUUID(UUIDType.Revision);
+    public long Created { get; set; } = created;
+    public int StartIndex { get; set; } = startIndex;
+    public string? Substring { get; set; } = substring;
+    public string? Uuid { get; set; } = uuid ?? MakeUUID(UUIDType.Revision);
 }
 
 public partial class NoteRecord
 {
-	private long Created = -1;
-	private int _index = -1;
-	private string? Initial = string.Empty;
-	private long LastChange = -1;
-	private DateTime LastChangeObject = DateTime.UtcNow;
-	private string LastQuery = string.Empty;
-	private readonly List<NoteRevision> Revisions = [];
-	private readonly List<string> Tags = [];
-	private bool TagsDirty = true;
-	private string? _uuid;
-
-	public Database? DB { get; set; }
-	public int Index { get => _index; set => _index = value; }
-	public int LastMatchCount { get; set; }
-	public bool Locked { get; set; }
-	public string? UUID { get => _uuid; set => _uuid = value; }
-
-	public string FullDateChange
-	{
-		get
-		{
-			LastChangeObject = DateTime.FromBinary(LastChange);
-
-			var dtObject = RecentEntriesSortMode switch
-			{
-				SortType.ByCreation => GetCreatedObject(),
-				_ => LastChangeObject,
-			};
-
-			dtObject = dtObject.ToLocalTime();
-
-			return $"{dtObject:d} {dtObject:t}";
-		}
-	}
-
-	public string Preview
-	{
-		get
-		{
-			var _preview = FlowDocumentPreview(TextConverter.Parse(Reconstruct(), TextFormat.Xaml)).Replace("\r", string.Empty).Replace('\n', ' ').Replace('\t', ' ');
-
-			return string.IsNullOrEmpty(_preview) ? "(empty note)" : _preview;
-		}
-	}
-
-	public string ShortChange
-	{
-		get
-		{
-			LastChangeObject = DateTime.FromBinary(LastChange);
-
-			var dtObject = RecentEntriesSortMode switch
-			{
-				SortType.ByCreation => GetCreatedObject(),
-				_ => LastChangeObject,
-			};
-
-			var diff = DateTime.UtcNow - dtObject;
-
-			if (diff.TotalHours < 24.0)
-				return dtObject.ToLocalTime().ToShortTimeString();
-
-			if (diff.TotalHours < 168.0)
-				return $"{diff.Days} day{(diff.Days > 1 ? "s" : string.Empty)} ago";
-
-			return dtObject.ToLocalTime().ToShortDateString();
-		}
-	}
-
-	public NoteRecord(Database? DB = null)
-	{
-		Created = DateTime.UnixEpoch.ToBinary();
-		this.DB = DB;
-		Index = -1;
-		Initial = string.Empty;
-		LastChange = Created;
-		LastChangeObject = DateTime.FromBinary(LastChange);
-		UUID = MakeUUID(UUIDType.Record);
-	}
-
-	public NoteRecord(int Index, string Initial, Database? DB = null, long Created = -1, string? UUID = null)
-	{
-		this.Created = Created == -1 ? DateTime.UtcNow.ToBinary() : Created;
-		this.DB = DB;
-		this.Index = Index;
-		this.Initial = Initial;
-		LastChange = this.Created;
-		LastChangeObject = DateTime.FromBinary(LastChange);
-		this.UUID = UUID ?? MakeUUID(UUIDType.Record);
-	}
-
-	public void Add(NoteRevision revision)
-	{
-		if (revision.Created == -1)
-			revision.Created = DateTime.UtcNow.ToBinary();
-
-		if (DateTime.FromBinary(revision.Created).CompareTo(LastChangeObject) > 0)
-		{
-			LastChange = revision.Created;
-			LastChangeObject = DateTime.FromBinary(LastChange);
-		}
-
-		revision.Uuid ??= MakeUUID(UUIDType.Revision);
-
-		Revisions.Add(revision);
-		TagsDirty = true;
-
-		RecentNotesDirty = true;
-		DeferUpdateRecentNotes();
-
-		return;
-	}
-
-	public void Autosave(FlowDocument document)
-	{
-		CreateRevision(TextConverter.Save(document, TextFormat.Xaml));
-		DB?.Autosave();
-		DeleteRevision(GetNumRevisions() - 1);
-	}
-
-	public void CreateRevision(string NewVersion)
-	{
-		string Current = ToXaml();
-		int StartIndex = 0;
-
-		if (NewVersion.Equals(Current, StringComparison.Ordinal))
-			return;
-
-		for (int i = 0; i < Math.Min(Current.Length, NewVersion.Length); i++)
-		{
-			if (!Current[i].Equals(NewVersion[i]))
-				break;
-			StartIndex = i;
-		}
-
-		Add(new()
-		{
-			Created = DateTime.UtcNow.ToBinary(),
-			StartIndex = StartIndex,
-			Substring = StartIndex >= NewVersion.Length ? string.Empty : NewVersion[StartIndex..],
-			Uuid = MakeUUID(UUIDType.Revision)
-		});
-
-		if (DB is null)
-			return;
-
-		DB.Changed = true;
-
-		return;
-	}
-
-	public void Delete()
-	{
-		Index = 0;
-		Initial = string.Empty;
-		LastChange = DateTime.UtcNow.ToBinary();
-		Revisions.Clear();
-		TagsDirty = true;
-
-		RecentNotesDirty = true;
-		DeferUpdateRecentNotes();
-	}
-
-	// In its current state, this function is only well-behaved when removing all subsequent revisions in addition to the one marked for deletion.
-	public void DeleteRevision(int index)
-	{
-		if (index >= GetNumRevisions())
-			return;
-
-		if (GetNumRevisions() > 0)
-			Revisions.RemoveAt(index);
-
-		LastChange = GetNumRevisions() == 0 ? Created : Revisions[GetNumRevisions() - 1].Created;
-		LastChangeObject = DateTime.FromBinary(LastChange);
-
-		RecentNotesDirty = true;
-		DeferUpdateRecentNotes();
-	}
-
-	public NoteRecord Deserialize(Serializer? serializer)
-	{
-		if (serializer?.DatabaseFormat >= 5)
-			UUID = serializer?.ReadShortString();
-		Created = serializer?.ReadLong() ?? DateTime.UtcNow.ToBinary();
-		Index = serializer?.ReadInt32() ?? -1;
-		Initial = serializer?.ReadString();
-		LastChange = serializer?.ReadLong() ?? DateTime.UtcNow.ToBinary();
-
-		int RevisionsCount = serializer?.ReadInt32() ?? 0;
-		for (int i = 0; i < RevisionsCount; i++)
-		{
-			NoteRevision _revision = new();
-			if (serializer?.DatabaseFormat >= 7)
-				_revision.Uuid = serializer?.ReadShortString();
-			_revision.Created = serializer?.ReadLong() ?? DateTime.UtcNow.ToBinary();
-			_revision.StartIndex = serializer?.ReadInt32() ?? 0;
-			_revision.Substring = serializer?.ReadString();
-			Add(_revision);
-		}
-
-		// SIDB v.9 introduced XAML rich text formatting. Its absence in earlier versions must be accounted for.
-		if (serializer?.DatabaseFormat < 9)
-			TargetXaml();
-
-		return this;
-	}
-
-	public override bool Equals(object? obj)
-	{
-		if (!GetType().Equals(obj?.GetType()))
-			return false;
-
-		var recordObj = (NoteRecord?)obj;
-		return base.Equals(obj) ||
-			(Created.Equals(recordObj?.Created) && Index.Equals(recordObj?.Index) && Initial?.Equals(recordObj?.Initial, StringComparison.Ordinal) is true && LastChange.Equals(recordObj?.LastChange)) ||
-			(UUID?.Equals(recordObj?.UUID ?? string.Empty, StringComparison.Ordinal) is true);
-	}
-
-	private int ExtractTags()
-	{
-		if (!TagsDirty)
-			return Tags.Count;
-
-		Tags.Clear();
-
-		var recordText = ToString();
-		var matches = Lowercase().Matches(recordText.ToLowerInvariant());
-		foreach (Match match in matches)
-		{
-			foreach (Group group in match.Groups.Values)
-			{
-				var val = group.Value.ToLowerInvariant();
-
-				if (Tags.Contains(val))
-					continue;
-
-				foreach (Database db in Databases)
-				{
-					if (!db.WordPercentages.ContainsKey(val))
-						continue;
-
-					// To be treated as a tag, a word must be less common than 0.1% of all words in at least one database.
-					if (db.WordPercentages[val] < Math.Max(0.1, 100.0 - db.WordPercentages.Count))
-						Tags.Add(val);
-				}
-			}
-		}
-
-		TagsDirty = false;
-		return Tags.Count;
-	}
-
-	public string GetCreated() => GetCreatedObject().ToLocalTime().ToString(DateFormat, CultureInfo.InvariantCulture);
-
-	public DateTime GetCreatedObject() => DateTime.FromBinary(Created);
-
-	public override int GetHashCode() => int.Parse((UUID ??= MakeUUID(UUIDType.Record))[^8..], NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo);
-
-	public DateTime GetLastChangeObject() => DateTime.FromBinary(LastChange);
-
-	public string GetLastChange() => GetLastChangeObject().ToLocalTime().ToString(DateFormat, CultureInfo.InvariantCulture);
-
-	public FlowDocument GetDocument() => TextConverter.Parse(Reconstruct(), TextFormat.Xaml);
-
-	public FlowDocument GetDocument(uint backsteps = 0U) => TextConverter.Parse(Reconstruct(backsteps), TextFormat.Xaml);
-
-	public int GetNumRevisions() => Revisions.Count;
-
-	private string GetPlaintext() => TextConverter.Convert(Reconstruct(), TextFormat.Xaml, TextFormat.Plaintext);
-
-	public NoteRevision GetRevision(uint index) => Revisions[Revisions.Count - 1 - (int)index];
-
-	public string GetRevisionTime(uint index) => DateTime.FromBinary(GetRevision(index).Created).ToLocalTime().ToString(DateFormat, CultureInfo.InvariantCulture);
-
-	public void Lock()
-	{
-		Locked = true;
-	}
-
-	public int MatchTags(string text)
-	{
-		var format = text.Trim();
-		if (!TagsDirty && format.Equals(LastQuery, StringComparison.Ordinal))
-			return LastMatchCount;
-
-		var matches = Lowercase().Matches(format.ToLowerInvariant());
-		int outCount = 0;
-
-		ExtractTags();
-
-		foreach (Match match in matches)
-		{
-			foreach (Group group in match.Groups.Values)
-			{
-				if (Tags.Contains(group.Value.ToLowerInvariant()))
-					outCount++;
-			}
-		}
-
-		LastQuery = format;
-		return LastMatchCount = outCount;
-	}
-
-	public void OverwriteIndex(int Index) => this.Index = Index;
-
-	/// <summary>
-	/// <para>Reverts this record to a previous state by applying each of its stored revisions while leaving a requested count undone, specified by <paramref name="backsteps"/>.</para>
-	/// </summary>
-	/// <param name="backsteps">The number of revisions to undo, or 0 for the current state of the record.</param>
-	/// <returns>The text of this record after undoing the requested number of revisions.</returns>
-	public string Reconstruct(uint backsteps = 0U)
-	{
-		var latest = Initial ?? string.Empty;
-		if (Revisions.Count == 0)
-			return latest;
-
-		for (int i = 0; i < Revisions.Count - Math.Min(backsteps, Revisions.Count); i++)
-		{
-			if (Revisions[i].StartIndex > -1 && Revisions[i].StartIndex < latest.Length)
-				latest = latest[..Revisions[i].StartIndex];
-
-			latest += Revisions[i].Substring;
-		}
-
-		return latest ?? string.Empty;
-	}
-
-	private void ReconstructRevisions(List<long> CreatedTags, List<string> Substrings)
-	{
-		for (int i = 0; i < Substrings.Count; i++)
-		{
-			var Created = CreatedTags[i];
-			var RString = Substrings[i];
-			var StartIndex = -1;
-			var Substring = string.Empty;
-			var ToCompare = i == 0 ? Initial : Substrings[i - 1];
-			for (int j = 0; j < ToCompare?.Length; j++)
-			{
-				if (j >= RString.Length)
-					break;
-
-				if (!RString[j].Equals(ToCompare[j]))
-					break;
-
-				StartIndex = j + 1;
-				if (StartIndex < RString.Length)
-					Substring = RString[StartIndex..];
-			}
-
-			Add(new NoteRevision()
-			{
-				Created = Created,
-				StartIndex = StartIndex,
-				Substring = Substring,
-				Uuid = MakeUUID(UUIDType.Revision)
-			});
-		}
-	}
-
-	public void Serialize(Serializer? serializer)
-	{
-		if (serializer?.DatabaseFormat < 9)
-			TargetPlaintext();
-
-		if (serializer?.DatabaseFormat >= 5)
-			serializer?.WriteShortString(UUID);
-		serializer?.WriteLong(Created);
-		serializer?.WriteInt32(Index);
-		serializer?.WriteString(Initial);
-		serializer?.WriteLong(LastChange);
-
-		serializer?.WriteInt32(Revisions.Count);
-		for (int i = 0; i < Revisions.Count; i++)
-		{
-			if (serializer?.DatabaseFormat >= 7)
-				serializer?.WriteShortString(Revisions[i].Uuid);
-			serializer?.WriteLong(Revisions[i].Created);
-			serializer?.WriteInt32(Revisions[i].StartIndex);
-			serializer?.WriteString(Revisions[i].Substring);
-		}
-	}
-
-	private void TargetPlaintext()
-	{
-		List<long> CreatedTags = [];
-		var ParsedInitial = TextConverter.Convert(Initial ??= string.Empty, TextFormat.Xaml, TextFormat.Plaintext);
-		var RCount = Revisions.Count;
-		List<string> ReconstructedSubstrings = [];
-
-		for (int i = RCount - 1; i > -1; i--)
-		{
-			var oldText = Reconstruct((uint)i);
-			CreatedTags.Add(Revisions[i].Created);
-			ReconstructedSubstrings.Add(TextConverter.Convert(oldText, TextFormat.Xaml, TextFormat.Plaintext));
-		}
-
-		Revisions.Clear();
-		Initial = ParsedInitial;
-
-		ReconstructRevisions(CreatedTags, ReconstructedSubstrings);
-	}
-
-	private void TargetXaml()
-	{
-		List<long> CreatedTags = [];
-		var ParsedInitial = TextConverter.Convert(Initial ?? string.Empty, TextFormat.Plaintext, TextFormat.Xaml);
-		var RCount = Revisions.Count;
-		List<string> ReconstructedSubstrings = [];
-
-		for (int i = RCount - 1; i > -1; i--)
-		{
-			var oldText = Reconstruct((uint)i);
-			CreatedTags.Add(Revisions[i].Created);
-			ReconstructedSubstrings.Add(TextConverter.Convert(oldText, TextFormat.Plaintext, TextFormat.Xaml));
-		}
-
-		Revisions.Clear();
-		Initial = ParsedInitial;
-
-		ReconstructRevisions(CreatedTags, ReconstructedSubstrings);
-	}
-
-	public override string ToString() => GetPlaintext();
-
-	public string ToXaml() => Reconstruct(0U);
-
-	public void Unlock()
-	{
-		Locked = false;
-
-		foreach (var query in OpenQueries)
-			query.RequestUnlock(this);
-
-		foreach (var item in OpenTabs)
-		{
-			if (item.Content is not NoteTab tab)
-				continue;
-
-			tab.RequestUnlock(this);
-		}
-	}
-
-	[GeneratedRegex(@"(\p{Ll}+)")]
-	private static partial Regex Lowercase();
+    private long Created = -1;
+    private int _index = -1;
+    private string? Initial = string.Empty;
+    private long LastChange = -1;
+    private DateTime LastChangeObject = DateTime.UtcNow;
+    private string LastQuery = string.Empty;
+    private readonly List<NoteRevision> Revisions = [];
+    private readonly List<string> Tags = [];
+    private bool TagsDirty = true;
+    private string? _uuid;
+
+    public Database? DB { get; set; }
+    public int Index { get => _index; set => _index = value; }
+    public int LastMatchCount { get; set; }
+    public bool Locked { get; set; }
+    public string? UUID { get => _uuid; set => _uuid = value; }
+
+    public string FullDateChange
+    {
+        get
+        {
+            LastChangeObject = DateTime.FromBinary(LastChange);
+
+            var dtObject = RecentEntriesSortMode switch
+            {
+                SortType.ByCreation => GetCreatedObject(),
+                _ => LastChangeObject,
+            };
+
+            dtObject = dtObject.ToLocalTime();
+
+            return $"{dtObject:d} {dtObject:t}";
+        }
+    }
+
+    public string Preview
+    {
+        get
+        {
+            var _preview = FlowDocumentPreview(TextConverter.Parse(Reconstruct(), TextFormat.Xaml)).Replace("\r", string.Empty).Replace('\n', ' ').Replace('\t', ' ');
+
+            return string.IsNullOrEmpty(_preview) ? "(empty note)" : _preview;
+        }
+    }
+
+    public string ShortChange
+    {
+        get
+        {
+            LastChangeObject = DateTime.FromBinary(LastChange);
+
+            var dtObject = RecentEntriesSortMode switch
+            {
+                SortType.ByCreation => GetCreatedObject(),
+                _ => LastChangeObject,
+            };
+
+            var diff = DateTime.UtcNow - dtObject;
+
+            if (diff.TotalHours < 24.0)
+                return dtObject.ToLocalTime().ToShortTimeString();
+
+            if (diff.TotalHours < 168.0)
+                return $"{diff.Days} day{(diff.Days > 1 ? "s" : string.Empty)} ago";
+
+            return dtObject.ToLocalTime().ToShortDateString();
+        }
+    }
+
+    public NoteRecord(Database? DB = null)
+    {
+        Created = DateTime.UnixEpoch.ToBinary();
+        this.DB = DB;
+        Index = -1;
+        Initial = string.Empty;
+        LastChange = Created;
+        LastChangeObject = DateTime.FromBinary(LastChange);
+        UUID = MakeUUID(UUIDType.Record);
+    }
+
+    public NoteRecord(int Index, string Initial, Database? DB = null, long Created = -1, string? UUID = null)
+    {
+        this.Created = Created == -1 ? DateTime.UtcNow.ToBinary() : Created;
+        this.DB = DB;
+        this.Index = Index;
+        this.Initial = Initial;
+        LastChange = this.Created;
+        LastChangeObject = DateTime.FromBinary(LastChange);
+        this.UUID = UUID ?? MakeUUID(UUIDType.Record);
+    }
+
+    public void Add(NoteRevision revision)
+    {
+        if (revision.Created == -1)
+            revision.Created = DateTime.UtcNow.ToBinary();
+
+        if (DateTime.FromBinary(revision.Created).CompareTo(LastChangeObject) > 0)
+        {
+            LastChange = revision.Created;
+            LastChangeObject = DateTime.FromBinary(LastChange);
+        }
+
+        revision.Uuid ??= MakeUUID(UUIDType.Revision);
+
+        Revisions.Add(revision);
+        TagsDirty = true;
+
+        RecentNotesDirty = true;
+        DeferUpdateRecentNotes();
+
+        return;
+    }
+
+    public void Autosave(FlowDocument document)
+    {
+        CreateRevision(TextConverter.Save(document, TextFormat.Xaml));
+        DB?.Autosave();
+        DeleteRevision(GetNumRevisions() - 1);
+    }
+
+    public void CreateRevision(string NewVersion)
+    {
+        string Current = ToXaml();
+        int StartIndex = 0;
+
+        if (NewVersion.Equals(Current, StringComparison.Ordinal))
+            return;
+
+        for (int i = 0; i < Math.Min(Current.Length, NewVersion.Length); i++)
+        {
+            if (!Current[i].Equals(NewVersion[i]))
+                break;
+            StartIndex = i;
+        }
+
+        Add(new()
+        {
+            Created = DateTime.UtcNow.ToBinary(),
+            StartIndex = StartIndex,
+            Substring = StartIndex >= NewVersion.Length ? string.Empty : NewVersion[StartIndex..],
+            Uuid = MakeUUID(UUIDType.Revision)
+        });
+
+        if (DB is null)
+            return;
+
+        DB.Changed = true;
+
+        return;
+    }
+
+    public void Delete()
+    {
+        Index = 0;
+        Initial = string.Empty;
+        LastChange = DateTime.UtcNow.ToBinary();
+        Revisions.Clear();
+        TagsDirty = true;
+
+        RecentNotesDirty = true;
+        DeferUpdateRecentNotes();
+    }
+
+    // In its current state, this function is only well-behaved when removing all subsequent revisions in addition to the one marked for deletion.
+    public void DeleteRevision(int index)
+    {
+        if (index >= GetNumRevisions())
+            return;
+
+        if (GetNumRevisions() > 0)
+            Revisions.RemoveAt(index);
+
+        LastChange = GetNumRevisions() == 0 ? Created : Revisions[GetNumRevisions() - 1].Created;
+        LastChangeObject = DateTime.FromBinary(LastChange);
+
+        RecentNotesDirty = true;
+        DeferUpdateRecentNotes();
+    }
+
+    public NoteRecord Deserialize(Serializer? serializer)
+    {
+        if (serializer?.DatabaseFormat >= 5)
+            UUID = serializer?.ReadShortString();
+        Created = serializer?.ReadLong() ?? DateTime.UtcNow.ToBinary();
+        Index = serializer?.ReadInt32() ?? -1;
+        Initial = serializer?.ReadString();
+        LastChange = serializer?.ReadLong() ?? DateTime.UtcNow.ToBinary();
+
+        int RevisionsCount = serializer?.ReadInt32() ?? 0;
+        for (int i = 0; i < RevisionsCount; i++)
+        {
+            NoteRevision _revision = new();
+            if (serializer?.DatabaseFormat >= 7)
+                _revision.Uuid = serializer?.ReadShortString();
+            _revision.Created = serializer?.ReadLong() ?? DateTime.UtcNow.ToBinary();
+            _revision.StartIndex = serializer?.ReadInt32() ?? 0;
+            _revision.Substring = serializer?.ReadString();
+            Add(_revision);
+        }
+
+        // SIDB v.9 introduced XAML rich text formatting. Its absence in earlier versions must be accounted for.
+        if (serializer?.DatabaseFormat < 9)
+            TargetXaml();
+
+        return this;
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (!GetType().Equals(obj?.GetType()))
+            return false;
+
+        var recordObj = (NoteRecord?)obj;
+        return base.Equals(obj) ||
+            (Created.Equals(recordObj?.Created) && Index.Equals(recordObj?.Index) && Initial?.Equals(recordObj?.Initial, StringComparison.Ordinal) is true && LastChange.Equals(recordObj?.LastChange)) ||
+            (UUID?.Equals(recordObj?.UUID ?? string.Empty, StringComparison.Ordinal) is true);
+    }
+
+    private int ExtractTags()
+    {
+        if (!TagsDirty)
+            return Tags.Count;
+
+        Tags.Clear();
+
+        var recordText = ToString();
+        var matches = Lowercase().Matches(recordText.ToLowerInvariant());
+        foreach (Match match in matches)
+        {
+            foreach (Group group in match.Groups.Values)
+            {
+                var val = group.Value.ToLowerInvariant();
+
+                if (Tags.Contains(val))
+                    continue;
+
+                foreach (Database db in Databases)
+                {
+                    if (!db.WordPercentages.ContainsKey(val))
+                        continue;
+
+                    // To be treated as a tag, a word must be less common than 0.1% of all words in at least one database.
+                    if (db.WordPercentages[val] < Math.Max(0.1, 100.0 - db.WordPercentages.Count))
+                        Tags.Add(val);
+                }
+            }
+        }
+
+        TagsDirty = false;
+        return Tags.Count;
+    }
+
+    public string GetCreated() => GetCreatedObject().ToLocalTime().ToString(DateFormat, CultureInfo.InvariantCulture);
+
+    public DateTime GetCreatedObject() => DateTime.FromBinary(Created);
+
+    public override int GetHashCode() => int.Parse((UUID ??= MakeUUID(UUIDType.Record))[^8..], NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo);
+
+    public DateTime GetLastChangeObject() => DateTime.FromBinary(LastChange);
+
+    public string GetLastChange() => GetLastChangeObject().ToLocalTime().ToString(DateFormat, CultureInfo.InvariantCulture);
+
+    public FlowDocument GetDocument() => TextConverter.Parse(Reconstruct(), TextFormat.Xaml);
+
+    public FlowDocument GetDocument(uint backsteps = 0U) => TextConverter.Parse(Reconstruct(backsteps), TextFormat.Xaml);
+
+    public int GetNumRevisions() => Revisions.Count;
+
+    private string GetPlaintext() => TextConverter.Convert(Reconstruct(), TextFormat.Xaml, TextFormat.Plaintext);
+
+    public NoteRevision GetRevision(uint index) => Revisions[Revisions.Count - 1 - (int)index];
+
+    public string GetRevisionTime(uint index) => DateTime.FromBinary(GetRevision(index).Created).ToLocalTime().ToString(DateFormat, CultureInfo.InvariantCulture);
+
+    public void Lock()
+    {
+        Locked = true;
+    }
+
+    public int MatchTags(string text)
+    {
+        var format = text.Trim();
+        if (!TagsDirty && format.Equals(LastQuery, StringComparison.Ordinal))
+            return LastMatchCount;
+
+        var matches = Lowercase().Matches(format.ToLowerInvariant());
+        int outCount = 0;
+
+        ExtractTags();
+
+        foreach (Match match in matches)
+        {
+            foreach (Group group in match.Groups.Values)
+            {
+                if (Tags.Contains(group.Value.ToLowerInvariant()))
+                    outCount++;
+            }
+        }
+
+        LastQuery = format;
+        return LastMatchCount = outCount;
+    }
+
+    public void OverwriteIndex(int Index) => this.Index = Index;
+
+    /// <summary>
+    /// <para>Reverts this record to a previous state by applying each of its stored revisions while leaving a requested count undone, specified by <paramref name="backsteps"/>.</para>
+    /// </summary>
+    /// <param name="backsteps">The number of revisions to undo, or 0 for the current state of the record.</param>
+    /// <returns>The text of this record after undoing the requested number of revisions.</returns>
+    public string Reconstruct(uint backsteps = 0U)
+    {
+        var latest = Initial ?? string.Empty;
+        if (Revisions.Count == 0)
+            return latest;
+
+        for (int i = 0; i < Revisions.Count - Math.Min(backsteps, Revisions.Count); i++)
+        {
+            if (Revisions[i].StartIndex > -1 && Revisions[i].StartIndex < latest.Length)
+                latest = latest[..Revisions[i].StartIndex];
+
+            latest += Revisions[i].Substring;
+        }
+
+        return latest ?? string.Empty;
+    }
+
+    private void ReconstructRevisions(List<long> CreatedTags, List<string> Substrings)
+    {
+        for (int i = 0; i < Substrings.Count; i++)
+        {
+            var Created = CreatedTags[i];
+            var RString = Substrings[i];
+            var StartIndex = -1;
+            var Substring = string.Empty;
+            var ToCompare = i == 0 ? Initial : Substrings[i - 1];
+            for (int j = 0; j < ToCompare?.Length; j++)
+            {
+                if (j >= RString.Length)
+                    break;
+
+                if (!RString[j].Equals(ToCompare[j]))
+                    break;
+
+                StartIndex = j + 1;
+                if (StartIndex < RString.Length)
+                    Substring = RString[StartIndex..];
+            }
+
+            Add(new NoteRevision()
+            {
+                Created = Created,
+                StartIndex = StartIndex,
+                Substring = Substring,
+                Uuid = MakeUUID(UUIDType.Revision)
+            });
+        }
+    }
+
+    public void Serialize(Serializer? serializer)
+    {
+        if (serializer?.DatabaseFormat < 9)
+            TargetPlaintext();
+
+        if (serializer?.DatabaseFormat >= 5)
+            serializer?.WriteShortString(UUID);
+        serializer?.WriteLong(Created);
+        serializer?.WriteInt32(Index);
+        serializer?.WriteString(Initial);
+        serializer?.WriteLong(LastChange);
+
+        serializer?.WriteInt32(Revisions.Count);
+        for (int i = 0; i < Revisions.Count; i++)
+        {
+            if (serializer?.DatabaseFormat >= 7)
+                serializer?.WriteShortString(Revisions[i].Uuid);
+            serializer?.WriteLong(Revisions[i].Created);
+            serializer?.WriteInt32(Revisions[i].StartIndex);
+            serializer?.WriteString(Revisions[i].Substring);
+        }
+    }
+
+    private void TargetPlaintext()
+    {
+        List<long> CreatedTags = [];
+        var ParsedInitial = TextConverter.Convert(Initial ??= string.Empty, TextFormat.Xaml, TextFormat.Plaintext);
+        var RCount = Revisions.Count;
+        List<string> ReconstructedSubstrings = [];
+
+        for (int i = RCount - 1; i > -1; i--)
+        {
+            var oldText = Reconstruct((uint)i);
+            CreatedTags.Add(Revisions[i].Created);
+            ReconstructedSubstrings.Add(TextConverter.Convert(oldText, TextFormat.Xaml, TextFormat.Plaintext));
+        }
+
+        Revisions.Clear();
+        Initial = ParsedInitial;
+
+        ReconstructRevisions(CreatedTags, ReconstructedSubstrings);
+    }
+
+    private void TargetXaml()
+    {
+        List<long> CreatedTags = [];
+        var ParsedInitial = TextConverter.Convert(Initial ?? string.Empty, TextFormat.Plaintext, TextFormat.Xaml);
+        var RCount = Revisions.Count;
+        List<string> ReconstructedSubstrings = [];
+
+        for (int i = RCount - 1; i > -1; i--)
+        {
+            var oldText = Reconstruct((uint)i);
+            CreatedTags.Add(Revisions[i].Created);
+            ReconstructedSubstrings.Add(TextConverter.Convert(oldText, TextFormat.Plaintext, TextFormat.Xaml));
+        }
+
+        Revisions.Clear();
+        Initial = ParsedInitial;
+
+        ReconstructRevisions(CreatedTags, ReconstructedSubstrings);
+    }
+
+    public override string ToString() => GetPlaintext();
+
+    public string ToXaml() => Reconstruct(0U);
+
+    public void Unlock()
+    {
+        Locked = false;
+
+        foreach (var query in OpenQueries)
+            query.RequestUnlock(this);
+
+        foreach (var item in OpenTabs)
+        {
+            if (item.Content is not NoteTab tab)
+                continue;
+
+            tab.RequestUnlock(this);
+        }
+    }
+
+    [GeneratedRegex(@"(\p{Ll}+)")]
+    private static partial Regex Lowercase();
 }

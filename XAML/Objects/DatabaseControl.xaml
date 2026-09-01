@@ -1,92 +1,92 @@
 ﻿<UserControl x:Class="SylverInk.XAML.Objects.DatabaseControl"
-			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-			 xmlns:local="clr-namespace:SylverInk.XAML.Objects"
-			 xmlns:sylverink="clr-namespace:SylverInk"
-			 xmlns:vm="clr-namespace:SylverInk.XAML.Objects.ViewModels"
-			 mc:Ignorable="d"
-			 d:DataContext="{d:DesignInstance Type=vm:DatabaseControlViewModel}">
-	<TabControl Background="{Binding AppSettings.MenuBackground}" BorderBrush="{Binding AppSettings.AccentBackground}" BorderThickness="2" Foreground="{Binding AppSettings.MenuForeground}" Grid.Row="1" Margin="-3,0" SelectedIndex="0" x:Name="Controller">
-		<TabItem x:Name="PlusTab" Margin="0,2,0,0">
-			<TabItem.Header>
-				<Grid Margin="0,-4,0,0">
-					<Label Content="+"/>
-				</Grid>
-			</TabItem.Header>
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="*"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-				</Grid.RowDefinitions>
-				<Grid Margin="10">
-					<Grid.RowDefinitions>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="*"/>
-					</Grid.RowDefinitions>
-					<StackPanel HorizontalAlignment="Right" Orientation="Horizontal" VerticalAlignment="Bottom">
-						<Label Content="Recent notes" FontStyle="Italic"/>
-						<Label Content="(?)" Foreground="{Binding AppSettings.AccentForeground}" ToolTip="You can press Ctrl+L to re-open the note you most recently closed."/>
-					</StackPanel>
-					<Border Grid.Row="1" BorderBrush="{Binding AppSettings.AccentBackground}" BorderThickness="1">
-						<Grid Background="{Binding AppSettings.AccentBackground}">
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="Auto"/>
-								<ColumnDefinition Width="*"/>
-							</Grid.ColumnDefinitions>
-							<ListBox AlternationCount="2" BorderThickness="0" ClipToBounds="True" ItemsSource="{Binding AppSettings.RecentNotes}" Margin="0,0,1,0" MinWidth="60"
-									 MouseUp="ListItemChosen"
-									 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-									 ScrollViewer.VerticalScrollBarVisibility="Disabled"
-									 x:Name="ShortChangesBox">
-								<ListBox.ItemTemplate>
-									<DataTemplate>
-										<TextBlock HorizontalAlignment="Right" Text="{Binding ShortChange}" ToolTip="{Binding FullDateChange}" ToolTipService.InitialShowDelay="250"/>
-									</DataTemplate>
-								</ListBox.ItemTemplate>
-							</ListBox>
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:SylverInk.XAML.Objects"
+             xmlns:sylverink="clr-namespace:SylverInk"
+             xmlns:vm="clr-namespace:SylverInk.XAML.Objects.ViewModels"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=vm:DatabaseControlViewModel}">
+    <TabControl Background="{Binding AppSettings.MenuBackground}" BorderBrush="{Binding AppSettings.AccentBackground}" BorderThickness="2" Foreground="{Binding AppSettings.MenuForeground}" Grid.Row="1" Margin="-3,0" SelectedIndex="0" x:Name="Controller">
+        <TabItem x:Name="PlusTab" Margin="0,2,0,0">
+            <TabItem.Header>
+                <Grid Margin="0,-4,0,0">
+                    <Label Content="+"/>
+                </Grid>
+            </TabItem.Header>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" VerticalAlignment="Bottom">
+                        <Label Content="Recent notes" FontStyle="Italic"/>
+                        <Label Content="(?)" Foreground="{Binding AppSettings.AccentForeground}" ToolTip="You can press Ctrl+L to re-open the note you most recently closed."/>
+                    </StackPanel>
+                    <Border Grid.Row="1" BorderBrush="{Binding AppSettings.AccentBackground}" BorderThickness="1">
+                        <Grid Background="{Binding AppSettings.AccentBackground}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <ListBox AlternationCount="2" BorderThickness="0" ClipToBounds="True" ItemsSource="{Binding AppSettings.RecentNotes}" Margin="0,0,1,0" MinWidth="60"
+                                     MouseUp="ListItemChosen"
+                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                     ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                     x:Name="ShortChangesBox">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock HorizontalAlignment="Right" Text="{Binding ShortChange}" ToolTip="{Binding FullDateChange}" ToolTipService.InitialShowDelay="250"/>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
 
-							<ListBox AlternationCount="2" BorderThickness="0" ClipToBounds="True" Grid.Column="1" ItemsSource="{Binding AppSettings.RecentNotes}" Margin="1,0,0,0"
-									 MouseUp="ListItemChosen"
-									 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-									 ScrollViewer.VerticalScrollBarVisibility="Disabled"
-									 x:Name="RecentNotesBox">
-								<ListBox.ItemTemplate>
-									<DataTemplate>
-										<TextBlock ClipToBounds="True" HorizontalAlignment="Right" Text="{Binding Preview}" TextTrimming="CharacterEllipsis"/>
-									</DataTemplate>
-								</ListBox.ItemTemplate>
-							</ListBox>
-						</Grid>
-					</Border>
-				</Grid>
-				<StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Grid.Row="1" VerticalAlignment="Bottom">
-					<Label Content="New note" FontStyle="Italic"/>
-					<Label Content="(?)" Foreground="{Binding AppSettings.AccentForeground}" ToolTip="Write a line of text and press Enter to create a new note. You can also press Ctrl+N to open a sticky note at any time."/>
-				</StackPanel>
-				<TextBox KeyDown="NewNoteKeydown" Margin="5" Grid.Row="2" VerticalAlignment="Top"/>
-				<Grid Margin="0,10" Grid.Row="3">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="*"/>
-						<ColumnDefinition Width="*"/>
-						<ColumnDefinition Width="*"/>
-						<ColumnDefinition Width="*"/>
-						<ColumnDefinition Width="*"/>
-					</Grid.ColumnDefinitions>
-					<Grid.RowDefinitions>
-						<RowDefinition Height="*"/>
-						<RowDefinition Height="*"/>
-						<RowDefinition Height="*"/>
-					</Grid.RowDefinitions>
-					<Button Command="{Binding SearchCommand}" Grid.Column="1" Content="Search" Margin="0,5"/>
-					<Button Command="{Binding ImportCommand}" Grid.Column="3" Content="Import" Margin="0,5"/>
-					<Button Command="{Binding SettingsCommand}" Grid.Column="1" Content="Settings" Margin="0,5" Grid.Row="2"/>
-					<Button Background="{Binding AppSettings.AccentBackground}" Command="{Binding ExitCommand}" Grid.Column="3" Content="Exit" Foreground="{Binding AppSettings.AccentForeground}" Margin="0,5" Grid.Row="2"/>
-				</Grid>
-			</Grid>
-		</TabItem>
-	</TabControl>
+                            <ListBox AlternationCount="2" BorderThickness="0" ClipToBounds="True" Grid.Column="1" ItemsSource="{Binding AppSettings.RecentNotes}" Margin="1,0,0,0"
+                                     MouseUp="ListItemChosen"
+                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                     ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                     x:Name="RecentNotesBox">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock ClipToBounds="True" HorizontalAlignment="Right" Text="{Binding Preview}" TextTrimming="CharacterEllipsis"/>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </Grid>
+                    </Border>
+                </Grid>
+                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Grid.Row="1" VerticalAlignment="Bottom">
+                    <Label Content="New note" FontStyle="Italic"/>
+                    <Label Content="(?)" Foreground="{Binding AppSettings.AccentForeground}" ToolTip="Write a line of text and press Enter to create a new note. You can also press Ctrl+N to open a sticky note at any time."/>
+                </StackPanel>
+                <TextBox KeyDown="NewNoteKeydown" Margin="5" Grid.Row="2" VerticalAlignment="Top"/>
+                <Grid Margin="0,10" Grid.Row="3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Button Command="{Binding SearchCommand}" Grid.Column="1" Content="Search" Margin="0,5"/>
+                    <Button Command="{Binding ImportCommand}" Grid.Column="3" Content="Import" Margin="0,5"/>
+                    <Button Command="{Binding SettingsCommand}" Grid.Column="1" Content="Settings" Margin="0,5" Grid.Row="2"/>
+                    <Button Background="{Binding AppSettings.AccentBackground}" Command="{Binding ExitCommand}" Grid.Column="3" Content="Exit" Foreground="{Binding AppSettings.AccentForeground}" Margin="0,5" Grid.Row="2"/>
+                </Grid>
+            </Grid>
+        </TabItem>
+    </TabControl>
 </UserControl>

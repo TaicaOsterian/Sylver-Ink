@@ -15,97 +15,97 @@ namespace SylverInk.FileIO;
 /// </summary>
 public static class FileUtils
 {
-	public static string DocumentsFolder { get; } = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Sylver Ink");
-	public static string SettingsFile { get; } = Path.Join(DocumentsFolder, "settings.sis");
-	public static int HighestSIDBFormat { get; } = 14;
-	public static char[] InvalidPathChars { get; } = ['/', '\\', ':', '*', '"', '?', '<', '>', '|'];
-	public static Dictionary<string, string> Subfolders { get; } = new([
-		new("Databases", Path.Join(DocumentsFolder, "Databases"))
-		]);
+    public static string DocumentsFolder { get; } = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Sylver Ink");
+    public static string SettingsFile { get; } = Path.Join(DocumentsFolder, "settings.sis");
+    public static int HighestSIDBFormat { get; } = 14;
+    public static char[] InvalidPathChars { get; } = ['/', '\\', ':', '*', '"', '?', '<', '>', '|'];
+    public static Dictionary<string, string> Subfolders { get; } = new([
+        new("Databases", Path.Join(DocumentsFolder, "Databases"))
+        ]);
 
-	public static string DialogFileSelect(bool outgoing = false, int filterIndex = 3, string? defaultName = null)
-	{
-		FileDialog dialog = outgoing ? new SaveFileDialog()
-		{
-			FileName = defaultName ?? DefaultDatabase,
-			Filter = "Sylver Ink backup files (*.sibk)|*.sibk|Sylver Ink database files (*.sidb)|*.sidb|All files (*.*)|*.*",
-		} : new OpenFileDialog()
-		{
-			CheckFileExists = true,
-			Filter = "Sylver Ink backup files (*.sibk)|*.sibk|Sylver Ink database files (*.sidb)|*.sidb|Text files (*.txt)|*.txt|All files (*.*)|*.*",
-			InitialDirectory = Subfolders["Databases"],
-		};
+    public static string DialogFileSelect(bool outgoing = false, int filterIndex = 3, string? defaultName = null)
+    {
+        FileDialog dialog = outgoing ? new SaveFileDialog()
+        {
+            FileName = defaultName ?? DefaultDatabase,
+            Filter = "Sylver Ink backup files (*.sibk)|*.sibk|Sylver Ink database files (*.sidb)|*.sidb|All files (*.*)|*.*",
+        } : new OpenFileDialog()
+        {
+            CheckFileExists = true,
+            Filter = "Sylver Ink backup files (*.sibk)|*.sibk|Sylver Ink database files (*.sidb)|*.sidb|Text files (*.txt)|*.txt|All files (*.*)|*.*",
+            InitialDirectory = Subfolders["Databases"],
+        };
 
-		dialog.FilterIndex = filterIndex;
-		dialog.ValidateNames = true;
+        dialog.FilterIndex = filterIndex;
+        dialog.ValidateNames = true;
 
-		return dialog.ShowDialog() is true ? dialog.FileName : string.Empty;
-	}
+        return dialog.ShowDialog() is true ? dialog.FileName : string.Empty;
+    }
 
-	/// <summary>
-	/// Deletes a file if it exists.
-	/// </summary>
-	/// <returns><see langword="true"/> if the file existed and was deleted; else, <see langword="false"/>.</returns>
-	public static bool Erase(string filename)
-	{
-		try
-		{
-			if (!File.Exists(filename))
-				return false;
+    /// <summary>
+    /// Deletes a file if it exists.
+    /// </summary>
+    /// <returns><see langword="true"/> if the file existed and was deleted; else, <see langword="false"/>.</returns>
+    public static bool Erase(string filename)
+    {
+        try
+        {
+            if (!File.Exists(filename))
+                return false;
 
-			File.Delete(filename);
-			return true;
-		}
-		catch
-		{
-			return false;
-		}
-	}
+            File.Delete(filename);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
 
-	public static string GetBackupPath(Database db) => Path.Join(Subfolders["Databases"], db.Name, db.Name);
+    public static string GetBackupPath(Database db) => Path.Join(Subfolders["Databases"], db.Name, db.Name);
 
-	/// <summary>
-	/// Get the default file path for a Sylver Ink database, based on its name and the working directory.
-	/// </summary>
-	public static string GetDatabasePath(Database db)
-	{
-		var index = 0;
-		Match match;
-		if ((match = IndexDigits().Match(db.Name ?? string.Empty)).Success)
-			index = int.Parse(match.Groups[1].Value, NumberFormatInfo.InvariantInfo);
+    /// <summary>
+    /// Get the default file path for a Sylver Ink database, based on its name and the working directory.
+    /// </summary>
+    public static string GetDatabasePath(Database db)
+    {
+        var index = 0;
+        Match match;
+        if ((match = IndexDigits().Match(db.Name ?? string.Empty)).Success)
+            index = int.Parse(match.Groups[1].Value, NumberFormatInfo.InvariantInfo);
 
-		var path = Path.Join(Subfolders["Databases"], db.Name);
-		var dbFile = Path.Join(path, $"{db.Name}.sidb");
-		var uuidFile = Path.Join(path, "uuid.dat");
+        var path = Path.Join(Subfolders["Databases"], db.Name);
+        var dbFile = Path.Join(path, $"{db.Name}.sidb");
+        var uuidFile = Path.Join(path, "uuid.dat");
 
-		while (File.Exists(dbFile))
-		{
-			if (File.Exists(uuidFile) && File.ReadAllText(uuidFile).Equals(db.UUID, StringComparison.Ordinal))
-				return dbFile;
+        while (File.Exists(dbFile))
+        {
+            if (File.Exists(uuidFile) && File.ReadAllText(uuidFile).Equals(db.UUID, StringComparison.Ordinal))
+                return dbFile;
 
-			Database tmpDB = new();
-			try
-			{
-				tmpDB.Load(dbFile);
-				if (tmpDB.UUID?.Equals(db.UUID, StringComparison.Ordinal) is true)
-					return dbFile;
-				if (tmpDB.Format < 7) // Database object UUID was added in SIDB v7
-					return dbFile;
-			}
-			catch
-			{
-				tmpDB.Dispose();
-				return string.Empty;
-			}
+            Database tmpDB = new();
+            try
+            {
+                tmpDB.Load(dbFile);
+                if (tmpDB.UUID?.Equals(db.UUID, StringComparison.Ordinal) is true)
+                    return dbFile;
+                if (tmpDB.Format < 7) // Database object UUID was added in SIDB v7
+                    return dbFile;
+            }
+            catch
+            {
+                tmpDB.Dispose();
+                return string.Empty;
+            }
 
-			index++;
-			db.Name = $"{db.Name} ({index})";
-			dbFile = Path.Join(path, $"{db.Name}.sidb");
-			uuidFile = Path.Join(path, "uuid.dat");
-		}
+            index++;
+            db.Name = $"{db.Name} ({index})";
+            dbFile = Path.Join(path, $"{db.Name}.sidb");
+            uuidFile = Path.Join(path, "uuid.dat");
+        }
 
-		return dbFile;
-	}
+        return dbFile;
+    }
 
-	public static string GetLockFile(string? dbFile = null) => Path.Join(Path.GetDirectoryName(dbFile ?? CurrentDatabase.DBFile) ?? ".", "_lock.sidb");
+    public static string GetLockFile(string? dbFile = null) => Path.Join(Path.GetDirectoryName(dbFile ?? CurrentDatabase.DBFile) ?? ".", "_lock.sidb");
 }

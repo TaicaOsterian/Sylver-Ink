@@ -1,36 +1,36 @@
 ﻿<Window x:Class="SylverInk.XAML.Search"
-		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		xmlns:local="clr-namespace:SylverInk"
-		xmlns:vm="clr-namespace:SylverInk.XAML.ViewModels"
-		mc:Ignorable="d"
-		d:DataContext="{d:DesignInstance Type=vm:SearchViewModel}"
-		Background="{Binding AppSettings.MenuBackground}" Closed="OnClose" Foreground="{Binding AppSettings.MenuForeground}" Height="525" MinHeight="275" MinWidth="350" MouseLeftButtonDown="Drag" ResizeMode="NoResize" ShowInTaskbar="False" Title="Sylver Ink: Search" Topmost="True" Width="350">
-	<Grid>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="150"/>
-			<RowDefinition Height="*"/>
-		</Grid.RowDefinitions>
-		<StackPanel>
-			<Label Content="Search text" FontStyle="Italic" HorizontalAlignment="Right" Margin="0,20,40,0"/>
-			<TextBox Margin="20,0" Text="{Binding QueryString}" x:Name="SearchText"/>
-			<Grid Margin="0,50,0,0">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="*"/>
-					<ColumnDefinition Width="*"/>
-				</Grid.ColumnDefinitions>
-				<Button Command="{Binding QueryCommand}" Content="Query" IsEnabled="{Binding CanQuery}"/>
-				<Button Command="{Binding CloseCommand}" Grid.Column="1" Content="Close"/>
-			</Grid>
-		</StackPanel>
-		<ListBox AlternationCount="2" ItemsSource="{Binding AppSettings.SearchResults}" Margin="20,0,20,20" MouseUp="ListItemChosen" Grid.Row="1" x:Name="Results">
-			<ListBox.ItemTemplate>
-				<DataTemplate>
-					<TextBlock Text="{Binding Preview}" />
-				</DataTemplate>
-			</ListBox.ItemTemplate>
-		</ListBox>
-	</Grid>
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SylverInk"
+        xmlns:vm="clr-namespace:SylverInk.XAML.ViewModels"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance Type=vm:SearchViewModel}"
+        Background="{Binding AppSettings.MenuBackground}" Closed="OnClose" Foreground="{Binding AppSettings.MenuForeground}" Height="525" MinHeight="275" MinWidth="350" MouseLeftButtonDown="Drag" ResizeMode="NoResize" ShowInTaskbar="False" Title="Sylver Ink: Search" Topmost="True" Width="350">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="150"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackPanel>
+            <Label Content="Search text" FontStyle="Italic" HorizontalAlignment="Right" Margin="0,20,40,0"/>
+            <TextBox Margin="20,0" Text="{Binding QueryString}" x:Name="SearchText"/>
+            <Grid Margin="0,50,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button Command="{Binding QueryCommand}" Content="Query" IsEnabled="{Binding CanQuery}"/>
+                <Button Command="{Binding CloseCommand}" Grid.Column="1" Content="Close"/>
+            </Grid>
+        </StackPanel>
+        <ListBox AlternationCount="2" ItemsSource="{Binding AppSettings.SearchResults}" Margin="20,0,20,20" MouseUp="ListItemChosen" Grid.Row="1" x:Name="Results">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Preview}" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
 </Window>

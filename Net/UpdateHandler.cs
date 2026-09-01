@@ -16,116 +16,119 @@ namespace SylverInk.Net;
 
 public static class UpdateHandler
 {
-	private static string GitReleasesURI { get; } = "https://api.github.com/repos/TaicaOsterian/Sylver-Ink/releases?per_page=1&page=1";
-	public static string TempUri { get; } = Path.Join(DocumentsFolder, "SylverInk.msi");
-	public static string UpdateLockUri { get; } = Path.Join(DocumentsFolder, "~si_update.lock");
-	private static CancellationTokenSource UpdateTokenSource { get; } = new();
-	public static Update UpdateWindow { get; } = new();
+    private static string GitReleasesURI { get; } = "https://api.github.com/repos/TaicaOsterian/Sylver-Ink/releases?per_page=1&page=1";
+    public static string TempUri { get; } = Path.Join(DocumentsFolder, "SylverInk.msi");
+    public static string UpdateLockUri { get; } = Path.Join(DocumentsFolder, "~si_update.lock");
+    private static CancellationTokenSource UpdateTokenSource { get; } = new();
+    public static Update UpdateWindow { get; } = new();
 
-	public static void CancelUpdate()
-	{
-		UpdateTokenSource.Cancel();
-	}
+    public static void CancelUpdate()
+    {
+        UpdateTokenSource.Cancel();
+    }
 
-	public static async Task CheckForUpdates()
-	{
-		using var httpClient = new HttpClient();
-		Version? releaseVersion;
-		string? uriNode = null;
+    public static async Task CheckForUpdates()
+    {
+        using var httpClient = new HttpClient();
+        Version? releaseVersion;
+        string? uriNode = null;
 
-		if (Assembly.GetExecutingAssembly().GetName().Version is not Version assemblyVersion)
-			return;
+        if (Assembly.GetExecutingAssembly().GetName().Version is not Version assemblyVersion)
+            return;
 
-		if (Process.GetCurrentProcess().MainModule?.FileName is null)
-			return;
+        if (Process.GetCurrentProcess().MainModule?.FileName is null)
+            return;
 
-		try
-		{
-			if (!httpClient.DefaultRequestHeaders.UserAgent.TryParseAdd("request"))
-				return;
+        try
+        {
+            if (!httpClient.DefaultRequestHeaders.UserAgent.TryParseAdd("request"))
+                return;
 
-			var jsonString = await httpClient.GetStringAsync(GitReleasesURI);
-			if (JsonSerializer.Deserialize<JsonArray>(jsonString)?[0]?.AsObject() is not JsonObject release)
-				return;
+            var jsonString = await httpClient.GetStringAsync(GitReleasesURI);
+            if (JsonSerializer.Deserialize<JsonArray>(jsonString)?[0]?.AsObject() is not JsonObject release)
+                return;
 
-			if (!release.TryGetPropertyValue("tag_name", out var tagNode) || !release.TryGetPropertyValue("assets", out var assetNode))
-				return;
+            if (!release.TryGetPropertyValue("tag_name", out var tagNode) || !release.TryGetPropertyValue("assets", out var assetNode))
+                return;
 
-			var releaseString = tagNode?.ToString() ?? "0.0.0";
-			if (releaseString.StartsWith('v'))
-				releaseString = releaseString[1..];
+            var releaseString = tagNode?.ToString() ?? "0.0.0";
+            if (releaseString.StartsWith('v'))
+                releaseString = releaseString[1..];
 
-			if (!Version.TryParse(releaseString, out releaseVersion) || releaseVersion.CompareTo(assemblyVersion) < 1)
-				return;
+            if (!Version.TryParse(releaseString, out releaseVersion) || releaseVersion.CompareTo(assemblyVersion) < 1)
+                return;
 
-			if (assetNode?.AsArray() is not JsonArray assetArray)
-				return;
+            if (assetNode?.AsArray() is not JsonArray assetArray)
+                return;
 
-			foreach (var asset in assetArray)
-			{
-				if (asset is null)
-					continue;
+            foreach (var asset in assetArray)
+            {
+                if (asset is null)
+                    continue;
 
-				if (!asset.AsObject().TryGetPropertyValue("browser_download_url", out var nValue))
-					continue;
+                if (!asset.AsObject().TryGetPropertyValue("browser_download_url", out var nValue))
+                    continue;
 
-				if (nValue?.ToString() is not string nString)
-					continue;
+                if (nValue?.ToString() is not string nString)
+                    continue;
 
-				if (nString.EndsWith(".msi", StringComparison.Ordinal))
-					uriNode = nString;
-			}
+                // Starting in v1.8.0: Download a .MSI package only if a .EXE package doesn't exist.
+                if (nString.EndsWith(".exe", StringComparison.Ordinal))
+                    uriNode = nString;
+                else if (nString.EndsWith(".msi", StringComparison.Ordinal))
+                    uriNode ??= nString;
+            }
 
-			if (uriNode is null)
-				return;
-		}
-		catch
-		{
-			return;
-		}
+            if (uriNode is null)
+                return;
+        }
+        catch
+        {
+            return;
+        }
 
-		if (MessageBox.Show($"A new version of Sylver Ink is available ({assemblyVersion.ToString(3)} → {releaseVersion.ToString(3)}).\n\nWould you like to download and install it now?", "Sylver Ink: Notification", MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.No)
-			return;
+        if (MessageBox.Show($"A new version of Sylver Ink is available ({assemblyVersion.ToString(3)} → {releaseVersion.ToString(3)}).\n\nWould you like to download and install it now?", "Sylver Ink: Notification", MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.No)
+            return;
 
-		await DownloadAndInstallUpdate(httpClient, uriNode);
-	}
+        await DownloadAndInstallUpdate(httpClient, uriNode);
+    }
 
-	private static async Task DownloadAndInstallUpdate(HttpClient httpClient, string uriNode)
-	{
-		try
-		{
-			Erase(TempUri);
-			Erase(UpdateLockUri);
+    private static async Task DownloadAndInstallUpdate(HttpClient httpClient, string uriNode)
+    {
+        try
+        {
+            Erase(TempUri);
+            Erase(UpdateLockUri);
 
-			File.Create(UpdateLockUri, 0).Close();
+            File.Create(UpdateLockUri, 0).Close();
 
-			UpdateWindow.Show();
+            UpdateWindow.Show();
 
-			await httpClient.DownloadFileTaskAsync(uriNode, TempUri, UpdateTokenSource);
+            await httpClient.DownloadFileTaskAsync(uriNode, TempUri, UpdateTokenSource);
 
-			UpdateWindow.Close();
+            UpdateWindow.Close();
 
-			if (UpdateTokenSource.IsCancellationRequested)
-				return;
+            if (UpdateTokenSource.IsCancellationRequested)
+                return;
 
-			AbortRun = true;
+            AbortRun = true;
 
-			Process.Start(new ProcessStartInfo()
-			{
-				FileName = TempUri,
-				UseShellExecute = true,
-			});
+            Process.Start(new ProcessStartInfo()
+            {
+                FileName = TempUri,
+                UseShellExecute = true,
+            });
 
-			Application.Current.Shutdown();
-		}
-		catch (Exception ex)
-		{
-			UpdateWindow?.Close();
+            Application.Current.Shutdown();
+        }
+        catch (Exception ex)
+        {
+            UpdateWindow?.Close();
 
-			if (ex is not OperationCanceledException)
-				MessageBox.Show($"Unable to update Sylver Ink: {ex.Message}", "Sylver Ink: Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            if (ex is not OperationCanceledException)
+                MessageBox.Show($"Unable to update Sylver Ink: {ex.Message}", "Sylver Ink: Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
-			return;
-		}
-	}
+            return;
+        }
+    }
 }

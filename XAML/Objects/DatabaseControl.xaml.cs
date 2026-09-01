@@ -14,89 +14,89 @@ namespace SylverInk.XAML.Objects;
 /// </summary>
 public partial class DatabaseControl : UserControl
 {
-	public DatabaseControl()
-	{
-		DataContext = new DatabaseControlViewModel();
-		InitializeComponent();
-		CreateContextMenu();
-	}
+    public DatabaseControl()
+    {
+        DataContext = new DatabaseControlViewModel();
+        InitializeComponent();
+        CreateContextMenu();
+    }
 
-	private void ContextDelete(object? sender, RoutedEventArgs e)
-	{
-		if (RecentSelection is null)
-			return;
+    private void ContextDelete(object? sender, RoutedEventArgs e)
+    {
+        if (RecentSelection is null)
+            return;
 
-		if (MessageBox.Show("Are you sure you want to delete this note?", "Sylver Ink: Notification", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
-			return;
+        if (MessageBox.Show("Are you sure you want to delete this note?", "Sylver Ink: Notification", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+            return;
 
-		CurrentDatabase.DeleteRecord(RecentSelection);
+        CurrentDatabase.DeleteRecord(RecentSelection);
 
-		return;
-	}
+        return;
+    }
 
-	private void ContextOpen(object? sender, RoutedEventArgs e)
-	{
-		if (RecentSelection is null)
-			return;
+    private void ContextOpen(object? sender, RoutedEventArgs e)
+    {
+        if (RecentSelection is null)
+            return;
 
-		OpenQuery(RecentSelection);
+        OpenQuery(RecentSelection);
 
-		return;
-	}
+        return;
+    }
 
-	private void CreateContextMenu()
-	{
-		ContextMenu menu = new()
-		{
-			DataContext = CommonUtils.Settings
-		};
+    private void CreateContextMenu()
+    {
+        ContextMenu menu = new()
+        {
+            DataContext = CommonUtils.Settings
+        };
 
-		MenuItem itemOpen = new()
-		{
-			Header = "Open",
-		};
+        MenuItem itemOpen = new()
+        {
+            Header = "Open",
+        };
 
-		MenuItem itemDelete = new()
-		{
-			Header = "Delete",
-		};
+        MenuItem itemDelete = new()
+        {
+            Header = "Delete",
+        };
 
-		itemOpen.Click += ContextOpen;
-		itemDelete.Click += ContextDelete;
+        itemOpen.Click += ContextOpen;
+        itemDelete.Click += ContextDelete;
 
-		menu.Items.Add(itemOpen);
-		menu.Items.Add(itemDelete);
+        menu.Items.Add(itemOpen);
+        menu.Items.Add(itemDelete);
 
-		PlusTab.ContextMenu = menu;
-	}
+        PlusTab.ContextMenu = menu;
+    }
 
-	private void ListItemChosen(object sender, MouseButtonEventArgs e)
-	{
-		if (sender is not ListBox box)
-			return;
+    private void ListItemChosen(object sender, MouseButtonEventArgs e)
+    {
+        if (sender is not ListBox box)
+            return;
 
-		if (box.SelectedItem is not NoteRecord record)
-			return;
+        if (box.SelectedItem is not NoteRecord record)
+            return;
 
-		RecentSelection = record;
+        RecentSelection = record;
 
-		// We set the recent selection on any click, but only open it on a left button click. This makes it easier for the context menu to grab the affected note when needed.
-		if (e.ChangedButton == MouseButton.Right)
-			return;
+        // We set the recent selection on any click, but only open it on a left button click. This makes it easier for the context menu to grab the affected note when needed.
+        if (e.ChangedButton == MouseButton.Right)
+            return;
 
-		OpenQuery(RecentSelection);
-	}
+        OpenQuery(RecentSelection);
+    }
 
-	private void NewNoteKeydown(object? sender, KeyEventArgs e)
-	{
-		if (e.Key != Key.Enter)
-			return;
+    private void NewNoteKeydown(object? sender, KeyEventArgs e)
+    {
+        if (e.Key != Key.Enter)
+            return;
 
-		if (sender is not TextBox box)
-			return;
+        if (sender is not TextBox box)
+            return;
 
-		CurrentDatabase.CreateRecord(box.Text);
-		box.Text = string.Empty;
-		DeferUpdateRecentNotes();
-	}
+        CurrentDatabase.CreateRecord(box.Text);
+        box.Text = string.Empty;
+        DeferUpdateRecentNotes();
+    }
 }
