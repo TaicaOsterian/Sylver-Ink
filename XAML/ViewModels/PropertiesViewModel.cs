@@ -167,7 +167,7 @@ public partial class PropertiesViewModel : ViewModelBase
         DBFormat = $"SIDB v.{CurrentDatabase.Format}";
         DBLongest = "...";
         DBName = CurrentDatabase.Name;
-        DBNotes = $"{CurrentDatabase.RecordCount:N0} notes";
+        DBNotes = $"{CurrentDatabase.RecordCount:N0} {Resources.Word_Notes}";
         DBPath = $"{CurrentDatabase.DBFile}";
         DBTotal = "...";
 
@@ -208,14 +208,14 @@ public partial class PropertiesViewModel : ViewModelBase
         noteAvgC /= CurrentDatabase.RecordCount;
         noteAvgW /= CurrentDatabase.RecordCount;
 
-        DBAvg = $"{noteAvgW:N1} words\n({noteAvgC:N1} chars.)";
-        DBLongest = $"{noteLongestW:N0} words\n({noteLongestC:N0} chars.)";
-        DBTotal = $"{noteTotalW:N0} words\n({noteTotalC:N0} chars.)";
+        DBAvg = $"{noteAvgW:N1} {Resources.Word_Words}\n({noteAvgC:N1} {Resources.Word_Chars}.)";
+        DBLongest = $"{noteLongestW:N0} {Resources.Word_Words}\n({noteLongestC:N0} {Resources.Word_Chars}.)";
+        DBTotal = $"{noteTotalW:N0} {Resources.Word_Words}\n({noteTotalC:N0} {Resources.Word_Chars}.)";
     }
 
     private async void Restore(object? param = null)
     {
-        if (MessageBox.Show("Are you sure you want to revert the database to the selected date and time?", "Sylver Ink: Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+        if (MessageBox.Show(Resources.Message_ConfirmReversion, Resources.Title_Warning, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
             return;
 
         DateTime reversion = RestoreDate ?? DateTime.UtcNow;

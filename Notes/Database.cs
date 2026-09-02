@@ -74,7 +74,7 @@ public class Database : IDisposable
             if (db is not null)
                 RemoveDatabase(db);
 
-            MessageBox.Show($"Could not load database: {dbFile}", "Sylver Ink: Error", MessageBoxButton.OK);
+            MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheCouldNotLoadDatabase, dbFile), Resources.Title_Error, MessageBoxButton.OK);
         }
     }
 
@@ -272,7 +272,7 @@ public class Database : IDisposable
     public void Load(string dbFile)
     {
         var lockFile = GetLockFile(dbFile);
-        if (File.Exists(lockFile) && MessageBox.Show($"{Path.GetFileName(dbFile)} - The database last closed unexpectedly. Do you want to load the most recent autosave?", "Sylver Ink: Notification", MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes)
+        if (File.Exists(lockFile) && MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheMessageDatabaseAutosaved, Path.GetFileName(dbFile)), Resources.Title_Notification, MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes)
         {
             Controller.Open(lockFile);
             Initialize();
@@ -280,7 +280,7 @@ public class Database : IDisposable
             if (Controller.EnforceNoForwardCompatibility)
             {
                 Loaded = false;
-                throw new NotSupportedException("The program attempted to load a database file with a newer format than it supports.");
+                throw new NotSupportedException(Resources.DatabaseTooNew);
             }
 
             Loaded = Controller.Loaded = true;
@@ -299,7 +299,7 @@ public class Database : IDisposable
         if (Controller.EnforceNoForwardCompatibility)
         {
             Loaded = false;
-            throw new NotSupportedException("The program attempted to load a database file with a newer format than it supports.");
+            throw new NotSupportedException(Resources.DatabaseTooNew);
         }
 
         Loaded = Controller.Loaded;
@@ -308,7 +308,7 @@ public class Database : IDisposable
             Name = Path.GetFileNameWithoutExtension(DBFile);
 
         if (DBFile.EndsWith("sibk", StringComparison.Ordinal))
-            Name = $"Backup: {Name}";
+            Name = $"{Resources.Backup}: {Name}";
 
         DeferUpdateRecentNotes();
     }
@@ -371,12 +371,12 @@ public class Database : IDisposable
         if (!Directory.Exists(oldPath))
             return;
 
-        var directorySearch = Directory.GetDirectories(Subfolders["Databases"], "*", new EnumerationOptions() { IgnoreInaccessible = true, RecurseSubdirectories = true, MaxRecursionDepth = 3 });
+        var directorySearch = Directory.GetDirectories(Subfolders[Resources.Subfolder_Databases], "*", new EnumerationOptions() { IgnoreInaccessible = true, RecurseSubdirectories = true, MaxRecursionDepth = 3 });
         if (oldPath is not null && newPath is not null && directorySearch.Contains(oldPath))
         {
             if (Directory.Exists(newPath))
             {
-                if (MessageBox.Show($"A database with that name already exists in {newPath}.\n\nDo you want to overwrite it?", "Sylver Ink: Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+                if (MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheRenameDatabaseAlreadyExists, newPath), Resources.Title_Warning, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
                 {
                     DBFile = oldFile;
                     Name = oldName;
@@ -399,7 +399,7 @@ public class Database : IDisposable
 
         if (File.Exists(newFile) && !overwrite)
         {
-            if (MessageBox.Show($"A database with that name already exists at {newFile}.\n\nDo you want to overwrite it?", "Sylver Ink: Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+            if (MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheRenameDatabaseAlreadyExists, newFile), Resources.Title_Warning, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
             {
                 DBFile = oldFile;
                 Name = oldName;
@@ -450,7 +450,7 @@ public class Database : IDisposable
 
         Controller.SerializeRecords();
 
-        if (targetFile.Contains(Subfolders["Databases"]))
+        if (targetFile.Contains(Subfolders[Resources.Subfolder_Databases]))
             File.WriteAllText(Path.Join(Path.GetDirectoryName(targetFile), "uuid.dat"), UUID);
 
         var lockFile = GetLockFile(targetFile);

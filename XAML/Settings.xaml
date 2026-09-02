@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SylverInk"
         xmlns:objects="clr-namespace:SylverInk.XAML.Objects"
+        xmlns:properties="clr-namespace:SylverInk.Localization"
         xmlns:vm="clr-namespace:SylverInk.XAML.ViewModels"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=vm:SettingsViewModel}"
@@ -45,21 +46,21 @@
             <Label FontStyle="Italic" Foreground="{Binding AppSettings.MenuForeground}" HorizontalAlignment="Right" Margin="10,0" Grid.Row="2">
                 <TextBlock TextAlignment="Right">Sticky notes<LineBreak/>stay on top</TextBlock>
             </Label>
-            <Label FontStyle="Italic" Foreground="{Binding AppSettings.AccentForeground}" HorizontalAlignment="Right" Margin="10,0" Grid.Row="3" ToolTip="The duration of time (in seconds) a transparent sticky note must be hovered over before it activates.">
+            <Label FontStyle="Italic" Foreground="{Binding AppSettings.AccentForeground}" HorizontalAlignment="Right" Margin="10,0" Grid.Row="3" ToolTip="{x:Static properties:Resources.ClickthroughTooltip}">
                 <TextBlock TextAlignment="Right">Note<LineBreak/>clickthrough</TextBlock>
             </Label>
             <Label FontStyle="Italic" Foreground="{Binding AppSettings.MenuForeground}" HorizontalAlignment="Right" Margin="10,0" Grid.Row="4">
                 <TextBlock TextAlignment="Right">Note<LineBreak/>transparency</TextBlock>
             </Label>
             <ComboBox Grid.Column="1" SelectionChanged="StickyRibbonChanged" VerticalAlignment="Center" Width="125" x:Name="RibbonBox">
-                <ComboBoxItem Content="Content preview" Tag="Content"/>
-                <ComboBoxItem Content="Last changed date" Tag="Change"/>
-                <ComboBoxItem Content="Created date" Tag="Creation"/>
-                <ComboBoxItem Content="Index number" Tag="Index"/>
+                <ComboBoxItem Content="{x:Static properties:Resources.ContentPreview}" Tag="Content"/>
+                <ComboBoxItem Content="{x:Static properties:Resources.LastChangedDate}" Tag="Change"/>
+                <ComboBoxItem Content="{x:Static properties:Resources.CreatedDate}" Tag="Creation"/>
+                <ComboBoxItem Content="{x:Static properties:Resources.IndexNumber}" Tag="Index"/>
             </ComboBox>
             <ComboBox Grid.Column="1" Grid.Row="1" SelectionChanged="SortRibbonChanged" VerticalAlignment="Center" Width="125" x:Name="SortBox">
-                <ComboBoxItem Content="Created date" Tag="ByCreation"/>
-                <ComboBoxItem Content="Last changed date" Tag="ByChange"/>
+                <ComboBoxItem Content="{x:Static properties:Resources.CreatedDate}" Tag="ByCreation"/>
+                <ComboBoxItem Content="{x:Static properties:Resources.LastChangedDate}" Tag="ByChange"/>
             </ComboBox>
             <CheckBox Grid.Column="1" IsChecked="{Binding AppSettings.SearchResultsOnTop}" Margin="20,10" Grid.Row="2"/>
             <Slider x:Name="NoteClickthroughSlider" Grid.Column="1" IsSnapToTickEnabled="True" LargeChange="1" Margin="0,5" Maximum="2" Minimum="0" Grid.Row="3" SmallChange="0.25" TickFrequency="0.25" TickPlacement="BottomRight" ToolTip="{Binding AppSettings.NoteClickthrough}" Value="{Binding AppSettings.NoteClickthrough}" VerticalAlignment="Center" Width="125"/>
@@ -79,11 +80,11 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Label Content="Display Font" FontStyle="Italic" HorizontalAlignment="Right" Margin="10,0"/>
-            <Label Content="Font Size" FontStyle="Italic" HorizontalAlignment="Right" Margin="10,0" Grid.Row="1"/>
-            <Label Content="Menu Colors" FontStyle="Italic" HorizontalAlignment="Right" Margin="10,0" Grid.Row="2"/>
-            <Label Content="Text Colors" FontStyle="Italic" HorizontalAlignment="Right" Margin="10,0" Grid.Row="3"/>
-            <Label Content="Accent Colors" FontStyle="Italic" HorizontalAlignment="Right" Margin="10,0" Grid.Row="4"/>
+            <Label Content="{x:Static properties:Resources.DisplayFont}" FontStyle="Italic" HorizontalAlignment="Right" Margin="10,0"/>
+            <Label Content="{x:Static properties:Resources.FontSize}" FontStyle="Italic" HorizontalAlignment="Right" Margin="10,0" Grid.Row="1"/>
+            <Label Content="{x:Static properties:Resources.MenuColors}" FontStyle="Italic" HorizontalAlignment="Right" Margin="10,0" Grid.Row="2"/>
+            <Label Content="{x:Static properties:Resources.TextColors}" FontStyle="Italic" HorizontalAlignment="Right" Margin="10,0" Grid.Row="3"/>
+            <Label Content="{x:Static properties:Resources.AccentColors}" FontStyle="Italic" HorizontalAlignment="Right" Margin="10,0" Grid.Row="4"/>
 
             <ComboBox Grid.Column="1" Foreground="Black" HorizontalAlignment="Center" ItemsSource="{Binding AppSettings.AvailableFonts}" SelectedItem="{Binding AppSettings.MainFontFamily}" VerticalAlignment="Center" Width="125" x:Name="MenuFont">
                 <ComboBox.ItemTemplate>
@@ -101,28 +102,28 @@
             
             <StackPanel Grid.Column="1" HorizontalAlignment="Center" Orientation="Horizontal" Grid.Row="2" VerticalAlignment="Center">
                 <Button BorderBrush="Black" BorderThickness="1" Click="ColorPopup" Margin="20,0" Tag="P1B" Width="20">
-                    <Rectangle Fill="{Binding AppSettings.MenuBackground}" Margin="-1" Stretch="UniformToFill" ToolTip="Background"/>
+                    <Rectangle Fill="{Binding AppSettings.MenuBackground}" Margin="-1" Stretch="UniformToFill" ToolTip="{x:Static properties:Resources.Background}"/>
                 </Button>
                 <Button BorderBrush="Black" BorderThickness="1" Click="ColorPopup" Margin="20,0" Tag="P1F" Width="20">
-                    <Rectangle Fill="{Binding AppSettings.MenuForeground}" Margin="-1" Stretch="UniformToFill" ToolTip="Foreground"/>
+                    <Rectangle Fill="{Binding AppSettings.MenuForeground}" Margin="-1" Stretch="UniformToFill" ToolTip="{x:Static properties:Resources.Foreground}"/>
                 </Button>
             </StackPanel>
             
             <StackPanel Grid.Column="1" HorizontalAlignment="Center" Orientation="Horizontal" Grid.Row="3" VerticalAlignment="Center">
                 <Button BorderBrush="Black" BorderThickness="1" Click="ColorPopup" Margin="20,0" Tag="P2B" Width="20">
-                    <Rectangle Fill="{Binding AppSettings.ListBackground}" Margin="-1" Stretch="UniformToFill" ToolTip="Background"/>
+                    <Rectangle Fill="{Binding AppSettings.ListBackground}" Margin="-1" Stretch="UniformToFill" ToolTip="{x:Static properties:Resources.Background}"/>
                 </Button>
                 <Button BorderBrush="Black" BorderThickness="1" Click="ColorPopup" Margin="20,0" Tag="P2F" Width="20">
-                    <Rectangle Fill="{Binding AppSettings.ListForeground}" Margin="-1" Stretch="UniformToFill" ToolTip="Foreground"/>
+                    <Rectangle Fill="{Binding AppSettings.ListForeground}" Margin="-1" Stretch="UniformToFill" ToolTip="{x:Static properties:Resources.Foreground}"/>
                 </Button>
             </StackPanel>
             
             <StackPanel Grid.Column="1" HorizontalAlignment="Center" Orientation="Horizontal" Grid.Row="4" VerticalAlignment="Center">
                 <Button BorderBrush="Black" BorderThickness="1" Click="ColorPopup" Margin="20,0" Tag="P3B" Width="20">
-                    <Rectangle Fill="{Binding AppSettings.AccentBackground}" Margin="-1" Stretch="UniformToFill" ToolTip="Background"/>
+                    <Rectangle Fill="{Binding AppSettings.AccentBackground}" Margin="-1" Stretch="UniformToFill" ToolTip="{x:Static properties:Resources.Background}"/>
                 </Button>
                 <Button BorderBrush="Black" BorderThickness="1" Click="ColorPopup" Margin="20,0" Tag="P3F" Width="20">
-                    <Rectangle Fill="{Binding AppSettings.AccentForeground}" Margin="-1" Stretch="UniformToFill" ToolTip="Foreground"/>
+                    <Rectangle Fill="{Binding AppSettings.AccentForeground}" Margin="-1" Stretch="UniformToFill" ToolTip="{x:Static properties:Resources.Foreground}"/>
                 </Button>
             </StackPanel>
         </Grid>
@@ -132,8 +133,8 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Button Command="{Binding ResetCommand}" Content="Reset" HorizontalAlignment="Right" Margin="10,0"/>
-            <Button Command="{Binding CloseCommand}" Grid.Column="1" Content="Close" HorizontalAlignment="Left" Margin="10,0"/>
+            <Button Command="{Binding ResetCommand}" Content="{x:Static properties:Resources.Reset}" HorizontalAlignment="Right" Margin="10,0"/>
+            <Button Command="{Binding CloseCommand}" Grid.Column="1" Content="{x:Static properties:Resources.Word_Close}" HorizontalAlignment="Left" Margin="10,0"/>
         </Grid>
     </Grid>
 </Window>

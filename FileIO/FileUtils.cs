@@ -10,12 +10,12 @@ namespace SylverInk.FileIO;
 /// </summary>
 public static class FileUtils
 {
-    public static string DocumentsFolder { get; } = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Sylver Ink");
-    public static string SettingsFile { get; } = Path.Join(DocumentsFolder, "settings.sis");
+    public static string DocumentsFolder { get; } = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), Resources.SylverInk);
+    public static string SettingsFile { get; } = Path.Join(DocumentsFolder, Resources.SettingsFileName);
     public static int HighestSIDBFormat { get; } = 14;
     public static char[] InvalidPathChars { get; } = ['/', '\\', ':', '*', '"', '?', '<', '>', '|'];
     public static Dictionary<string, string> Subfolders { get; } = new([
-        new("Databases", Path.Join(DocumentsFolder, "Databases"))
+        new(Resources.Subfolder_Databases, Path.Join(DocumentsFolder, Resources.Subfolder_Databases))
         ]);
 
     public static string DialogFileSelect(bool outgoing = false, int filterIndex = 3, string? defaultName = null)
@@ -23,12 +23,12 @@ public static class FileUtils
         FileDialog dialog = outgoing ? new SaveFileDialog()
         {
             FileName = defaultName ?? DefaultDatabase,
-            Filter = "Sylver Ink backup files (*.sibk)|*.sibk|Sylver Ink database files (*.sidb)|*.sidb|All files (*.*)|*.*",
+            Filter = Resources.DatabaseFileFilter,
         } : new OpenFileDialog()
         {
             CheckFileExists = true,
-            Filter = "Sylver Ink backup files (*.sibk)|*.sibk|Sylver Ink database files (*.sidb)|*.sidb|Text files (*.txt)|*.txt|All files (*.*)|*.*",
-            InitialDirectory = Subfolders["Databases"],
+            Filter = Resources.DatabaseAndTextFileFilter,
+            InitialDirectory = Subfolders[Resources.Subfolder_Databases],
         };
 
         dialog.FilterIndex = filterIndex;
@@ -57,7 +57,7 @@ public static class FileUtils
         }
     }
 
-    public static string GetBackupPath(Database db) => Path.Join(Subfolders["Databases"], db.Name, db.Name);
+    public static string GetBackupPath(Database db) => Path.Join(Subfolders[Resources.Subfolder_Databases], db.Name, db.Name);
 
     /// <summary>
     /// Get the default file path for a Sylver Ink database, based on its name and the working directory.
@@ -69,7 +69,7 @@ public static class FileUtils
         if ((match = IndexDigits().Match(db.Name ?? string.Empty)).Success)
             index = int.Parse(match.Groups[1].Value, NumberFormatInfo.InvariantInfo);
 
-        var path = Path.Join(Subfolders["Databases"], db.Name);
+        var path = Path.Join(Subfolders[Resources.Subfolder_Databases], db.Name);
         var dbFile = Path.Join(path, $"{db.Name}.sidb");
         var uuidFile = Path.Join(path, "uuid.dat");
 

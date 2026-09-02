@@ -21,7 +21,7 @@ public partial class DatabaseControl : UserControl
         if (RecentSelection is null)
             return;
 
-        if (MessageBox.Show("Are you sure you want to permanently delete this note?", "Sylver Ink: Notification", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+        if (MessageBox.Show(Localization.Resources.ConfirmDeleteNote, Localization.Resources.Title_Notification, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
             return;
 
         CurrentDatabase.DeleteRecord(RecentSelection);
@@ -48,12 +48,12 @@ public partial class DatabaseControl : UserControl
 
         MenuItem itemOpen = new()
         {
-            Header = "Open",
+            Header = Localization.Resources.Word_Open,
         };
 
         MenuItem itemDelete = new()
         {
-            Header = "Delete",
+            Header = Localization.Resources.Word_Delete,
         };
 
         itemOpen.Click += ContextOpen;

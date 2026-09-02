@@ -1,4 +1,6 @@
-﻿namespace SylverInk.Text;
+﻿using System.Globalization;
+
+namespace SylverInk.Text;
 
 public static class TextConverter
 {
@@ -13,7 +15,7 @@ public static class TextConverter
         if (_converters.TryGetValue(to, out var converter))
             return converter.Convert(text, from);
 
-        throw new ArgumentException($"No converter registered for {to}");
+        throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, CacheTextNoConverterRegistered, to));
     }
 
     public static FlowDocument Parse(string text, TextFormat from)
@@ -21,7 +23,7 @@ public static class TextConverter
         if (_converters.TryGetValue(from, out var converter))
             return converter.Parse(text);
 
-        throw new ArgumentException($"No parser registered for {from}");
+        throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, CacheTextNoParserRegistered, from));
     }
 
     public static string Save(FlowDocument document, TextFormat to)
@@ -29,6 +31,6 @@ public static class TextConverter
         if (_converters.TryGetValue(to, out var converter))
             return converter.Save(document);
 
-        throw new ArgumentException($"No saver registered for {to}");
+        throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, CacheTextNoSaverRegistered, to));
     }
 }

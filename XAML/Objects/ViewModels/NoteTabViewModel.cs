@@ -1,3 +1,4 @@
+using System.Globalization;
 using static SylverInk.CommonUtils;
 using static SylverInk.Notes.DatabaseUtils;
 using static SylverInk.XAMLUtils.MainWindowUtils;
@@ -12,7 +13,7 @@ public class NoteTabViewModel : NoteEditorViewModel
     private TextPointer _initialPointer;
     private int _revisionIndex;
     private bool _revisionView;
-    private string _saveLabel = "Save";
+    private string _saveLabel = Resources.Word_Save;
     private string _searchText = string.Empty;
 
     public bool CanNavigateNext
@@ -129,7 +130,7 @@ public class NoteTabViewModel : NoteEditorViewModel
         CanNavigateNext = false;
         CanNavigatePrevious = Record.GetNumRevisions() > 0;
         Edited = false;
-        LastChange = Record.Locked ? "Note locked by another user" : Record.GetNumRevisions() == 0 ? $"Entry created: {Record.GetCreated()}" : $"Entry last modified: {Record.GetLastChange()}";
+        LastChange = Record.Locked ? Resources.NoteLocked : Record.GetNumRevisions() == 0 ? string.Format(CultureInfo.CurrentCulture, CacheNoteEntryCreated, Record.GetCreated()) : string.Format(CultureInfo.CurrentCulture, CacheNoteEntryModified, Record.GetLastChange());
     }
 
     public void Deconstruct()
@@ -160,7 +161,7 @@ public class NoteTabViewModel : NoteEditorViewModel
 
     private void Delete(object? param)
     {
-        if (MessageBox.Show("Are you sure you want to permanently delete this note?", "Sylver Ink: Notification", MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.No)
+        if (MessageBox.Show(Resources.ConfirmDeleteNote, Resources.Title_Notification, MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.No)
             return;
 
         Deconstruct();
@@ -185,9 +186,9 @@ public class NoteTabViewModel : NoteEditorViewModel
         SetNavigation();
         Document = RevisionIndex != 0 ? Record.GetDocument(RevisionIndex) : TextConverter.Parse(CurrentRevision, TextFormat.Xaml);
         Edited = RevisionIndex != 0 || CalculateIsEdited();
-        LastChange = (RevisionIndex != 0 ? $"Revision {Record.GetNumRevisions() - RevisionIndex} from " : "Entry last modified: ") + revisionTime;
+        LastChange = (RevisionIndex != 0 ? string.Format(CultureInfo.CurrentCulture, CacheNoteRevisionID, Record.GetNumRevisions() - RevisionIndex) : Resources.EntryLastModified) + revisionTime;
         RevisionView = RevisionIndex != 0;
-        SaveLabel = RevisionIndex != 0 ? "Restore" : "Save";
+        SaveLabel = RevisionIndex != 0 ? Resources.Restore : Resources.Word_Save;
     }
 
     private void NavigatePrevious(object? param)
@@ -201,16 +202,16 @@ public class NoteTabViewModel : NoteEditorViewModel
         SetNavigation();
         Document = Record.GetDocument(RevisionIndex);
         Edited = true;
-        LastChange = (RevisionIndex == Record.GetNumRevisions() ? "Entry created " : $"Revision {Record.GetNumRevisions() - RevisionIndex} from ") + revisionTime;
+        LastChange = (RevisionIndex == Record.GetNumRevisions() ? Resources.Note_EntryCreated : string.Format(CultureInfo.CurrentCulture, CacheNoteRevisionID, Record.GetNumRevisions() - RevisionIndex)) + revisionTime;
         RevisionView = true;
-        SaveLabel = "Restore";
+        SaveLabel = Resources.Restore;
     }
 
     private void Return(object? param)
     {
         if (Edited)
         {
-            switch (MessageBox.Show("You have unsaved changes. Save before closing this note?", "Sylver Ink: Notification", MessageBoxButton.YesNoCancel, MessageBoxImage.Information))
+            switch (MessageBox.Show(Resources.Message_SaveBeforeClosingNote, Resources.Title_Notification, MessageBoxButton.YesNoCancel, MessageBoxImage.Information))
             {
                 case MessageBoxResult.Cancel:
                     return;
@@ -235,7 +236,7 @@ public class NoteTabViewModel : NoteEditorViewModel
         CanNavigatePrevious = true;
         Edited = false;
         IsEnabled = true;
-        LastChange = "Entry last modified: " + Record.GetLastChange();
+        LastChange = Resources.EntryLastModified + Record.GetLastChange();
         OriginalBlockCount = Document.Blocks.Count;
         OriginalPlaintext = new TextRange(Document.ContentStart, Document.ContentEnd).Text;
         OriginalRevisionCount = Record.GetNumRevisions();

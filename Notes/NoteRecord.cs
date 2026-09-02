@@ -59,7 +59,7 @@ public partial class NoteRecord
         {
             var _preview = FlowDocumentPreview(TextConverter.Parse(Reconstruct(), TextFormat.Xaml)).Replace("\r", string.Empty).Replace('\n', ' ').Replace('\t', ' ');
 
-            return string.IsNullOrEmpty(_preview) ? "(empty note)" : _preview;
+            return string.IsNullOrEmpty(_preview) ? Resources.EmptyNote : _preview;
         }
     }
 

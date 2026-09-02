@@ -199,7 +199,7 @@ public class NoteEditorViewModel : ViewModelBase
 
         if (Record.Locked)
         {
-            LastChange = "Locked by another user";
+            LastChange = Resources.NoteLocked;
             IsEnabled = false;
         }
         else

@@ -206,7 +206,7 @@ public class LZWState
         }
 
         if (lastCode >= MaxRestrictedWidth)
-            throw new OverflowException("Serialized database has exceeded the maximum capacity for restricted LZW compression.", new OverflowException());
+            throw new OverflowException(Resources.DatabaseTooLargeForCompression, new OverflowException());
     }
 
     /// <summary>

@@ -54,7 +54,7 @@ public partial class MainWindow : Window
 
         if (!DatabaseChanged)
         {
-            switch (MessageBox.Show("Are you sure you wish to exit Sylver Ink?", "Sykver Ink: Notification", MessageBoxButton.YesNo, MessageBoxImage.Information))
+            switch (MessageBox.Show(Localization.Resources.ExitMessage, Localization.Resources.Title_Notification, MessageBoxButton.YesNo, MessageBoxImage.Information))
             {
                 case MessageBoxResult.No:
                     e.Cancel = true;
@@ -66,7 +66,7 @@ public partial class MainWindow : Window
             }
         }
 
-        switch (MessageBox.Show("Do you want to save your work before exiting?", "Sylver Ink: Notification", MessageBoxButton.YesNoCancel, MessageBoxImage.Information))
+        switch (MessageBox.Show(Localization.Resources.ExitMessage_SaveWork, Localization.Resources.Title_Notification, MessageBoxButton.YesNoCancel, MessageBoxImage.Information))
         {
             case MessageBoxResult.Cancel:
                 e.Cancel = true;
@@ -133,7 +133,7 @@ public partial class MainWindow : Window
         if (InstanceRunning())
         {
             if (!ShellVerbsPassed)
-                MessageBox.Show("Another instance of Sylver Ink is already running.", "Sylver Ink: Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Localization.Resources.Error_InstanceRunning, Localization.Resources.Title_Error, MessageBoxButton.OK, MessageBoxImage.Error);
 
             // If shell verbs were passed to an existing instance, close this instance silently before a head is established.
             AbortRun = true;

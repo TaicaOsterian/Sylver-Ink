@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:SylverInk.XAML.Objects"
+        xmlns:properties="clr-namespace:SylverInk.Localization"
              xmlns:sylverink="clr-namespace:SylverInk"
              xmlns:utils="clr-namespace:SylverInk.XAMLUtils"
              xmlns:vm="clr-namespace:SylverInk.XAML.Objects.ViewModels"
@@ -46,27 +47,27 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <Separator Grid.ColumnSpan="8" Foreground="{Binding AppSettings.AccentForeground}" Height="2" Grid.Row="1"/>
-            <Button Style="{StaticResource ToolbarButton}" Command="ApplicationCommands.Undo" Content="↶" TabIndex="0" ToolTip="Undo"/>
-                <Button Style="{StaticResource ToolbarButton}" Command="ApplicationCommands.Redo" Content="↷" Grid.Column="1" TabIndex="1" ToolTip="Redo"/>
-            <Button Style="{StaticResource ToolbarButton}" Command="EditingCommands.ToggleBold" Grid.Column="2" TabIndex="2" ToolTip="Bold">
+            <Button Style="{StaticResource ToolbarButton}" Command="ApplicationCommands.Undo" Content="↶" TabIndex="0" ToolTip="{x:Static properties:Resources.Word_Undo}"/>
+                <Button Style="{StaticResource ToolbarButton}" Command="ApplicationCommands.Redo" Content="↷" Grid.Column="1" TabIndex="1" ToolTip="{x:Static properties:Resources.Word_Redo}"/>
+            <Button Style="{StaticResource ToolbarButton}" Command="EditingCommands.ToggleBold" Grid.Column="2" TabIndex="2" ToolTip="{x:Static properties:Resources.Bold}">
                 <TextBlock FontWeight="Bold">B</TextBlock>
             </Button>
-            <Button Style="{StaticResource ToolbarButton}" Command="EditingCommands.ToggleItalic" Grid.Column="3" TabIndex="3" ToolTip="Italic">
+            <Button Style="{StaticResource ToolbarButton}" Command="EditingCommands.ToggleItalic" Grid.Column="3" TabIndex="3" ToolTip="{x:Static properties:Resources.Italic}">
                 <TextBlock FontStyle="Italic" FontWeight="Bold">I</TextBlock>
             </Button>
-            <Button Style="{StaticResource ToolbarButton}" Command="EditingCommands.ToggleUnderline" Grid.Column="4" TabIndex="4" ToolTip="Underline">
+            <Button Style="{StaticResource ToolbarButton}" Command="EditingCommands.ToggleUnderline" Grid.Column="4" TabIndex="4" ToolTip="{x:Static properties:Resources.Underline}">
                 <TextBlock TextDecorations="Underline" FontWeight="Bold">U</TextBlock>
             </Button>
-            <Button Style="{StaticResource ToolbarButton}" Command="EditingCommands.IncreaseFontSize" Grid.Column="5" TabIndex="9" ToolTip="Increase Font Size">
+            <Button Style="{StaticResource ToolbarButton}" Command="EditingCommands.IncreaseFontSize" Grid.Column="5" TabIndex="9" ToolTip="{x:Static properties:Resources.IncreaseFontSize}">
                 <TextBlock FontWeight="Bold">A↑</TextBlock>
             </Button>
-            <Button Style="{StaticResource ToolbarButton}" Command="EditingCommands.DecreaseFontSize" Grid.Column="6" TabIndex="10" ToolTip="Decrease Font Size">
+            <Button Style="{StaticResource ToolbarButton}" Command="EditingCommands.DecreaseFontSize" Grid.Column="6" TabIndex="10" ToolTip="{x:Static properties:Resources.DecreaseFontSize}">
                 <TextBlock FontWeight="Bold">a↓</TextBlock>
             </Button>
-            <Button Style="{StaticResource ToolbarButton}" Click="SelectColor" Grid.Column="7" TabIndex="11" ToolTip="Text color..." x:Name="TextColorButton">
+            <Button Style="{StaticResource ToolbarButton}" Click="SelectColor" Grid.Column="7" TabIndex="11" ToolTip="{x:Static properties:Resources.TextColorEllipsis}" x:Name="TextColorButton">
                 <Path Fill="Black" Stroke="White" StrokeThickness="0.5" Data="M13.354.646a1.207 1.207 0 0 0-1.708 0L8.5 3.793l-.646-.647a.5.5 0 1 0-.708.708L8.293 5l-7.147 7.146A.5.5 0 0 0 1 12.5v1.793l-.854.853a.5.5 0 1 0 .708.707L1.707 15H3.5a.5.5 0 0 0 .354-.146L11 7.707l1.146 1.147a.5.5 0 0 0 .708-.708l-.647-.646 3.147-3.146a1.207 1.207 0 0 0 0-1.708zM2 12.707l7-7L10.293 7l-7 7H2z"/>
             </Button>
-            <Button Style="{StaticResource ToolbarButton}" Command="EditingCommands.AlignLeft" Grid.Row="2" Grid.Column="1" TabIndex="5" ToolTip="Left">
+            <Button Style="{StaticResource ToolbarButton}" Command="EditingCommands.AlignLeft" Grid.Row="2" Grid.Column="1" TabIndex="5" ToolTip="{x:Static properties:Resources.Left}">
                 <StackPanel>
                     <Line Stroke="{Binding AppSettings.ListForeground}" StrokeThickness="1" X1="0" X2="16" Y1="2" Y2="2"/>
                     <Line Stroke="{Binding AppSettings.ListForeground}" StrokeThickness="1" X1="0" X2="8" Y1="3" Y2="3"/>
@@ -74,7 +75,7 @@
                     <Line Stroke="{Binding AppSettings.ListForeground}" StrokeThickness="1" X1="0" X2="8" Y1="3" Y2="3"/>
                 </StackPanel>
             </Button>
-            <Button Style="{StaticResource ToolbarButton}" Command="EditingCommands.AlignCenter" Grid.Row="2" Grid.Column="2" TabIndex="6" ToolTip="Center">
+            <Button Style="{StaticResource ToolbarButton}" Command="EditingCommands.AlignCenter" Grid.Row="2" Grid.Column="2" TabIndex="6" ToolTip="{x:Static properties:Resources.Center}">
                 <StackPanel>
                     <Line Stroke="{Binding AppSettings.ListForeground}" StrokeThickness="1" X1="0" X2="16" Y1="2" Y2="2"/>
                     <Line Stroke="{Binding AppSettings.ListForeground}" StrokeThickness="1" X1="4" X2="12" Y1="3" Y2="3"/>
@@ -82,7 +83,7 @@
                     <Line Stroke="{Binding AppSettings.ListForeground}" StrokeThickness="1" X1="4" X2="12" Y1="3" Y2="3"/>
                 </StackPanel>
             </Button>
-            <Button Style="{StaticResource ToolbarButton}" Command="EditingCommands.AlignRight" Grid.Row="2" Grid.Column="3" TabIndex="7" ToolTip="Right">
+            <Button Style="{StaticResource ToolbarButton}" Command="EditingCommands.AlignRight" Grid.Row="2" Grid.Column="3" TabIndex="7" ToolTip="{x:Static properties:Resources.Right}">
                 <StackPanel>
                     <Line Stroke="{Binding AppSettings.ListForeground}" StrokeThickness="1" X1="0" X2="16" Y1="2" Y2="2"/>
                     <Line Stroke="{Binding AppSettings.ListForeground}" StrokeThickness="1" X1="8" X2="16" Y1="3" Y2="3"/>
@@ -90,7 +91,7 @@
                     <Line Stroke="{Binding AppSettings.ListForeground}" StrokeThickness="1" X1="8" X2="16" Y1="3" Y2="3"/>
                 </StackPanel>
             </Button>
-            <Button Style="{StaticResource ToolbarButton}" Command="EditingCommands.AlignJustify" Grid.Row="2" Grid.Column="4" TabIndex="8" ToolTip="Justify">
+            <Button Style="{StaticResource ToolbarButton}" Command="EditingCommands.AlignJustify" Grid.Row="2" Grid.Column="4" TabIndex="8" ToolTip="{x:Static properties:Resources.Justify}">
                 <StackPanel>
                     <Line Stroke="{Binding AppSettings.ListForeground}" StrokeThickness="1" X1="0" X2="16" Y1="2" Y2="2"/>
                     <Line Stroke="{Binding AppSettings.ListForeground}" StrokeThickness="1" X1="0" X2="16" Y1="3" Y2="3"/>
@@ -98,7 +99,7 @@
                     <Line Stroke="{Binding AppSettings.ListForeground}" StrokeThickness="1" X1="0" X2="16" Y1="3" Y2="3"/>
                 </StackPanel>
             </Button>
-            <Button Style="{StaticResource ToolbarButton}" Command="EditingCommands.ToggleBullets" Grid.Row="2" Grid.Column="5" ToolTip="Bullet List">
+            <Button Style="{StaticResource ToolbarButton}" Command="EditingCommands.ToggleBullets" Grid.Row="2" Grid.Column="5" ToolTip="{x:Static properties:Resources.BulletList}">
                 <StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <Ellipse Fill="{Binding AppSettings.ListForeground}" Height="4" HorizontalAlignment="Left" Width="4"/>
@@ -114,7 +115,7 @@
                     </StackPanel>
                 </StackPanel>
             </Button>
-            <Button Style="{StaticResource ToolbarButton}" Command="EditingCommands.ToggleNumbering" Grid.Row="2" Grid.Column="6" ToolTip="Numbered List">
+            <Button Style="{StaticResource ToolbarButton}" Command="EditingCommands.ToggleNumbering" Grid.Row="2" Grid.Column="6" ToolTip="{x:Static properties:Resources.NumberedList}">
                 <StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock FontFamily="Arial" FontSize="4" FontWeight="Bold" Text="1"/>
@@ -147,11 +148,11 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <Label Content="Search:"/>
+                    <Label Content="{x:Static properties:Resources.Word_Search}"/>
                     <TextBox Grid.Column="1" Grid.ColumnSpan="3" KeyDown="ISPText_KeyDown" Text="{Binding SearchText}" Width="200" x:Name="ISPText"/>
-                    <Button Command="{Binding FindPreviousCommand}" Content="Previous..." Grid.ColumnSpan="2" Grid.Row="1"/>
-                    <Button Command="{Binding FindNextCommand}" Content="Next..." Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1"/>
-                    <Button Command="{Binding CloseSearchPopupCommand}" Content="Close" Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="1"/>
+                    <Button Command="{Binding FindPreviousCommand}" Content="{x:Static properties:Resources.PreviousEllipsis}" Grid.ColumnSpan="2" Grid.Row="1"/>
+                    <Button Command="{Binding FindNextCommand}" Content="{x:Static properties:Resources.NextEllipsis}" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1"/>
+                    <Button Command="{Binding CloseSearchPopupCommand}" Content="{x:Static properties:Resources.Word_Close}" Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="1"/>
                 </Grid>
             </Border>
         </Popup>
@@ -184,9 +185,9 @@
             <Button Command="{Binding NavigatePreviousCommand}" Grid.ColumnSpan="2" Content="←" IsEnabled="{Binding CanNavigatePrevious}" TabIndex="13" Width="50" x:Name="PreviousButton"/>
             <Button Command="{Binding NavigateNextCommand}" Grid.Column="1" Grid.ColumnSpan="2" Content="→" IsEnabled="{Binding CanNavigateNext}" TabIndex="14" Width="50" x:Name="NextButton"/>
 
-            <Button Command="{Binding DeleteCommand}" Content="Delete" Grid.Row="2" TabIndex="15" x:Name="DeleteButton"/>
+            <Button Command="{Binding DeleteCommand}" Content="{x:Static properties:Resources.Word_Delete}" Grid.Row="2" TabIndex="15" x:Name="DeleteButton"/>
             <Button Command="{Binding SaveCommand}" Grid.Column="1" Content="{Binding SaveLabel}" IsEnabled="{Binding Edited}" Margin="20,0" Grid.Row="2" TabIndex="16" x:Name="SaveButton"/>
-            <Button Command="{Binding ReturnCommand}" Grid.Column="2" Content="Return" Grid.Row="2" TabIndex="17" x:Name="ReturnButton"/>
+            <Button Command="{Binding ReturnCommand}" Grid.Column="2" Content="{x:Static properties:Resources.Return}" Grid.Row="2" TabIndex="17" x:Name="ReturnButton"/>
         </Grid>
     </Grid>
 </UserControl>

@@ -3,6 +3,7 @@ using static SylverInk.Notes.DatabaseUtils;
 using static SylverInk.XAMLUtils.MainWindowUtils;
 using SylverInk.FileIO;
 using System.Text;
+using System.Globalization;
 
 namespace SylverInk.XAML.ViewModels;
 
@@ -157,7 +158,7 @@ public class ImportViewModel : ViewModelBase
         ToggleAdaptiveCommand = new RelayCommand(async _ => await ToggleAdaptiveAsync());
 
         LineTolerance = CommonUtils.Settings.LineTolerance;
-        StatusText = "Select a file to import.";
+        StatusText = Resources.SelectFile;
     }
 
     private async Task ChangeLineToleranceAsync(object? param = null)
@@ -178,18 +179,18 @@ public class ImportViewModel : ViewModelBase
 
         CanImport = false;
         IsBusy = true;
-        StatusText = "Importing...";
+        StatusText = Resources.Importing;
 
         try
         {
             await Task.Run(PerformImport);
 
-            StatusText = $"Notes imported: {Imported:N0}";
+            StatusText = string.Format(CultureInfo.CurrentCulture, CacheNotesImported, Imported);
             ImportTarget = string.Empty;
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Failed to import the selected file: {ex.Message}", "Sylver Ink: Error", MessageBoxButton.OK);
+            MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheImportFailed, ex.Message), Resources.Title_Error, MessageBoxButton.OK);
         }
         finally
         {
@@ -204,11 +205,11 @@ public class ImportViewModel : ViewModelBase
 
         if (!ReadFromStream(ImportTarget))
         {
-            StatusText = "Failed to read file.";
+            StatusText = Resources.FailedToReadFile;
             return;
         }
 
-        StatusText = "Measuring...";
+        StatusText = Resources.Measuring;
 
         if (AdaptiveImport)
             MeasureNotesAdaptive();
@@ -358,7 +359,7 @@ public class ImportViewModel : ViewModelBase
             return;
         }
 
-        MessageBox.Show("Failed to autodetect the note format.", "Sylver Ink: Error", MessageBoxButton.OK);
+        MessageBox.Show(Resources.FailedAutodetect, Resources.Title_Error, MessageBoxButton.OK);
         AdaptivePredicate = string.Empty;
         RunningCount = 0;
     }
@@ -383,7 +384,7 @@ public class ImportViewModel : ViewModelBase
                 blankCount = 0;
 
             if (i % 100 == 0)
-                StatusText = $"{i * 100.0 / DataLines.Count:N2}% scanned...";
+                StatusText = $"{i * 100.0 / DataLines.Count:N2}% {Resources.Scanned}...";
 
             if (recordData.Length == 0 || blankCount < LineTolerance)
                 continue;
@@ -447,7 +448,7 @@ public class ImportViewModel : ViewModelBase
             else
                 blankCount = 0;
 
-            StatusText = $"{i * 100.0 / DataLines.Count:N2}% imported...";
+            StatusText = $"{i * 100.0 / DataLines.Count:N2}% {Resources.Imported}...";
 
             if (blankCount < LineTolerance && i < DataLines.Count - 1)
                 continue;
@@ -478,7 +479,7 @@ public class ImportViewModel : ViewModelBase
 
         CanImport = false;
         IsBusy = true;
-        StatusText = "Processing...";
+        StatusText = Resources.Processing;
 
         try
         {
@@ -486,8 +487,8 @@ public class ImportViewModel : ViewModelBase
                 ImportTarget.EndsWith(".sibk", StringComparison.Ordinal))
             {
                 var result = MessageBox.Show(
-                    "You have selected an existing Sylver Ink database. Its contents will be merged with your current database.\n\nDo you want to overwrite your current database instead?",
-                    "Sylver Ink: Warning",
+                    Resources.Message_MergeDatabases,
+                    Resources.Title_Warning,
                     MessageBoxButton.YesNoCancel,
                     MessageBoxImage.Warning);
 
@@ -496,7 +497,7 @@ public class ImportViewModel : ViewModelBase
 
                 if (!CurrentDatabase.Open(ImportTarget))
                 {
-                    MessageBox.Show("Failed to import the selected file.", "Sylver Ink: Error", MessageBoxButton.OK);
+                    MessageBox.Show(Resources.FailedImport, Resources.Title_Error, MessageBoxButton.OK);
                     return;
                 }
 
@@ -508,7 +509,7 @@ public class ImportViewModel : ViewModelBase
 
                 CurrentDatabase.Initialize(false);
                 Imported = CurrentDatabase.RecordCount;
-                StatusText = $"Notes imported: {Imported:N0}";
+                StatusText = string.Format(CultureInfo.CurrentCulture, CacheNotesImported, Imported);
                 return;
             }
 
@@ -516,7 +517,7 @@ public class ImportViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Failed to process file: {ex.Message}", "Sylver Ink: Error", MessageBoxButton.OK);
+            MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheFailedToProcessFile, ex.Message), Resources.Title_Error, MessageBoxButton.OK);
         }
         finally
         {
@@ -544,7 +545,7 @@ public class ImportViewModel : ViewModelBase
     private void ReportMeasurement()
     {
         CanImport = RunningCount > 0;
-        StatusText = $"Estimated new notes: {RunningCount:N0}\nAverage length: {RunningAverage:N0} characters per note\n\nRemember to press Import to finalize your changes!";
+        StatusText = string.Format(CultureInfo.CurrentCulture, CacheImportMeasurementText, RunningCount, RunningAverage.ToString("N0", CultureInfo.CurrentCulture));
     }
 
     private async Task ToggleAdaptiveAsync()

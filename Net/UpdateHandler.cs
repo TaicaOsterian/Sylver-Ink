@@ -1,4 +1,5 @@
 ﻿using SylverInk.XAML;
+using System.Globalization;
 using System.Net.Http;
 using System.Reflection;
 using System.Text.Json;
@@ -12,7 +13,7 @@ namespace SylverInk.Net;
 public static class UpdateHandler
 {
     private static string GitReleasesURI { get; } = "https://api.github.com/repos/TaicaOsterian/Sylver-Ink/releases?per_page=1&page=1";
-    public static string TempUri { get; } = Path.Join(DocumentsFolder, "SylverInk.msi");
+    public static string TempUri { get; } = Path.Join(DocumentsFolder, Resources.MsiFileName);
     public static string UpdateLockUri { get; } = Path.Join(DocumentsFolder, "~si_update.lock");
     private static CancellationTokenSource UpdateTokenSource { get; } = new();
     public static Update UpdateWindow { get; } = new();
@@ -82,7 +83,7 @@ public static class UpdateHandler
             return;
         }
 
-        if (MessageBox.Show($"A new version of Sylver Ink is available ({assemblyVersion.ToString(3)} → {releaseVersion.ToString(3)}).\n\nWould you like to download and install it now?", "Sylver Ink: Notification", MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.No)
+        if (MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheMessageUpdateAvailable, assemblyVersion.ToString(3), releaseVersion.ToString(3)), Resources.Title_Notification, MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.No)
             return;
 
         await DownloadAndInstallUpdate(httpClient, uriNode);
@@ -121,7 +122,7 @@ public static class UpdateHandler
             UpdateWindow?.Close();
 
             if (ex is not OperationCanceledException)
-                MessageBox.Show($"Unable to update Sylver Ink: {ex.Message}", "Sylver Ink: Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheUnableToUpdate, ex.Message), Resources.Title_Error, MessageBoxButton.OK, MessageBoxImage.Error);
 
             return;
         }

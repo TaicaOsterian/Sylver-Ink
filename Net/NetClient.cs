@@ -77,7 +77,7 @@ public class NetClient : IDisposable
         }
         catch
         {
-            MessageBox.Show("Failed to connect to the database.", "Sylver Ink: Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(Resources.FailedConnection, Resources.Title_Error, MessageBoxButton.OK, MessageBoxImage.Error);
             if (DB is not null)
                 Concurrent(RemoveDatabase, DB);
             return;

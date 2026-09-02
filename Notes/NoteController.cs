@@ -66,7 +66,7 @@ public partial class NoteController : IDisposable
                 ReloadSerializer();
                 if (!_serializer?.OpenRead(backup) is true)
                 {
-                    MessageBox.Show($"Unable to load database file: {dbFile}", "Sylver Ink: Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheUnableToLoadDatabase, dbFile), Resources.Title_Warning, MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
             }
@@ -139,7 +139,7 @@ public partial class NoteController : IDisposable
         {
             EnforceNoForwardCompatibility = true;
             _serializer?.Close();
-            MessageBox.Show("This database was created in a newer format than the current version of Sylver Ink supports. Please update your installation before opening this database.", "Sylver Ink: Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(Resources.Message_DatabaseTooNew, Resources.Title_Error, MessageBoxButton.OK, MessageBoxImage.Error);
             return;
         }
 

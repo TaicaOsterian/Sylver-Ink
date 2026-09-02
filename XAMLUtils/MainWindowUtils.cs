@@ -69,8 +69,8 @@ public static class MainWindowUtils
         var tooltip = GetRibbonTooltip(record);
         var content = tooltip;
 
-        if (content.Contains('\n'))
-            content = content[..content.IndexOf('\n')];
+        if (content.Contains(Environment.NewLine))
+            content = content[..content.IndexOf(Environment.NewLine, StringComparison.OrdinalIgnoreCase)];
 
         if (content.Length >= 13)
             content = $"{content[..10]}...";
@@ -88,7 +88,7 @@ public static class MainWindowUtils
         DisplayType.Change => $"{record.ShortChange} — {record.Preview}",
         DisplayType.Content => record.Preview,
         DisplayType.Creation => $"{record.GetCreated()} — {record.Preview}",
-        DisplayType.Index => $"Note #{record.Index + 1:N0} — {record.Preview}",
+        DisplayType.Index => $"{Resources.Word_Note} #{record.Index + 1:N0} — {record.Preview}",
         _ => record.Preview
     };
 

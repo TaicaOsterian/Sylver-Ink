@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SylverInk"
+        xmlns:properties="clr-namespace:SylverInk.Localization"
         xmlns:utils="clr-namespace:SylverInk.XAMLUtils"
         xmlns:vm="clr-namespace:SylverInk.XAML.ViewModels"
         mc:Ignorable="d"
@@ -34,8 +35,8 @@
                          UndoLimit="20">
             </RichTextBox>
             <Label Content="{Binding LastChange}" Grid.ColumnSpan="2" FontStyle="Italic" HorizontalAlignment="Center" Grid.Row="1"/>
-            <Button Command="{Binding ViewCommand}" Content="View..." IsEnabled="{Binding IsFocused}" Margin="0,2" Grid.Row="2" Width="50"/>
-            <Button Command="{Binding CloseCommand}" Grid.Column="1" Content="Close" IsEnabled="{Binding IsFocused}" Margin="0,2" Grid.Row="2" Width="50"/>
+            <Button Command="{Binding ViewCommand}" Content="{x:Static properties:Resources.ViewEllipsis}" IsEnabled="{Binding IsFocused}" Margin="0,2" Grid.Row="2" Width="50"/>
+            <Button Command="{Binding CloseCommand}" Grid.Column="1" Content="{x:Static properties:Resources.Word_Close}" IsEnabled="{Binding IsFocused}" Margin="0,2" Grid.Row="2" Width="50"/>
         </Grid>
     </Border>
 </Window>

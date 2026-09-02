@@ -161,7 +161,7 @@ public static partial class CommonUtils
         DeferUpdateRecentNotes();
     }
 
-    public static bool InstanceRunning() => Process.GetProcessesByName("Sylver Ink").Length > 1 && !File.Exists(UpdateHandler.UpdateLockUri);
+    public static bool InstanceRunning() => Process.GetProcessesByName(Resources.SylverInk).Length > 1 && !File.Exists(UpdateHandler.UpdateLockUri);
 
     public static double Lerp(double x, double y, double a)
     {
@@ -182,7 +182,7 @@ public static partial class CommonUtils
             return;
 
         // Create an empty database if and only if we haven't loaded any from files
-        await Database.Create(Path.Join(Subfolders["Databases"], DefaultDatabase, $"{DefaultDatabase}.sidb"));
+        await Database.Create(Path.Join(Subfolders[Resources.Subfolder_Databases], DefaultDatabase, $"{DefaultDatabase}.sidb"));
 
         return;
     }

@@ -22,7 +22,7 @@ public class ContextSettings : INotifyPropertyChanged
     private int _lineTolerance;
     private Brush? _listBackgound = Brushes.White;
     private Brush? _listForegound = Brushes.Black;
-    private FontFamily? _mainFontFamily = new("Arial");
+    private FontFamily? _mainFontFamily;
     private double _mainFontSize = 11.0;
     private Typeface? _mainTypeFace;
     private Brush? _menuBackgound = Brushes.Beige;
@@ -357,7 +357,7 @@ public class ContextSettings : INotifyPropertyChanged
                     if (Databases.Count != 0)
                         break;
 
-                    await Database.Create(Path.Join(Subfolders["Databases"], DefaultDatabase, $"{DefaultDatabase}.sidb"));
+                    await Database.Create(Path.Join(Subfolders[Resources.Subfolder_Databases], DefaultDatabase, $"{DefaultDatabase}.sidb"));
                     break;
                 case "ListBackground":
                     ListBackground = BrushFromBytes(keyValue[1]);

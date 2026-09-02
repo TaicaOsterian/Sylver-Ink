@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SylverInk"
+        xmlns:properties="clr-namespace:SylverInk.Localization"
         xmlns:vm="clr-namespace:SylverInk.XAML.ViewModels"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=vm:AboutViewModel}"
@@ -22,6 +23,6 @@
             And to <Bold>Norvinsk Hunter</Bold> for his invaluable insight into the wants and needs of our target audience.<LineBreak/><LineBreak/>
             <Hyperlink NavigateUri="{Binding AboutUsUri}" Command="{Binding NavigateCommand}" CommandParameter="{Binding AboutUsUri}">Visit us on Github.</Hyperlink>
         </TextBlock>
-        <Button Command="{Binding CloseCommand}" Content="Close" Grid.Row="1"/>
+        <Button Command="{Binding CloseCommand}" Content="{x:Static properties:Resources.Word_Close}" Grid.Row="1"/>
     </Grid>
 </Window>

@@ -1,3 +1,4 @@
+using System.Globalization;
 using static SylverInk.CommonUtils;
 using static SylverInk.FileIO.FileUtils;
 using static SylverInk.Notes.DatabaseUtils;
@@ -166,7 +167,7 @@ public class MainWindowViewModel : ViewModelBase
         }
         catch
         {
-            ShowTooltip("Failed to copy the address code to the clipboard");
+            ShowTooltip(Resources.Tooltip_FailedCopy);
         }
     }
 
@@ -176,7 +177,7 @@ public class MainWindowViewModel : ViewModelBase
     {
         if (CurrentDatabase.Changed)
         {
-            var res = MessageBox.Show("Do you want to save your changes?", "Sylver Ink: Notification", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+            var res = MessageBox.Show(Resources.Message_SaveChangesShort, Resources.Title_Notification, MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
             if (res == MessageBoxResult.Cancel)
                 return;
             if (res == MessageBoxResult.Yes)
@@ -206,7 +207,7 @@ public class MainWindowViewModel : ViewModelBase
 
     private static void MenuDelete(object? param)
     {
-        if (MessageBox.Show("Are you sure you want to permanently delete this database?", "Sylver Ink: Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+        if (MessageBox.Show(Resources.Message_ConfirmDeleteDatabase, Resources.Title_Warning, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
             return;
 
         Erase(CurrentDatabase.DBFile);
@@ -257,7 +258,7 @@ public class MainWindowViewModel : ViewModelBase
 
         if (!Path.Exists(path))
         {
-            if (MessageBox.Show($"The file {path} has been either moved or deleted.\n\nDo you want to remove it from the list?", $"Sylver Ink: Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+            if (MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheMessageFileMovedOrDeleted, path), Resources.Title_Warning, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
             {
                 CommonUtils.Settings.RecentDatabases.Remove(new() { FullPath = path });
                 DeferUpdateRecentNotes();
@@ -292,7 +293,7 @@ public class MainWindowViewModel : ViewModelBase
     private static void MenuSaveLocal(object? param)
     {
         CurrentDatabase.Changed = true;
-        CurrentDatabase.DBFile = Path.Join(Subfolders["Databases"], Path.GetFileNameWithoutExtension(CurrentDatabase.DBFile), Path.GetFileName(CurrentDatabase.DBFile));
+        CurrentDatabase.DBFile = Path.Join(Subfolders[Resources.Subfolder_Databases], Path.GetFileNameWithoutExtension(CurrentDatabase.DBFile), Path.GetFileName(CurrentDatabase.DBFile));
         CurrentDatabase.Format = HighestSIDBFormat;
         CurrentDatabase.Save();
     }
@@ -333,7 +334,7 @@ public class MainWindowViewModel : ViewModelBase
             if (!RenameDatabaseName.Equals(db.Name, StringComparison.Ordinal))
                 continue;
 
-            MessageBox.Show("A database already exists with the provided name.", "Sylver Ink: Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(Resources.Message_DatabaseExists, Resources.Title_Error, MessageBoxButton.OK, MessageBoxImage.Error);
             return;
         }
 
@@ -342,7 +343,7 @@ public class MainWindowViewModel : ViewModelBase
             if (!RenameDatabaseName.Contains(pc))
                 continue;
 
-            MessageBox.Show($"Provided name contains invalid character: {pc}", "Sylver Ink: Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheMessageInvalidPath, pc), Resources.Title_Error, MessageBoxButton.OK, MessageBoxImage.Error);
             return;
         }
 
@@ -356,7 +357,7 @@ public class MainWindowViewModel : ViewModelBase
 
         if (string.IsNullOrWhiteSpace(AddressCode) || AddressCode.Length != 6)
         {
-            MessageBox.Show("Invalid address code. Must be 6 characters.", "Sylver Ink: Error", MessageBoxButton.OK);
+            MessageBox.Show(Resources.Message_InvalidAddressCode, Resources.Title_Error, MessageBoxButton.OK);
             return;
         }
 

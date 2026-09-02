@@ -151,7 +151,7 @@ public partial class ColorPicker : UserControl
             ], new(0, 0), new(1, 1)),
             Margin = new(-1),
             Stretch = Stretch.UniformToFill,
-            ToolTip = "Custom color..."
+            ToolTip = Localization.Resources.CustomColor
         };
 
         System.Windows.Shapes.Rectangle clearRect = new()
@@ -165,7 +165,7 @@ public partial class ColorPicker : UserControl
             ], new(0, 0), new(1, 1)),
             Margin = new(-1),
             Stretch = Stretch.UniformToFill,
-            ToolTip = "Default color"
+            ToolTip = Localization.Resources.DefaultColor
         };
 
         Button customOption = new()
