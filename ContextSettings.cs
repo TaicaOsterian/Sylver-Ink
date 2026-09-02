@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using static SylverInk.CommonUtils;
 using static SylverInk.FileIO.FileUtils;
 using static SylverInk.Interop.VisualUtils;
 using static SylverInk.Notes.DatabaseUtils;

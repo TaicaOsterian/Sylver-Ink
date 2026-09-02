@@ -1,6 +1,5 @@
 ﻿using System.Runtime.InteropServices;
 using System.Windows.Interop;
-using static SylverInk.CommonUtils;
 using static SylverInk.Notes.DatabaseUtils;
 
 namespace SylverInk.Interop;

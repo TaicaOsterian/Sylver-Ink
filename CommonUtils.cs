@@ -1,6 +1,6 @@
-﻿using System.Globalization;
+﻿using SylverInk.XAML;
+using System.Globalization;
 using System.Threading;
-using SylverInk.XAML;
 using static SylverInk.FileIO.FileUtils;
 using static SylverInk.Notes.DatabaseUtils;
 using static SylverInk.XAMLUtils.MainWindowUtils;

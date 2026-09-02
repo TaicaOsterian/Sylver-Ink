@@ -1,7 +1,6 @@
-using static SylverInk.CommonUtils;
+using SylverInk.XAML.Objects;
 using static SylverInk.Notes.DatabaseUtils;
 using static SylverInk.XAMLUtils.MainWindowUtils;
-using SylverInk.XAML.Objects;
 
 namespace SylverInk.XAML.ViewModels;
 

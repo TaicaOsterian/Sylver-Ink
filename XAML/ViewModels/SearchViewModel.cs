@@ -1,6 +1,5 @@
-using static SylverInk.CommonUtils;
-using static SylverInk.Notes.DatabaseUtils;
 using System.Windows.Data;
+using static SylverInk.Notes.DatabaseUtils;
 
 namespace SylverInk.XAML.ViewModels;
 

@@ -1,8 +1,7 @@
-using static SylverInk.CommonUtils;
-using static SylverInk.XAMLUtils.MainWindowUtils;
 using System.Runtime.InteropServices;
 using System.Windows.Interop;
 using System.Windows.Threading;
+using static SylverInk.XAMLUtils.MainWindowUtils;
 
 namespace SylverInk.XAML;
 

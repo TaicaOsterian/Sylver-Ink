@@ -1,6 +1,5 @@
 ﻿using System.Globalization;
 using System.Text;
-using static SylverInk.CommonUtils;
 using static SylverInk.FileIO.FileUtils;
 using static SylverInk.Notes.DatabaseUtils;
 using static SylverInk.XAMLUtils.MainWindowUtils;
@@ -308,7 +307,7 @@ public class Database : IDisposable
             Name = Path.GetFileNameWithoutExtension(DBFile);
 
         if (DBFile.EndsWith("sibk", StringComparison.Ordinal))
-            Name = $"{Resources.Backup}: {Name}";
+            Name = $"{Resources.Word_Backup}: {Name}";
 
         DeferUpdateRecentNotes();
     }

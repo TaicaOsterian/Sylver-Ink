@@ -1,6 +1,5 @@
 ﻿using System.IO.Pipes;
 using System.Threading;
-using static SylverInk.CommonUtils;
 using static SylverInk.Notes.DatabaseUtils;
 
 namespace SylverInk.Interop;

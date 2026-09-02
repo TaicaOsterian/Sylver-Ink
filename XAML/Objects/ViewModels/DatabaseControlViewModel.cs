@@ -1,5 +1,3 @@
-using static SylverInk.CommonUtils;
-
 namespace SylverInk.XAML.Objects.ViewModels;
 
 public class DatabaseControlViewModel : ViewModelBase

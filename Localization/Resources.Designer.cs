@@ -8,10 +8,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SylverInk.Localization {
-    using System;
-    
-    
+namespace SylverInk.Localization
+{
+
+
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -102,15 +102,6 @@ namespace SylverInk.Localization {
         public static string Background {
             get {
                 return ResourceManager.GetString("Background", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Backup....
-        /// </summary>
-        public static string Backup {
-            get {
-                return ResourceManager.GetString("Backup", resourceCulture);
             }
         }
         
@@ -322,7 +313,7 @@ namespace SylverInk.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Entry last modified: .
+        ///   Looks up a localized string similar to Entry last modified:.
         /// </summary>
         public static string EntryLastModified {
             get {
@@ -763,7 +754,7 @@ namespace SylverInk.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Revision {0} from .
+        ///   Looks up a localized string similar to Revision {0} from.
         /// </summary>
         public static string Note_RevisionID {
             get {
@@ -1137,6 +1128,24 @@ namespace SylverInk.Localization {
         public static string Word_About {
             get {
                 return ResourceManager.GetString("Word_About", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Backup.
+        /// </summary>
+        public static string Word_Backup {
+            get {
+                return ResourceManager.GetString("Word_Backup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Backup....
+        /// </summary>
+        public static string Word_BackupEllipsis {
+            get {
+                return ResourceManager.GetString("Word_BackupEllipsis", resourceCulture);
             }
         }
         

@@ -1,6 +1,5 @@
-using static SylverInk.CommonUtils;
-using static SylverInk.XAMLUtils.MainWindowUtils;
 using System.Threading;
+using static SylverInk.XAMLUtils.MainWindowUtils;
 
 namespace SylverInk.XAML.Objects.ViewModels;
 

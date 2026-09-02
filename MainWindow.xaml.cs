@@ -1,6 +1,5 @@
 ﻿using SylverInk.Interop;
 using System.ComponentModel;
-using static SylverInk.CommonUtils;
 using static SylverInk.FileIO.FileUtils;
 using static SylverInk.Interop.VisualUtils;
 using static SylverInk.Notes.DatabaseUtils;

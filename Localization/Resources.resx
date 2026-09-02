@@ -112,7 +112,7 @@
   <data name="Background" xml:space="preserve">
     <value>Background</value>
   </data>
-  <data name="Backup" xml:space="preserve">
+  <data name="Word_BackupEllipsis" xml:space="preserve">
     <value>Backup...</value>
   </data>
   <data name="Bold" xml:space="preserve">
@@ -187,7 +187,7 @@
     <value>(empty note)</value>
   </data>
   <data name="EntryLastModified" xml:space="preserve">
-    <value>Entry last modified: </value>
+    <value>Entry last modified:</value>
   </data>
   <data name="Error_InstanceRunning" xml:space="preserve">
     <value>Another instance of Sylver Ink is already running.</value>
@@ -353,7 +353,7 @@
     <comment>{0} = The date and time when the note was last modified</comment>
   </data>
   <data name="Note_RevisionID" xml:space="preserve">
-    <value>Revision {0} from </value>
+    <value>Revision {0} from</value>
     <comment>{0} = The number of the revision we're viewing</comment>
   </data>
   <data name="NumberedList" xml:space="preserve">
@@ -475,6 +475,9 @@
   </data>
   <data name="Word_About" xml:space="preserve">
     <value>About</value>
+  </data>
+  <data name="Word_Backup" xml:space="preserve">
+    <value>Backup</value>
   </data>
   <data name="Word_Cancel" xml:space="preserve">
     <value>Cancel</value>

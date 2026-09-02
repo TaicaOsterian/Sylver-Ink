@@ -116,7 +116,7 @@
                 <Separator/>
                 <MenuItem Command="{Binding SaveLocalCommand}" Header="{x:Static properties:Resources.SaveToDocuments}" Tag="Always"/>
                 <MenuItem Command="{Binding SaveAsCommand}" Header="{x:Static properties:Resources.SaveAs}" Tag="Always"/>
-                <MenuItem Command="{Binding BackupDatabaseCommand}" Header="{x:Static properties:Resources.Backup}" Tag="Always"/>
+                <MenuItem Command="{Binding BackupDatabaseCommand}" Header="{x:Static properties:Resources.Word_BackupEllipsis}" Tag="Always"/>
                 <Separator/>
                 <MenuItem Command="{Binding DeleteDatabaseCommand}" Header="{x:Static properties:Resources.Word_Delete}"/>
             </MenuItem>

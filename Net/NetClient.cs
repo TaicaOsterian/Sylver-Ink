@@ -2,7 +2,6 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using static SylverInk.CommonUtils;
 using static SylverInk.Net.NetworkUtils;
 using static SylverInk.Notes.DatabaseUtils;
 

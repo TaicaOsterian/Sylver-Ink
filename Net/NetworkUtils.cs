@@ -3,7 +3,6 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Windows.Shapes;
-using static SylverInk.CommonUtils;
 using static SylverInk.XAMLUtils.MainWindowUtils;
 
 namespace SylverInk.Net;

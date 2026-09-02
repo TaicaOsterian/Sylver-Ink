@@ -1,5 +1,4 @@
 ﻿using SylverInk.XAML.Objects;
-using static SylverInk.CommonUtils;
 using static SylverInk.Notes.DatabaseUtils;
 
 namespace SylverInk.XAMLUtils;

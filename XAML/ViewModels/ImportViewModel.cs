@@ -1,9 +1,8 @@
-using static SylverInk.CommonUtils;
+using SylverInk.FileIO;
+using System.Globalization;
+using System.Text;
 using static SylverInk.Notes.DatabaseUtils;
 using static SylverInk.XAMLUtils.MainWindowUtils;
-using SylverInk.FileIO;
-using System.Text;
-using System.Globalization;
 
 namespace SylverInk.XAML.ViewModels;
 
