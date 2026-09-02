@@ -21,7 +21,7 @@
             <Bold>Sylver Ink</Bold> is released under the MIT software license. You are free to modify and redistribute Sylver Ink as you see fit, provided no claim is made to patent rights.<LineBreak/><LineBreak/>
             With special thanks to <Bold>Miles Farber</Bold> for the priceless contribution of encouraging words and helpful brainstorming.<LineBreak/><LineBreak/>
             And to <Bold>Norvinsk Hunter</Bold> for his invaluable insight into the wants and needs of our target audience.<LineBreak/><LineBreak/>
-            <Hyperlink NavigateUri="{Binding AboutUsUri}" Command="{Binding NavigateCommand}" CommandParameter="{Binding AboutUsUri}">Visit us on Github.</Hyperlink>
+            <Hyperlink NavigateUri="{Binding AboutUsUri}" Command="{Binding NavigateCommand}" CommandParameter="{Binding AboutUsUri}"><Run Text="{x:Static properties:Resources.About_Github}"/></Hyperlink>
         </TextBlock>
         <Button Command="{Binding CloseCommand}" Content="{x:Static properties:Resources.Word_Close}" Grid.Row="1"/>
     </Grid>

@@ -97,6 +97,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="About_Github" xml:space="preserve">
+    <value>Visit us on Github.</value>
+  </data>
   <data name="AccentColors" xml:space="preserve">
     <value>Accent Colors</value>
   </data>
@@ -111,9 +114,6 @@
   </data>
   <data name="Background" xml:space="preserve">
     <value>Background</value>
-  </data>
-  <data name="Word_BackupEllipsis" xml:space="preserve">
-    <value>Backup...</value>
   </data>
   <data name="Bold" xml:space="preserve">
     <value>Bold</value>
@@ -478,6 +478,9 @@
   </data>
   <data name="Word_Backup" xml:space="preserve">
     <value>Backup</value>
+  </data>
+  <data name="Word_BackupEllipsis" xml:space="preserve">
+    <value>Backup...</value>
   </data>
   <data name="Word_Cancel" xml:space="preserve">
     <value>Cancel</value>

@@ -8,10 +8,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SylverInk.Localization
-{
-
-
+namespace SylverInk.Localization {
+    using System;
+    
+    
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -57,6 +57,15 @@ namespace SylverInk.Localization
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Visit us on Github..
+        /// </summary>
+        public static string About_Github {
+            get {
+                return ResourceManager.GetString("About_Github", resourceCulture);
             }
         }
         

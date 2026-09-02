@@ -239,19 +239,18 @@ public static partial class CommonUtils
 
     public static void ShowTooltip(string text)
     {
-        var tooltip = new ToolTip
+        _ = new ToolTip()
         {
             Background = Settings.MenuBackground,
             Content = text,
             FontFamily = Settings.MainFontFamily,
             FontSize = Settings.MainFontSize,
             Foreground = Settings.MenuForeground,
+            IsOpen = true,
             Placement = System.Windows.Controls.Primitives.PlacementMode.Mouse,
             PlacementTarget = Application.Current.MainWindow,
-            StaysOpen = false,
+            StaysOpen = false
         };
-
-        tooltip.IsOpen = true;
         return;
     }
 
