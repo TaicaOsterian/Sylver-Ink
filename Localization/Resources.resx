@@ -278,6 +278,10 @@ Remember to press Import to finalize your changes!</value>
   <data name="Label_Previous" xml:space="preserve">
     <value>Previous...</value>
   </data>
+  <data name="Label_Restore" xml:space="preserve">
+    <value>Restore the database
+to a previous state</value>
+  </data>
   <data name="Label_SaveAs" xml:space="preserve">
     <value>Save as...</value>
   </data>
@@ -304,6 +308,7 @@ Remember to press Import to finalize your changes!</value>
   </data>
   <data name="Message_DatabaseAutosaved" xml:space="preserve">
     <value>{0} - The database last closed unexpectedly. Do you want to load the most recent autosave?</value>
+    <comment>{0} = The file path of the database.</comment>
   </data>
   <data name="Message_DatabaseExists" xml:space="preserve">
     <value>A database already exists with the provided name.</value>
@@ -594,6 +599,7 @@ Do you want to overwrite it?</value>
   </data>
   <data name="Word_Path" xml:space="preserve">
     <value>Path</value>
+    <comment>As in file path.</comment>
   </data>
   <data name="Word_Previous" xml:space="preserve">
     <value>Previous</value>

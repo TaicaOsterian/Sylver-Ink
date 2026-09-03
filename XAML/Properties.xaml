@@ -84,9 +84,7 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Label FontStyle="Italic" HorizontalAlignment="Right" Margin="10" VerticalAlignment="Center">
-                <TextBlock>Restore the database<LineBreak/>to a previous state</TextBlock>
-            </Label>
+            <Label Content="{x:Static properties:Resources.Label_Restore}" FontStyle="Italic" HorizontalAlignment="Right" Margin="10" VerticalAlignment="Center"/>
 
             <StackPanel Grid.Column="1" Margin="0,2,0,0" VerticalAlignment="Center">
                 <DatePicker CalendarOpened="CalendarOpened" MaxWidth="120" SelectedDate="{Binding RestoreDate, Mode=TwoWay}"/>

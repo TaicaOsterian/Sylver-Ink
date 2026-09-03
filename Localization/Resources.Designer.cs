@@ -514,6 +514,16 @@ namespace SylverInk.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Restore the database
+        ///to a previous state.
+        /// </summary>
+        public static string Label_Restore {
+            get {
+                return ResourceManager.GetString("Label_Restore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Save as....
         /// </summary>
         public static string Label_SaveAs {

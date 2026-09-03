@@ -47,8 +47,8 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <Separator Grid.ColumnSpan="8" Foreground="{Binding AppSettings.AccentForeground}" Height="2" Grid.Row="1"/>
-            <Button Style="{StaticResource ToolbarButton}" Command="ApplicationCommands.Undo" Content="↶" TabIndex="0" ToolTip="{x:Static properties:Resources.Word_Undo}"/>
-                <Button Style="{StaticResource ToolbarButton}" Command="ApplicationCommands.Redo" Content="↷" Grid.Column="1" TabIndex="1" ToolTip="{x:Static properties:Resources.Word_Redo}"/>
+            <Button Style="{StaticResource ToolbarButton}" Command="ApplicationCommands.Undo" Content="↶" TabIndex="0" ToolTip="{x:Static properties:Resources.Word_Undo}" ToolTipService.ShowOnDisabled="True"/>
+            <Button Style="{StaticResource ToolbarButton}" Command="ApplicationCommands.Redo" Content="↷" Grid.Column="1" TabIndex="1" ToolTip="{x:Static properties:Resources.Word_Redo}" ToolTipService.ShowOnDisabled="True"/>
             <Button Style="{StaticResource ToolbarButton}" Command="EditingCommands.ToggleBold" Grid.Column="2" TabIndex="2" ToolTip="{x:Static properties:Resources.Word_Bold}">
                 <TextBlock FontWeight="Bold">B</TextBlock>
             </Button>
