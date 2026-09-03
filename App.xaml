@@ -6,16 +6,16 @@
     <Application.Resources>
         <ResourceDictionary>
             <Style TargetType="{x:Type Button}">
-                <Setter Property="FontFamily" Value="{Binding DataContext.AppSettings.MainFontFamily, RelativeSource={RelativeSource AncestorType=Window}}"/>
-                <Setter Property="FontSize" Value="{Binding DataContext.AppSettings.MainFontSize, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                <Setter Property="FontFamily" Value="{Binding AppSettings.MainFontFamily}"/>
+                <Setter Property="FontSize" Value="{Binding AppSettings.MainFontSize}"/>
                 <Setter Property="FontStyle" Value="Italic"/>
-                <Setter Property="Foreground" Value="{Binding DataContext.AppSettings.ListForeground, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                <Setter Property="Foreground" Value="{Binding AppSettings.ListForeground}"/>
                 <Setter Property="Height" Value="20"/>
                 <Setter Property="HorizontalContentAlignment" Value="Center"/>
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type Button}">
-                            <Border x:Name="Border" Background="{Binding DataContext.AppSettings.ListBackground, RelativeSource={RelativeSource AncestorType=Window}}" BorderBrush="{Binding DataContext.AppSettings.MenuForeground, RelativeSource={RelativeSource AncestorType=Window}}" BorderThickness="1">
+                            <Border x:Name="Border" Background="{Binding AppSettings.ListBackground}" BorderBrush="{Binding AppSettings.MenuForeground}" BorderThickness="1">
                                 <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
                             <ControlTemplate.Triggers>
@@ -24,8 +24,8 @@
                                     <Setter Property="Foreground" Value="DimGray"/>
                                 </Trigger>
                                 <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Background" TargetName="Border" Value="{Binding DataContext.AppSettings.AccentBackground, RelativeSource={RelativeSource AncestorType=Window}}"/>
-                                    <Setter Property="Foreground" Value="{Binding DataContext.AppSettings.AccentForeground, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                                    <Setter Property="Background" TargetName="Border" Value="{Binding AppSettings.AccentBackground}"/>
+                                    <Setter Property="Foreground" Value="{Binding AppSettings.AccentForeground}"/>
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
@@ -41,10 +41,10 @@
                 <Setter Property="VerticalContentAlignment" Value="Center"/>
             </Style>
             <Style TargetType="{x:Type ContextMenu}">
-                <Setter Property="Background" Value="{Binding MenuBackground}"/>
+                <Setter Property="Background" Value="{Binding ListBackground}"/>
                 <Setter Property="BorderBrush" Value="Black"/>
                 <Setter Property="BorderThickness" Value="1"/>
-                <Setter Property="Foreground" Value="{Binding MenuForeground}"/>
+                <Setter Property="Foreground" Value="{Binding ListForeground}"/>
                 <Setter Property="Padding" Value="1"/>
                 <Setter Property="Template">
                     <Setter.Value>
@@ -59,11 +59,11 @@
                 </Setter>
             </Style>
             <Style TargetType="{x:Type DatePicker}">
-                <Setter Property="Background" Value="{Binding DataContext.AppSettings.ListBackground, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                <Setter Property="Background" Value="{Binding AppSettings.ListBackground}"/>
                 <Setter Property="BorderBrush" Value="#FF333333"/>
-                <Setter Property="FontFamily" Value="{Binding DataContext.AppSettings.MainFontFamily, RelativeSource={RelativeSource AncestorType=Window}}"/>
-                <Setter Property="FontSize" Value="{Binding DataContext.AppSettings.MainFontSize, RelativeSource={RelativeSource AncestorType=Window}}"/>
-                <Setter Property="Foreground" Value="{Binding DataContext.AppSettings.ListForeground, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                <Setter Property="FontFamily" Value="{Binding AppSettings.MainFontFamily}"/>
+                <Setter Property="FontSize" Value="{Binding AppSettings.MainFontSize}"/>
+                <Setter Property="Foreground" Value="{Binding AppSettings.ListForeground}"/>
                 <Setter Property="HorizontalContentAlignment" Value="Center"/>
                 <Setter Property="VerticalContentAlignment" Value="Center"/>
             </Style>
@@ -72,71 +72,71 @@
                 <Setter Property="VerticalContentAlignment" Value="Center"/>
             </Style>
             <Style TargetType="{x:Type Label}">
-                <Setter Property="FontFamily" Value="{Binding DataContext.AppSettings.MainFontFamily, RelativeSource={RelativeSource AncestorType=Window}}"/>
-                <Setter Property="FontSize" Value="{Binding DataContext.AppSettings.MainFontSize, RelativeSource={RelativeSource AncestorType=Window}}"/>
-                <Setter Property="Foreground" Value="{Binding DataContext.AppSettings.MenuForeground, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                <Setter Property="FontFamily" Value="{Binding AppSettings.MainFontFamily}"/>
+                <Setter Property="FontSize" Value="{Binding AppSettings.MainFontSize}"/>
+                <Setter Property="Foreground" Value="{Binding AppSettings.MenuForeground}"/>
                 <Setter Property="HorizontalContentAlignment" Value="Center"/>
                 <Setter Property="ToolTipService.InitialShowDelay" Value="250"/>
                 <Setter Property="VerticalContentAlignment" Value="Center"/>
             </Style>
             <Style TargetType="{x:Type ListBox}">
-                <Setter Property="Background" Value="{Binding DataContext.AppSettings.ListBackground, RelativeSource={RelativeSource AncestorType=Window}}"/>
-                <Setter Property="FontFamily" Value="{Binding DataContext.AppSettings.MainFontFamily, RelativeSource={RelativeSource AncestorType=Window}}"/>
-                <Setter Property="FontSize" Value="{Binding DataContext.AppSettings.MainFontSize, RelativeSource={RelativeSource AncestorType=Window}}"/>
-                <Setter Property="Foreground" Value="{Binding DataContext.AppSettings.ListForeground, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                <Setter Property="Background" Value="{Binding AppSettings.ListBackground}"/>
+                <Setter Property="FontFamily" Value="{Binding AppSettings.MainFontFamily}"/>
+                <Setter Property="FontSize" Value="{Binding AppSettings.MainFontSize}"/>
+                <Setter Property="Foreground" Value="{Binding AppSettings.ListForeground}"/>
             </Style>
             <Style TargetType="{x:Type ListBoxItem}" x:Key="LBIStyle">
                 <Style.Triggers>
                     <Trigger Property="ListBox.AlternationIndex" Value="1">
-                        <Setter Property="Background" Value="{Binding Path=Background, RelativeSource={RelativeSource AncestorType=Window}}"/>
-                        <Setter Property="Foreground" Value="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                        <Setter Property="Background" Value="{Binding Path=DataContext.AppSettings.Background}"/>
+                        <Setter Property="Foreground" Value="{Binding Path=DataContext.AppSettings.Foreground}"/>
                     </Trigger>
                 </Style.Triggers>
             </Style>
             <Style TargetType="{x:Type Menu}">
-                <Setter Property="Background" Value="{Binding DataContext.AppSettings.MenuBackground, RelativeSource={RelativeSource AncestorType=Window}}"/>
-                <Setter Property="Foreground" Value="{Binding DataContext.AppSettings.MenuForeground, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                <Setter Property="Background" Value="{Binding AppSettings.MenuBackground}"/>
+                <Setter Property="Foreground" Value="{Binding AppSettings.MenuForeground}"/>
             </Style>
             <Style TargetType="{x:Type MenuItem}" x:Key="MenuItemStyle">
                 <Style.Triggers>
                     <Trigger Property="IsMouseOver" Value="True">
-                        <Setter Property="Background" Value="{Binding DataContext.AppSettings.ListBackground, RelativeSource={RelativeSource AncestorType=Window}}"/>
-                        <Setter Property="Foreground" Value="{Binding DataContext.AppSettings.ListForeground, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                        <Setter Property="Background" Value="{Binding AppSettings.ListBackground}"/>
+                        <Setter Property="Foreground" Value="{Binding AppSettings.ListForeground}"/>
                     </Trigger>
                 </Style.Triggers>
-                <Setter Property="Background" Value="{Binding DataContext.AppSettings.MenuBackground, RelativeSource={RelativeSource AncestorType=Window}}"/>
-                <Setter Property="Foreground" Value="{Binding DataContext.AppSettings.MenuForeground, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                <Setter Property="Background" Value="{Binding AppSettings.MenuBackground}"/>
+                <Setter Property="Foreground" Value="{Binding AppSettings.MenuForeground}"/>
             </Style>
             <Style BasedOn="{StaticResource MenuItemStyle}" TargetType="{x:Type MenuItem}" x:Key="ContextMenuItemStyle">
-                <Setter Property="Background" Value="{Binding DataContext.MenuBackground, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
-                <Setter Property="Foreground" Value="{Binding DataContext.MenuForeground, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                <Setter Property="Background" Value="{Binding MenuBackground, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                <Setter Property="Foreground" Value="{Binding MenuForeground, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
                 <Style.Triggers>
                     <Trigger Property="IsMouseOver" Value="True">
-                        <Setter Property="Background" Value="{Binding DataContext.ListBackground, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
-                        <Setter Property="Foreground" Value="{Binding DataContext.ListForeground, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                        <Setter Property="Background" Value="{Binding ListBackground, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                        <Setter Property="Foreground" Value="{Binding ListForeground, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
                     </Trigger>
                 </Style.Triggers>
             </Style>
             <!--<Style BasedOn="{StaticResource MenuItemStyle}" TargetType="{x:Type MenuItem}"/>-->
             <Style TargetType="{x:Type RichTextBox}">
-                <Setter Property="Background" Value="{Binding DataContext.AppSettings.ListBackground, RelativeSource={RelativeSource AncestorType=Window}}"/>
-                <Setter Property="BorderBrush" Value="{Binding DataContext.AppSettings.MenuForeground, RelativeSource={RelativeSource AncestorType=Window}}"/>
-                <Setter Property="FontFamily" Value="{Binding DataContext.AppSettings.MainFontFamily, RelativeSource={RelativeSource AncestorType=Window}}"/>
-                <Setter Property="FontSize" Value="{Binding DataContext.AppSettings.MainFontSize, RelativeSource={RelativeSource AncestorType=Window}}"/>
-                <Setter Property="Foreground" Value="{Binding DataContext.AppSettings.ListForeground, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                <Setter Property="Background" Value="{Binding AppSettings.ListBackground}"/>
+                <Setter Property="BorderBrush" Value="{Binding AppSettings.MenuForeground}"/>
+                <Setter Property="FontFamily" Value="{Binding AppSettings.MainFontFamily}"/>
+                <Setter Property="FontSize" Value="{Binding AppSettings.MainFontSize}"/>
+                <Setter Property="Foreground" Value="{Binding AppSettings.ListForeground}"/>
             </Style>
             <Style TargetType="{x:Type Separator}">
-                <Setter Property="BorderBrush" Value="{Binding DataContext.AppSettings.AccentBackground, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                <Setter Property="BorderBrush" Value="{Binding AppSettings.AccentBackground}"/>
                 <Setter Property="BorderThickness" Value="2"/>
             </Style>
             <Style TargetType="{x:Type TabItem}">
-                <Setter Property="FontFamily" Value="{Binding DataContext.AppSettings.MainFontFamily, RelativeSource={RelativeSource AncestorType=Window}}"/>
-                <Setter Property="Foreground" Value="{Binding DataContext.AppSettings.MenuForeground, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                <Setter Property="FontFamily" Value="{Binding AppSettings.MainFontFamily}"/>
+                <Setter Property="Foreground" Value="{Binding AppSettings.MenuForeground}"/>
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type TabItem}">
                             <Grid Margin="0,4,0,0" x:Name="ContentSite">
-                                <Border Name="Border" Background="{Binding DataContext.AppSettings.MenuBackground, RelativeSource={RelativeSource AncestorType=Window}}" BorderBrush="Black" BorderThickness="1,1,1,0">
+                                <Border Name="Border" Background="{Binding AppSettings.MenuBackground}" BorderBrush="Black" BorderThickness="1,1,1,0">
                                     <ContentPresenter ContentSource="Header" HorizontalAlignment="Center" RecognizesAccessKey="True" VerticalAlignment="Center"/>
                                 </Border>
                             </Grid>
@@ -144,8 +144,8 @@
                                 <Trigger Property="IsSelected" Value="True">
                                     <Setter Property="Panel.ZIndex" Value="100"/>
                                     <Setter Property="Margin" TargetName="ContentSite" Value="0"/>
-                                    <Setter Property="Background" TargetName="Border" Value="{Binding DataContext.AppSettings.ListBackground, RelativeSource={RelativeSource AncestorType=Window}}"/>
-                                    <Setter Property="TextElement.Foreground" TargetName="Border" Value="{Binding DataContext.AppSettings.ListForeground, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                                    <Setter Property="Background" TargetName="Border" Value="{Binding AppSettings.ListBackground}"/>
+                                    <Setter Property="TextElement.Foreground" TargetName="Border" Value="{Binding AppSettings.ListForeground}"/>
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
@@ -153,11 +153,11 @@
                 </Setter>
             </Style>
             <Style TargetType="{x:Type TextBox}">
-                <Setter Property="Background" Value="{Binding DataContext.AppSettings.ListBackground, RelativeSource={RelativeSource AncestorType=Window}}"/>
-                <Setter Property="BorderBrush" Value="{Binding DataContext.AppSettings.MenuForeground, RelativeSource={RelativeSource AncestorType=Window}}"/>
-                <Setter Property="FontFamily" Value="{Binding DataContext.AppSettings.MainFontFamily, RelativeSource={RelativeSource AncestorType=Window}}"/>
-                <Setter Property="FontSize" Value="{Binding DataContext.AppSettings.MainFontSize, RelativeSource={RelativeSource AncestorType=Window}}"/>
-                <Setter Property="Foreground" Value="{Binding DataContext.AppSettings.ListForeground, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                <Setter Property="Background" Value="{Binding AppSettings.ListBackground}"/>
+                <Setter Property="BorderBrush" Value="{Binding AppSettings.MenuForeground}"/>
+                <Setter Property="FontFamily" Value="{Binding AppSettings.MainFontFamily}"/>
+                <Setter Property="FontSize" Value="{Binding AppSettings.MainFontSize}"/>
+                <Setter Property="Foreground" Value="{Binding AppSettings.ListForeground}"/>
                 <Setter Property="Height" Value="20"/>
                 <Setter Property="VerticalContentAlignment" Value="Center"/>
             </Style>

@@ -8,7 +8,7 @@
         xmlns:vm="clr-namespace:SylverInk.XAML.ViewModels"
         d:DataContext="{d:DesignInstance Type=vm:ImportViewModel}"
         mc:Ignorable="d"
-        Background="{Binding AppSettings.MenuBackground}" Foreground="{Binding AppSettings.MenuForeground}" Height="375" MinHeight="325" MinWidth="225" MouseLeftButtonDown="Drag" ResizeMode="CanResize" ShowInTaskbar="False" Title="Sylver Ink: Import" Topmost="True" Width="325">
+        Background="{Binding AppSettings.MenuBackground}" Foreground="{Binding AppSettings.MenuForeground}" Height="375" MinHeight="325" MinWidth="225" MouseLeftButtonDown="Drag" ResizeMode="CanResize" ShowInTaskbar="False" Title="{x:Static properties:Resources.Title_Import}" Topmost="True" Width="325">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -34,7 +34,7 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <Button Command="{Binding ImportCommand}" Content="{x:Static properties:Resources.Word_Import}" IsEnabled="{Binding CanImport, UpdateSourceTrigger=PropertyChanged}"/>
+                <Button Command="{Binding ImportCommand}" Content="{x:Static properties:Resources.Word_Import}" IsEnabled="{Binding CanImport}"/>
                 <Button Command="{Binding CloseCommand}" Content="{x:Static properties:Resources.Word_Close}" Grid.Column="1"/>
             </Grid>
         </StackPanel>

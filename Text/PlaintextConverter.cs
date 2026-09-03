@@ -17,7 +17,7 @@ public class PlaintextConverter : ITextConverter
         FlowDocument document = new();
         TextPointer pointer = document.ContentStart;
 
-        var lineSplit = text.Replace("\r", string.Empty).Split('\n') ?? [];
+        var lineSplit = text.ReplaceLineEndings().Split(Environment.NewLine) ?? [];
         for (int i = 0; i < lineSplit.Length; i++)
         {
             var line = lineSplit[i];

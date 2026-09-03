@@ -255,19 +255,20 @@ public class MainWindowViewModel : ViewModelBase
             return;
         }
 
-        if (!Path.Exists(path))
+        if (Path.Exists(path))
         {
-            if (MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheMessageFileMovedOrDeleted, path), Resources.Title_Warning, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
-            {
-                CommonUtils.Settings.RecentDatabases.Remove(new() { FullPath = path });
-                DeferUpdateRecentNotes();
-            }
-
+            await Database.Create(dbFile);
+            DeferUpdateRecentNotes();
             return;
         }
 
-        await Database.Create(dbFile);
+        if (MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheMessageFileMovedOrDeleted, path), Resources.Title_Warning, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+            return;
+
+        CommonUtils.Settings.RecentDatabases.Remove(new() { FullPath = path });
         DeferUpdateRecentNotes();
+
+        return;
     }
 
     private static void MenuProperties(object? param)

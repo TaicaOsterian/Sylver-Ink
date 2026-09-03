@@ -100,8 +100,8 @@
         
         <Menu x:Name="DatabaseMenu">
             <MenuItem Header="{x:Static properties:Resources.Word_File}" Height="25">
-                <MenuItem Command="{Binding NewDatabaseCommand}" Header="{x:Static properties:Resources.DefaultDatabase}" Tag="Always"/>
-                <MenuItem Command="{Binding OpenDatabaseCommand}" Header="{x:Static properties:Resources.Word_OpenEllipsis}" Tag="Always"/>
+                <MenuItem Command="{Binding NewDatabaseCommand}" Header="{x:Static properties:Resources.Word_New}" Tag="Always"/>
+                <MenuItem Command="{Binding OpenDatabaseCommand}" Header="{x:Static properties:Resources.Label_Open}" Tag="Always"/>
                 <MenuItem Header="{x:Static properties:Resources.OpenRecent}" ItemsSource="{Binding AppSettings.RecentDatabases}" Tag="Recents">
                     <MenuItem.ItemContainerStyle>
                         <Style TargetType="MenuItem">
@@ -114,9 +114,9 @@
                     </MenuItem.ItemContainerStyle>
                 </MenuItem>
                 <Separator/>
-                <MenuItem Command="{Binding SaveLocalCommand}" Header="{x:Static properties:Resources.SaveToDocuments}" Tag="Always"/>
-                <MenuItem Command="{Binding SaveAsCommand}" Header="{x:Static properties:Resources.SaveAs}" Tag="Always"/>
-                <MenuItem Command="{Binding BackupDatabaseCommand}" Header="{x:Static properties:Resources.Word_BackupEllipsis}" Tag="Always"/>
+                <MenuItem Command="{Binding SaveLocalCommand}" Header="{x:Static properties:Resources.SaveToDocuments}" Tag="NotInDocuments"/>
+                <MenuItem Command="{Binding SaveAsCommand}" Header="{x:Static properties:Resources.Label_SaveAs}" Tag="Always"/>
+                <MenuItem Command="{Binding BackupDatabaseCommand}" Header="{x:Static properties:Resources.Label_Backup}" Tag="Always"/>
                 <Separator/>
                 <MenuItem Command="{Binding DeleteDatabaseCommand}" Header="{x:Static properties:Resources.Word_Delete}"/>
             </MenuItem>
@@ -139,7 +139,7 @@
             </MenuItem>
         </Menu>
 
-        <Label Content="{x:Static properties:Resources.SylverInk}" FontSize="16" FontStyle="Italic" FontWeight="Light" Grid.Row="1" HorizontalAlignment="Center" Margin="0,15" VerticalAlignment="Top"/>
+        <Label Content="Sylver Ink" FontSize="16" FontStyle="Italic" FontWeight="Light" Grid.Row="1" HorizontalAlignment="Center" Margin="0,15" VerticalAlignment="Top"/>
         <TabControl Background="{Binding AppSettings.MenuBackground}" BorderThickness="0" Foreground="{Binding AppSettings.MenuForeground}" Grid.Row="2" SelectionChanged="MenuTabChanged" x:Name="DatabasesPanel"/>
         <Label Content="{Binding AppSettings.VersionString}" FontSize="9" FontStyle="Italic" FontWeight="Light" HorizontalAlignment="Right" Margin="0,5" Grid.Row="3" VerticalAlignment="Bottom"/>
     </Grid>

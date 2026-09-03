@@ -8,7 +8,7 @@
         xmlns:vm="clr-namespace:SylverInk.XAML.ViewModels"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=vm:UpdateViewModel}"
-        Background="{Binding AppSettings.MenuBackground}" Foreground="{Binding AppSettings.MenuForeground}" MouseLeftButtonDown="Drag" Title="Sylver Ink: Update" Height="150" Width="450">
+        Background="{Binding AppSettings.MenuBackground}" Foreground="{Binding AppSettings.MenuForeground}" MouseLeftButtonDown="Drag" Title="{x:Static properties:Resources.Title_Update}" Height="150" Width="450">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>

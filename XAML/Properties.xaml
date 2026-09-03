@@ -8,7 +8,7 @@
         xmlns:vm="clr-namespace:SylverInk.XAML.ViewModels"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=vm:PropertiesViewModel}"
-        Title="Sylver Ink: Properties"
+        Title="{x:Static properties:Resources.Title_Properties}"
         Height="625" Width="350" MouseLeftButtonDown="Drag" ShowInTaskbar="False" Topmost="True">
     <Grid Background="{Binding AppSettings.MenuBackground}">
         <Grid.RowDefinitions>
@@ -58,9 +58,9 @@
             </Grid.ColumnDefinitions>
 
             <Separator Grid.ColumnSpan="2" Grid.Row="2"/>
-            <Label Content="{x:Static properties:Resources.Created}" FontWeight="Bold" HorizontalAlignment="Right" Margin="5,0" Grid.Row="3"/>
-            <Label Content="{x:Static properties:Resources.Format}" FontWeight="Bold" HorizontalAlignment="Right" Margin="5,0" Grid.Row="4"/>
-            <Label Content="{x:Static properties:Resources.Path}" FontWeight="Bold" HorizontalAlignment="Right" Margin="5,0" Grid.Row="5"/>
+            <Label Content="{x:Static properties:Resources.Word_Created}" FontWeight="Bold" HorizontalAlignment="Right" Margin="5,0" Grid.Row="3"/>
+            <Label Content="{x:Static properties:Resources.Word_Format}" FontWeight="Bold" HorizontalAlignment="Right" Margin="5,0" Grid.Row="4"/>
+            <Label Content="{x:Static properties:Resources.Word_Path}" FontWeight="Bold" HorizontalAlignment="Right" Margin="5,0" Grid.Row="5"/>
             <Separator Grid.ColumnSpan="2" Grid.Row="6"/>
             <Label Content="{x:Static properties:Resources.NoteCount}" FontWeight="Bold" HorizontalAlignment="Right" Margin="5,0" Grid.Row="7"/>
             <Label FontWeight="Bold" HorizontalAlignment="Right" Margin="5,0" Grid.Row="8">
@@ -91,7 +91,7 @@
             <StackPanel Grid.Column="1" Margin="0,2,0,0" VerticalAlignment="Center">
                 <DatePicker CalendarOpened="CalendarOpened" MaxWidth="120" SelectedDate="{Binding RestoreDate, Mode=TwoWay}"/>
                 <Button Click="SelectTime" Content="{Binding TimeString}" FontStyle="Normal" Margin="0,5" Width="70" x:Name="SelectedTime"/>
-                <Button Command="{Binding RestoreCommand}" Content="{x:Static properties:Resources.Restore}" Margin="0,10,0,5"/>
+                <Button Command="{Binding RestoreCommand}" Content="{x:Static properties:Resources.Word_Restore}" Margin="0,10,0,5"/>
             </StackPanel>
         </Grid>
         

@@ -1,76 +1,96 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
-		Microsoft ResX Schema
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
 
-		Version 1.3
-
-		The primary goals of this format is to allow a simple XML format 
-		that is mostly human readable. The generation and parsing of the 
-		various data types are done through the TypeConverter classes 
-		associated with the data types.
-
-		Example:
-
-		... ado.net/XML headers & schema ...
-		<resheader name="resmimetype">text/microsoft-resx</resheader>
-		<resheader name="version">1.3</resheader>
-		<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-		<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-		<data name="Name1">this is my long string</data>
-		<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-		<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
-			[base64 mime encoded serialized .NET Framework object]
-		</data>
-		<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-			[base64 mime encoded string representing a byte array form of the .NET Framework object]
-		</data>
-
-		There are any number of "resheader" rows that contain simple 
-		name/value pairs.
-
-		Each data row contains a name, and value. The row also contains a 
-		type or mimetype. Type corresponds to a .NET class that support 
-		text/value conversion through the TypeConverter architecture. 
-		Classes that don't support this are serialized and stored with the 
-		mimetype set.
-
-		The mimetype is used for serialized objects, and tells the 
-		ResXResourceReader how to depersist the object. This is currently not 
-		extensible. For a given mimetype the value must be set accordingly:
-
-		Note - application/x-microsoft.net.object.binary.base64 is the format 
-		that the ResXResourceWriter will generate, however the reader can 
-		read any of the formats listed below.
-
-		mimetype: application/x-microsoft.net.object.binary.base64
-		value   : The object must be serialized with 
-			: System.Serialization.Formatters.Binary.BinaryFormatter
-			: and then encoded with base64 encoding.
-
-		mimetype: application/x-microsoft.net.object.soap.base64
-		value   : The object must be serialized with 
-			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-			: and then encoded with base64 encoding.
-
-		mimetype: application/x-microsoft.net.object.bytearray.base64
-		value   : The object must be serialized into a byte array 
-			: using a System.ComponentModel.TypeConverter
-			: and then encoded with base64 encoding.
-	-->
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
           <xsd:element name="data">
             <xsd:complexType>
               <xsd:sequence>
                 <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
                 <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" msdata:Ordinal="1" />
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
               <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
               <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="resheader">
@@ -89,14 +109,23 @@
     <value>text/microsoft-resx</value>
   </resheader>
   <resheader name="version">
-    <value>1.3</value>
+    <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AboutUs_Line1" xml:space="preserve">
+    <value>Sylver Ink is released under the MIT software license. You are free to modify and redistribute Sylver Ink as you see fit, provided no claim is made to patent rights.</value>
+  </data>
+  <data name="AboutUs_Line2" xml:space="preserve">
+    <value>With special thanks to Miles Farber for the priceless contribution of encouraging words and helpful brainstorming.</value>
+  </data>
+  <data name="AboutUs_Line3" xml:space="preserve">
+    <value>And to Norvinsk Hunter for his invaluable insight into the wants and needs of our target audience.</value>
+  </data>
   <data name="About_Github" xml:space="preserve">
     <value>Visit us on Github.</value>
   </data>
@@ -112,17 +141,8 @@
   <data name="AddressCode" xml:space="preserve">
     <value>Address Code:</value>
   </data>
-  <data name="Background" xml:space="preserve">
-    <value>Background</value>
-  </data>
-  <data name="Bold" xml:space="preserve">
-    <value>Bold</value>
-  </data>
   <data name="BulletList" xml:space="preserve">
-    <value>Bullet List</value>
-  </data>
-  <data name="Center" xml:space="preserve">
-    <value>Center</value>
+    <value>Bullet list</value>
   </data>
   <data name="ClickthroughTooltip" xml:space="preserve">
     <value>The duration of time (in seconds) a transparent sticky note must be hovered over before it activates.</value>
@@ -146,17 +166,15 @@
     <value>Could not load database: {0}</value>
     <comment>{0} = The file path of the database</comment>
   </data>
-  <data name="Created" xml:space="preserve">
-    <value>Created:</value>
-  </data>
   <data name="CreatedDate" xml:space="preserve">
     <value>Created date</value>
   </data>
   <data name="CustomColor" xml:space="preserve">
-    <value>Custom color...</value>
+    <value>Custom color</value>
   </data>
   <data name="DatabaseAndTextFileFilter" xml:space="preserve">
     <value>Sylver Ink backup files (*.sibk)|*.sibk|Sylver Ink database files (*.sidb)|*.sidb|Text files (*.txt)|*.txt|All files (*.*)|*.*</value>
+    <comment>Only the text needs to be translated - "Sylver Ink backup files", etc. The extensions, in the parentheses, should be left alone.</comment>
   </data>
   <data name="DatabaseFileFilter" xml:space="preserve">
     <value>Sylver Ink backup files (*.sibk)|*.sibk|Sylver Ink database files (*.sidb)|*.sidb|All files (*.*)|*.*</value>
@@ -168,14 +186,18 @@
   <data name="DatabaseTooNew" xml:space="preserve">
     <value>The program attempted to load a database file with a newer format than it supports.</value>
   </data>
+  <data name="DayPassed" xml:space="preserve">
+    <value>1 day ago</value>
+  </data>
+  <data name="DaysPassed" xml:space="preserve">
+    <value>{0} days ago</value>
+    <comment>{0} = The number of days that have elapsed since a change to a note object.</comment>
+  </data>
   <data name="DecreaseFontSize" xml:space="preserve">
     <value>Decrease Font Size</value>
   </data>
   <data name="DefaultColor" xml:space="preserve">
     <value>Default color</value>
-  </data>
-  <data name="DefaultDatabase" xml:space="preserve">
-    <value>New</value>
   </data>
   <data name="DisplayFont" xml:space="preserve">
     <value>Display Font</value>
@@ -185,9 +207,6 @@
   </data>
   <data name="EmptyNote" xml:space="preserve">
     <value>(empty note)</value>
-  </data>
-  <data name="EntryLastModified" xml:space="preserve">
-    <value>Entry last modified:</value>
   </data>
   <data name="Error_InstanceRunning" xml:space="preserve">
     <value>Another instance of Sylver Ink is already running.</value>
@@ -227,28 +246,19 @@
   <data name="FontSize" xml:space="preserve">
     <value>Font Size</value>
   </data>
-  <data name="Foreground" xml:space="preserve">
-    <value>Foreground</value>
-  </data>
-  <data name="Format" xml:space="preserve">
-    <value>Format:</value>
-  </data>
   <data name="HexCodeTooltip" xml:space="preserve">
     <value>Hex code (RGB or ARGB)</value>
-  </data>
-  <data name="Imported" xml:space="preserve">
-    <value>imported</value>
   </data>
   <data name="ImportFailed" xml:space="preserve">
     <value>Failed to import the selected file: {0}</value>
     <comment>{0} = The exact error message relating to the failure.</comment>
   </data>
-  <data name="Importing" xml:space="preserve">
-    <value>Importing...</value>
-  </data>
   <data name="Import_MeasurementText" xml:space="preserve">
-    <value>Estimated new notes: {0}\nAverage length: {1} characters per note\n\nRemember to press Import to finalize your changes!</value>
-    <comment>{0} = The number of new notes, {1} = The average character length of each note.</comment>
+    <value>Estimated new notes: {0}
+Average length: {1:N0} characters per note
+
+Remember to press Import to finalize your changes!</value>
+    <comment>{0} = The number of new notes, {1:N0} = The average character length of each note.</comment>
   </data>
   <data name="IncreaseFontSize" xml:space="preserve">
     <value>Increase Font Size</value>
@@ -256,29 +266,32 @@
   <data name="IndexNumber" xml:space="preserve">
     <value>Index number</value>
   </data>
-  <data name="Italic" xml:space="preserve">
-    <value>Italic</value>
+  <data name="Label_Backup" xml:space="preserve">
+    <value>Backup...</value>
   </data>
-  <data name="Justify" xml:space="preserve">
-    <value>Justify</value>
+  <data name="Label_Next" xml:space="preserve">
+    <value>Next...</value>
+  </data>
+  <data name="Label_Open" xml:space="preserve">
+    <value>Open...</value>
+  </data>
+  <data name="Label_Previous" xml:space="preserve">
+    <value>Previous...</value>
+  </data>
+  <data name="Label_SaveAs" xml:space="preserve">
+    <value>Save as...</value>
   </data>
   <data name="LastChangedDate" xml:space="preserve">
     <value>Last changed date</value>
   </data>
-  <data name="Left" xml:space="preserve">
-    <value>Left</value>
-  </data>
   <data name="LineTolerance" xml:space="preserve">
-    <value>Line tolerance:</value>
+    <value>Line tolerance</value>
   </data>
   <data name="LineToleranceTooltip" xml:space="preserve">
     <value>The number of blank lines to look for when separating the file into different notes.</value>
   </data>
   <data name="LongestNote" xml:space="preserve">
     <value>Longest note:</value>
-  </data>
-  <data name="Measuring" xml:space="preserve">
-    <value>Measuring...</value>
   </data>
   <data name="MenuColors" xml:space="preserve">
     <value>Menu Colors</value>
@@ -299,7 +312,9 @@
     <value>This database was created in a newer format than the current version of Sylver Ink supports. Please update your installation before opening this database.</value>
   </data>
   <data name="Message_FileMovedOrDeleted" xml:space="preserve">
-    <value>The file {0} has been either moved or deleted.\n\nDo you want to remove it from the list?</value>
+    <value>The file {0} has been either moved or deleted.
+
+Do you want to remove it from the list?</value>
     <comment>{0} = Path of the file that we were trying to open</comment>
   </data>
   <data name="Message_InvalidAddressCode" xml:space="preserve">
@@ -310,7 +325,9 @@
     <comment>{0} = Letter or symbol that is not allowed to be a part of a file path</comment>
   </data>
   <data name="Message_MergeDatabases" xml:space="preserve">
-    <value>You have selected an existing Sylver Ink database. Its contents will be merged with your current database.\n\nDo you want to overwrite your current database instead?</value>
+    <value>You have selected an existing Sylver Ink database. Its contents will be merged with your current database.
+
+Do you want to overwrite your current database instead?</value>
   </data>
   <data name="Message_SaveBeforeClosingNote" xml:space="preserve">
     <value>You have unsaved changes. Save before closing this note?</value>
@@ -319,11 +336,10 @@
     <value>Do you want to save your changes?</value>
   </data>
   <data name="Message_UpdateAvailable" xml:space="preserve">
-    <value>A new version of Sylver Ink is available ({0} → {1}).\n\nWould you like to download and install it now?</value>
+    <value>A new version of Sylver Ink is available ({0} → {1}).
+
+Would you like to download and install it now?</value>
     <comment>{0} = The old version number of the program, {1} = The new version number</comment>
-  </data>
-  <data name="MsiFileName" xml:space="preserve">
-    <value>SylverInk.msi</value>
   </data>
   <data name="NewNote" xml:space="preserve">
     <value>New note</value>
@@ -331,18 +347,25 @@
   <data name="NewNoteTooltip" xml:space="preserve">
     <value>Write a line of text and press Enter to create a new note. You can also press Ctrl+N to open a sticky note at any time.</value>
   </data>
-  <data name="NextEllipsis" xml:space="preserve">
-    <value>Next...</value>
+  <data name="NoteClickthrough" xml:space="preserve">
+    <value>Note clickthrough</value>
   </data>
   <data name="NoteCount" xml:space="preserve">
-    <value>Note count:</value>
+    <value>Note count</value>
   </data>
   <data name="NoteLocked" xml:space="preserve">
     <value>Note locked by another user</value>
   </data>
+  <data name="NoteNumber" xml:space="preserve">
+    <value>{0:N0} notes</value>
+    <comment>{0:N0} = The number of notes a database contains.</comment>
+  </data>
   <data name="NotesImported" xml:space="preserve">
     <value>Notes imported: {0}</value>
     <comment>{0} = The number of notes which were imported.</comment>
+  </data>
+  <data name="NoteTransparency" xml:space="preserve">
+    <value>Note transparency</value>
   </data>
   <data name="Note_EntryCreated" xml:space="preserve">
     <value>Entry created: {0}</value>
@@ -352,12 +375,16 @@
     <value>Entry last modified: {0}</value>
     <comment>{0} = The date and time when the note was last modified</comment>
   </data>
+  <data name="Note_IndexLabel" xml:space="preserve">
+    <value>Note #{0:N0} — {1}</value>
+    <comment>{0:N0} = The ID number of the note that is opened, {1} = A short preview of the note's text contents.</comment>
+  </data>
   <data name="Note_RevisionID" xml:space="preserve">
-    <value>Revision {0} from</value>
-    <comment>{0} = The number of the revision we're viewing</comment>
+    <value>Revision {0} from {1}</value>
+    <comment>{0} = The number of the revision we're viewing, {1} = The date and time the revision was created</comment>
   </data>
   <data name="NumberedList" xml:space="preserve">
-    <value>Numbered List</value>
+    <value>Numbered list</value>
   </data>
   <data name="OpenRecent" xml:space="preserve">
     <value>Open recent</value>
@@ -365,48 +392,29 @@
   <data name="OpenToNetwork" xml:space="preserve">
     <value>Open to network</value>
   </data>
-  <data name="Path" xml:space="preserve">
-    <value>Path:</value>
-  </data>
-  <data name="PreviousEllipsis" xml:space="preserve">
-    <value>Previous...</value>
-  </data>
-  <data name="Processing" xml:space="preserve">
-    <value>Processing...</value>
-  </data>
-  <data name="Query" xml:space="preserve">
-    <value>Query</value>
-  </data>
   <data name="RecentNotes" xml:space="preserve">
     <value>Recent notes</value>
+  </data>
+  <data name="RecentNotesSortBy" xml:space="preserve">
+    <value>Recent notes sort by...</value>
   </data>
   <data name="RecentNotesTooltip" xml:space="preserve">
     <value>You can press Ctrl+L to re-open the note you most recently closed.</value>
   </data>
   <data name="Rename_DatabaseAlreadyExists" xml:space="preserve">
-    <value>A database with that name already exists in {0}.\n\nDo you want to overwrite it?</value>
+    <value>A database with that name already exists in {0}.
+
+Do you want to overwrite it?</value>
     <comment>{0} = The database file path.</comment>
   </data>
-  <data name="Reset" xml:space="preserve">
-    <value>Reset</value>
-  </data>
-  <data name="Restore" xml:space="preserve">
-    <value>Restore</value>
-  </data>
-  <data name="Return" xml:space="preserve">
-    <value>Return</value>
-  </data>
-  <data name="Right" xml:space="preserve">
-    <value>Right</value>
-  </data>
-  <data name="SaveAs" xml:space="preserve">
-    <value>Save as...</value>
+  <data name="RibbonTabsDisplay" xml:space="preserve">
+    <value>Ribbon tabs display...</value>
   </data>
   <data name="SaveToDocuments" xml:space="preserve">
     <value>Save to Documents</value>
   </data>
-  <data name="Scanned" xml:space="preserve">
-    <value>Scanned</value>
+  <data name="SearchResultsOnTop" xml:space="preserve">
+    <value>Sticky notes stay on top</value>
   </data>
   <data name="SearchText" xml:space="preserve">
     <value>Search text</value>
@@ -417,17 +425,20 @@
   <data name="ServerCodeLabelTooltip" xml:space="preserve">
     <value>Enter this code in another Sylver Ink installation to connect to the database.</value>
   </data>
-  <data name="SettingsFileName" xml:space="preserve">
-    <value>settings.sis</value>
+  <data name="Status_Importing" xml:space="preserve">
+    <value>Importing</value>
+  </data>
+  <data name="Status_Measuring" xml:space="preserve">
+    <value>Measuring</value>
+  </data>
+  <data name="Status_Processing" xml:space="preserve">
+    <value>Processing</value>
   </data>
   <data name="Subfolder_Databases" xml:space="preserve">
     <value>Databases</value>
   </data>
-  <data name="SylverInk" xml:space="preserve">
-    <value>Sylver Ink</value>
-  </data>
-  <data name="TextColorEllipsis" xml:space="preserve">
-    <value>Text color...</value>
+  <data name="TextColor" xml:space="preserve">
+    <value>Text color</value>
   </data>
   <data name="TextColors" xml:space="preserve">
     <value>Text Colors</value>
@@ -444,14 +455,35 @@
     <value>No saver registered for {0}</value>
     <comment>{0} = The target text format</comment>
   </data>
+  <data name="Title_About" xml:space="preserve">
+    <value>Sylver Ink: About</value>
+  </data>
   <data name="Title_Error" xml:space="preserve">
-    <value>Sylver Ink: Error</value>
+    <value>Error</value>
+  </data>
+  <data name="Title_Import" xml:space="preserve">
+    <value>Sylver Ink: Import</value>
   </data>
   <data name="Title_Notification" xml:space="preserve">
-    <value>Sylver Ink: Notification</value>
+    <value>Notification</value>
+  </data>
+  <data name="Title_Properties" xml:space="preserve">
+    <value>Sylver Ink: Properties</value>
+  </data>
+  <data name="Title_Search" xml:space="preserve">
+    <value>Sylver Ink: Search</value>
+  </data>
+  <data name="Title_Settings" xml:space="preserve">
+    <value>Sylver Ink: Settings</value>
+  </data>
+  <data name="Title_StickyNote" xml:space="preserve">
+    <value>Sylver Ink: Sticky Note</value>
+  </data>
+  <data name="Title_Update" xml:space="preserve">
+    <value>Sylver Ink: Update</value>
   </data>
   <data name="Title_Warning" xml:space="preserve">
-    <value>Sylver Ink: Warning</value>
+    <value>Warning</value>
   </data>
   <data name="Tooltip_FailedCopy" xml:space="preserve">
     <value>Failed to copy the address code to the clipboard</value>
@@ -467,27 +499,31 @@
     <value>Unable to update Sylver Ink: {0}</value>
     <comment>{0} = The exact error message which occurred</comment>
   </data>
-  <data name="Underline" xml:space="preserve">
-    <value>Underline</value>
-  </data>
-  <data name="ViewEllipsis" xml:space="preserve">
-    <value>View...</value>
+  <data name="WordCount" xml:space="preserve">
+    <value>{0:N1} words
+({1:N1} chars.)</value>
+    <comment>{0:N1} = The number of words in a note, {1:N1} = The number of characters in the same note. "chars." is the abbreviation for the word "characters".</comment>
   </data>
   <data name="Word_About" xml:space="preserve">
     <value>About</value>
   </data>
+  <data name="Word_Background" xml:space="preserve">
+    <value>Background</value>
+    <comment>As in a background color.</comment>
+  </data>
   <data name="Word_Backup" xml:space="preserve">
     <value>Backup</value>
   </data>
-  <data name="Word_BackupEllipsis" xml:space="preserve">
-    <value>Backup...</value>
+  <data name="Word_Bold" xml:space="preserve">
+    <value>Bold</value>
+    <comment>As in bold text.</comment>
   </data>
   <data name="Word_Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
-  <data name="Word_Chars" xml:space="preserve">
-    <value>chars</value>
-    <comment>The abbreviation of the word 'characters'.</comment>
+  <data name="Word_Center" xml:space="preserve">
+    <value>Center</value>
+    <comment>As in center-justified text.</comment>
   </data>
   <data name="Word_Close" xml:space="preserve">
     <value>Close</value>
@@ -497,6 +533,9 @@
   </data>
   <data name="Word_Copy" xml:space="preserve">
     <value>Copy</value>
+  </data>
+  <data name="Word_Created" xml:space="preserve">
+    <value>Created</value>
   </data>
   <data name="Word_Database" xml:space="preserve">
     <value>Database</value>
@@ -513,29 +552,57 @@
   <data name="Word_File" xml:space="preserve">
     <value>File</value>
   </data>
+  <data name="Word_Foreground" xml:space="preserve">
+    <value>Foreground</value>
+  </data>
+  <data name="Word_Format" xml:space="preserve">
+    <value>Format</value>
+  </data>
   <data name="Word_Help" xml:space="preserve">
     <value>Help</value>
   </data>
   <data name="Word_Import" xml:space="preserve">
     <value>Import</value>
   </data>
+  <data name="Word_Imported" xml:space="preserve">
+    <value>Imported</value>
+  </data>
+  <data name="Word_Italic" xml:space="preserve">
+    <value>Italic</value>
+  </data>
+  <data name="Word_Justify" xml:space="preserve">
+    <value>Justify</value>
+  </data>
+  <data name="Word_Left" xml:space="preserve">
+    <value>Left</value>
+    <comment>The direction, left</comment>
+  </data>
   <data name="Word_Network" xml:space="preserve">
     <value>Network</value>
+  </data>
+  <data name="Word_New" xml:space="preserve">
+    <value>New</value>
+  </data>
+  <data name="Word_Next" xml:space="preserve">
+    <value>Next</value>
   </data>
   <data name="Word_Note" xml:space="preserve">
     <value>Note</value>
   </data>
-  <data name="Word_Notes" xml:space="preserve">
-    <value>notes</value>
-  </data>
   <data name="Word_Open" xml:space="preserve">
     <value>Open</value>
   </data>
-  <data name="Word_OpenEllipsis" xml:space="preserve">
-    <value>Open...</value>
+  <data name="Word_Path" xml:space="preserve">
+    <value>Path</value>
+  </data>
+  <data name="Word_Previous" xml:space="preserve">
+    <value>Previous</value>
   </data>
   <data name="Word_Properties" xml:space="preserve">
     <value>Properties</value>
+  </data>
+  <data name="Word_Query" xml:space="preserve">
+    <value>Query</value>
   </data>
   <data name="Word_Redo" xml:space="preserve">
     <value>Redo</value>
@@ -543,8 +610,24 @@
   <data name="Word_Rename" xml:space="preserve">
     <value>Rename</value>
   </data>
+  <data name="Word_Reset" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="Word_Restore" xml:space="preserve">
+    <value>Restore</value>
+  </data>
+  <data name="Word_Return" xml:space="preserve">
+    <value>Return</value>
+  </data>
+  <data name="Word_Right" xml:space="preserve">
+    <value>Right</value>
+    <comment>The direction, right</comment>
+  </data>
   <data name="Word_Save" xml:space="preserve">
     <value>Save</value>
+  </data>
+  <data name="Word_Scanned" xml:space="preserve">
+    <value>Scanned</value>
   </data>
   <data name="Word_Search" xml:space="preserve">
     <value>Search</value>
@@ -552,10 +635,13 @@
   <data name="Word_Settings" xml:space="preserve">
     <value>Settings</value>
   </data>
+  <data name="Word_Underline" xml:space="preserve">
+    <value>Underline</value>
+  </data>
   <data name="Word_Undo" xml:space="preserve">
     <value>Undo</value>
   </data>
-  <data name="Word_Words" xml:space="preserve">
-    <value>words</value>
+  <data name="Word_View" xml:space="preserve">
+    <value>View</value>
   </data>
 </root>

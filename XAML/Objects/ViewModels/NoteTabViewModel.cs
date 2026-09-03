@@ -185,9 +185,9 @@ public class NoteTabViewModel : NoteEditorViewModel
         SetNavigation();
         Document = RevisionIndex != 0 ? Record.GetDocument(RevisionIndex) : TextConverter.Parse(CurrentRevision, TextFormat.Xaml);
         Edited = RevisionIndex != 0 || CalculateIsEdited();
-        LastChange = (RevisionIndex != 0 ? string.Format(CultureInfo.CurrentCulture, CacheNoteRevisionID, Record.GetNumRevisions() - RevisionIndex) : Resources.EntryLastModified) + revisionTime;
+        LastChange = RevisionIndex != 0 ? string.Format(CultureInfo.CurrentCulture, CacheNoteRevisionID, Record.GetNumRevisions() - RevisionIndex, revisionTime) : string.Format(CultureInfo.CurrentCulture, CacheNoteEntryModified, revisionTime);
         RevisionView = RevisionIndex != 0;
-        SaveLabel = RevisionIndex != 0 ? Resources.Restore : Resources.Word_Save;
+        SaveLabel = RevisionIndex != 0 ? Resources.Word_Restore : Resources.Word_Save;
     }
 
     private void NavigatePrevious(object? param)
@@ -201,9 +201,9 @@ public class NoteTabViewModel : NoteEditorViewModel
         SetNavigation();
         Document = Record.GetDocument(RevisionIndex);
         Edited = true;
-        LastChange = (RevisionIndex == Record.GetNumRevisions() ? Resources.Note_EntryCreated : string.Format(CultureInfo.CurrentCulture, CacheNoteRevisionID, Record.GetNumRevisions() - RevisionIndex)) + revisionTime;
+        LastChange = RevisionIndex == Record.GetNumRevisions() ? string.Format(CultureInfo.CurrentCulture, CacheNoteEntryCreated, revisionTime): string.Format(CultureInfo.CurrentCulture, CacheNoteRevisionID, Record.GetNumRevisions() - RevisionIndex, revisionTime);
         RevisionView = true;
-        SaveLabel = Resources.Restore;
+        SaveLabel = Resources.Word_Restore;
     }
 
     private void Return(object? param)
@@ -235,13 +235,14 @@ public class NoteTabViewModel : NoteEditorViewModel
         CanNavigatePrevious = true;
         Edited = false;
         IsEnabled = true;
-        LastChange = Resources.EntryLastModified + Record.GetLastChange();
+        LastChange = string.Format(CultureInfo.CurrentCulture, CacheNoteEntryModified, Record.GetLastChange());
         OriginalBlockCount = Document.Blocks.Count;
         OriginalPlaintext = new TextRange(Document.ContentStart, Document.ContentEnd).Text;
         OriginalRevisionCount = Record.GetNumRevisions();
         OriginalText = newText;
         RevisionView = false;
         RevisionIndex = 0;
+        SaveLabel = Resources.Word_Save;
     }
 
     private void SetNavigation()

@@ -12,7 +12,7 @@ namespace SylverInk.Net;
 public static class UpdateHandler
 {
     private static string GitReleasesURI { get; } = "https://api.github.com/repos/TaicaOsterian/Sylver-Ink/releases?per_page=1&page=1";
-    public static string TempUri { get; } = Path.Join(DocumentsFolder, Resources.MsiFileName);
+    public static string TempUri { get; } = Path.Join(DocumentsFolder, "SylverInk.msi");
     public static string UpdateLockUri { get; } = Path.Join(DocumentsFolder, "~si_update.lock");
     private static CancellationTokenSource UpdateTokenSource { get; } = new();
     public static Update UpdateWindow { get; } = new();

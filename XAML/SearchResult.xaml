@@ -10,7 +10,7 @@
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=vm:SearchResultViewModel}"
         Activated="WindowActivated" AllowsTransparency="True"
-        Background="{x:Null}" Closed="Result_Closed" Deactivated="WindowDeactivated" Height="225" Loaded="WindowLoaded" MinHeight="125" MinWidth="175" MouseDown="WindowMouseDown" MouseEnter="WindowMouseEnter" MouseLeave="WindowMouseLeave" MouseMove="WindowMove" MouseUp="WindowMouseUp" ResizeMode="CanResizeWithGrip" ShowInTaskbar="{Binding AppSettings.SearchResultsInTaskbar}" Title="Sylver Ink: Sticky Note" Topmost="{Binding AppSettings.SearchResultsOnTop}" Width="225" WindowStyle="None">
+        Background="{x:Null}" Closed="Result_Closed" Deactivated="WindowDeactivated" Height="225" Loaded="WindowLoaded" MinHeight="125" MinWidth="175" MouseDown="WindowMouseDown" MouseEnter="WindowMouseEnter" MouseLeave="WindowMouseLeave" MouseMove="WindowMove" MouseUp="WindowMouseUp" ResizeMode="CanResizeWithGrip" ShowInTaskbar="{Binding AppSettings.SearchResultsInTaskbar}" Title="{x:Static properties:Resources.Title_StickyNote}" Topmost="{Binding AppSettings.SearchResultsOnTop}" Width="225" WindowStyle="None">
     <Border Background="{Binding AppSettings.MenuBackground}" BorderBrush="{Binding AppSettings.AccentBackground}" BorderThickness="1.5" CornerRadius="6">
         <Grid>
             <Grid.ColumnDefinitions>
@@ -35,7 +35,7 @@
                          UndoLimit="20">
             </RichTextBox>
             <Label Content="{Binding LastChange}" Grid.ColumnSpan="2" FontStyle="Italic" HorizontalAlignment="Center" Grid.Row="1"/>
-            <Button Command="{Binding ViewCommand}" Content="{x:Static properties:Resources.ViewEllipsis}" IsEnabled="{Binding IsFocused}" Margin="0,2" Grid.Row="2" Width="50"/>
+            <Button Command="{Binding ViewCommand}" Content="{Binding Source={x:Static properties:Resources.Word_View}, StringFormat='{}{0}...'}" IsEnabled="{Binding IsFocused}" Margin="0,2" Grid.Row="2" Width="50"/>
             <Button Command="{Binding CloseCommand}" Grid.Column="1" Content="{x:Static properties:Resources.Word_Close}" IsEnabled="{Binding IsFocused}" Margin="0,2" Grid.Row="2" Width="50"/>
         </Grid>
     </Border>

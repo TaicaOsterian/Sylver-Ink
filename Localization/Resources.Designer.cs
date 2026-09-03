@@ -70,6 +70,33 @@ namespace SylverInk.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sylver Ink is released under the MIT software license. You are free to modify and redistribute Sylver Ink as you see fit, provided no claim is made to patent rights..
+        /// </summary>
+        public static string AboutUs_Line1 {
+            get {
+                return ResourceManager.GetString("AboutUs_Line1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to With special thanks to Miles Farber for the priceless contribution of encouraging words and helpful brainstorming..
+        /// </summary>
+        public static string AboutUs_Line2 {
+            get {
+                return ResourceManager.GetString("AboutUs_Line2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to And to Norvinsk Hunter for his invaluable insight into the wants and needs of our target audience..
+        /// </summary>
+        public static string AboutUs_Line3 {
+            get {
+                return ResourceManager.GetString("AboutUs_Line3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Accent Colors.
         /// </summary>
         public static string AccentColors {
@@ -106,38 +133,11 @@ namespace SylverInk.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Background.
-        /// </summary>
-        public static string Background {
-            get {
-                return ResourceManager.GetString("Background", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Bold.
-        /// </summary>
-        public static string Bold {
-            get {
-                return ResourceManager.GetString("Bold", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Bullet List.
+        ///   Looks up a localized string similar to Bullet list.
         /// </summary>
         public static string BulletList {
             get {
                 return ResourceManager.GetString("BulletList", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Center.
-        /// </summary>
-        public static string Center {
-            get {
-                return ResourceManager.GetString("Center", resourceCulture);
             }
         }
         
@@ -205,15 +205,6 @@ namespace SylverInk.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Created:.
-        /// </summary>
-        public static string Created {
-            get {
-                return ResourceManager.GetString("Created", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Created date.
         /// </summary>
         public static string CreatedDate {
@@ -223,7 +214,7 @@ namespace SylverInk.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Custom color....
+        ///   Looks up a localized string similar to Custom color.
         /// </summary>
         public static string CustomColor {
             get {
@@ -268,6 +259,24 @@ namespace SylverInk.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 1 day ago.
+        /// </summary>
+        public static string DayPassed {
+            get {
+                return ResourceManager.GetString("DayPassed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} days ago.
+        /// </summary>
+        public static string DaysPassed {
+            get {
+                return ResourceManager.GetString("DaysPassed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Decrease Font Size.
         /// </summary>
         public static string DecreaseFontSize {
@@ -282,15 +291,6 @@ namespace SylverInk.Localization {
         public static string DefaultColor {
             get {
                 return ResourceManager.GetString("DefaultColor", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to New.
-        /// </summary>
-        public static string DefaultDatabase {
-            get {
-                return ResourceManager.GetString("DefaultDatabase", resourceCulture);
             }
         }
         
@@ -318,15 +318,6 @@ namespace SylverInk.Localization {
         public static string EmptyNote {
             get {
                 return ResourceManager.GetString("EmptyNote", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Entry last modified:.
-        /// </summary>
-        public static string EntryLastModified {
-            get {
-                return ResourceManager.GetString("EntryLastModified", resourceCulture);
             }
         }
         
@@ -439,24 +430,6 @@ namespace SylverInk.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Foreground.
-        /// </summary>
-        public static string Foreground {
-            get {
-                return ResourceManager.GetString("Foreground", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Format:.
-        /// </summary>
-        public static string Format {
-            get {
-                return ResourceManager.GetString("Format", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Hex code (RGB or ARGB).
         /// </summary>
         public static string HexCodeTooltip {
@@ -466,20 +439,14 @@ namespace SylverInk.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Estimated new notes: {0}\nAverage length: {1} characters per note\n\nRemember to press Import to finalize your changes!.
+        ///   Looks up a localized string similar to Estimated new notes: {0}
+        ///Average length: {1:N0} characters per note
+        ///
+        ///Remember to press Import to finalize your changes!.
         /// </summary>
         public static string Import_MeasurementText {
             get {
                 return ResourceManager.GetString("Import_MeasurementText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to imported.
-        /// </summary>
-        public static string Imported {
-            get {
-                return ResourceManager.GetString("Imported", resourceCulture);
             }
         }
         
@@ -489,15 +456,6 @@ namespace SylverInk.Localization {
         public static string ImportFailed {
             get {
                 return ResourceManager.GetString("ImportFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Importing....
-        /// </summary>
-        public static string Importing {
-            get {
-                return ResourceManager.GetString("Importing", resourceCulture);
             }
         }
         
@@ -520,20 +478,47 @@ namespace SylverInk.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Italic.
+        ///   Looks up a localized string similar to Backup....
         /// </summary>
-        public static string Italic {
+        public static string Label_Backup {
             get {
-                return ResourceManager.GetString("Italic", resourceCulture);
+                return ResourceManager.GetString("Label_Backup", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Justify.
+        ///   Looks up a localized string similar to Next....
         /// </summary>
-        public static string Justify {
+        public static string Label_Next {
             get {
-                return ResourceManager.GetString("Justify", resourceCulture);
+                return ResourceManager.GetString("Label_Next", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open....
+        /// </summary>
+        public static string Label_Open {
+            get {
+                return ResourceManager.GetString("Label_Open", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Previous....
+        /// </summary>
+        public static string Label_Previous {
+            get {
+                return ResourceManager.GetString("Label_Previous", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save as....
+        /// </summary>
+        public static string Label_SaveAs {
+            get {
+                return ResourceManager.GetString("Label_SaveAs", resourceCulture);
             }
         }
         
@@ -547,16 +532,7 @@ namespace SylverInk.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Left.
-        /// </summary>
-        public static string Left {
-            get {
-                return ResourceManager.GetString("Left", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Line tolerance:.
+        ///   Looks up a localized string similar to Line tolerance.
         /// </summary>
         public static string LineTolerance {
             get {
@@ -579,15 +555,6 @@ namespace SylverInk.Localization {
         public static string LongestNote {
             get {
                 return ResourceManager.GetString("LongestNote", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Measuring....
-        /// </summary>
-        public static string Measuring {
-            get {
-                return ResourceManager.GetString("Measuring", resourceCulture);
             }
         }
         
@@ -646,7 +613,9 @@ namespace SylverInk.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The file {0} has been either moved or deleted.\n\nDo you want to remove it from the list?.
+        ///   Looks up a localized string similar to The file {0} has been either moved or deleted.
+        ///
+        ///Do you want to remove it from the list?.
         /// </summary>
         public static string Message_FileMovedOrDeleted {
             get {
@@ -673,7 +642,9 @@ namespace SylverInk.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You have selected an existing Sylver Ink database. Its contents will be merged with your current database.\n\nDo you want to overwrite your current database instead?.
+        ///   Looks up a localized string similar to You have selected an existing Sylver Ink database. Its contents will be merged with your current database.
+        ///
+        ///Do you want to overwrite your current database instead?.
         /// </summary>
         public static string Message_MergeDatabases {
             get {
@@ -700,20 +671,13 @@ namespace SylverInk.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A new version of Sylver Ink is available ({0} → {1}).\n\nWould you like to download and install it now?.
+        ///   Looks up a localized string similar to A new version of Sylver Ink is available ({0} → {1}).
+        ///
+        ///Would you like to download and install it now?.
         /// </summary>
         public static string Message_UpdateAvailable {
             get {
                 return ResourceManager.GetString("Message_UpdateAvailable", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to SylverInk.msi.
-        /// </summary>
-        public static string MsiFileName {
-            get {
-                return ResourceManager.GetString("MsiFileName", resourceCulture);
             }
         }
         
@@ -736,15 +700,6 @@ namespace SylverInk.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Next....
-        /// </summary>
-        public static string NextEllipsis {
-            get {
-                return ResourceManager.GetString("NextEllipsis", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Entry created: {0}.
         /// </summary>
         public static string Note_EntryCreated {
@@ -763,7 +718,16 @@ namespace SylverInk.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Revision {0} from.
+        ///   Looks up a localized string similar to Note #{0:N0} — {1}.
+        /// </summary>
+        public static string Note_IndexLabel {
+            get {
+                return ResourceManager.GetString("Note_IndexLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Revision {0} from {1}.
         /// </summary>
         public static string Note_RevisionID {
             get {
@@ -772,7 +736,16 @@ namespace SylverInk.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Note count:.
+        ///   Looks up a localized string similar to Note clickthrough.
+        /// </summary>
+        public static string NoteClickthrough {
+            get {
+                return ResourceManager.GetString("NoteClickthrough", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Note count.
         /// </summary>
         public static string NoteCount {
             get {
@@ -790,6 +763,15 @@ namespace SylverInk.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0:N0} notes.
+        /// </summary>
+        public static string NoteNumber {
+            get {
+                return ResourceManager.GetString("NoteNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Notes imported: {0}.
         /// </summary>
         public static string NotesImported {
@@ -799,7 +781,16 @@ namespace SylverInk.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Numbered List.
+        ///   Looks up a localized string similar to Note transparency.
+        /// </summary>
+        public static string NoteTransparency {
+            get {
+                return ResourceManager.GetString("NoteTransparency", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Numbered list.
         /// </summary>
         public static string NumberedList {
             get {
@@ -826,47 +817,20 @@ namespace SylverInk.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Path:.
-        /// </summary>
-        public static string Path {
-            get {
-                return ResourceManager.GetString("Path", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Previous....
-        /// </summary>
-        public static string PreviousEllipsis {
-            get {
-                return ResourceManager.GetString("PreviousEllipsis", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Processing....
-        /// </summary>
-        public static string Processing {
-            get {
-                return ResourceManager.GetString("Processing", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Query.
-        /// </summary>
-        public static string Query {
-            get {
-                return ResourceManager.GetString("Query", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Recent notes.
         /// </summary>
         public static string RecentNotes {
             get {
                 return ResourceManager.GetString("RecentNotes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Recent notes sort by....
+        /// </summary>
+        public static string RecentNotesSortBy {
+            get {
+                return ResourceManager.GetString("RecentNotesSortBy", resourceCulture);
             }
         }
         
@@ -880,7 +844,9 @@ namespace SylverInk.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A database with that name already exists in {0}.\n\nDo you want to overwrite it?.
+        ///   Looks up a localized string similar to A database with that name already exists in {0}.
+        ///
+        ///Do you want to overwrite it?.
         /// </summary>
         public static string Rename_DatabaseAlreadyExists {
             get {
@@ -889,47 +855,11 @@ namespace SylverInk.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reset.
+        ///   Looks up a localized string similar to Ribbon tabs display....
         /// </summary>
-        public static string Reset {
+        public static string RibbonTabsDisplay {
             get {
-                return ResourceManager.GetString("Reset", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Restore.
-        /// </summary>
-        public static string Restore {
-            get {
-                return ResourceManager.GetString("Restore", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Return.
-        /// </summary>
-        public static string Return {
-            get {
-                return ResourceManager.GetString("Return", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Right.
-        /// </summary>
-        public static string Right {
-            get {
-                return ResourceManager.GetString("Right", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Save as....
-        /// </summary>
-        public static string SaveAs {
-            get {
-                return ResourceManager.GetString("SaveAs", resourceCulture);
+                return ResourceManager.GetString("RibbonTabsDisplay", resourceCulture);
             }
         }
         
@@ -943,11 +873,11 @@ namespace SylverInk.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Scanned.
+        ///   Looks up a localized string similar to Sticky notes stay on top.
         /// </summary>
-        public static string Scanned {
+        public static string SearchResultsOnTop {
             get {
-                return ResourceManager.GetString("Scanned", resourceCulture);
+                return ResourceManager.GetString("SearchResultsOnTop", resourceCulture);
             }
         }
         
@@ -979,11 +909,29 @@ namespace SylverInk.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to settings.sis.
+        ///   Looks up a localized string similar to Importing.
         /// </summary>
-        public static string SettingsFileName {
+        public static string Status_Importing {
             get {
-                return ResourceManager.GetString("SettingsFileName", resourceCulture);
+                return ResourceManager.GetString("Status_Importing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Measuring.
+        /// </summary>
+        public static string Status_Measuring {
+            get {
+                return ResourceManager.GetString("Status_Measuring", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Processing.
+        /// </summary>
+        public static string Status_Processing {
+            get {
+                return ResourceManager.GetString("Status_Processing", resourceCulture);
             }
         }
         
@@ -993,15 +941,6 @@ namespace SylverInk.Localization {
         public static string Subfolder_Databases {
             get {
                 return ResourceManager.GetString("Subfolder_Databases", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Sylver Ink.
-        /// </summary>
-        public static string SylverInk {
-            get {
-                return ResourceManager.GetString("SylverInk", resourceCulture);
             }
         }
         
@@ -1033,11 +972,11 @@ namespace SylverInk.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Text color....
+        ///   Looks up a localized string similar to Text color.
         /// </summary>
-        public static string TextColorEllipsis {
+        public static string TextColor {
             get {
-                return ResourceManager.GetString("TextColorEllipsis", resourceCulture);
+                return ResourceManager.GetString("TextColor", resourceCulture);
             }
         }
         
@@ -1051,7 +990,16 @@ namespace SylverInk.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Sylver Ink: Error.
+        ///   Looks up a localized string similar to Sylver Ink: About.
+        /// </summary>
+        public static string Title_About {
+            get {
+                return ResourceManager.GetString("Title_About", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error.
         /// </summary>
         public static string Title_Error {
             get {
@@ -1060,7 +1008,16 @@ namespace SylverInk.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Sylver Ink: Notification.
+        ///   Looks up a localized string similar to Sylver Ink: Import.
+        /// </summary>
+        public static string Title_Import {
+            get {
+                return ResourceManager.GetString("Title_Import", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Notification.
         /// </summary>
         public static string Title_Notification {
             get {
@@ -1069,7 +1026,52 @@ namespace SylverInk.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Sylver Ink: Warning.
+        ///   Looks up a localized string similar to Sylver Ink: Properties.
+        /// </summary>
+        public static string Title_Properties {
+            get {
+                return ResourceManager.GetString("Title_Properties", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sylver Ink: Search.
+        /// </summary>
+        public static string Title_Search {
+            get {
+                return ResourceManager.GetString("Title_Search", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sylver Ink: Settings.
+        /// </summary>
+        public static string Title_Settings {
+            get {
+                return ResourceManager.GetString("Title_Settings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sylver Ink: Sticky Note.
+        /// </summary>
+        public static string Title_StickyNote {
+            get {
+                return ResourceManager.GetString("Title_StickyNote", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sylver Ink: Update.
+        /// </summary>
+        public static string Title_Update {
+            get {
+                return ResourceManager.GetString("Title_Update", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Warning.
         /// </summary>
         public static string Title_Warning {
             get {
@@ -1114,29 +1116,20 @@ namespace SylverInk.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Underline.
-        /// </summary>
-        public static string Underline {
-            get {
-                return ResourceManager.GetString("Underline", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to View....
-        /// </summary>
-        public static string ViewEllipsis {
-            get {
-                return ResourceManager.GetString("ViewEllipsis", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to About.
         /// </summary>
         public static string Word_About {
             get {
                 return ResourceManager.GetString("Word_About", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Background.
+        /// </summary>
+        public static string Word_Background {
+            get {
+                return ResourceManager.GetString("Word_Background", resourceCulture);
             }
         }
         
@@ -1150,11 +1143,11 @@ namespace SylverInk.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Backup....
+        ///   Looks up a localized string similar to Bold.
         /// </summary>
-        public static string Word_BackupEllipsis {
+        public static string Word_Bold {
             get {
-                return ResourceManager.GetString("Word_BackupEllipsis", resourceCulture);
+                return ResourceManager.GetString("Word_Bold", resourceCulture);
             }
         }
         
@@ -1168,11 +1161,11 @@ namespace SylverInk.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to chars.
+        ///   Looks up a localized string similar to Center.
         /// </summary>
-        public static string Word_Chars {
+        public static string Word_Center {
             get {
-                return ResourceManager.GetString("Word_Chars", resourceCulture);
+                return ResourceManager.GetString("Word_Center", resourceCulture);
             }
         }
         
@@ -1200,6 +1193,15 @@ namespace SylverInk.Localization {
         public static string Word_Copy {
             get {
                 return ResourceManager.GetString("Word_Copy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Created.
+        /// </summary>
+        public static string Word_Created {
+            get {
+                return ResourceManager.GetString("Word_Created", resourceCulture);
             }
         }
         
@@ -1249,6 +1251,24 @@ namespace SylverInk.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Foreground.
+        /// </summary>
+        public static string Word_Foreground {
+            get {
+                return ResourceManager.GetString("Word_Foreground", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Format.
+        /// </summary>
+        public static string Word_Format {
+            get {
+                return ResourceManager.GetString("Word_Format", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Help.
         /// </summary>
         public static string Word_Help {
@@ -1267,11 +1287,65 @@ namespace SylverInk.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Imported.
+        /// </summary>
+        public static string Word_Imported {
+            get {
+                return ResourceManager.GetString("Word_Imported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Italic.
+        /// </summary>
+        public static string Word_Italic {
+            get {
+                return ResourceManager.GetString("Word_Italic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Justify.
+        /// </summary>
+        public static string Word_Justify {
+            get {
+                return ResourceManager.GetString("Word_Justify", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Left.
+        /// </summary>
+        public static string Word_Left {
+            get {
+                return ResourceManager.GetString("Word_Left", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Network.
         /// </summary>
         public static string Word_Network {
             get {
                 return ResourceManager.GetString("Word_Network", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New.
+        /// </summary>
+        public static string Word_New {
+            get {
+                return ResourceManager.GetString("Word_New", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Next.
+        /// </summary>
+        public static string Word_Next {
+            get {
+                return ResourceManager.GetString("Word_Next", resourceCulture);
             }
         }
         
@@ -1285,15 +1359,6 @@ namespace SylverInk.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to notes.
-        /// </summary>
-        public static string Word_Notes {
-            get {
-                return ResourceManager.GetString("Word_Notes", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Open.
         /// </summary>
         public static string Word_Open {
@@ -1303,11 +1368,20 @@ namespace SylverInk.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Open....
+        ///   Looks up a localized string similar to Path.
         /// </summary>
-        public static string Word_OpenEllipsis {
+        public static string Word_Path {
             get {
-                return ResourceManager.GetString("Word_OpenEllipsis", resourceCulture);
+                return ResourceManager.GetString("Word_Path", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Previous.
+        /// </summary>
+        public static string Word_Previous {
+            get {
+                return ResourceManager.GetString("Word_Previous", resourceCulture);
             }
         }
         
@@ -1317,6 +1391,15 @@ namespace SylverInk.Localization {
         public static string Word_Properties {
             get {
                 return ResourceManager.GetString("Word_Properties", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Query.
+        /// </summary>
+        public static string Word_Query {
+            get {
+                return ResourceManager.GetString("Word_Query", resourceCulture);
             }
         }
         
@@ -1339,11 +1422,56 @@ namespace SylverInk.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Reset.
+        /// </summary>
+        public static string Word_Reset {
+            get {
+                return ResourceManager.GetString("Word_Reset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restore.
+        /// </summary>
+        public static string Word_Restore {
+            get {
+                return ResourceManager.GetString("Word_Restore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Return.
+        /// </summary>
+        public static string Word_Return {
+            get {
+                return ResourceManager.GetString("Word_Return", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Right.
+        /// </summary>
+        public static string Word_Right {
+            get {
+                return ResourceManager.GetString("Word_Right", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Save.
         /// </summary>
         public static string Word_Save {
             get {
                 return ResourceManager.GetString("Word_Save", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Scanned.
+        /// </summary>
+        public static string Word_Scanned {
+            get {
+                return ResourceManager.GetString("Word_Scanned", resourceCulture);
             }
         }
         
@@ -1366,6 +1494,15 @@ namespace SylverInk.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Underline.
+        /// </summary>
+        public static string Word_Underline {
+            get {
+                return ResourceManager.GetString("Word_Underline", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Undo.
         /// </summary>
         public static string Word_Undo {
@@ -1375,11 +1512,21 @@ namespace SylverInk.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to words.
+        ///   Looks up a localized string similar to View.
         /// </summary>
-        public static string Word_Words {
+        public static string Word_View {
             get {
-                return ResourceManager.GetString("Word_Words", resourceCulture);
+                return ResourceManager.GetString("Word_View", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0:N1} words
+        ///({1:N1} chars.).
+        /// </summary>
+        public static string WordCount {
+            get {
+                return ResourceManager.GetString("WordCount", resourceCulture);
             }
         }
     }

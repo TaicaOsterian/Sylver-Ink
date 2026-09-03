@@ -8,7 +8,7 @@ public static class MutexUtils
 {
     private static Mutex? mutex;
     private static readonly CancellationTokenSource mutexTokenSource = new();
-    private static readonly string MutexName = $"{Resources.SylverInk}/{typeof(MainWindow).GUID}";
+    private static readonly string MutexName = $"Sylver Ink/{typeof(MainWindow).GUID}";
 
     /// <summary>
     /// Mutex management in Sylver Ink allows passing shell verbs through a named pipe to an existing open instance.

@@ -1,5 +1,7 @@
 ﻿using SylverInk.XAML.Objects;
+using System.Globalization;
 using static SylverInk.Notes.DatabaseUtils;
+using static SylverInk.FileIO.FileUtils;
 
 namespace SylverInk.XAMLUtils;
 
@@ -87,7 +89,7 @@ public static class MainWindowUtils
         DisplayType.Change => $"{record.ShortChange} — {record.Preview}",
         DisplayType.Content => record.Preview,
         DisplayType.Creation => $"{record.GetCreated()} — {record.Preview}",
-        DisplayType.Index => $"{Resources.Word_Note} #{record.Index + 1:N0} — {record.Preview}",
+        DisplayType.Index => string.Format(CultureInfo.CurrentCulture, CacheNoteIndexLabel, record.Index + 1, record.Preview),
         _ => record.Preview
     };
 
@@ -96,10 +98,16 @@ public static class MainWindowUtils
         var control = (TabControl)Application.Current.MainWindow.FindName("DatabasesPanel");
         var menu = (Menu)Application.Current.MainWindow.FindName("DatabaseMenu");
 
-        foreach (MenuItem tab in menu.Items)
+        foreach (object tab in menu.Items)
         {
-            foreach (MenuItem mItem in tab.Items)
+            if (tab is not MenuItem mTab)
+                continue;
+
+            foreach (object item in mTab.Items)
             {
+                if (item is not MenuItem mItem)
+                    continue;
+
                 var tag = mItem.GetValue(FrameworkElement.TagProperty) ?? string.Empty;
                 if (tag.Equals("Always"))
                     continue;
@@ -111,6 +119,7 @@ public static class MainWindowUtils
                 {
                     "Connected" => client && !server,
                     "NotConnected" => !client && !server,
+                    "NotInDocuments" => !CurrentDatabase.DBFile.Contains(Subfolders[Resources.Subfolder_Databases]),
                     "NotServing" => !client && !server,
                     "Recents" => CommonUtils.Settings.RecentDatabases.Count > 0,
                     "Serving" => !client && server,

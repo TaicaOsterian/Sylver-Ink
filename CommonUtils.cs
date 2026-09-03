@@ -161,7 +161,7 @@ public static partial class CommonUtils
         DeferUpdateRecentNotes();
     }
 
-    public static bool InstanceRunning() => Process.GetProcessesByName(Resources.SylverInk).Length > 1 && !File.Exists(UpdateHandler.UpdateLockUri);
+    public static bool InstanceRunning() => Process.GetProcessesByName("Sylver Ink").Length > 1 && !File.Exists(UpdateHandler.UpdateLockUri);
 
     public static double Lerp(double x, double y, double a)
     {

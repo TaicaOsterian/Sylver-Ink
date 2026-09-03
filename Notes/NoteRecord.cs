@@ -56,7 +56,7 @@ public partial class NoteRecord
     {
         get
         {
-            var _preview = FlowDocumentPreview(TextConverter.Parse(Reconstruct(), TextFormat.Xaml)).Replace("\r", string.Empty).Replace('\n', ' ').Replace('\t', ' ');
+            var _preview = FlowDocumentPreview(TextConverter.Parse(Reconstruct(), TextFormat.Xaml)).ReplaceLineEndings().Replace(Environment.NewLine, " ").Replace('\t', ' ');
 
             return string.IsNullOrEmpty(_preview) ? Resources.EmptyNote : _preview;
         }
@@ -80,7 +80,7 @@ public partial class NoteRecord
                 return dtObject.ToLocalTime().ToShortTimeString();
 
             if (diff.TotalHours < 168.0)
-                return $"{diff.Days} day{(diff.Days > 1 ? "s" : string.Empty)} ago";
+                return diff.Days == 1 ? Resources.DayPassed : string.Format(CultureInfo.CurrentCulture, CacheDaysPassed, diff.Days);
 
             return dtObject.ToLocalTime().ToShortDateString();
         }

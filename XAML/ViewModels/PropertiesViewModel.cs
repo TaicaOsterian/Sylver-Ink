@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Windows.Markup;
 using static SylverInk.Notes.DatabaseUtils;
 
 namespace SylverInk.XAML.ViewModels;
@@ -166,7 +167,7 @@ public partial class PropertiesViewModel : ViewModelBase
         DBFormat = $"SIDB v.{CurrentDatabase.Format}";
         DBLongest = "...";
         DBName = CurrentDatabase.Name;
-        DBNotes = $"{CurrentDatabase.RecordCount:N0} {Resources.Word_Notes}";
+        DBNotes = string.Format(CultureInfo.CurrentCulture, CacheNoteNumber, CurrentDatabase.RecordCount);
         DBPath = $"{CurrentDatabase.DBFile}";
         DBTotal = "...";
 
@@ -207,9 +208,9 @@ public partial class PropertiesViewModel : ViewModelBase
         noteAvgC /= CurrentDatabase.RecordCount;
         noteAvgW /= CurrentDatabase.RecordCount;
 
-        DBAvg = $"{noteAvgW:N1} {Resources.Word_Words}\n({noteAvgC:N1} {Resources.Word_Chars}.)";
-        DBLongest = $"{noteLongestW:N0} {Resources.Word_Words}\n({noteLongestC:N0} {Resources.Word_Chars}.)";
-        DBTotal = $"{noteTotalW:N0} {Resources.Word_Words}\n({noteTotalC:N0} {Resources.Word_Chars}.)";
+        DBAvg = string.Format(CultureInfo.CurrentCulture, CacheWordCount, noteAvgW, noteAvgC);
+        DBLongest = string.Format(CultureInfo.CurrentCulture, CacheWordCount, noteLongestW, noteLongestC);
+        DBTotal = string.Format(CultureInfo.CurrentCulture, CacheWordCount, noteTotalW, noteTotalC);
     }
 
     private async void Restore(object? param = null)

@@ -45,6 +45,17 @@ public class SearchViewModel : ViewModelBase
             await SearchDatabase(db);
     }
 
+    private async void Query(object? param)
+    {
+        if (param is null)
+            CanQuery = false;
+
+        await PerformSearch();
+
+        if (param is null)
+            CanQuery = true;
+    }
+
     private async Task SearchDatabase(Database db)
     {
         CommonUtils.Settings.SearchResults.Clear();
@@ -94,11 +105,4 @@ public class SearchViewModel : ViewModelBase
 
         return false;
     });
-
-    private async void Query(object? param)
-    {
-        CanQuery = false;
-        await PerformSearch();
-        CanQuery = true;
-    }
 }

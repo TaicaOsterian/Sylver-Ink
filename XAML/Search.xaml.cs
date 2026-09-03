@@ -16,6 +16,7 @@ public partial class Search : Window
         ViewModel.RequestClose += (_, _) => Close();
         InitializeComponent();
         CreateContextMenu();
+        ViewModel.QueryCommand.Execute(true);
     }
 
     private void ContextDelete(object? sender, RoutedEventArgs e)

@@ -21,7 +21,7 @@ public class ContextSettings : INotifyPropertyChanged
     private int _lineTolerance;
     private Brush? _listBackgound = Brushes.White;
     private Brush? _listForegound = Brushes.Black;
-    private FontFamily? _mainFontFamily;
+    private FontFamily? _mainFontFamily = Fonts.SystemFontFamilies.ElementAt(0); // This is unclean, but a proper default font will be selected before the head is established.
     private double _mainFontSize = 11.0;
     private Typeface? _mainTypeFace;
     private Brush? _menuBackgound = Brushes.Beige;
@@ -54,7 +54,7 @@ public class ContextSettings : INotifyPropertyChanged
     }
     public List<FontFamily> AvailableFonts { get; } = [];
     public FontFamily? DefaultFont { get; private set; }
-    private string[] DefaultFonts { get; } = ["Segoe UI", "Helvetica Neue", "Arial", "Noto Sans", "Liberation Sans", "DejaVu Sans", "sans‑serif"];
+    private readonly string[] DefaultFonts = ["Segoe UI", "Helvetica Neue", "Arial", "Noto Sans", "Liberation Sans", "DejaVu Sans", "sans‑serif"];
     public bool FirstRun
     {
         get => _firstRun;

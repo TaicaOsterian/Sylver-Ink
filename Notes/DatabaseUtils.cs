@@ -17,7 +17,7 @@ public static class DatabaseUtils
     public static bool DatabaseChanged { get; set; }
     public static List<string> DatabaseFiles { get => [.. Databases.Select(db => db.DBFile)]; }
     public static List<Database> Databases { get; } = [];
-    public static string DefaultDatabase { get; } = Resources.DefaultDatabase;
+    public static string DefaultDatabase { get; } = $"{Resources.Word_New}";
     public static string ShellDB { get; set; } = string.Empty;
 
     public static void AddDatabase(Database db)

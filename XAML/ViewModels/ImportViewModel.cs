@@ -178,7 +178,7 @@ public class ImportViewModel : ViewModelBase
 
         CanImport = false;
         IsBusy = true;
-        StatusText = Resources.Importing;
+        StatusText = $"{Resources.Status_Importing}...";
 
         try
         {
@@ -208,7 +208,7 @@ public class ImportViewModel : ViewModelBase
             return;
         }
 
-        StatusText = Resources.Measuring;
+        StatusText = $"{Resources.Status_Measuring}...";
 
         if (AdaptiveImport)
             MeasureNotesAdaptive();
@@ -383,7 +383,7 @@ public class ImportViewModel : ViewModelBase
                 blankCount = 0;
 
             if (i % 100 == 0)
-                StatusText = $"{i * 100.0 / DataLines.Count:N2}% {Resources.Scanned}...";
+                StatusText = $"{i * 100.0 / DataLines.Count:N2}% {Resources.Word_Scanned}...";
 
             if (recordData.Length == 0 || blankCount < LineTolerance)
                 continue;
@@ -447,7 +447,7 @@ public class ImportViewModel : ViewModelBase
             else
                 blankCount = 0;
 
-            StatusText = $"{i * 100.0 / DataLines.Count:N2}% {Resources.Imported}...";
+            StatusText = $"{i * 100.0 / DataLines.Count:N2}% {Resources.Word_Imported}...";
 
             if (blankCount < LineTolerance && i < DataLines.Count - 1)
                 continue;
@@ -478,7 +478,7 @@ public class ImportViewModel : ViewModelBase
 
         CanImport = false;
         IsBusy = true;
-        StatusText = Resources.Processing;
+        StatusText = $"{Resources.Status_Processing}...";
 
         try
         {
@@ -544,7 +544,7 @@ public class ImportViewModel : ViewModelBase
     private void ReportMeasurement()
     {
         CanImport = RunningCount > 0;
-        StatusText = string.Format(CultureInfo.CurrentCulture, CacheImportMeasurementText, RunningCount, RunningAverage.ToString("N0", CultureInfo.CurrentCulture));
+        StatusText = string.Format(CultureInfo.CurrentCulture, CacheImportMeasurementText, RunningCount, RunningAverage);
     }
 
     private async Task ToggleAdaptiveAsync()

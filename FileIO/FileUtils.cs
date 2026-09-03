@@ -9,8 +9,8 @@ namespace SylverInk.FileIO;
 /// </summary>
 public static class FileUtils
 {
-    public static string DocumentsFolder { get; } = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), Resources.SylverInk);
-    public static string SettingsFile { get; } = Path.Join(DocumentsFolder, Resources.SettingsFileName);
+    public static string DocumentsFolder { get; } = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Sylver Ink");
+    public static string SettingsFile { get; } = Path.Join(DocumentsFolder, $"{Resources.Word_Settings.ToLower(CultureInfo.CurrentCulture)}.sis");
     public static int HighestSIDBFormat { get; } = 14;
     public static char[] InvalidPathChars { get; } = ['/', '\\', ':', '*', '"', '?', '<', '>', '|'];
     public static Dictionary<string, string> Subfolders { get; } = new([
