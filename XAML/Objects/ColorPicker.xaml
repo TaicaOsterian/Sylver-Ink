@@ -36,7 +36,7 @@
                              KeyDown="PopupKeyDown"
                              Text="{Binding CustomColorCode}"
                              TextChanged="NewCustomColor"
-                             ToolTip="{x:Static properties:Resources.HexCodeTooltip}"
+                             ToolTip="{x:Static properties:Strings.HexCodeTooltip}"
                              VerticalAlignment="Center"
                              VerticalContentAlignment="Center"
                              Width="75"

@@ -49,11 +49,11 @@ public partial class MainWindow : Window
             return;
         }
 
-        CommonUtils.Settings.Save();
+        Settings.Save();
 
         if (!DatabaseChanged)
         {
-            switch (MessageBox.Show(Localization.Resources.ExitMessage, Localization.Resources.Title_Notification, MessageBoxButton.YesNo, MessageBoxImage.Information))
+            switch (MessageBox.Show(Strings.ExitMessage, Strings.Title_Notification, MessageBoxButton.YesNo, MessageBoxImage.Information))
             {
                 case MessageBoxResult.No:
                     e.Cancel = true;
@@ -65,7 +65,7 @@ public partial class MainWindow : Window
             }
         }
 
-        switch (MessageBox.Show(Localization.Resources.ExitMessage_SaveWork, Localization.Resources.Title_Notification, MessageBoxButton.YesNoCancel, MessageBoxImage.Information))
+        switch (MessageBox.Show(Strings.ExitMessage_SaveWork, Strings.Title_Notification, MessageBoxButton.YesNoCancel, MessageBoxImage.Information))
         {
             case MessageBoxResult.Cancel:
                 e.Cancel = true;
@@ -80,7 +80,7 @@ public partial class MainWindow : Window
                 await SaveDatabases();
 
                 DatabaseChanged = false;
-                CommonUtils.Settings.Save();
+                Settings.Save();
                 Application.Current.Shutdown();
                 return;
             case MessageBoxResult.No:
@@ -106,7 +106,7 @@ public partial class MainWindow : Window
         {
             CurrentDatabase = newDB;
             RecentNotesDirty = true;
-            CommonUtils.Settings.SearchResults.Clear();
+            Settings.SearchResults.Clear();
             DeferUpdateRecentNotes();
         }
     }
@@ -132,7 +132,7 @@ public partial class MainWindow : Window
         if (InstanceRunning())
         {
             if (!ShellVerbsPassed)
-                MessageBox.Show(Localization.Resources.Error_InstanceRunning, Localization.Resources.Title_Error, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Strings.Error_InstanceRunning, Strings.Title_Error, MessageBoxButton.OK, MessageBoxImage.Error);
 
             // If shell verbs were passed to an existing instance, close this instance silently before a head is established.
             AbortRun = true;
@@ -141,7 +141,7 @@ public partial class MainWindow : Window
         }
 
         // Settings initialization
-        await CommonUtils.Settings.Load();
+        await Settings.Load();
         SettingsLoaded = true;
 
         // Style initialization

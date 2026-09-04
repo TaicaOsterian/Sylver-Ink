@@ -182,7 +182,7 @@ public static partial class CommonUtils
             return;
 
         // Create an empty database if and only if we haven't loaded any from files
-        await Database.Create(Path.Join(Subfolders[Resources.Subfolder_Databases], DefaultDatabase, $"{DefaultDatabase}.sidb"));
+        await Database.Create(Path.Join(Subfolders[Strings.Subfolder_Databases], DefaultDatabase, $"{DefaultDatabase}.sidb"));
 
         return;
     }

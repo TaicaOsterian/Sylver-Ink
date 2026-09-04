@@ -76,7 +76,7 @@ public class NetClient : IDisposable
         }
         catch
         {
-            MessageBox.Show(Resources.FailedConnection, Resources.Title_Error, MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(Strings.FailedConnection, Strings.Title_Error, MessageBoxButton.OK, MessageBoxImage.Error);
             if (DB is not null)
                 Concurrent(RemoveDatabase, DB);
             return;

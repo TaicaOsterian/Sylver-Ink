@@ -8,22 +8,22 @@
         xmlns:vm="clr-namespace:SylverInk.XAML.ViewModels"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=vm:SearchViewModel}"
-        Background="{Binding AppSettings.MenuBackground}" Closed="OnClose" Foreground="{Binding AppSettings.MenuForeground}" Height="525" MinHeight="275" MinWidth="350" MouseLeftButtonDown="Drag" ResizeMode="NoResize" ShowInTaskbar="False" Title="{x:Static properties:Resources.Title_Search}" Topmost="True" Width="350">
+        Background="{Binding AppSettings.MenuBackground}" Closed="OnClose" Foreground="{Binding AppSettings.MenuForeground}" Height="525" MinHeight="275" MinWidth="350" MouseLeftButtonDown="Drag" ResizeMode="NoResize" ShowInTaskbar="False" Title="{x:Static properties:Strings.Title_Search}" Topmost="True" Width="350">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="150"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <StackPanel>
-            <Label Content="{x:Static properties:Resources.SearchText}" FontStyle="Italic" HorizontalAlignment="Right" Margin="0,20,40,0"/>
+            <Label Content="{x:Static properties:Strings.SearchText}" FontStyle="Italic" HorizontalAlignment="Right" Margin="0,20,40,0"/>
             <TextBox Margin="20,0" Text="{Binding QueryString}" x:Name="SearchText"/>
             <Grid Margin="0,50,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Button Command="{Binding QueryCommand}" Content="{x:Static properties:Resources.Word_Query}" IsEnabled="{Binding CanQuery}"/>
-                <Button Command="{Binding CloseCommand}" Grid.Column="1" Content="{x:Static properties:Resources.Word_Close}"/>
+                <Button Command="{Binding QueryCommand}" Content="{x:Static properties:Strings.Word_Query}" IsEnabled="{Binding CanQuery}"/>
+                <Button Command="{Binding CloseCommand}" Grid.Column="1" Content="{x:Static properties:Strings.Word_Close}"/>
             </Grid>
         </StackPanel>
         <ListBox AlternationCount="2" ItemsSource="{Binding AppSettings.SearchResults}" Margin="20,0,20,20" MouseUp="ListItemChosen" Grid.Row="1" x:Name="Results">

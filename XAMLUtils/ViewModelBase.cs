@@ -5,7 +5,7 @@ namespace SylverInk.XAMLUtils;
 
 public abstract class ViewModelBase : INotifyPropertyChanged
 {
-    public static ContextSettings AppSettings => CommonUtils.Settings;
+    public static ContextSettings AppSettings => Settings;
 
     public event PropertyChangedEventHandler? PropertyChanged;
     protected void OnPropertyChanged([CallerMemberName] string? name = null)

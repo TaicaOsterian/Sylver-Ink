@@ -157,7 +157,7 @@ public class ImportViewModel : ViewModelBase
         ToggleAdaptiveCommand = new RelayCommand(async _ => await ToggleAdaptiveAsync());
 
         LineTolerance = CommonUtils.Settings.LineTolerance;
-        StatusText = Resources.SelectFile;
+        StatusText = Strings.SelectFile;
     }
 
     private async Task ChangeLineToleranceAsync(object? param = null)
@@ -178,18 +178,18 @@ public class ImportViewModel : ViewModelBase
 
         CanImport = false;
         IsBusy = true;
-        StatusText = $"{Resources.Status_Importing}...";
+        StatusText = $"{Strings.Status_Importing}...";
 
         try
         {
             await Task.Run(PerformImport);
 
-            StatusText = string.Format(CultureInfo.CurrentCulture, CacheNotesImported, Imported);
+            StatusText = string.Format(CultureInfo.CurrentCulture, CacheLabelNotesImported, Imported);
             ImportTarget = string.Empty;
         }
         catch (Exception ex)
         {
-            MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheImportFailed, ex.Message), Resources.Title_Error, MessageBoxButton.OK);
+            MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheImportFailed, ex.Message), Strings.Title_Error, MessageBoxButton.OK);
         }
         finally
         {
@@ -204,11 +204,11 @@ public class ImportViewModel : ViewModelBase
 
         if (!ReadFromStream(ImportTarget))
         {
-            StatusText = Resources.FailedToReadFile;
+            StatusText = Strings.FailedToReadFile;
             return;
         }
 
-        StatusText = $"{Resources.Status_Measuring}...";
+        StatusText = $"{Strings.Status_Measuring}...";
 
         if (AdaptiveImport)
             MeasureNotesAdaptive();
@@ -358,7 +358,7 @@ public class ImportViewModel : ViewModelBase
             return;
         }
 
-        MessageBox.Show(Resources.FailedAutodetect, Resources.Title_Error, MessageBoxButton.OK);
+        MessageBox.Show(Strings.FailedAutodetect, Strings.Title_Error, MessageBoxButton.OK);
         AdaptivePredicate = string.Empty;
         RunningCount = 0;
     }
@@ -383,7 +383,7 @@ public class ImportViewModel : ViewModelBase
                 blankCount = 0;
 
             if (i % 100 == 0)
-                StatusText = $"{i * 100.0 / DataLines.Count:N2}% {Resources.Word_Scanned}...";
+                StatusText = $"{i * 100.0 / DataLines.Count:N2}% {Strings.Word_Scanned}...";
 
             if (recordData.Length == 0 || blankCount < LineTolerance)
                 continue;
@@ -447,7 +447,7 @@ public class ImportViewModel : ViewModelBase
             else
                 blankCount = 0;
 
-            StatusText = $"{i * 100.0 / DataLines.Count:N2}% {Resources.Word_Imported}...";
+            StatusText = $"{i * 100.0 / DataLines.Count:N2}% {Strings.Word_Imported}...";
 
             if (blankCount < LineTolerance && i < DataLines.Count - 1)
                 continue;
@@ -478,7 +478,7 @@ public class ImportViewModel : ViewModelBase
 
         CanImport = false;
         IsBusy = true;
-        StatusText = $"{Resources.Status_Processing}...";
+        StatusText = $"{Strings.Status_Processing}...";
 
         try
         {
@@ -486,8 +486,8 @@ public class ImportViewModel : ViewModelBase
                 ImportTarget.EndsWith(".sibk", StringComparison.Ordinal))
             {
                 var result = MessageBox.Show(
-                    Resources.Message_MergeDatabases,
-                    Resources.Title_Warning,
+                    Strings.Message_MergeDatabases,
+                    Strings.Title_Warning,
                     MessageBoxButton.YesNoCancel,
                     MessageBoxImage.Warning);
 
@@ -496,7 +496,7 @@ public class ImportViewModel : ViewModelBase
 
                 if (!CurrentDatabase.Open(ImportTarget))
                 {
-                    MessageBox.Show(Resources.FailedImport, Resources.Title_Error, MessageBoxButton.OK);
+                    MessageBox.Show(Strings.FailedImport, Strings.Title_Error, MessageBoxButton.OK);
                     return;
                 }
 
@@ -508,7 +508,7 @@ public class ImportViewModel : ViewModelBase
 
                 CurrentDatabase.Initialize(false);
                 Imported = CurrentDatabase.RecordCount;
-                StatusText = string.Format(CultureInfo.CurrentCulture, CacheNotesImported, Imported);
+                StatusText = string.Format(CultureInfo.CurrentCulture, CacheLabelNotesImported, Imported);
                 return;
             }
 
@@ -516,7 +516,7 @@ public class ImportViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheFailedToProcessFile, ex.Message), Resources.Title_Error, MessageBoxButton.OK);
+            MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheFailedToProcessFile, ex.Message), Strings.Title_Error, MessageBoxButton.OK);
         }
         finally
         {

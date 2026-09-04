@@ -356,7 +356,7 @@ public class ContextSettings : INotifyPropertyChanged
                     if (Databases.Count != 0)
                         break;
 
-                    await Database.Create(Path.Join(Subfolders[Resources.Subfolder_Databases], DefaultDatabase, $"{DefaultDatabase}.sidb"));
+                    await Database.Create(Path.Join(Subfolders[Strings.Subfolder_Databases], DefaultDatabase, $"{DefaultDatabase}.sidb"));
                     break;
                 case "ListBackground":
                     ListBackground = BrushFromBytes(keyValue[1]);

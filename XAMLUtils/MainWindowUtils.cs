@@ -119,9 +119,9 @@ public static class MainWindowUtils
                 {
                     "Connected" => client && !server,
                     "NotConnected" => !client && !server,
-                    "NotInDocuments" => !CurrentDatabase.DBFile.Contains(Subfolders[Resources.Subfolder_Databases]),
+                    "NotInDocuments" => !CurrentDatabase.DBFile.Contains(Subfolders[Strings.Subfolder_Databases]),
                     "NotServing" => !client && !server,
-                    "Recents" => CommonUtils.Settings.RecentDatabases.Count > 0,
+                    "Recents" => Settings.RecentDatabases.Count > 0,
                     "Serving" => !client && server,
                     _ => control.Items.Count != 1
                 };

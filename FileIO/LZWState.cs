@@ -206,7 +206,7 @@ public class LZWState
         }
 
         if (lastCode >= MaxRestrictedWidth)
-            throw new OverflowException(Resources.DatabaseTooLargeForCompression, new OverflowException());
+            throw new OverflowException(Strings.DatabaseTooLargeForCompression, new OverflowException());
     }
 
     /// <summary>

@@ -174,7 +174,7 @@ public static class NetworkUtils
 
         Indicator.Height = 12;
         Indicator.Margin = new(2, 4, 3, 4);
-        Indicator.Stroke = CommonUtils.Settings.MenuForeground;
+        Indicator.Stroke = Settings.MenuForeground;
         Indicator.Width = 12;
         Indicator.InvalidateVisual();
 

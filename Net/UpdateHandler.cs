@@ -82,7 +82,7 @@ public static class UpdateHandler
             return;
         }
 
-        if (MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheMessageUpdateAvailable, assemblyVersion.ToString(3), releaseVersion.ToString(3)), Resources.Title_Notification, MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.No)
+        if (MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheMessageUpdateAvailable, assemblyVersion.ToString(3), releaseVersion.ToString(3)), Strings.Title_Notification, MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.No)
             return;
 
         await DownloadAndInstallUpdate(httpClient, uriNode);
@@ -121,7 +121,7 @@ public static class UpdateHandler
             UpdateWindow?.Close();
 
             if (ex is not OperationCanceledException)
-                MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheUnableToUpdate, ex.Message), Resources.Title_Error, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheUnableToUpdate, ex.Message), Strings.Title_Error, MessageBoxButton.OK, MessageBoxImage.Error);
 
             return;
         }

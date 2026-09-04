@@ -38,8 +38,8 @@
                         </TextBox.InputBindings>
                     </TextBox>
                     <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center">
-                        <Button Command="{Binding SaveRenameCommand}" Content="{x:Static properties:Resources.Word_Save}" Margin="5"/>
-                        <Button Command="{Binding CancelRenameCommand}" Content="{x:Static properties:Resources.Word_Cancel}" Margin="5"/>
+                        <Button Command="{Binding SaveRenameCommand}" Content="{x:Static properties:Strings.Word_Save}" Margin="5"/>
+                        <Button Command="{Binding CancelRenameCommand}" Content="{x:Static properties:Strings.Word_Cancel}" Margin="5"/>
                     </StackPanel>
                 </Grid>
             </Border>
@@ -55,7 +55,7 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" VerticalAlignment="Center">
-                        <Label Content="{x:Static properties:Resources.AddressCode}"/>
+                        <Label Content="{x:Static properties:Strings.Label_AddressCode}"/>
                         <TextBox Width="75" Margin="0,10"
                                  Text="{Binding AddressCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                  x:Name="AddressBox">
@@ -64,11 +64,11 @@
                                 <KeyBinding Key="Escape" Command="{Binding ConnectPopupEscapeCommand}" />
                             </TextBox.InputBindings>
                         </TextBox>
-                        <Label Content="(?)" Foreground="{Binding AppSettings.AccentForeground}" ToolTip="{x:Static properties:Resources.ConnectLabelTooltip}"/>
+                        <Label Content="(?)" Foreground="{Binding AppSettings.AccentForeground}" ToolTip="{x:Static properties:Strings.ConnectLabelTooltip}"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center">
-                        <Button Command="{Binding SaveConnectCommand}" Content="{x:Static properties:Resources.Word_Connect}" Margin="5"/>
-                        <Button Command="{Binding CancelConnectCommand}" Content="{x:Static properties:Resources.Word_Cancel}" Margin="5"/>
+                        <Button Command="{Binding SaveConnectCommand}" Content="{x:Static properties:Strings.Word_Connect}" Margin="5"/>
+                        <Button Command="{Binding CancelConnectCommand}" Content="{x:Static properties:Strings.Word_Cancel}" Margin="5"/>
                     </StackPanel>
                 </Grid>
             </Border>
@@ -84,25 +84,25 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" VerticalAlignment="Center">
-                        <Label Content="{x:Static properties:Resources.AddressCode}"/>
+                        <Label Content="{x:Static properties:Strings.Label_AddressCode}"/>
                         <TextBox Margin="0,10" IsReadOnly="True" Width="75"
                                  Text="{Binding AddressCodeDisplay, Mode=OneWay}"
                                  x:Name="CodeBox"/>
-                        <Label Content="(?)" Foreground="{Binding AppSettings.AccentForeground}" ToolTip="{x:Static properties:Resources.ServerCodeLabelTooltip}"/>
+                        <Label Content="(?)" Foreground="{Binding AppSettings.AccentForeground}" ToolTip="{x:Static properties:Strings.ServerCodeLabelTooltip}"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center">
-                        <Button Command="{Binding CopyAddressCodeCommand}" Content="{x:Static properties:Resources.Word_Copy}" Margin="5"/>
-                        <Button Command="{Binding CloseCodePopupCommand}" Content="{x:Static properties:Resources.Word_Close}" Margin="5"/>
+                        <Button Command="{Binding CopyAddressCodeCommand}" Content="{x:Static properties:Strings.Word_Copy}" Margin="5"/>
+                        <Button Command="{Binding CloseCodePopupCommand}" Content="{x:Static properties:Strings.Word_Close}" Margin="5"/>
                     </StackPanel>
                 </Grid>
             </Border>
         </Popup>
         
         <Menu x:Name="DatabaseMenu">
-            <MenuItem Header="{x:Static properties:Resources.Word_File}" Height="25">
-                <MenuItem Command="{Binding NewDatabaseCommand}" Header="{x:Static properties:Resources.Word_New}" Tag="Always"/>
-                <MenuItem Command="{Binding OpenDatabaseCommand}" Header="{x:Static properties:Resources.Label_Open}" Tag="Always"/>
-                <MenuItem Header="{x:Static properties:Resources.OpenRecent}" ItemsSource="{Binding AppSettings.RecentDatabases}" Tag="Recents">
+            <MenuItem Header="{x:Static properties:Strings.Word_File}" Height="25">
+                <MenuItem Command="{Binding NewDatabaseCommand}" Header="{x:Static properties:Strings.Word_New}" Tag="Always"/>
+                <MenuItem Command="{Binding OpenDatabaseCommand}" Header="{x:Static properties:Strings.Label_Open}" Tag="Always"/>
+                <MenuItem Header="{x:Static properties:Strings.OpenRecent}" ItemsSource="{Binding AppSettings.RecentDatabases}" Tag="Recents">
                     <MenuItem.ItemContainerStyle>
                         <Style TargetType="MenuItem">
                             <Setter Property="Header" Value="{Binding}" />
@@ -114,28 +114,28 @@
                     </MenuItem.ItemContainerStyle>
                 </MenuItem>
                 <Separator/>
-                <MenuItem Command="{Binding SaveLocalCommand}" Header="{x:Static properties:Resources.SaveToDocuments}" Tag="NotInDocuments"/>
-                <MenuItem Command="{Binding SaveAsCommand}" Header="{x:Static properties:Resources.Label_SaveAs}" Tag="Always"/>
-                <MenuItem Command="{Binding BackupDatabaseCommand}" Header="{x:Static properties:Resources.Label_Backup}" Tag="Always"/>
+                <MenuItem Command="{Binding SaveLocalCommand}" Header="{x:Static properties:Strings.SaveToDocuments}" Tag="NotInDocuments"/>
+                <MenuItem Command="{Binding SaveAsCommand}" Header="{x:Static properties:Strings.Label_SaveAs}" Tag="Always"/>
+                <MenuItem Command="{Binding BackupDatabaseCommand}" Header="{x:Static properties:Strings.Label_Backup}" Tag="Always"/>
                 <Separator/>
-                <MenuItem Command="{Binding DeleteDatabaseCommand}" Header="{x:Static properties:Resources.Word_Delete}"/>
+                <MenuItem Command="{Binding DeleteDatabaseCommand}" Header="{x:Static properties:Strings.Word_Delete}"/>
             </MenuItem>
-            <MenuItem Header="{x:Static properties:Resources.Word_Database}" Height="25">
-                <MenuItem Command="{Binding CloseDatabaseCommand}" Header="{x:Static properties:Resources.Word_Close}"/>
-                <MenuItem Command="{Binding RenameDatabaseCommand}" Header="{x:Static properties:Resources.Word_Rename}" Tag="Always"/>
+            <MenuItem Header="{x:Static properties:Strings.Word_Database}" Height="25">
+                <MenuItem Command="{Binding CloseDatabaseCommand}" Header="{x:Static properties:Strings.Word_Close}"/>
+                <MenuItem Command="{Binding RenameDatabaseCommand}" Header="{x:Static properties:Strings.Word_Rename}" Tag="Always"/>
                 <Separator/>
-                <MenuItem Command="{Binding PropertiesCommand}" Header="{x:Static properties:Resources.Word_Properties}" Tag="Always"/>
+                <MenuItem Command="{Binding PropertiesCommand}" Header="{x:Static properties:Strings.Word_Properties}" Tag="Always"/>
             </MenuItem>
-            <MenuItem Header="{x:Static properties:Resources.Word_Network}" Height="25">
-                <MenuItem Command="{Binding ConnectCommand}" Header="{x:Static properties:Resources.Word_Connect}" Tag="NotConnected"/>
-                <MenuItem Command="{Binding DisconnectCommand}" Header="{x:Static properties:Resources.Word_Disconnect}" Tag="Connected"/>
+            <MenuItem Header="{x:Static properties:Strings.Word_Network}" Height="25">
+                <MenuItem Command="{Binding ConnectCommand}" Header="{x:Static properties:Strings.Word_Connect}" Tag="NotConnected"/>
+                <MenuItem Command="{Binding DisconnectCommand}" Header="{x:Static properties:Strings.Word_Disconnect}" Tag="Connected"/>
                 <Separator/>
-                <MenuItem Command="{Binding UnserveCommand}" Header="{x:Static properties:Resources.CloseToNetwork}" Tag="Serving"/>
-                <MenuItem Command="{Binding ServeCommand}" Header="{x:Static properties:Resources.OpenToNetwork}" Tag="NotServing"/>
-                <MenuItem Command="{Binding CopyCodeCommand}" Header="{x:Static properties:Resources.CopyAddressCode}" Tag="Serving"/>
+                <MenuItem Command="{Binding UnserveCommand}" Header="{x:Static properties:Strings.CloseToNetwork}" Tag="Serving"/>
+                <MenuItem Command="{Binding ServeCommand}" Header="{x:Static properties:Strings.OpenToNetwork}" Tag="NotServing"/>
+                <MenuItem Command="{Binding CopyCodeCommand}" Header="{x:Static properties:Strings.CopyAddressCode}" Tag="Serving"/>
             </MenuItem>
-            <MenuItem Header="{x:Static properties:Resources.Word_Help}" Height="25">
-                <MenuItem Command="{Binding AboutCommand}" Header="{x:Static properties:Resources.Word_About}" Tag="Always"/>
+            <MenuItem Header="{x:Static properties:Strings.Word_Help}" Height="25">
+                <MenuItem Command="{Binding AboutCommand}" Header="{x:Static properties:Strings.Word_About}" Tag="Always"/>
             </MenuItem>
         </Menu>
 

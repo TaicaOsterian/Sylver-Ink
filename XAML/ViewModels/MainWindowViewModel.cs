@@ -166,7 +166,7 @@ public class MainWindowViewModel : ViewModelBase
         }
         catch
         {
-            ShowTooltip(Resources.Tooltip_FailedCopy);
+            ShowTooltip(Strings.Tooltip_FailedCopy);
         }
     }
 
@@ -176,7 +176,7 @@ public class MainWindowViewModel : ViewModelBase
     {
         if (CurrentDatabase.Changed)
         {
-            var res = MessageBox.Show(Resources.Message_SaveChangesShort, Resources.Title_Notification, MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+            var res = MessageBox.Show(Strings.ExitMessage_SaveWork, Strings.Title_Notification, MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
             if (res == MessageBoxResult.Cancel)
                 return;
             if (res == MessageBoxResult.Yes)
@@ -206,7 +206,7 @@ public class MainWindowViewModel : ViewModelBase
 
     private static void MenuDelete(object? param)
     {
-        if (MessageBox.Show(Resources.Message_ConfirmDeleteDatabase, Resources.Title_Warning, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+        if (MessageBox.Show(Strings.Message_ConfirmDeleteDatabase, Strings.Title_Warning, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
             return;
 
         Erase(CurrentDatabase.DBFile);
@@ -262,7 +262,7 @@ public class MainWindowViewModel : ViewModelBase
             return;
         }
 
-        if (MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheMessageFileMovedOrDeleted, path), Resources.Title_Warning, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+        if (MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheMessageFileMovedOrDeleted, path), Strings.Title_Warning, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
             return;
 
         CommonUtils.Settings.RecentDatabases.Remove(new() { FullPath = path });
@@ -293,7 +293,7 @@ public class MainWindowViewModel : ViewModelBase
     private static void MenuSaveLocal(object? param)
     {
         CurrentDatabase.Changed = true;
-        CurrentDatabase.DBFile = Path.Join(Subfolders[Resources.Subfolder_Databases], Path.GetFileNameWithoutExtension(CurrentDatabase.DBFile), Path.GetFileName(CurrentDatabase.DBFile));
+        CurrentDatabase.DBFile = Path.Join(Subfolders[Strings.Subfolder_Databases], Path.GetFileNameWithoutExtension(CurrentDatabase.DBFile), Path.GetFileName(CurrentDatabase.DBFile));
         CurrentDatabase.Format = HighestSIDBFormat;
         CurrentDatabase.Save();
     }
@@ -334,7 +334,7 @@ public class MainWindowViewModel : ViewModelBase
             if (!RenameDatabaseName.Equals(db.Name, StringComparison.Ordinal))
                 continue;
 
-            MessageBox.Show(Resources.Message_DatabaseExists, Resources.Title_Error, MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(Strings.Message_DatabaseExists, Strings.Title_Error, MessageBoxButton.OK, MessageBoxImage.Error);
             return;
         }
 
@@ -343,7 +343,7 @@ public class MainWindowViewModel : ViewModelBase
             if (!RenameDatabaseName.Contains(pc))
                 continue;
 
-            MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheMessageInvalidPath, pc), Resources.Title_Error, MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheMessageInvalidPath, pc), Strings.Title_Error, MessageBoxButton.OK, MessageBoxImage.Error);
             return;
         }
 
@@ -357,7 +357,7 @@ public class MainWindowViewModel : ViewModelBase
 
         if (string.IsNullOrWhiteSpace(AddressCode) || AddressCode.Length != 6)
         {
-            MessageBox.Show(Resources.Message_InvalidAddressCode, Resources.Title_Error, MessageBoxButton.OK);
+            MessageBox.Show(Strings.Message_InvalidAddressCode, Strings.Title_Error, MessageBoxButton.OK);
             return;
         }
 

@@ -65,7 +65,7 @@ public partial class NoteController : IDisposable
                 ReloadSerializer();
                 if (!_serializer?.OpenRead(backup) is true)
                 {
-                    MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheUnableToLoadDatabase, dbFile), Resources.Title_Warning, MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheUnableToLoadDatabase, dbFile), Strings.Title_Warning, MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
             }
@@ -138,7 +138,7 @@ public partial class NoteController : IDisposable
         {
             EnforceNoForwardCompatibility = true;
             _serializer?.Close();
-            MessageBox.Show(Resources.Message_DatabaseTooNew, Resources.Title_Error, MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(Strings.Message_DatabaseTooNew, Strings.Title_Error, MessageBoxButton.OK, MessageBoxImage.Error);
             return;
         }
 

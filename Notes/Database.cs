@@ -73,7 +73,7 @@ public class Database : IDisposable
             if (db is not null)
                 RemoveDatabase(db);
 
-            MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheCouldNotLoadDatabase, dbFile), Resources.Title_Error, MessageBoxButton.OK);
+            MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheCouldNotLoadDatabase, dbFile), Strings.Title_Error, MessageBoxButton.OK);
         }
     }
 
@@ -271,7 +271,7 @@ public class Database : IDisposable
     public void Load(string dbFile)
     {
         var lockFile = GetLockFile(dbFile);
-        if (File.Exists(lockFile) && MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheMessageDatabaseAutosaved, Path.GetFileName(dbFile)), Resources.Title_Notification, MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes)
+        if (File.Exists(lockFile) && MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheMessageDatabaseAutosaved, Path.GetFileName(dbFile)), Strings.Title_Notification, MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes)
         {
             Controller.Open(lockFile);
             Initialize();
@@ -279,7 +279,7 @@ public class Database : IDisposable
             if (Controller.EnforceNoForwardCompatibility)
             {
                 Loaded = false;
-                throw new NotSupportedException(Resources.DatabaseTooNew);
+                throw new NotSupportedException(Strings.DatabaseTooNew);
             }
 
             Loaded = Controller.Loaded = true;
@@ -298,7 +298,7 @@ public class Database : IDisposable
         if (Controller.EnforceNoForwardCompatibility)
         {
             Loaded = false;
-            throw new NotSupportedException(Resources.DatabaseTooNew);
+            throw new NotSupportedException(Strings.DatabaseTooNew);
         }
 
         Loaded = Controller.Loaded;
@@ -307,7 +307,7 @@ public class Database : IDisposable
             Name = Path.GetFileNameWithoutExtension(DBFile);
 
         if (DBFile.EndsWith("sibk", StringComparison.Ordinal))
-            Name = $"{Resources.Word_Backup}: {Name}";
+            Name = $"{Strings.Word_Backup}: {Name}";
 
         DeferUpdateRecentNotes();
     }
@@ -370,12 +370,12 @@ public class Database : IDisposable
         if (!Directory.Exists(oldPath))
             return;
 
-        var directorySearch = Directory.GetDirectories(Subfolders[Resources.Subfolder_Databases], "*", new EnumerationOptions() { IgnoreInaccessible = true, RecurseSubdirectories = true, MaxRecursionDepth = 3 });
+        var directorySearch = Directory.GetDirectories(Subfolders[Strings.Subfolder_Databases], "*", new EnumerationOptions() { IgnoreInaccessible = true, RecurseSubdirectories = true, MaxRecursionDepth = 3 });
         if (oldPath is not null && newPath is not null && directorySearch.Contains(oldPath))
         {
             if (Directory.Exists(newPath))
             {
-                if (MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheRenameDatabaseAlreadyExists, newPath), Resources.Title_Warning, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+                if (MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheRenameDatabaseAlreadyExists, newPath), Strings.Title_Warning, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
                 {
                     DBFile = oldFile;
                     Name = oldName;
@@ -398,7 +398,7 @@ public class Database : IDisposable
 
         if (File.Exists(newFile) && !overwrite)
         {
-            if (MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheRenameDatabaseAlreadyExists, newFile), Resources.Title_Warning, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+            if (MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheRenameDatabaseAlreadyExists, newFile), Strings.Title_Warning, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
             {
                 DBFile = oldFile;
                 Name = oldName;
@@ -449,7 +449,7 @@ public class Database : IDisposable
 
         Controller.SerializeRecords();
 
-        if (targetFile.Contains(Subfolders[Resources.Subfolder_Databases]))
+        if (targetFile.Contains(Subfolders[Strings.Subfolder_Databases]))
             File.WriteAllText(Path.Join(Path.GetDirectoryName(targetFile), "uuid.dat"), UUID);
 
         var lockFile = GetLockFile(targetFile);

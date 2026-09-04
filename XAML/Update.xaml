@@ -8,7 +8,7 @@
         xmlns:vm="clr-namespace:SylverInk.XAML.ViewModels"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=vm:UpdateViewModel}"
-        Background="{Binding AppSettings.MenuBackground}" Foreground="{Binding AppSettings.MenuForeground}" MouseLeftButtonDown="Drag" Title="{x:Static properties:Resources.Title_Update}" Height="150" Width="450">
+        Background="{Binding AppSettings.MenuBackground}" Foreground="{Binding AppSettings.MenuForeground}" MouseLeftButtonDown="Drag" Title="{x:Static properties:Strings.Title_Update}" Height="150" Width="450">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -22,6 +22,6 @@
 
         <ProgressBar Grid.ColumnSpan="3" Height="30" Minimum="0" Maximum="1" Value="{Binding Progress}" Width="375" x:Name="UpdateProgress" />
 
-        <Button Command="{Binding CancelCommand}" Grid.Column="2" Content="{x:Static properties:Resources.Word_Cancel}" Grid.Row="1" />
+        <Button Command="{Binding CancelCommand}" Grid.Column="2" Content="{x:Static properties:Strings.Word_Cancel}" Grid.Row="1" />
     </Grid>
 </Window>

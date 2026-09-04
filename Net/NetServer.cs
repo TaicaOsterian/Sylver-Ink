@@ -190,7 +190,7 @@ public class NetServer : IDisposable
 
         if (Address.Equals(IPAddress.Loopback))
         {
-            MessageBox.Show(Resources.FailedDNSConnection, Resources.Title_Error, MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(Strings.FailedDNSConnection, Strings.Title_Error, MessageBoxButton.OK, MessageBoxImage.Error);
             Active = false;
             Serving = false;
             return;
@@ -205,7 +205,7 @@ public class NetServer : IDisposable
         }
         catch
         {
-            MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheFailedToOpenServer, TcpPort), Resources.Title_Error, MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheFailedToOpenServer, TcpPort), Strings.Title_Error, MessageBoxButton.OK, MessageBoxImage.Error);
             Active = false;
             Serving = false;
             return;

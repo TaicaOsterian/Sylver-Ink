@@ -24,7 +24,7 @@ public partial class Search : Window
         if (RecentSelection is null)
             return;
 
-        if (MessageBox.Show(Localization.Resources.ConfirmDeleteNote, Localization.Resources.Title_Notification, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+        if (MessageBox.Show(Strings.ConfirmDeleteNote, Strings.Title_Notification, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
             return;
 
         CurrentDatabase.DeleteRecord(RecentSelection);
@@ -50,12 +50,12 @@ public partial class Search : Window
 
         MenuItem itemOpen = new()
         {
-            Header = Localization.Resources.Word_Open,
+            Header = Strings.Word_Open,
         };
 
         MenuItem itemDelete = new()
         {
-            Header = Localization.Resources.Word_Delete,
+            Header = Strings.Word_Delete,
         };
 
         itemOpen.Click += ContextOpen;

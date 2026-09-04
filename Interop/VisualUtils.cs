@@ -47,7 +47,7 @@ public static class VisualUtils
         {
             var child = VisualTreeHelper.GetChild(parent, i);
 
-            if (child is T typedChild && name.Equals(child.GetValue(FrameworkElement.NameProperty) as string, System.StringComparison.Ordinal))
+            if (child is T typedChild && name.Equals(child.GetValue(FrameworkElement.NameProperty) as string, StringComparison.Ordinal))
                 return typedChild;
 
             if (FindVisualChildByName<T>(child, name) is T result)

@@ -12,7 +12,7 @@ public class NoteTabViewModel : NoteEditorViewModel
     private TextPointer _initialPointer;
     private int _revisionIndex;
     private bool _revisionView;
-    private string _saveLabel = Resources.Word_Save;
+    private string _saveLabel = Strings.Word_Save;
     private string _searchText = string.Empty;
 
     public bool CanNavigateNext
@@ -129,7 +129,7 @@ public class NoteTabViewModel : NoteEditorViewModel
         CanNavigateNext = false;
         CanNavigatePrevious = Record.GetNumRevisions() > 0;
         Edited = false;
-        LastChange = Record.Locked ? Resources.NoteLocked : Record.GetNumRevisions() == 0 ? string.Format(CultureInfo.CurrentCulture, CacheNoteEntryCreated, Record.GetCreated()) : string.Format(CultureInfo.CurrentCulture, CacheNoteEntryModified, Record.GetLastChange());
+        LastChange = Record.Locked ? Strings.NoteLocked : Record.GetNumRevisions() == 0 ? string.Format(CultureInfo.CurrentCulture, CacheNoteEntryCreated, Record.GetCreated()) : string.Format(CultureInfo.CurrentCulture, CacheNoteEntryModified, Record.GetLastChange());
     }
 
     public void Deconstruct()
@@ -160,7 +160,7 @@ public class NoteTabViewModel : NoteEditorViewModel
 
     private void Delete(object? param)
     {
-        if (MessageBox.Show(Resources.ConfirmDeleteNote, Resources.Title_Notification, MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.No)
+        if (MessageBox.Show(Strings.ConfirmDeleteNote, Strings.Title_Notification, MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.No)
             return;
 
         Deconstruct();
@@ -187,7 +187,7 @@ public class NoteTabViewModel : NoteEditorViewModel
         Edited = RevisionIndex != 0 || CalculateIsEdited();
         LastChange = RevisionIndex != 0 ? string.Format(CultureInfo.CurrentCulture, CacheNoteRevisionID, Record.GetNumRevisions() - RevisionIndex, revisionTime) : string.Format(CultureInfo.CurrentCulture, CacheNoteEntryModified, revisionTime);
         RevisionView = RevisionIndex != 0;
-        SaveLabel = RevisionIndex != 0 ? Resources.Word_Restore : Resources.Word_Save;
+        SaveLabel = RevisionIndex != 0 ? Strings.Word_Restore : Strings.Word_Save;
     }
 
     private void NavigatePrevious(object? param)
@@ -203,14 +203,14 @@ public class NoteTabViewModel : NoteEditorViewModel
         Edited = true;
         LastChange = RevisionIndex == Record.GetNumRevisions() ? string.Format(CultureInfo.CurrentCulture, CacheNoteEntryCreated, revisionTime): string.Format(CultureInfo.CurrentCulture, CacheNoteRevisionID, Record.GetNumRevisions() - RevisionIndex, revisionTime);
         RevisionView = true;
-        SaveLabel = Resources.Word_Restore;
+        SaveLabel = Strings.Word_Restore;
     }
 
     private void Return(object? param)
     {
         if (Edited)
         {
-            switch (MessageBox.Show(Resources.Message_SaveBeforeClosingNote, Resources.Title_Notification, MessageBoxButton.YesNoCancel, MessageBoxImage.Information))
+            switch (MessageBox.Show(Strings.ExitMessage_SaveWork, Strings.Title_Notification, MessageBoxButton.YesNoCancel, MessageBoxImage.Information))
             {
                 case MessageBoxResult.Cancel:
                     return;
@@ -242,7 +242,7 @@ public class NoteTabViewModel : NoteEditorViewModel
         OriginalText = newText;
         RevisionView = false;
         RevisionIndex = 0;
-        SaveLabel = Resources.Word_Save;
+        SaveLabel = Strings.Word_Save;
     }
 
     private void SetNavigation()

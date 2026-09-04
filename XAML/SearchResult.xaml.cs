@@ -86,7 +86,7 @@ public partial class SearchResult : Window, IDisposable
     {
         if (ViewModel.Edited && !force)
         {
-            switch (MessageBox.Show(Localization.Resources.Message_SaveBeforeClosingNote, Localization.Resources.Title_Notification, MessageBoxButton.YesNoCancel, MessageBoxImage.Information))
+            switch (MessageBox.Show(Strings.ExitMessage_SaveWork, Strings.Title_Notification, MessageBoxButton.YesNoCancel, MessageBoxImage.Information))
             {
                 case MessageBoxResult.Cancel:
                     return;

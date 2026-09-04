@@ -10,22 +10,22 @@ public static class SettingsUtils
         switch (ColorTag)
         {
             case "P1F":
-                CommonUtils.Settings.MenuForeground = ColorSelection ?? Brushes.Gray;
+                Settings.MenuForeground = ColorSelection ?? Brushes.Gray;
                 break;
             case "P1B":
-                CommonUtils.Settings.MenuBackground = ColorSelection ?? Brushes.Beige;
+                Settings.MenuBackground = ColorSelection ?? Brushes.Beige;
                 break;
             case "P2F":
-                CommonUtils.Settings.ListForeground = ColorSelection ?? Brushes.Black;
+                Settings.ListForeground = ColorSelection ?? Brushes.Black;
                 break;
             case "P2B":
-                CommonUtils.Settings.ListBackground = ColorSelection ?? Brushes.White;
+                Settings.ListBackground = ColorSelection ?? Brushes.White;
                 break;
             case "P3F":
-                CommonUtils.Settings.AccentForeground = ColorSelection ?? Brushes.Blue;
+                Settings.AccentForeground = ColorSelection ?? Brushes.Blue;
                 break;
             case "P3B":
-                CommonUtils.Settings.AccentBackground = ColorSelection ?? Brushes.Khaki;
+                Settings.AccentBackground = ColorSelection ?? Brushes.Khaki;
                 break;
             case "PT":
                 if (TextTarget is null)

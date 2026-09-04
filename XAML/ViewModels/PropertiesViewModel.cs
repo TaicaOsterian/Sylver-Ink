@@ -167,7 +167,7 @@ public partial class PropertiesViewModel : ViewModelBase
         DBFormat = $"SIDB v.{CurrentDatabase.Format}";
         DBLongest = "...";
         DBName = CurrentDatabase.Name;
-        DBNotes = string.Format(CultureInfo.CurrentCulture, CacheNoteNumber, CurrentDatabase.RecordCount);
+        DBNotes = string.Format(CultureInfo.CurrentCulture, CacheLabelNoteNumber, CurrentDatabase.RecordCount);
         DBPath = $"{CurrentDatabase.DBFile}";
         DBTotal = "...";
 
@@ -215,7 +215,7 @@ public partial class PropertiesViewModel : ViewModelBase
 
     private async void Restore(object? param = null)
     {
-        if (MessageBox.Show(Resources.Message_ConfirmReversion, Resources.Title_Warning, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+        if (MessageBox.Show(Strings.Message_ConfirmReversion, Strings.Title_Warning, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
             return;
 
         DateTime reversion = RestoreDate ?? DateTime.UtcNow;
