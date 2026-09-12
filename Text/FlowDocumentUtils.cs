@@ -26,22 +26,29 @@ public static class FlowDocumentUtils
         return content.ToString().Trim();
     }
 
-    public static void ScrollToText(FlowDocument? document, string text, LogicalDirection direction = LogicalDirection.Forward)
+    public static void ScrollToText(FlowDocument? document, string? text, LogicalDirection direction = LogicalDirection.Forward)
     {
         if (document is null)
             return;
 
-        var box = (RichTextBox)document.Parent;
+        if (text is null)
+            return;
+
+        if (document.Parent is not RichTextBox box)
+            return;
+
+        if (box.CaretPosition is null || !ReferenceEquals(box.CaretPosition.Parent, box.Document))
+            box.CaretPosition = document.ContentStart;
 
         int index = 0;
         string plaintext = (direction == LogicalDirection.Forward
-            ? new TextRange(box.CaretPosition, box.Document.ContentEnd)
-            : new TextRange(box.Document.ContentStart, box.CaretPosition))
+            ? new TextRange(box.CaretPosition, document.ContentEnd)
+            : new TextRange(document.ContentStart, box.CaretPosition))
             .Text.ReplaceLineEndings(string.Empty);
 
         TextPointer pointer = direction == LogicalDirection.Forward
             ? box.CaretPosition
-            : box.Document.ContentStart;
+            : document.ContentStart;
 
         if (direction == LogicalDirection.Backward && plaintext.EndsWith(text, StringComparison.InvariantCultureIgnoreCase))
             plaintext = plaintext[..^text.Length];

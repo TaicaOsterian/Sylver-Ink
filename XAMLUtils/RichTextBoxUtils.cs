@@ -1,4 +1,6 @@
-﻿namespace SylverInk.XAMLUtils;
+﻿using System.Windows.Threading;
+
+namespace SylverInk.XAMLUtils;
 
 /// <summary>
 /// Custom dependency property handlers for specific needs in regards to bindings that require special support.
@@ -44,7 +46,9 @@ public class RichTextBoxUtils
         {
             rtb.Document = document;
             rtb.CaretPosition = document.ContentStart;
-        }), System.Windows.Threading.DispatcherPriority.Background);
+            FlowDocumentUtils.ScrollToText(document, (string?)document.Tag);
+            document.Tag = null;
+        }), DispatcherPriority.Background);
     }
 
     private static void OnObserveCaretChanged(DependencyObject source, DependencyPropertyChangedEventArgs e)
@@ -84,6 +88,6 @@ public class RichTextBoxUtils
         {
             rtb.CaretPosition = newCaret;
             rtb.Focus();
-        }), System.Windows.Threading.DispatcherPriority.Background);
+        }), DispatcherPriority.Background);
     }
 }

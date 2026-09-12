@@ -109,7 +109,7 @@ public static class DatabaseUtils
         OpenQuery(newRecord);
     }
 
-    public static SearchResult? OpenQuery(NoteRecord record, bool show = true)
+    public static SearchResult? OpenQuery(NoteRecord record, string? scrollTo = null)
     {
         foreach (SearchResult result in OpenQueries)
         {
@@ -121,9 +121,7 @@ public static class DatabaseUtils
 
         SearchResult resultWindow = new();
         resultWindow.ViewModel.Record = record;
-
-        if (!show)
-            return resultWindow;
+        resultWindow.ViewModel.ScrollTo = scrollTo;
 
         resultWindow.Show();
         OpenQueries.Add(resultWindow);

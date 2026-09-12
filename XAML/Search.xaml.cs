@@ -7,7 +7,6 @@ namespace SylverInk.XAML;
 /// </summary>
 public partial class Search : Window
 {
-    public string Query { get; private set; } = string.Empty;
     public SearchViewModel ViewModel => (SearchViewModel)DataContext;
 
     public Search()
@@ -77,7 +76,7 @@ public partial class Search : Window
         if (e.ChangedButton == MouseButton.Right)
             return;
 
-        OpenQuery(record)?.ViewModel.ScrollToText(Query);
+        OpenQuery(record, scrollTo: ViewModel.QueryString);
     }
 
     private void OnClose(object? sender, EventArgs e)

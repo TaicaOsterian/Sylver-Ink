@@ -99,7 +99,7 @@ public class NoteTabViewModel : NoteEditorViewModel
 
     public event EventHandler? RequestCloseSearchPopup;
 
-    public NoteTabViewModel()
+    public NoteTabViewModel() : base()
     {
         CloseSearchPopupCommand = new RelayCommand(_ => RequestCloseSearchPopup?.Invoke(this, EventArgs.Empty));
         DeleteCommand = new RelayCommand(Delete);

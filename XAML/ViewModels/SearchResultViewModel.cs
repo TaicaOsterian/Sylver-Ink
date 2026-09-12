@@ -18,12 +18,19 @@ public class SearchResultViewModel : NoteEditorViewModel
         }
     }
 
+    // Consumed by RichTextBoxUtils.OnDocumentChanged. Likely to be replaced with a DependencyProperty later.
+    public string? ScrollTo
+    {
+        get => Document.Tag as string;
+        set => Document.Tag = value;
+    }
+
     public ICommand CloseCommand { get; }
     public ICommand ViewCommand { get; }
 
     public event EventHandler? RequestClose;
 
-    public SearchResultViewModel()
+    public SearchResultViewModel() : base()
     {
         CloseCommand = new RelayCommand(_ => RequestClose?.Invoke(this, EventArgs.Empty));
         ViewCommand = new RelayCommand(View);

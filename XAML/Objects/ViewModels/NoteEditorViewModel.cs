@@ -135,7 +135,8 @@ public class NoteEditorViewModel : ViewModelBase
         set
         {
             _record = value;
-            OnPropertyChanged();
+            _document = value.GetDocument();
+            OnPropertyChanged(null);
         }
     }
 
@@ -227,8 +228,6 @@ public class NoteEditorViewModel : ViewModelBase
         LastChange = source.GetLastChange();
         IsEnabled = true;
     }
-
-    public void ScrollToText(string text) => FlowDocumentUtils.ScrollToText(Document, text);
 
     public virtual void TextChanged()
     {
