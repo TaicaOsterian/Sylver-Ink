@@ -126,8 +126,6 @@ public partial class NoteRecord
 
         RecentNotesDirty = true;
         DeferUpdateRecentNotes();
-
-        return;
     }
 
     public void Autosave(FlowDocument document)
@@ -164,8 +162,6 @@ public partial class NoteRecord
             return;
 
         DB.Changed = true;
-
-        return;
     }
 
     public void Delete()

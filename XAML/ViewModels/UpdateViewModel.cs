@@ -1,3 +1,5 @@
+using SylverInk.XAML.Objects;
+
 namespace SylverInk.XAML.ViewModels;
 
 public class UpdateViewModel : ViewModelBase

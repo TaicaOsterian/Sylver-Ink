@@ -1,11 +1,11 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace SylverInk.XAMLUtils;
+namespace SylverInk.XAML.Objects;
 
 public abstract class ViewModelBase : INotifyPropertyChanged
 {
-    public static ContextSettings AppSettings => Settings;
+    public static ContextSettings AppSettings => CommonUtils.Settings;
 
     public event PropertyChangedEventHandler? PropertyChanged;
     protected void OnPropertyChanged([CallerMemberName] string? name = null)

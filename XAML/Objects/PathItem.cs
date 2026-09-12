@@ -1,6 +1,6 @@
 ﻿using SylverInk.FileIO;
 
-namespace SylverInk.XAMLUtils;
+namespace SylverInk.XAML.Objects;
 
 /// <summary>
 /// Encapsulates a file path and provides properties for ease of display purposes.

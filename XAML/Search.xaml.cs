@@ -16,7 +16,6 @@ public partial class Search : Window
         ViewModel.RequestClose += (_, _) => Close();
         InitializeComponent();
         CreateContextMenu();
-        ViewModel.QueryCommand.Execute(true);
     }
 
     private void ContextDelete(object? sender, RoutedEventArgs e)
@@ -28,8 +27,6 @@ public partial class Search : Window
             return;
 
         CurrentDatabase.DeleteRecord(RecentSelection);
-
-        return;
     }
 
     private void ContextOpen(object? sender, RoutedEventArgs e)
@@ -38,8 +35,6 @@ public partial class Search : Window
             return;
 
         OpenQuery(RecentSelection);
-
-        return;
     }
     private void CreateContextMenu()
     {
@@ -87,6 +82,21 @@ public partial class Search : Window
 
     private void OnClose(object? sender, EventArgs e)
     {
+        ViewModel.CancelSearch();
         CommonUtils.Settings.SearchResults.Clear();
+    }
+
+    protected override async void OnSourceInitialized(EventArgs e)
+    {
+        base.OnSourceInitialized(e);
+
+        if (string.IsNullOrWhiteSpace(ViewModel.QueryString))
+        {
+            CommonUtils.Settings.SearchResults.Clear();
+
+            var token = ViewModel.StartNewSearch();
+            try { await ViewModel.SearchCurrentDatabase(token); }
+            catch (OperationCanceledException) { }
+        }
     }
 }

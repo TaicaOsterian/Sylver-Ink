@@ -65,6 +65,10 @@
   </ItemGroup>
   
   <ItemGroup>
+    <PackageReference Include="System.Resources.ResourceManager" Version="4.3.0" />
+  </ItemGroup>
+  
+  <ItemGroup>
     <None Update="res\glasses.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>

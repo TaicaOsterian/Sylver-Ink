@@ -112,8 +112,6 @@ public class Database : IDisposable
             outBuffer.AddRange(Encoding.UTF8.GetBytes(newVersion));
 
         Transmit(NetworkUtils.MessageType.TextInsert, [.. outBuffer]);
-
-        return;
     }
 
     public void CreateRevision(NoteRecord record, string newVersion, bool local = true) => CreateRevision(record.Index, newVersion, local);

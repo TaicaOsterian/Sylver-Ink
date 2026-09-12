@@ -76,7 +76,7 @@ public static class HotKeyUtils
             return;
 
         RegisterHotKey(hWndHelper.Handle, NewNoteHotKeyID, 2, (uint)KeyInterop.VirtualKeyFromKey(Key.N));
-        RegisterHotKey(hWndHelper.Handle, PreviousNoteHotKeyID, 2, (uint)KeyInterop.VirtualKeyFromKey(Key.L));
+        RegisterHotKey(hWndHelper.Handle, PreviousNoteHotKeyID, 6, (uint)KeyInterop.VirtualKeyFromKey(Key.T));
     }
 
     public static void Release()

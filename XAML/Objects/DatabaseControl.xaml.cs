@@ -24,8 +24,6 @@ public partial class DatabaseControl : UserControl
             return;
 
         CurrentDatabase.DeleteRecord(RecentSelection);
-
-        return;
     }
 
     private void ContextOpen(object? sender, RoutedEventArgs e)
@@ -34,8 +32,6 @@ public partial class DatabaseControl : UserControl
             return;
 
         OpenQuery(RecentSelection);
-
-        return;
     }
 
     private void CreateContextMenu()

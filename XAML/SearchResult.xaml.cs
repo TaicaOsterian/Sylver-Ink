@@ -177,14 +177,7 @@ public partial class SearchResult : Window, IDisposable
 
         ViewModel.Record?.DB?.Transmit(NetworkUtils.MessageType.RecordUnlock, ViewModel.Record?.Index.ToByteArray());
 
-        foreach (SearchResult result in OpenQueries)
-        {
-            if (result.ViewModel.Record != ViewModel.Record)
-                continue;
-
-            OpenQueries.Remove(result);
-            return;
-        }
+        OpenQueries.RemoveAll(query => query.ViewModel.Record.Equals(ViewModel.Record));
     }
 
     private void ResultBlock_TextChanged(object? sender, TextChangedEventArgs e)
@@ -331,7 +324,7 @@ public partial class SearchResult : Window, IDisposable
         LeaveMonitor?.Stop();
         MouseMonitor?.Stop();
     }
-    
+
     public bool UnsetWindowExTransparent()
     {
         int extendedStyle = GetWindowLong(HWnd, GWL_EXSTYLE);

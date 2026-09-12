@@ -144,8 +144,12 @@ public partial class MainWindow : Window
         await Settings.Load();
         SettingsLoaded = true;
 
+        // High-contrast theme detection
+        Microsoft.Win32.SystemEvents.UserPreferenceChanged += CommonUtils.SystemPreferenceChanged;
+        Settings.HighContrast = SystemParameters.HighContrast;
+
         // Style initialization
-        SetMenuColors(this);
+        SetMenuColors();
 
         // Documents subdirectory initialization
         foreach (var folder in Subfolders)

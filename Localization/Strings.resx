@@ -228,6 +228,9 @@
   <data name="HexCodeTooltip" xml:space="preserve">
     <value>Hex code (RGB or ARGB)</value>
   </data>
+  <data name="HighContrastAssistance" xml:space="preserve">
+    <value>When enabled, the application will automatically adjust the foreground color when you select a background, and vice versa.</value>
+  </data>
   <data name="ImportFailed" xml:space="preserve">
     <value>Failed to import the selected file: {0}</value>
     <comment>{0} = The exact error message relating to the failure.</comment>
@@ -259,6 +262,9 @@ Remember to press Import to finalize your changes!</value>
   <data name="Label_Backup" xml:space="preserve">
     <value>Backup...</value>
   </data>
+  <data name="Label_Catpuccin" xml:space="preserve">
+    <value>Catpuccin</value>
+  </data>
   <data name="Label_CustomColor" xml:space="preserve">
     <value>Custom color</value>
   </data>
@@ -275,8 +281,14 @@ Remember to press Import to finalize your changes!</value>
   <data name="Label_FontSize" xml:space="preserve">
     <value>Font size</value>
   </data>
+  <data name="Label_HighContrast" xml:space="preserve">
+    <value>High Contrast</value>
+  </data>
   <data name="Label_LineTolerance" xml:space="preserve">
     <value>Line tolerance</value>
+  </data>
+  <data name="Label_Manila" xml:space="preserve">
+    <value>Manila</value>
   </data>
   <data name="Label_MenuColors" xml:space="preserve">
     <value>Menu colors</value>
@@ -305,11 +317,20 @@ to a previous state</value>
   <data name="Label_SaveAs" xml:space="preserve">
     <value>Save as...</value>
   </data>
+  <data name="Label_SearchAllDatabases" xml:space="preserve">
+    <value>Search all databases</value>
+  </data>
+  <data name="Label_SmartAssist" xml:space="preserve">
+    <value>High contrast assistance</value>
+  </data>
   <data name="Label_TextColor" xml:space="preserve">
     <value>Text color</value>
   </data>
   <data name="Label_TextColors" xml:space="preserve">
     <value>Text colors</value>
+  </data>
+  <data name="Label_Theme" xml:space="preserve">
+    <value>Theme</value>
   </data>
   <data name="LastChangedDate" xml:space="preserve">
     <value>Last changed date</value>
@@ -464,6 +485,12 @@ Do you want to overwrite it?</value>
   <data name="Title_About" xml:space="preserve">
     <value>Sylver Ink: About</value>
   </data>
+  <data name="Title_Appearance" xml:space="preserve">
+    <value>Appearance</value>
+  </data>
+  <data name="Title_Behavior" xml:space="preserve">
+    <value>Behavior</value>
+  </data>
   <data name="Title_Error" xml:space="preserve">
     <value>Error</value>
   </data>
@@ -493,6 +520,9 @@ Do you want to overwrite it?</value>
   </data>
   <data name="Tooltip_FailedCopy" xml:space="preserve">
     <value>Failed to copy the address code to the clipboard</value>
+  </data>
+  <data name="Tooltip_SearchAllDatabases" xml:space="preserve">
+    <value>When enabled, search all open databases for the query text. When disabled, search only the active database.</value>
   </data>
   <data name="TotalLength" xml:space="preserve">
     <value>Total length:</value>

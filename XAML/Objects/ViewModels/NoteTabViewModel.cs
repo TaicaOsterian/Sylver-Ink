@@ -201,7 +201,7 @@ public class NoteTabViewModel : NoteEditorViewModel
         SetNavigation();
         Document = Record.GetDocument(RevisionIndex);
         Edited = true;
-        LastChange = RevisionIndex == Record.GetNumRevisions() ? string.Format(CultureInfo.CurrentCulture, CacheNoteEntryCreated, revisionTime): string.Format(CultureInfo.CurrentCulture, CacheNoteRevisionID, Record.GetNumRevisions() - RevisionIndex, revisionTime);
+        LastChange = RevisionIndex == Record.GetNumRevisions() ? string.Format(CultureInfo.CurrentCulture, CacheNoteEntryCreated, revisionTime) : string.Format(CultureInfo.CurrentCulture, CacheNoteRevisionID, Record.GetNumRevisions() - RevisionIndex, revisionTime);
         RevisionView = true;
         SaveLabel = Strings.Word_Restore;
     }

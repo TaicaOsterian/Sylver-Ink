@@ -38,7 +38,7 @@
                 <Button Command="{Binding CloseCommand}" Content="{x:Static properties:Strings.Word_Close}" Grid.Column="1"/>
             </Grid>
         </StackPanel>
-        
+
         <Grid HorizontalAlignment="Center" Margin="0,20" Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
@@ -52,14 +52,18 @@
             </Grid.RowDefinitions>
             <Label Content="{x:Static properties:Strings.Label_AdaptiveNotes}"/>
             <CheckBox Grid.Column="1" Command="{Binding ToggleAdaptiveCommand}" IsChecked="{Binding AdaptiveImport, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            <Label Grid.Column="2" Content="(?)" Foreground="{Binding AppSettings.AccentForeground}" ToolTip="{x:Static properties:Strings.AdaptiveNotesTooltip}"/>
+            <Label Grid.Column="2" Foreground="{Binding AppSettings.AccentForeground}" ToolTip="{x:Static properties:Strings.AdaptiveNotesTooltip}">
+                <TextBlock Text="(?)" TextDecorations="Underline"/>
+            </Label>
             <Label Content="{x:Static properties:Strings.Label_LineTolerance}" Grid.Row="2"/>
             <StackPanel Grid.Column="1" HorizontalAlignment="Center" IsEnabled="{Binding ManualImport}" Orientation="Horizontal" Grid.Row="2">
                 <Button Command="{Binding LineToleranceChangeCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}" Content="-" Width="20"/>
                 <TextBox HorizontalContentAlignment="Center" IsReadOnly="True" Text="{Binding LineTolerance}" Width="20"/>
                 <Button Command="{Binding LineToleranceChangeCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}" Content="+" Width="20"/>
             </StackPanel>
-            <Label Grid.Column="2" Content="(?)" Foreground="{Binding AppSettings.AccentForeground}" Grid.Row="2" ToolTip="{x:Static properties:Strings.LineToleranceTooltip}"/>
+            <Label Grid.Column="2" Foreground="{Binding AppSettings.AccentForeground}" Grid.Row="2" ToolTip="{x:Static properties:Strings.LineToleranceTooltip}">
+                <TextBlock Text="(?)" TextDecorations="Underline"/>
+            </Label>
         </Grid>
         <Border BorderBrush="{Binding AppSettings.MenuForeground}" BorderThickness="1" Grid.Row="2" Margin="20,5,20,20">
             <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">

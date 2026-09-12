@@ -1,7 +1,7 @@
 ﻿using SylverInk.XAML.Objects;
 using System.Globalization;
-using static SylverInk.Notes.DatabaseUtils;
 using static SylverInk.FileIO.FileUtils;
+using static SylverInk.Notes.DatabaseUtils;
 
 namespace SylverInk.XAMLUtils;
 

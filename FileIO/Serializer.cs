@@ -22,6 +22,7 @@ public class Serializer : IDisposable
     /// See SIDB.md for a file format description.
     /// </summary>
     public required byte DatabaseFormat { get; set; }
+    public byte? Flags { get; set; }
     public bool Headless { get; private set; }
     public bool Hidden { get; set; }
     public bool UseLZW { get; private set; }
@@ -120,7 +121,7 @@ public class Serializer : IDisposable
     private void HandleFormat()
     {
         Headless = DatabaseFormat < 3;
-        UseLZW = DatabaseFormat % 2 == 0;
+        UseLZW = DatabaseFormat > 14 ? (Flags & 1) == 1 : DatabaseFormat % 2 == 0;
 
         if (!UseLZW)
             return;
@@ -220,6 +221,9 @@ public class Serializer : IDisposable
 
         string header = Encoding.UTF8.GetString(_buffer);
         DatabaseFormat = (byte)header[^1];
+
+        if (DatabaseFormat > 14)
+            Flags = (byte?)_fileStream?.ReadByte();
 
         HandleFormat();
     }
@@ -356,6 +360,9 @@ public class Serializer : IDisposable
         _fileStream?.Write(Encoding.UTF8.GetBytes(
             $"SYL {(char)(testFormat ?? DatabaseFormat)}"
         ));
+
+        if (DatabaseFormat > 14)
+            _fileStream?.Write([Flags ?? 0]);
 
         HandleFormat();
     }

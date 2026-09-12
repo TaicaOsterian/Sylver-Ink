@@ -8,21 +8,27 @@
         xmlns:vm="clr-namespace:SylverInk.XAML.ViewModels"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=vm:SearchViewModel}"
-        Background="{Binding AppSettings.MenuBackground}" Closed="OnClose" Foreground="{Binding AppSettings.MenuForeground}" Height="525" MinHeight="275" MinWidth="350" MouseLeftButtonDown="Drag" ResizeMode="NoResize" ShowInTaskbar="False" Title="{x:Static properties:Strings.Title_Search}" Topmost="True" Width="350">
+        Background="{Binding AppSettings.MenuBackground}" Closed="OnClose" Foreground="{Binding AppSettings.MenuForeground}" Height="550" MouseLeftButtonDown="Drag" ResizeMode="NoResize" ShowInTaskbar="False" Title="{x:Static properties:Strings.Title_Search}" Topmost="True" Width="350">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="150"/>
+            <RowDefinition Height="175"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <StackPanel>
             <Label Content="{x:Static properties:Strings.SearchText}" FontStyle="Italic" HorizontalAlignment="Right" Margin="0,20,40,0"/>
             <TextBox Margin="20,0" Text="{Binding QueryString}" x:Name="SearchText"/>
-            <Grid Margin="0,50,0,0">
+            <StackPanel HorizontalAlignment="Right" Margin="20" Orientation="Horizontal">
+                <Label FontStyle="Italic" Foreground="{Binding AppSettings.AccentForeground}" ToolTip="{x:Static properties:Strings.Tooltip_SearchAllDatabases}">
+                    <TextBlock Text="{x:Static properties:Strings.Label_SearchAllDatabases}" TextWrapping="WrapWithOverflow"/>
+                </Label>
+                <CheckBox IsChecked="{Binding AppSettings.QueryAllDatabases}"/>
+            </StackPanel>
+            <Grid Margin="0,15,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Button Command="{Binding QueryCommand}" Content="{x:Static properties:Strings.Word_Query}" IsEnabled="{Binding CanQuery}"/>
+                <Button Command="{Binding QueryCommand}" Content="{x:Static properties:Strings.Word_Query}"/>
                 <Button Command="{Binding CloseCommand}" Grid.Column="1" Content="{x:Static properties:Strings.Word_Close}"/>
             </Grid>
         </StackPanel>

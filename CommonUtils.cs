@@ -1,4 +1,5 @@
-﻿using SylverInk.XAML;
+﻿using Microsoft.Win32;
+using SylverInk.XAML;
 using System.Globalization;
 using System.Threading;
 using static SylverInk.FileIO.FileUtils;
@@ -134,15 +135,22 @@ public static partial class CommonUtils
 
         var initTask = Task.Run(() =>
         {
-            do
+            try
             {
-                InitComplete = Databases.Count > 0
-                    && SettingsLoaded
-                    && UpdatesChecked;
+                do
+                {
+                    InitComplete = Databases.Count > 0
+                        && SettingsLoaded
+                        && UpdatesChecked;
 
-                if (Concurrent(() => Application.Current.MainWindow.FindName("DatabasesPanel")) is null)
-                    InitComplete = false;
-            } while (!InitComplete && !token.IsCancellationRequested);
+                    if (Concurrent(() => Application.Current.MainWindow.FindName("DatabasesPanel")) is null)
+                        InitComplete = false;
+                } while (!InitComplete && !token.IsCancellationRequested);
+            }
+            catch
+            {
+                return;
+            }
         }, token);
 
         await initTask;
@@ -183,8 +191,6 @@ public static partial class CommonUtils
 
         // Create an empty database if and only if we haven't loaded any from files
         await Database.Create(Path.Join(Subfolders[Strings.Subfolder_Databases], DefaultDatabase, $"{DefaultDatabase}.sidb"));
-
-        return;
     }
 
     private static void RestoreActiveNotes()
@@ -251,7 +257,14 @@ public static partial class CommonUtils
             PlacementTarget = Application.Current.MainWindow,
             StaysOpen = false
         };
-        return;
+    }
+
+    public static void SystemPreferenceChanged(object? sender, UserPreferenceChangedEventArgs e)
+    {
+        if (e.Category != UserPreferenceCategory.General)
+            return;
+
+        Settings.HighContrast = SystemParameters.HighContrast;
     }
 
     public static byte[] ToByteArray(this int data) => [

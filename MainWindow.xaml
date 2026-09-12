@@ -31,12 +31,14 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
+
                     <TextBox Width="250" Margin="0,10" Text="{Binding RenameDatabaseName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" x:Name="DatabaseNameBox">
                         <TextBox.InputBindings>
                             <KeyBinding Key="Enter" Command="{Binding RenamePopupEnterCommand}" />
                             <KeyBinding Key="Escape" Command="{Binding RenamePopupEscapeCommand}" />
                         </TextBox.InputBindings>
                     </TextBox>
+
                     <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center">
                         <Button Command="{Binding SaveRenameCommand}" Content="{x:Static properties:Strings.Word_Save}" Margin="5"/>
                         <Button Command="{Binding CancelRenameCommand}" Content="{x:Static properties:Strings.Word_Cancel}" Margin="5"/>
@@ -44,7 +46,7 @@
                 </Grid>
             </Border>
         </Popup>
-        
+
         <Popup IsOpen="{Binding ConnectPopupVisible, Mode=TwoWay}"
                Height="75" Placement="Mouse" PopupAnimation="Fade"
                StaysOpen="False" Width="275" x:Name="ConnectAddress">
@@ -54,6 +56,7 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
+
                     <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" VerticalAlignment="Center">
                         <Label Content="{x:Static properties:Strings.Label_AddressCode}"/>
                         <TextBox Width="75" Margin="0,10"
@@ -64,8 +67,11 @@
                                 <KeyBinding Key="Escape" Command="{Binding ConnectPopupEscapeCommand}" />
                             </TextBox.InputBindings>
                         </TextBox>
-                        <Label Content="(?)" Foreground="{Binding AppSettings.AccentForeground}" ToolTip="{x:Static properties:Strings.ConnectLabelTooltip}"/>
+                        <Label Foreground="{Binding AppSettings.AccentForeground}" ToolTip="{x:Static properties:Strings.ConnectLabelTooltip}">
+                            <TextBlock Text="(?)" TextDecorations="Underline"/>
+                        </Label>
                     </StackPanel>
+
                     <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center">
                         <Button Command="{Binding SaveConnectCommand}" Content="{x:Static properties:Strings.Word_Connect}" Margin="5"/>
                         <Button Command="{Binding CancelConnectCommand}" Content="{x:Static properties:Strings.Word_Cancel}" Margin="5"/>
@@ -73,7 +79,7 @@
                 </Grid>
             </Border>
         </Popup>
-        
+
         <Popup IsOpen="{Binding CodePopupVisible, Mode=TwoWay}"
                Height="75" Placement="Mouse" PopupAnimation="Fade"
                StaysOpen="False" Width="275" x:Name="CodePopup">
@@ -83,13 +89,17 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
+
                     <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" VerticalAlignment="Center">
                         <Label Content="{x:Static properties:Strings.Label_AddressCode}"/>
                         <TextBox Margin="0,10" IsReadOnly="True" Width="75"
                                  Text="{Binding AddressCodeDisplay, Mode=OneWay}"
                                  x:Name="CodeBox"/>
-                        <Label Content="(?)" Foreground="{Binding AppSettings.AccentForeground}" ToolTip="{x:Static properties:Strings.ServerCodeLabelTooltip}"/>
+                        <Label Foreground="{Binding AppSettings.AccentForeground}" ToolTip="{x:Static properties:Strings.ServerCodeLabelTooltip}">
+                            <TextBlock Text="(?)" TextDecorations="Underline"/>
+                        </Label>
                     </StackPanel>
+
                     <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center">
                         <Button Command="{Binding CopyAddressCodeCommand}" Content="{x:Static properties:Strings.Word_Copy}" Margin="5"/>
                         <Button Command="{Binding CloseCodePopupCommand}" Content="{x:Static properties:Strings.Word_Close}" Margin="5"/>
@@ -97,7 +107,7 @@
                 </Grid>
             </Border>
         </Popup>
-        
+
         <Menu x:Name="DatabaseMenu">
             <MenuItem Header="{x:Static properties:Strings.Word_File}" Height="25">
                 <MenuItem Command="{Binding NewDatabaseCommand}" Header="{x:Static properties:Strings.Word_New}" Tag="Always"/>
@@ -139,8 +149,8 @@
             </MenuItem>
         </Menu>
 
-        <Label Content="Sylver Ink" FontSize="16" FontStyle="Italic" FontWeight="Light" Grid.Row="1" HorizontalAlignment="Center" Margin="0,15" VerticalAlignment="Top"/>
+        <Label Content="Sylver Ink" FontSize="16" FontStyle="Italic" FontWeight="Light" Foreground="{Binding AppSettings.MenuForeground}" Grid.Row="1" HorizontalAlignment="Center" Margin="0,15" VerticalAlignment="Top"/>
         <TabControl Background="{Binding AppSettings.MenuBackground}" BorderThickness="0" Foreground="{Binding AppSettings.MenuForeground}" Grid.Row="2" SelectionChanged="MenuTabChanged" x:Name="DatabasesPanel"/>
-        <Label Content="{Binding AppSettings.VersionString}" FontSize="9" FontStyle="Italic" FontWeight="Light" HorizontalAlignment="Right" Margin="0,5" Grid.Row="3" VerticalAlignment="Bottom"/>
+        <Label Content="{Binding AppSettings.VersionString}" FontSize="9" FontStyle="Italic" FontWeight="Light" Foreground="{Binding AppSettings.MenuForeground}" HorizontalAlignment="Right" Margin="0,5" Grid.Row="3" VerticalAlignment="Bottom"/>
     </Grid>
 </Window>

@@ -219,6 +219,9 @@
   <data name="HexCodeTooltip" xml:space="preserve">
     <value>Código Hex (RGB o ARGB)</value>
   </data>
+  <data name="HighContrastAssistance" xml:space="preserve">
+    <value>Cuando está activada, la aplicación ajusta automáticamente el color de primer plano al seleccionar un fondo, y viceversa.</value>
+  </data>
   <data name="ImportFailed" xml:space="preserve">
     <value>No se pudo importar el archivo seleccionado: {0}</value>
   </data>
@@ -246,6 +249,9 @@ Recuerda presionar Importar para finalizar tus cambios!</value>
   <data name="Label_Backup" xml:space="preserve">
     <value>Respaldo...</value>
   </data>
+  <data name="Label_Catpuccin" xml:space="preserve">
+    <value>Catpuccín</value>
+  </data>
   <data name="Label_CustomColor" xml:space="preserve">
     <value>Color personalizado</value>
   </data>
@@ -261,8 +267,14 @@ Recuerda presionar Importar para finalizar tus cambios!</value>
   <data name="Label_FontSize" xml:space="preserve">
     <value>Tamaño de fuente</value>
   </data>
+  <data name="Label_HighContrast" xml:space="preserve">
+    <value>Alto Contraste</value>
+  </data>
   <data name="Label_LineTolerance" xml:space="preserve">
     <value>Tolerancia de líneas</value>
+  </data>
+  <data name="Label_Manila" xml:space="preserve">
+    <value>Manila</value>
   </data>
   <data name="Label_MenuColors" xml:space="preserve">
     <value>Menú de colores</value>
@@ -283,16 +295,26 @@ Recuerda presionar Importar para finalizar tus cambios!</value>
     <value>Anterior...</value>
   </data>
   <data name="Label_Restore" xml:space="preserve">
-    <value>Restaurar la base de datos</value>
+    <value>Restaurar la base de datos
+a un estado anterior</value>
   </data>
   <data name="Label_SaveAs" xml:space="preserve">
     <value>Guardar como...</value>
+  </data>
+  <data name="Label_SearchAllDatabases" xml:space="preserve">
+    <value>Buscar en todas las bases de datos</value>
+  </data>
+  <data name="Label_SmartAssist" xml:space="preserve">
+    <value>Ayuda con el contraste visual</value>
   </data>
   <data name="Label_TextColor" xml:space="preserve">
     <value>Color de texto</value>
   </data>
   <data name="Label_TextColors" xml:space="preserve">
     <value>Colores de texto</value>
+  </data>
+  <data name="Label_Theme" xml:space="preserve">
+    <value>Estilo visual</value>
   </data>
   <data name="LastChangedDate" xml:space="preserve">
     <value>Fecha del último cambio</value>
@@ -434,6 +456,12 @@ Recuerda presionar Importar para finalizar tus cambios!</value>
   <data name="Title_About" xml:space="preserve">
     <value>Sylver Ink: Sobre</value>
   </data>
+  <data name="Title_Appearance" xml:space="preserve">
+    <value>Apariencia</value>
+  </data>
+  <data name="Title_Behavior" xml:space="preserve">
+    <value>Funcionamiento</value>
+  </data>
   <data name="Title_Error" xml:space="preserve">
     <value>Error</value>
   </data>
@@ -463,6 +491,9 @@ Recuerda presionar Importar para finalizar tus cambios!</value>
   </data>
   <data name="Tooltip_FailedCopy" xml:space="preserve">
     <value>No se ha podido copiar la dirección del código al portapapeles</value>
+  </data>
+  <data name="Tooltip_SearchAllDatabases" xml:space="preserve">
+    <value>Cuando está activada, busca el texto de la consulta en todas las bases de datos abiertas. Cuando está desactivada, busca solo en la base de datos activa.</value>
   </data>
   <data name="TotalLength" xml:space="preserve">
     <value>Longitud total:</value>

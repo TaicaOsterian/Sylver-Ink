@@ -11,7 +11,7 @@ public static class FileUtils
 {
     public static string DocumentsFolder { get; } = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Sylver Ink");
     public static string SettingsFile { get; } = Path.Join(DocumentsFolder, $"{Strings.Word_Settings.ToLower(CultureInfo.CurrentCulture)}.sis");
-    public static int HighestSIDBFormat { get; } = 14;
+    public static int HighestSIDBFormat { get; } = 15;
     public static char[] InvalidPathChars { get; } = ['/', '\\', ':', '*', '"', '?', '<', '>', '|'];
     public static Dictionary<string, string> Subfolders { get; } = new([
         new(Strings.Subfolder_Databases, Path.Join(DocumentsFolder, Strings.Subfolder_Databases))

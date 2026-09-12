@@ -1,5 +1,5 @@
+using SylverInk.XAML.Objects;
 using System.Globalization;
-using System.Windows.Markup;
 using static SylverInk.Notes.DatabaseUtils;
 
 namespace SylverInk.XAML.ViewModels;

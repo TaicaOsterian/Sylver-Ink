@@ -36,6 +36,7 @@ The Settings window provides options for customizing the user's experience; plac
 
 ## Contributions
 
-- [Taica](https://github.com/taicanium/) (code base, frontend design)
+- [Taica](https://motebeta.com/) (frontend and backend design)
 - N. Hunter (backend debugging and testing)
+- Charly S. (Spanish localization)
 - [Miles Farber](https://github.com/milesfarber/) (therapy)

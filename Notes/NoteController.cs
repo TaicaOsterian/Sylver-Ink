@@ -249,7 +249,6 @@ public partial class NoteController : IDisposable
             Records.Clear();
 
         DeserializeRecords();
-        return;
     }
 
     public void MakeBackup()

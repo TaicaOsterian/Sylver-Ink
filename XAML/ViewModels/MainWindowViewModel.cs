@@ -1,3 +1,4 @@
+using SylverInk.XAML.Objects;
 using System.Globalization;
 using static SylverInk.FileIO.FileUtils;
 using static SylverInk.Notes.DatabaseUtils;
@@ -267,8 +268,6 @@ public class MainWindowViewModel : ViewModelBase
 
         CommonUtils.Settings.RecentDatabases.Remove(new() { FullPath = path });
         DeferUpdateRecentNotes();
-
-        return;
     }
 
     private static void MenuProperties(object? param)

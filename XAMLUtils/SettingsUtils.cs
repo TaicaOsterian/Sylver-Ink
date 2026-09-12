@@ -7,25 +7,27 @@ public static class SettingsUtils
         if (ColorTag is null)
             return;
 
+        var theme = Settings.HighContrast ? Themes.HighContrast : Settings.SelectedTheme;
+
         switch (ColorTag)
         {
             case "P1F":
-                Settings.MenuForeground = ColorSelection ?? Brushes.Gray;
+                Settings.MenuForeground = ColorSelection ?? theme.MenuForeground;
                 break;
             case "P1B":
-                Settings.MenuBackground = ColorSelection ?? Brushes.Beige;
+                Settings.MenuBackground = ColorSelection ?? theme.MenuBackground;
                 break;
             case "P2F":
-                Settings.ListForeground = ColorSelection ?? Brushes.Black;
+                Settings.ListForeground = ColorSelection ?? theme.ListForeground;
                 break;
             case "P2B":
-                Settings.ListBackground = ColorSelection ?? Brushes.White;
+                Settings.ListBackground = ColorSelection ?? theme.ListBackground;
                 break;
             case "P3F":
-                Settings.AccentForeground = ColorSelection ?? Brushes.Blue;
+                Settings.AccentForeground = ColorSelection ?? theme.AccentForeground;
                 break;
             case "P3B":
-                Settings.AccentBackground = ColorSelection ?? Brushes.Khaki;
+                Settings.AccentBackground = ColorSelection ?? theme.AccentBackground;
                 break;
             case "PT":
                 if (TextTarget is null)

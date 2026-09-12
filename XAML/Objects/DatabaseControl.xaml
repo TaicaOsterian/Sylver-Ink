@@ -23,14 +23,18 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
+
                 <Grid Margin="10">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
+
                     <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" VerticalAlignment="Bottom">
                         <Label Content="{x:Static properties:Strings.RecentNotes}" FontStyle="Italic"/>
-                        <Label Content="(?)" Foreground="{Binding AppSettings.AccentForeground}" ToolTip="{x:Static properties:Strings.RecentNotesTooltip}"/>
+                        <Label Foreground="{Binding AppSettings.AccentForeground}" ToolTip="{x:Static properties:Strings.RecentNotesTooltip}">
+                            <TextBlock Text="(?)" TextDecorations="Underline"/>
+                        </Label>
                     </StackPanel>
                     <Border Grid.Row="1" BorderBrush="{Binding AppSettings.AccentBackground}" BorderThickness="1">
                         <Grid Background="{Binding AppSettings.AccentBackground}">
@@ -38,6 +42,7 @@
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
+
                             <ListBox AlternationCount="2" BorderThickness="0" ClipToBounds="True" ItemsSource="{Binding AppSettings.RecentNotes}" Margin="0,0,1,0" MinWidth="60"
                                      MouseUp="ListItemChosen"
                                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -66,7 +71,9 @@
                 </Grid>
                 <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Grid.Row="1" VerticalAlignment="Bottom">
                     <Label Content="{x:Static properties:Strings.NewNote}" FontStyle="Italic"/>
-                    <Label Content="(?)" Foreground="{Binding AppSettings.AccentForeground}" ToolTip="{x:Static properties:Strings.NewNoteTooltip}"/>
+                    <Label Foreground="{Binding AppSettings.AccentForeground}" ToolTip="{x:Static properties:Strings.NewNoteTooltip}">
+                        <TextBlock Text="(?)" TextDecorations="Underline"/>
+                    </Label>
                 </StackPanel>
                 <TextBox KeyDown="NewNoteKeydown" Margin="5" Grid.Row="2" VerticalAlignment="Top"/>
                 <Grid Margin="0,10" Grid.Row="3">
@@ -82,6 +89,7 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
+
                     <Button Command="{Binding SearchCommand}" Grid.Column="1" Content="{x:Static properties:Strings.Word_Search}" Margin="0,5"/>
                     <Button Command="{Binding ImportCommand}" Grid.Column="3" Content="{x:Static properties:Strings.Word_Import}" Margin="0,5"/>
                     <Button Command="{Binding SettingsCommand}" Grid.Column="1" Content="{x:Static properties:Strings.Word_Settings}" Margin="0,5" Grid.Row="2"/>

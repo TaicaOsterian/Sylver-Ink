@@ -1,4 +1,5 @@
 using SylverInk.FileIO;
+using SylverInk.XAML.Objects;
 using System.Globalization;
 using System.Text;
 using static SylverInk.Notes.DatabaseUtils;

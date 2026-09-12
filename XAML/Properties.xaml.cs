@@ -29,8 +29,6 @@ public partial class Properties : Window
 
         headerButton.Height = 30;
         headerButton.Width = 120;
-
-        return;
     }
 
     private void Drag(object? sender, MouseButtonEventArgs e) => DragMove();

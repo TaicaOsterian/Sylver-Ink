@@ -1,22 +1,14 @@
+using SylverInk.XAML.Objects;
+using System.Threading;
 using System.Windows.Data;
 using static SylverInk.Notes.DatabaseUtils;
 
 namespace SylverInk.XAML.ViewModels;
 
-public class SearchViewModel : ViewModelBase
+public class SearchViewModel : ViewModelBase, IDisposable
 {
-    private bool _canQuery = true;
-    private string _queryString = string.Empty;
-
-    public bool CanQuery
-    {
-        get => _canQuery;
-        set
-        {
-            _canQuery = value;
-            OnPropertyChanged();
-        }
-    }
+    private CancellationTokenSource? _cts;
+    private static string _queryString = string.Empty;
 
     public string QueryString
     {
@@ -39,48 +31,82 @@ public class SearchViewModel : ViewModelBase
         QueryCommand = new RelayCommand(Query);
     }
 
-    private async Task PerformSearch()
+    public void CancelSearch()
     {
-        foreach (Database db in Databases)
-            await SearchDatabase(db);
+        _cts?.Cancel();
+        _cts?.Dispose();
+        _cts = null;
+    }
+
+    public void Dispose()
+    {
+        _cts?.Cancel();
+        _cts?.Dispose();
+        GC.SuppressFinalize(this);
+    }
+
+    private async Task PerformSearch(CancellationToken token)
+    {
+        if (CommonUtils.Settings.QueryAllDatabases)
+        {
+            foreach (Database db in Databases)
+            {
+                token.ThrowIfCancellationRequested();
+                await SearchDatabase(db, token);
+            }
+        }
+        else
+        {
+            await SearchCurrentDatabase(token);
+        }
     }
 
     private async void Query(object? param)
     {
-        if (param is null)
-            CanQuery = false;
+        var token = StartNewSearch();
 
-        await PerformSearch();
+        CommonUtils.Settings.SearchResults.Clear();
 
-        if (param is null)
-            CanQuery = true;
+        try
+        {
+            await PerformSearch(token);
+        }
+        catch { }
     }
 
-    private async Task SearchDatabase(Database db)
+    public async Task SearchCurrentDatabase(CancellationToken token)
     {
-        CommonUtils.Settings.SearchResults.Clear();
-        db.UpdateWordPercentages();
+        await SearchDatabase(CurrentDatabase, token);
+    }
 
-        List<NoteRecord> results = [];
+    private async Task SearchDatabase(Database db, CancellationToken token)
+    {
+        db.UpdateWordPercentages();
 
         ListCollectionView view = (ListCollectionView)CollectionViewSource.GetDefaultView(CommonUtils.Settings.SearchResults);
         view.CustomSort ??= Comparer<NoteRecord>.Create(new((r1, r2) => r2.MatchTags(QueryString).CompareTo(r1.MatchTags(QueryString))));
 
-        for (int i = 0; i < db.RecordCount; i++)
+        await Task.Run(async () =>
         {
-            if (db.GetRecord(i) is not NoteRecord newRecord)
-                continue;
+            for (int i = 0; i < db.RecordCount; i++)
+            {
+                token.ThrowIfCancellationRequested();
 
-            bool textFound = await SearchRecord(newRecord);
+                if (db.GetRecord(i) is not NoteRecord rec)
+                    continue;
 
-            if (!textFound)
-                continue;
+                if (!await SearchRecord(rec))
+                    continue;
 
-            results.Add(newRecord);
-        }
+                rec.MatchTags(QueryString);
 
-        for (int i = 0; i < results.Count; i++)
-            CommonUtils.Settings.SearchResults.Add(results[i]);
+                Concurrent(() =>
+                {
+                    if (!token.IsCancellationRequested)
+                        CommonUtils.Settings.SearchResults.Add(rec);
+                });
+            }
+        }, token);
     }
 
     private Task<bool> SearchRecord(NoteRecord record) => Task.Run(() =>
@@ -105,4 +131,11 @@ public class SearchViewModel : ViewModelBase
 
         return false;
     });
+
+    internal CancellationToken StartNewSearch()
+    {
+        CancelSearch();
+        _cts = new CancellationTokenSource();
+        return _cts.Token;
+    }
 }

@@ -8,6 +8,10 @@ Format number -- [1 byte]
 
 # Format schemas
 
+**Every format version prior to Format 15 encodes whether the data is compressed or plaintext.** An odd-numbered version number indicates plaintext; its immediate successor number indicates LZW compression. (For example, Format 13 and Format 14 encode the same data, but Format 13 is uncompressed, while Format 14 is compressed.)
+
+Starting from Format 15, the header contains a flag byte - **Bit 0 of the flag byte indicates the compression state**, rather than the version byte.
+
 - Format 1
 
 ```
@@ -30,7 +34,7 @@ The LZW bit stream is formatted with a code dictionary at most 25 bits wide, yie
 
 The dictionary is not reset when its width limit is reached. This results in exponential resource usage with increasing database size, eventually becoming prohibitive.
 
-- Format 3/4
+- Format 4
 
 Add database name to front of data.
 
@@ -47,7 +51,7 @@ Record count -- [4 bytes: big-endian unsigned int]
         Revision substring -- [4 bytes][n bytes: string. The text to insert in the record after removing all text after the revision start index. May be string.Empty]
 ```
 
-- Format 5/6
+- Format 6
 
 Add record UUID to front of record data.
 
@@ -65,7 +69,7 @@ Record count -- [4 bytes: big-endian unsigned int]
         Revision substring -- [4 bytes][n bytes: string. The text to insert in the record after removing all text after the revision start index. May be string.Empty]
 ```
 
-- Format 7/8
+- Format 8
 
 Add database UUID to front of database data. Add revision UUID to front of revision data.
 
@@ -85,23 +89,48 @@ Record count -- [4 bytes: big-endian unsigned int]
         Revision substring -- [4 bytes][n bytes: string. The text to insert in the record after removing all text after the revision start index. May be string.Empty]
 ```
 
-- Format 9/10
+- Format 10
 
 For formats >= 9, Sylver Ink expects to read Xaml data in record text. This data takes the form of a single FlowDocument object containing blocks representing the record data. See MSDN for more info.
 
 SIDB structure is otherwise unchanged in this revision.
 
-- Format 11/12
+- Format 12
 
 For formats >= 11, Sylver Ink encodes and decodes LZW data using a code-packet dictionary that resets upon reaching a certain size.
 
 SIDB structure is otherwise unchanged in this revision.
 
-- Format 13/14
+- Format 14
 
 UUID, name and datetime objects: Length strings reduced from 4 bytes to 2.
 
 ```
+Database UUID -- [2 bytes][n bytes: string]
+Database name -- [2 bytes: big-endian unsigned short, length of following string][n bytes: string]
+Record count -- [4 bytes: big-endian unsigned int]
+    Record UUID -- [2 bytes][n bytes: string]
+    Record creation date/time -- [2 bytes][n bytes: string from long]
+    Record index -- [4 bytes][n bytes: string from signed int]
+    Record initial state -- [4 bytes][n bytes: string. Initial text of the record at the time of creation]
+    Record modified date/time -- [2 bytes][n bytes: string from long. Date and time of the last change to record]
+    Revision count -- [4 bytes][n bytes: string from signed int. Number of changes made to record]
+        Revision UUID -- [2 bytes][n bytes: string]
+        Revision creation date/time -- [4 bytes][n bytes: string from long. Date the change was made]
+        Revision start index -- [4 bytes][n bytes: string from signed int. Index of the change to the record string. Dependant on the state of the record after reconstruction from all previous revisions (see NoteRecord.Reconstruct)]
+        Revision substring -- [4 bytes][n bytes: string. The text to insert in the record after removing all text after the revision start index. May be string.Empty]
+```
+
+- Format 15
+
+The header now contains a flag byte immediately following the version number and preceding the database UUID.
+
+Currently, Bit 0 of the flag byte encodes the compression state (0 = uncompressed, 1 = LZW-compressed), while the remaining 7 bits are reserved.
+
+```
+Flags -- [1 byte]
+    Bits 7-1 -- Reserved.
+    Bit 0 -- LZW compression state. (0 = uncompressed, 1 = LZW-compressed)
 Database UUID -- [2 bytes][n bytes: string]
 Database name -- [2 bytes: big-endian unsigned short, length of following string][n bytes: string]
 Record count -- [4 bytes: big-endian unsigned int]
