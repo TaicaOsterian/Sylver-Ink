@@ -7,10 +7,10 @@ using static SylverInk.XAMLUtils.MainWindowUtils;
 
 namespace SylverInk.Notes;
 
-public struct NoteRevision(long created = -1, int startIndex = -1, string? substring = null, string? uuid = null)
+public struct NoteRevision(long created = -1, bool isAutosave = false, int startIndex = -1, string? substring = null, string? uuid = null)
 {
     public long Created { get; set; } = created;
-    public bool IsAutosave { get; set; }
+    public bool IsAutosave { get; set; } = isAutosave;
     public int StartIndex { get; set; } = startIndex;
     public string? Substring { get; set; } = substring;
     public string? Uuid { get; set; } = uuid ?? MakeUUID(UUIDType.Revision);
@@ -208,6 +208,12 @@ public partial class NoteRecord
             if (serializer?.DatabaseFormat >= 7)
                 _revision.Uuid = serializer?.ReadShortString();
             _revision.Created = serializer?.ReadLong() ?? DateTime.UtcNow.ToBinary();
+            if (serializer?.DatabaseFormat >= 16)
+            {
+                byte flags = serializer?.ReadByte() ?? 0;
+
+                _revision.IsAutosave = (flags & 1) == 0;
+            }
             _revision.StartIndex = serializer?.ReadInt32() ?? 0;
             _revision.Substring = serializer?.ReadString();
             Add(_revision);
@@ -226,9 +232,12 @@ public partial class NoteRecord
             return false;
 
         var recordObj = (NoteRecord?)obj;
-        return base.Equals(obj) ||
-            (Created.Equals(recordObj?.Created) && Index.Equals(recordObj?.Index) && Initial?.Equals(recordObj?.Initial, StringComparison.Ordinal) is true && LastChange.Equals(recordObj?.LastChange)) ||
-            (UUID?.Equals(recordObj?.UUID ?? string.Empty, StringComparison.Ordinal) is true);
+        return base.Equals(obj)
+            || (Created.Equals(recordObj?.Created)
+                && Index.Equals(recordObj?.Index)
+                && Initial?.Equals(recordObj?.Initial, StringComparison.Ordinal) is true
+                && LastChange.Equals(recordObj?.LastChange))
+            || (UUID?.Equals(recordObj?.UUID ?? string.Empty, StringComparison.Ordinal) is true);
     }
 
     private int ExtractTags()
@@ -265,15 +274,15 @@ public partial class NoteRecord
         return Tags.Count;
     }
 
-    public string GetCreated() => GetCreatedObject().ToLocalTime().ToString(DateFormat, CultureInfo.InvariantCulture);
+    public string GetCreated() => GetCreatedObject().ToLocalTime().ToString(DateFormat, CultureInfo.CurrentCulture);
 
     public DateTime GetCreatedObject() => DateTime.FromBinary(Created);
 
-    public override int GetHashCode() => int.Parse((UUID ??= MakeUUID(UUIDType.Record))[^8..], NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo);
+    public override int GetHashCode() => int.Parse((UUID ??= MakeUUID(UUIDType.Record))[^8..], NumberStyles.HexNumber, NumberFormatInfo.CurrentInfo);
 
     public DateTime GetLastChangeObject() => DateTime.FromBinary(LastChange);
 
-    public string GetLastChange() => GetLastChangeObject().ToLocalTime().ToString(DateFormat, CultureInfo.InvariantCulture);
+    public string GetLastChange() => GetLastChangeObject().ToLocalTime().ToString(DateFormat, CultureInfo.CurrentCulture);
 
     public FlowDocument GetDocument() => TextConverter.Parse(Reconstruct(), TextFormat.Xaml);
 
@@ -285,9 +294,11 @@ public partial class NoteRecord
 
     public NoteRevision GetRevision(int index) => Revisions[Revisions.Count - 1 - index];
 
-    public string GetRevisionTime(int index) => DateTime.FromBinary(GetRevision(index).Created).ToLocalTime().ToString(DateFormat, CultureInfo.InvariantCulture);
+    public string GetRevisionTime(int index) => index < Revisions.Count
+        ? DateTime.FromBinary(GetRevision(index).Created).ToLocalTime().ToString(DateFormat, CultureInfo.CurrentCulture)
+        : GetCreated();
 
-    public bool IsAutosaveRevision(int index) => index != 0 && Revisions[Revisions.Count - 1 - index].IsAutosave;
+    public bool IsAutosaveRevision(int index) => index < Revisions.Count && Revisions[Revisions.Count - 1 - index].IsAutosave;
 
     public void Lock()
     {
@@ -395,6 +406,21 @@ public partial class NoteRecord
             if (serializer?.DatabaseFormat >= 7)
                 serializer?.WriteShortString(Revisions[i].Uuid);
             serializer?.WriteLong(Revisions[i].Created);
+            if (serializer?.DatabaseFormat > 15)
+            {
+                byte flags = (byte)(
+                    //0 << 7 |
+                    //0 << 6 |
+                    //0 << 5 |
+                    //0 << 4 |
+                    //0 << 3 |
+                    //0 << 2 |
+                    //0 << 1 |
+                    (Revisions[i].IsAutosave ? 1 : 0) // << 0
+                );
+
+                serializer?.WriteByte(flags);
+            }
             serializer?.WriteInt32(Revisions[i].StartIndex);
             serializer?.WriteString(Revisions[i].Substring);
         }

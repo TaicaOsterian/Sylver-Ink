@@ -74,7 +74,7 @@ public class Database : IDisposable
             if (db is not null)
                 RemoveDatabase(db);
 
-            MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheCouldNotLoadDatabase, dbFile), Strings.Title_Error, MessageBoxButton.OK);
+            ShowTooltip(string.Format(CultureInfo.CurrentCulture, CacheCouldNotLoadDatabase, dbFile));
         }
     }
 
@@ -137,11 +137,6 @@ public class Database : IDisposable
             if (local)
                 Transmit(NetworkUtils.MessageType.RecordRemove, index.ToByteArray());
         }
-
-        for (int index = OpenQueries.Count - 1; index > -1; index--)
-            OpenQueries[index].RequestClose();
-
-        RemoveRecordTab(record);
     }
 
     public void Dispose()

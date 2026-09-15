@@ -45,3 +45,5 @@ GlobalSuppressions.cs
 *.rtf
 *.jpg
 *.Designer.cs
+*.tmp
+

@@ -223,6 +223,8 @@ public partial class PropertiesViewModel : ViewModelBase
 
         CurrentDatabase.Revert(reversion);
         await Task.Run(InitializeProperties);
+
+        RefreshRecentNotes();
     }
 
     [GeneratedRegex(@"\S+")]

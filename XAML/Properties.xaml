@@ -31,9 +31,11 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
+                    
                     <ComboBox ItemsSource="{Binding Hours}" SelectedItem="{Binding Hour, Mode=TwoWay}"/>
-                    <ComboBox Grid.Column="1" ItemsSource="{Binding Minutes}" SelectedItem="{Binding Minute, Mode=TwoWay}"/>
-                    <ComboBox Grid.Column="2" ItemsSource="{Binding Meridians}" SelectedItem="{Binding Meridian, Mode=TwoWay}"/>
+                    
+                    <ComboBox Grid.Column="1" ItemsSource="{Binding Minutes}"  MaxDropDownHeight="80" SelectedItem="{Binding Minute, Mode=TwoWay}"/>
+                    <ComboBox Grid.Column="2" ItemsSource="{Binding Meridians}" MaxDropDownHeight="80" SelectedItem="{Binding Meridian, Mode=TwoWay}"/>
                 </Grid>
             </Border>
         </Popup>

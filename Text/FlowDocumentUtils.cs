@@ -142,7 +142,7 @@ public static class FlowDocumentUtils
                     case LineBreak:
                         content.AppendLine();
                         break;
-                    case Paragraph paragraph:
+                    case Paragraph:
                         if (content.Length > 0)
                         {
                             content.AppendLine();

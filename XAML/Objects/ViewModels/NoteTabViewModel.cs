@@ -1,3 +1,4 @@
+using SylverInk.XAML.Events;
 using System.Globalization;
 using static SylverInk.Notes.DatabaseUtils;
 using static SylverInk.XAMLUtils.MainWindowUtils;
@@ -11,6 +12,9 @@ public class NoteTabViewModel : NoteEditorViewModel
     private int _revisionIndex;
     private string _saveLabel = Strings.Word_Save;
     private string _searchText = string.Empty;
+
+    private int BackstepIndex => Record.GetNumRevisions() - RevisionIndex - 1;
+    private bool Saving;
 
     public FlowDocument HistoricalDocument
     {
@@ -67,6 +71,7 @@ public class NoteTabViewModel : NoteEditorViewModel
     public ICommand ReturnCommand { get; }
     public ICommand SaveCommand { get; }
 
+    public event EventHandler<DocumentRefreshEventArgs>? RequestRefresh;
     public event EventHandler? RequestCloseSearchPopup;
 
     public NoteTabViewModel() : base()
@@ -78,14 +83,33 @@ public class NoteTabViewModel : NoteEditorViewModel
         NavigateNextCommand = new RelayCommand(NavigateNext, CanNavigateNext);
         NavigatePreviousCommand = new RelayCommand(NavigatePrevious, CanNavigatePrevious);
         ReturnCommand = new RelayCommand(Return);
-        SaveCommand = new RelayCommand(Save);
+        SaveCommand = new RelayCommand(BeginSave);
 
         _historicalDocument = new();
     }
 
+    private void BeginSave(object? param)
+    {
+        Saving = true;
+        EraseAutosave();
+
+        if (RevisionIndex == 0)
+        {
+            EndSave();
+            return;
+        }
+
+        var blocks = new Block[HistoricalDocument.Blocks.Count];
+
+        HistoricalDocument.Blocks.CopyTo(blocks, 0);
+        HistoricalDocument.Blocks.Clear();
+
+        RequestRefresh?.Invoke(this, new(blocks));
+    }
+
     private bool CanNavigateNext(object? param) => RevisionIndex > 0;
 
-    private bool CanNavigatePrevious(object? param) => RevisionIndex + 1 <= Record.GetNumRevisions();
+    private bool CanNavigatePrevious(object? param) => RevisionIndex + 1 < Record.GetNumRevisions();
 
     public override void Construct()
     {
@@ -139,6 +163,24 @@ public class NoteTabViewModel : NoteEditorViewModel
         Concurrent(CurrentDatabase.DeleteRecord, Record, true);
     }
 
+    public void EndSave()
+    {
+        var newText = TextConverter.Save(Document, TextFormat.Xaml);
+        Record.DB?.CreateRevision(Record, newText);
+
+        Edited = false;
+        IsEnabled = true;
+        IsLive = true;
+        LastChange = string.Format(CultureInfo.CurrentCulture, CacheNoteEntryModified, Record.GetLastChange());
+        OriginalBlockCount = Document.Blocks.Count;
+        OriginalPlaintext = new TextRange(Document.ContentStart, Document.ContentEnd).Text;
+        OriginalRevisionCount = Record.GetNumRevisions();
+        OriginalText = newText;
+        RevisionIndex = 0;
+        SaveLabel = Strings.Word_Save;
+        Saving = false;
+    }
+
     private void FindNext(object? param)
     {
         FlowDocumentUtils.ScrollToText(Document, SearchText);
@@ -164,7 +206,7 @@ public class NoteTabViewModel : NoteEditorViewModel
         Edited = RevisionIndex != 0 || CalculateIsEdited();
         IsLive = RevisionIndex == 0;
         LastChange = RevisionIndex != 0
-            ? string.Format(CultureInfo.CurrentCulture, CacheNoteRevisionID, Record.GetNumRevisions() - RevisionIndex, revisionTime)
+            ? string.Format(CultureInfo.CurrentCulture, CacheNoteRevisionID, BackstepIndex, revisionTime)
             : string.Format(CultureInfo.CurrentCulture, CacheNoteEntryModified, revisionTime);
         SaveLabel = RevisionIndex != 0 ? Strings.Word_Restore : Strings.Word_Save;
     }
@@ -176,14 +218,14 @@ public class NoteTabViewModel : NoteEditorViewModel
             RevisionIndex++;
         } while (Record.IsAutosaveRevision(RevisionIndex));
 
-        string revisionTime = RevisionIndex == Record.GetNumRevisions() ? Record.GetCreated() : Record.GetRevisionTime(RevisionIndex);
+        string revisionTime = BackstepIndex == 0 ? Record.GetCreated() : Record.GetRevisionTime(RevisionIndex);
 
         Edited = true;
         HistoricalDocument = Record.GetDocument(RevisionIndex);
         IsLive = false;
-        LastChange = RevisionIndex == Record.GetNumRevisions()
+        LastChange = BackstepIndex == 0
             ? string.Format(CultureInfo.CurrentCulture, CacheNoteEntryCreated, revisionTime)
-            : string.Format(CultureInfo.CurrentCulture, CacheNoteRevisionID, Record.GetNumRevisions() - RevisionIndex, revisionTime);
+            : string.Format(CultureInfo.CurrentCulture, CacheNoteRevisionID, BackstepIndex, revisionTime);
         SaveLabel = Strings.Word_Restore;
     }
 
@@ -201,41 +243,13 @@ public class NoteTabViewModel : NoteEditorViewModel
         Deconstruct();
     }
 
-    private void Save(object? param)
-    {
-        EraseAutosave();
-
-        if (RevisionIndex != 0)
-        {
-            Document.Blocks.Clear();
-
-            for (int i = 0; i < HistoricalDocument.Blocks.Count; i++)
-            {
-                var item = HistoricalDocument.Blocks.ElementAt(i);
-                HistoricalDocument.Blocks.Remove(item);
-                Document.Blocks.Add(item);
-            }
-        }
-
-        var newText = TextConverter.Save(Document, TextFormat.Xaml);
-        Record.DB?.CreateRevision(Record, newText);
-
-        Edited = false;
-        IsEnabled = true;
-        IsLive = true;
-        LastChange = string.Format(CultureInfo.CurrentCulture, CacheNoteEntryModified, Record.GetLastChange());
-        OriginalBlockCount = Document.Blocks.Count;
-        OriginalPlaintext = new TextRange(Document.ContentStart, Document.ContentEnd).Text;
-        OriginalRevisionCount = Record.GetNumRevisions();
-        OriginalText = newText;
-        RevisionIndex = 0;
-        SaveLabel = Strings.Word_Save;
-    }
-
     public override void TextChanged()
     {
-        if (!IsLive)
+        if (!IsLive && !Saving)
             return;
+
+        if (Saving)
+            EndSave();
 
         base.TextChanged();
     }

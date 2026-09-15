@@ -76,7 +76,7 @@ public class NetClient : IDisposable
         }
         catch
         {
-            MessageBox.Show(Strings.FailedConnection, Strings.Title_Error, MessageBoxButton.OK, MessageBoxImage.Error);
+            ShowTooltip(Strings.FailedConnection);
             if (DB is not null)
                 Concurrent(RemoveDatabase, DB);
             return;
@@ -121,6 +121,7 @@ public class NetClient : IDisposable
         }
         catch
         {
+            ShowTooltip("The network connection was unexpectedly closed.");
             Disconnect();
         }
     }

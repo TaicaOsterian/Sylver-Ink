@@ -208,6 +208,9 @@
   <data name="FailedConnection" xml:space="preserve">
     <value>Failed to connect to the database.</value>
   </data>
+  <data name="FailedDelete" xml:space="preserve">
+    <value>Failed to delete the file.</value>
+  </data>
   <data name="FailedDNSConnection" xml:space="preserve">
     <value>Failed to connect to the DNS server. Please try again.</value>
   </data>

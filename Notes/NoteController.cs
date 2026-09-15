@@ -119,11 +119,20 @@ public partial class NoteController : IDisposable
     public void DeleteRecord(int index)
     {
         var recordIndex = Records.FindIndex(new(record => record.Index == index));
-        Records[recordIndex].Delete();
+
+        var record = Records[recordIndex];
         Records.RemoveAt(recordIndex);
+        record.Delete();
+
+        for (int i = OpenQueries.Count - 1; i > -1; i--)
+            OpenQueries[i].RequestClose(record);
+
+        RemoveRecordTab(record);
 
         PropagateIndices();
         Changed = true;
+
+        RefreshRecentNotes();
     }
 
     public void DeserializeRecords()
@@ -268,6 +277,7 @@ public partial class NoteController : IDisposable
         _serializer = new()
         {
             DatabaseFormat = (byte)Format,
+            Flags = 1, // UseLZW
             Hidden = hidden,
         };
 
@@ -290,21 +300,33 @@ public partial class NoteController : IDisposable
         _serializer?.Close();
         _serializer = new()
         {
-            DatabaseFormat = (byte)Format
+            DatabaseFormat = (byte)Format,
+            Flags = 1 // UseLZW
         };
 
         if (_canCompress == -1 || (_canCompress == 0 && !TestCanCompress()))
-            _serializer.DatabaseFormat--;
+        {
+            if (_serializer.DatabaseFormat > 14)
+                _serializer.Flags = 0; // !UseLZW
+            else
+                _serializer.DatabaseFormat--;
+        }
     }
 
     public void Revert(DateTime targetDate)
     {
         for (int i = RecordCount - 1; i > -1; i--)
         {
-            for (int j = OpenQueries.Count - 1; j > -1; j--)
-                Concurrent(OpenQueries[j].RequestClose, GetRecord(i));
+            var record = GetRecord(i);
+            if (record is null)
+                continue;
 
-            var RecordDate = Records[i].GetCreatedObject().ToLocalTime();
+            for (int j = OpenQueries.Count - 1; j > -1; j--)
+                Concurrent(OpenQueries[j].RequestClose, record);
+
+            RemoveRecordTab(record);
+
+            var RecordDate = record.GetCreatedObject().ToLocalTime();
             var comparison = RecordDate.CompareTo(targetDate);
             if (comparison > 0)
             {
@@ -312,20 +334,20 @@ public partial class NoteController : IDisposable
                 continue;
             }
 
-            for (int j = Records[i].GetNumRevisions(); j > 0; j--)
+            for (int j = record.GetNumRevisions(); j > 0; j--)
             {
-                var RevisionDate = DateTime.FromBinary(Records[i].GetRevision(j - 1).Created).ToLocalTime();
+                var RevisionDate = DateTime.FromBinary(record.GetRevision(j - 1).Created).ToLocalTime();
                 comparison = RevisionDate.CompareTo(targetDate);
                 if (comparison <= 0)
                     continue;
 
-                Records[i].DeleteRevision(j - 1);
+                record.DeleteRevision(j - 1);
                 Changed = true;
             }
         }
 
-        RefreshRecentNotes();
         PropagateIndices();
+        RefreshRecentNotes();
     }
 
     public byte[]? SerializeRecords(bool inMemory = false)

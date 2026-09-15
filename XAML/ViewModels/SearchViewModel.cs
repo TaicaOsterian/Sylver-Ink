@@ -71,7 +71,9 @@ public class SearchViewModel : ViewModelBase, IDisposable
         {
             await PerformSearch(token);
         }
-        catch { }
+        catch
+        {
+        }
     }
 
     public async Task SearchCurrentDatabase(CancellationToken token)

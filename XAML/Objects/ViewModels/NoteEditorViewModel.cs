@@ -232,6 +232,9 @@ public class NoteEditorViewModel : ViewModelBase
         Document = Record.GetDocument() ?? new();
         Document.Focus();
 
+        if (CaretPosition is null || !CaretPosition.IsInSameDocument(Document.ContentStart))
+            CaretPosition = Document.ContentStart;
+
         OriginalBlockCount = Document.Blocks.Count;
         OriginalPlaintext = new TextRange(Document.ContentStart, Document.ContentEnd).Text;
         OriginalRevisionCount = Record.GetNumRevisions();
@@ -251,10 +254,13 @@ public class NoteEditorViewModel : ViewModelBase
         if (Record is null)
             return;
 
-        for (int i = Record.GetNumRevisions() - 1; i >= OriginalRevisionCount - 1; i--)
+        for (int i = Record.GetNumRevisions() - 1; i >= Math.Max(OriginalRevisionCount - 1, 0); i--)
         {
             if (Record.IsAutosaveRevision(i))
-                Record.DeleteRevision(i);
+            {
+                for (int j = Record.GetNumRevisions() - 1; j >= i; j--)
+                    Record.DeleteRevision(j);
+            }
         }
     }
 

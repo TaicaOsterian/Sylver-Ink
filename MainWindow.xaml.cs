@@ -176,7 +176,7 @@ public partial class MainWindow : Window
         await HandleFinalInit();
 
         // If there are no active notes from last run, open an empty note and focus it.
-        if (LastActiveNotes.Count == 0)
+        if (OpenQueries.Count == 0)
             CreateNewNote();
 
         // Refresh the display

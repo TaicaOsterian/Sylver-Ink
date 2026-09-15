@@ -201,6 +201,9 @@
   <data name="FailedConnection" xml:space="preserve">
     <value>Falló la conexión a la base de datos.</value>
   </data>
+  <data name="FailedDelete" xml:space="preserve">
+    <value>Falló eliminar el archivo.</value>
+  </data>
   <data name="FailedDNSConnection" xml:space="preserve">
     <value>Falló el intento de conexión al servidor DNS. Intenta otra vez.</value>
   </data>

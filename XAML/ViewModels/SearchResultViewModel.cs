@@ -67,6 +67,7 @@ public class SearchResultViewModel : NoteEditorViewModel
         tab.ViewModel.Record = Record;
 
         tab.ViewModel.Document = Document;
+        tab.ViewModel.CaretPosition = CaretPosition;
         tab.ViewModel.Edited = Edited;
 
         TabItem item = new()

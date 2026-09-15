@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:SylverInk.XAML.Objects"
-             xmlns:conv="clr-namespace:SylverInk.XAMLUtils.Converters"
+             xmlns:conv="clr-namespace:SylverInk.XAML.Converters"
              xmlns:properties="clr-namespace:SylverInk.Localization"
              xmlns:sylverink="clr-namespace:SylverInk"
              xmlns:utils="clr-namespace:SylverInk.XAMLUtils"

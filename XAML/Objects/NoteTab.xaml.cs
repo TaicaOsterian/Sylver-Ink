@@ -1,3 +1,5 @@
+using SylverInk.XAML.Events;
+
 namespace SylverInk.XAML.Objects;
 
 /// <summary>
@@ -10,6 +12,7 @@ public partial class NoteTab : UserControl
     public NoteTab()
     {
         DataContext = new NoteTabViewModel();
+        ViewModel.RequestRefresh += RefreshRequested;
         ViewModel.RequestCloseSearchPopup += (_, _) => InternalSearchPopup.IsOpen = false;
         InitializeComponent();
     }
@@ -58,6 +61,8 @@ public partial class NoteTab : UserControl
             RichTextBoxUtils.SetDocumentCaret(NoteBox, caret); // Raise the event and let it fully go through once the document's parent reference is set.
     }
 
+    private void NoteBox_SelectionChanged(object sender, RoutedEventArgs e) => UpdateTextColorButton();
+
     private void NoteTab_KeyDown(object sender, KeyEventArgs e)
     {
         if (e.Key == Key.F && (Keyboard.Modifiers & ModifierKeys.Control) != 0)
@@ -77,13 +82,13 @@ public partial class NoteTab : UserControl
         TextColorPicker.Init(NoteBox);
     }
 
-    private void NoteBox_SelectionChanged(object sender, RoutedEventArgs e) => UpdateTextColorButton();
-
     private void Redo(object sender, ExecutedRoutedEventArgs e)
     {
         NoteBox.Redo();
         e.Handled = true;
     }
+
+    private void RefreshRequested(object? sender, DocumentRefreshEventArgs e) => RichTextBoxUtils.SetAtomicBlocks(NoteBox, e.NewBlocks);
 
     public void RequestUnlock(NoteRecord record) => ViewModel.RequestUnlock(record);
 

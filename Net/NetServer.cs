@@ -205,7 +205,7 @@ public class NetServer : IDisposable
         }
         catch
         {
-            MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheFailedToOpenServer, TcpPort), Strings.Title_Error, MessageBoxButton.OK, MessageBoxImage.Error);
+            ShowTooltip(string.Format(CultureInfo.CurrentCulture, CacheFailedToOpenServer, TcpPort));
             Active = false;
             Serving = false;
             return;
