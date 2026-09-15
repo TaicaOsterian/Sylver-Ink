@@ -385,6 +385,9 @@ Would you like to download and install it now?</value>
   <data name="NewNote" xml:space="preserve">
     <value>New note</value>
   </data>
+  <data name="NewNoteButtonTooltip" xml:space="preserve">
+    <value>Create and open a new sticky note. (Hotkey: Ctrl+N)</value>
+  </data>
   <data name="NewNoteTooltip" xml:space="preserve">
     <value>Write a line of text and press Enter to create a new note. You can also press Ctrl+N to open a sticky note at any time.</value>
   </data>
@@ -428,11 +431,14 @@ Would you like to download and install it now?</value>
   <data name="RecentNotes" xml:space="preserve">
     <value>Recent notes</value>
   </data>
+  <data name="RecentNotesButtonTooltip" xml:space="preserve">
+    <value>Reopen the most recently closed note. (Hotkey: Ctrl+Shift+T)</value>
+  </data>
   <data name="RecentNotesSortBy" xml:space="preserve">
     <value>Recent notes sort by...</value>
   </data>
   <data name="RecentNotesTooltip" xml:space="preserve">
-    <value>You can press Ctrl+L to re-open the note you most recently closed.</value>
+    <value>You can press Ctrl+Shift+T to re-open the note you most recently closed.</value>
   </data>
   <data name="Rename_DatabaseAlreadyExists" xml:space="preserve">
     <value>A database with that name already exists in {0}.
@@ -596,6 +602,9 @@ Do you want to overwrite it?</value>
   </data>
   <data name="Word_Help" xml:space="preserve">
     <value>Help</value>
+  </data>
+  <data name="Word_Image" xml:space="preserve">
+    <value>Image</value>
   </data>
   <data name="Word_Import" xml:space="preserve">
     <value>Import</value>

@@ -56,7 +56,6 @@ public static partial class CommonUtils
     public static Dictionary<string, double> LastActiveNotesTop { get; } = [];
     public static Dictionary<string, double> LastActiveNotesWidth { get; } = [];
     public static List<SearchResult> OpenQueries { get; } = [];
-    public static NoteRecord? PreviousOpenNote { get; set; }
     public static NoteRecord? RecentSelection { get; set; }
     public static Search? SearchWindow
     {
@@ -153,20 +152,38 @@ public static partial class CommonUtils
             }
         }, token);
 
+        // Wait for crucial startup tasks to be completed before performing secondary initialization on the data those tasks return.
+        // (See HandleFinalInit for those secondary tasks.)
         await initTask;
+    }
 
+    public static async Task HandleFinalInit()
+    {
+        // Assign the UI a main type face.
+        Settings.MainTypeFace = new(Settings.MainFontFamily, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
+
+        // Open the user's databases, or create a new one if none were set.
+        foreach (var file in Settings.LastDatabases)
+        {
+            if (!Databases.Any(db => Path.GetFullPath(db.DBFile).Equals(Path.GetFullPath(file), StringComparison.Ordinal)))
+                await Database.Create(file);
+        }
+
+        if (Databases.Count == 0)
+            await Database.Create(Path.Join(Subfolders[Strings.Subfolder_Databases], DefaultDatabase, $"{DefaultDatabase}.sidb"));
+
+        // Swap to the user's last active database, if one was set.
         if (string.IsNullOrEmpty(ShellDB))
             SwitchDatabase($"~N:{Settings.LastActiveDatabase}");
         else
             SwitchDatabase($"~F:{ShellDB}");
 
+        // Reopen the user's last active notes, if any were set.
         RestoreActiveNotes();
-        Settings.MainTypeFace = new(Settings.MainFontFamily, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
 
+        // Finally, unlock the main window and hand over control to the user.
         CanResize = true;
         Application.Current.MainWindow.ResizeMode = ResizeMode.CanResize;
-
-        DeferUpdateRecentNotes();
     }
 
     public static bool InstanceRunning() => Process.GetProcessesByName("Sylver Ink").Length > 1 && !File.Exists(UpdateHandler.UpdateLockUri);
@@ -191,6 +208,26 @@ public static partial class CommonUtils
 
         // Create an empty database if and only if we haven't loaded any from files
         await Database.Create(Path.Join(Subfolders[Strings.Subfolder_Databases], DefaultDatabase, $"{DefaultDatabase}.sidb"));
+    }
+
+    public static async void RefreshRecentNotes()
+    {
+        if (DelayVisualUpdates)
+            return;
+
+        DelayVisualUpdates = true;
+
+        try
+        {
+            var viewModel = Concurrent(() => (MainWindowViewModel)Application.Current.MainWindow.DataContext);
+            await viewModel.RefreshRecentNotesAsync();
+
+            Concurrent(UpdateRibbonTabs);
+        }
+        finally
+        {
+            DelayVisualUpdates = false;
+        }
     }
 
     private static void RestoreActiveNotes()

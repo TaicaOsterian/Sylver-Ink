@@ -18,16 +18,10 @@ public class SearchResultViewModel : NoteEditorViewModel
         }
     }
 
-    // Consumed by RichTextBoxUtils.OnDocumentChanged. Likely to be replaced with a DependencyProperty later.
-    public string? ScrollTo
-    {
-        get => Document.Tag as string;
-        set => Document.Tag = value;
-    }
-
     public ICommand CloseCommand { get; }
     public ICommand ViewCommand { get; }
 
+    public event EventHandler? ForceClose;
     public event EventHandler? RequestClose;
 
     public SearchResultViewModel() : base()
@@ -54,18 +48,12 @@ public class SearchResultViewModel : NoteEditorViewModel
         }
     }
 
-    public void SaveRecord()
-    {
-        if (Record is null)
-            return;
-
-        Record?.DB?.CreateRevision(Record, TextConverter.Save(Document, TextFormat.Xaml));
-        LastChange = Record?.GetLastChange();
-    }
-
     private void View(object? param)
     {
+        // To avoid cluttering the user's view
         SearchWindow?.Close();
+
+        ForceClose?.Invoke(this, EventArgs.Empty);
 
         if (Record is null)
             return;
@@ -76,8 +64,10 @@ public class SearchResultViewModel : NoteEditorViewModel
         SwitchDatabase(Record.DB);
 
         NoteTab tab = new();
-        tab.ViewModel.InitialPointer = CaretPosition;
         tab.ViewModel.Record = Record;
+
+        tab.ViewModel.Document = Document;
+        tab.ViewModel.Edited = Edited;
 
         TabItem item = new()
         {
@@ -89,14 +79,5 @@ public class SearchResultViewModel : NoteEditorViewModel
         var ChildPanel = GetChildPanel("DatabasesPanel");
         ChildPanel.SelectedIndex = ChildPanel.Items.Add(item);
         OpenTabs.Add(item);
-
-        Application.Current.MainWindow.WindowState = WindowState.Normal;
-
-        if (!Application.Current.MainWindow.IsActive)
-            Application.Current.MainWindow.Activate();
-
-        Application.Current.MainWindow.Focus();
-
-        CloseCommand.Execute(null);
     }
 }

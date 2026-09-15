@@ -1,8 +1,8 @@
-﻿using System.Globalization;
+﻿using SylverInk.Interop;
+using System.Globalization;
 using System.Text;
 using static SylverInk.FileIO.FileUtils;
 using static SylverInk.Notes.DatabaseUtils;
-using static SylverInk.XAMLUtils.MainWindowUtils;
 
 namespace SylverInk.Notes;
 
@@ -18,6 +18,7 @@ public class Database : IDisposable
     public int Format { get => Controller.Format; set => Controller.Format = value; }
     public bool Loaded { get; private set; }
     public string? Name { get => Controller.Name; set => Controller.Name = value; }
+    public LinkedStack<NoteRecord> PreviousOpenNotes { get; set; } = [];
     public int RecordCount => Controller.RecordCount;
     public NetServer Server { get; }
     public string UUID { get => Controller.UUID; set => Controller.UUID = value; }
@@ -91,7 +92,7 @@ public class Database : IDisposable
             Transmit(NetworkUtils.MessageType.RecordAdd, [.. outBuffer]);
         }
 
-        DeferUpdateRecentNotes();
+        RefreshRecentNotes();
 
         return index;
     }
@@ -249,12 +250,17 @@ public class Database : IDisposable
 
         return HeaderPanel;
     }
+    public int GetPreviousNoteCount() => PreviousOpenNotes.Count();
 
     public NoteRecord? GetRecord(int index) => Controller.GetRecord(index);
 
     public bool HasRecord(int index) => Controller.HasRecord(index);
 
-    public void Initialize(bool newDatabase = true) => Controller.InitializeRecords(newDatabase);
+    public void Initialize(bool newDatabase = true)
+    {
+        Controller.InitializeRecords(newDatabase);
+        RefreshRecentNotes();
+    }
 
     public bool Load()
     {
@@ -280,13 +286,12 @@ public class Database : IDisposable
                 throw new NotSupportedException(Strings.DatabaseTooNew);
             }
 
-            Loaded = Controller.Loaded = true;
-            Changed = true;
-
             if (string.IsNullOrWhiteSpace(Name))
                 Name = Path.GetFileNameWithoutExtension(DBFile);
 
-            DeferUpdateRecentNotes();
+            Changed = true;
+            Loaded = Controller.Loaded = true;
+            RefreshRecentNotes();
 
             return;
         }
@@ -307,7 +312,7 @@ public class Database : IDisposable
         if (DBFile.EndsWith("sibk", StringComparison.Ordinal))
             Name = $"{Strings.Word_Backup}: {Name}";
 
-        DeferUpdateRecentNotes();
+        RefreshRecentNotes();
     }
 
     public void Lock(int index, bool local = false)
@@ -345,6 +350,16 @@ public class Database : IDisposable
     }
 
     public bool Open(string path, bool writing = false) => Controller.Open(path, writing);
+
+    public void PopPreviousNote()
+    {
+        if (!PreviousOpenNotes.Any())
+            return;
+
+        OpenQuery(PreviousOpenNotes.Pop());
+    }
+
+    public void PushPreviousNote(NoteRecord record) => PreviousOpenNotes.Push(record);
 
     public void Rename(string newName)
     {

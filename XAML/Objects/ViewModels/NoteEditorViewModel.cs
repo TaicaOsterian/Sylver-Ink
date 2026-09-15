@@ -1,5 +1,4 @@
 using System.Threading;
-using static SylverInk.XAMLUtils.MainWindowUtils;
 
 namespace SylverInk.XAML.Objects.ViewModels;
 
@@ -171,10 +170,9 @@ public class NoteEditorViewModel : ViewModelBase
         Autosaving = true;
         Task.Factory.StartNew(() =>
         {
-            SpinWait.SpinUntil(() => (DateTime.UtcNow - TimeSinceAutosave).Seconds >= 5);
+            SpinWait.SpinUntil(() => (DateTime.UtcNow - TimeSinceAutosave).Seconds >= 1);
 
             Concurrent(Record.Autosave, Document);
-            RecentNotesDirty = true;
             TimeSinceAutosave = DateTime.UtcNow;
             Autosaving = false;
             return;
@@ -192,10 +190,33 @@ public class NoteEditorViewModel : ViewModelBase
         return !OriginalText.Equals(TextConverter.Save(Document, TextFormat.Xaml), StringComparison.Ordinal);
     }
 
+    public bool ConfirmExit()
+    {
+        switch (MessageBox.Show(Strings.ExitMessage_SaveWork, Strings.Title_Notification, MessageBoxButton.YesNoCancel, MessageBoxImage.Information))
+        {
+            case MessageBoxResult.Cancel:
+                return true;
+            case MessageBoxResult.Yes:
+                EraseAutosave();
+                SaveRecord();
+                RefreshRecentNotes();
+                break;
+            case MessageBoxResult.No:
+                Edited = false;
+                EraseAutosave();
+                RefreshRecentNotes();
+                break;
+        }
+
+        return false;
+    }
+
     public virtual void Construct()
     {
         if (FinishedLoading)
             return;
+
+        Record.DB?.PreviousOpenNotes.Remove(Record);
 
         if (Record.Locked)
         {
@@ -208,7 +229,6 @@ public class NoteEditorViewModel : ViewModelBase
             Record.DB?.Transmit(NetworkUtils.MessageType.RecordUnlock, Record.Index.ToByteArray());
         }
 
-        Edited = false;
         Document = Record.GetDocument() ?? new();
         Document.Focus();
 
@@ -217,7 +237,25 @@ public class NoteEditorViewModel : ViewModelBase
         OriginalRevisionCount = Record.GetNumRevisions();
         OriginalText = TextConverter.Save(Document, TextFormat.Xaml);
 
+        Edited = false;
         FinishedLoading = true;
+    }
+
+    public virtual void Deconstruct()
+    {
+        RichTextBoxUtils.SetDocumentCaret(Document, CaretPosition.DocumentStart.GetOffsetToPosition(CaretPosition));
+    }
+
+    protected void EraseAutosave()
+    {
+        if (Record is null)
+            return;
+
+        for (int i = Record.GetNumRevisions() - 1; i >= OriginalRevisionCount - 1; i--)
+        {
+            if (Record.IsAutosaveRevision(i))
+                Record.DeleteRevision(i);
+        }
     }
 
     public void RequestUnlock(NoteRecord source)
@@ -228,6 +266,19 @@ public class NoteEditorViewModel : ViewModelBase
         LastChange = source.GetLastChange();
         IsEnabled = true;
     }
+
+    public void SaveRecord()
+    {
+        if (Record is null)
+            return;
+
+        Record?.DB?.CreateRevision(Record, TextConverter.Save(Document, TextFormat.Xaml));
+        LastChange = Record?.GetLastChange();
+    }
+
+    public void ScrollTo(int position) => FlowDocumentUtils.ScrollToPosition(Document, position);
+
+    public void ScrollTo(string? text) => FlowDocumentUtils.ScrollToText(Document, text);
 
     public virtual void TextChanged()
     {

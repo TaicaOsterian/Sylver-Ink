@@ -10,6 +10,7 @@ namespace SylverInk.Notes;
 public struct NoteRevision(long created = -1, int startIndex = -1, string? substring = null, string? uuid = null)
 {
     public long Created { get; set; } = created;
+    public bool IsAutosave { get; set; }
     public int StartIndex { get; set; } = startIndex;
     public string? Substring { get; set; } = substring;
     public string? Uuid { get; set; } = uuid ?? MakeUUID(UUIDType.Revision);
@@ -123,19 +124,18 @@ public partial class NoteRecord
 
         Revisions.Add(revision);
         TagsDirty = true;
-
-        RecentNotesDirty = true;
-        DeferUpdateRecentNotes();
     }
 
+    // This function doesn't consume autosaved revisions to preserve continuity.
+    // The onus is on the object initiating the call chain to track which revisions to discard if the user chooses not to save their changes.
     public void Autosave(FlowDocument document)
     {
-        CreateRevision(TextConverter.Save(document, TextFormat.Xaml));
+        CreateRevision(TextConverter.Save(document, TextFormat.Xaml), Autosave: true);
         DB?.Autosave();
-        DeleteRevision(GetNumRevisions() - 1);
+        RefreshRecentNotes();
     }
 
-    public void CreateRevision(string NewVersion)
+    public void CreateRevision(string NewVersion, bool Autosave = false)
     {
         string Current = ToXaml();
         int StartIndex = 0;
@@ -153,6 +153,7 @@ public partial class NoteRecord
         Add(new()
         {
             Created = DateTime.UtcNow.ToBinary(),
+            IsAutosave = Autosave,
             StartIndex = StartIndex,
             Substring = StartIndex >= NewVersion.Length ? string.Empty : NewVersion[StartIndex..],
             Uuid = MakeUUID(UUIDType.Revision)
@@ -172,8 +173,8 @@ public partial class NoteRecord
         Revisions.Clear();
         TagsDirty = true;
 
-        RecentNotesDirty = true;
-        DeferUpdateRecentNotes();
+        RefreshRecentNotes();
+        DB?.PreviousOpenNotes.Remove(this);
     }
 
     // In its current state, this function is only well-behaved when removing all subsequent revisions in addition to the one marked for deletion.
@@ -188,8 +189,7 @@ public partial class NoteRecord
         LastChange = GetNumRevisions() == 0 ? Created : Revisions[GetNumRevisions() - 1].Created;
         LastChangeObject = DateTime.FromBinary(LastChange);
 
-        RecentNotesDirty = true;
-        DeferUpdateRecentNotes();
+        RefreshRecentNotes();
     }
 
     public NoteRecord Deserialize(Serializer? serializer)
@@ -286,6 +286,8 @@ public partial class NoteRecord
     public NoteRevision GetRevision(int index) => Revisions[Revisions.Count - 1 - index];
 
     public string GetRevisionTime(int index) => DateTime.FromBinary(GetRevision(index).Created).ToLocalTime().ToString(DateFormat, CultureInfo.InvariantCulture);
+
+    public bool IsAutosaveRevision(int index) => index != 0 && Revisions[Revisions.Count - 1 - index].IsAutosave;
 
     public void Lock()
     {

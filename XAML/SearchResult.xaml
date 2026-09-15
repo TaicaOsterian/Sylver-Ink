@@ -32,7 +32,8 @@
                          utils:RichTextBoxUtils.ObserveCaret="True"
                          ScrollViewer.VerticalScrollBarVisibility="Auto"
                          TextChanged="ResultBlock_TextChanged"
-                         UndoLimit="20">
+                         UndoLimit="20"
+                         x:Name="NoteBox">
             </RichTextBox>
             <Label Content="{Binding LastChange}" Grid.ColumnSpan="2" FontStyle="Italic" HorizontalAlignment="Center" Grid.Row="1"/>
             <Button Command="{Binding ViewCommand}" Content="{Binding Source={x:Static properties:Strings.Word_View}, StringFormat='{}{0}...'}" IsEnabled="{Binding IsFocused}" Margin="0,2" Grid.Row="2" Width="50"/>

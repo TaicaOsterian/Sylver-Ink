@@ -1,7 +1,6 @@
 using System.Runtime.InteropServices;
 using System.Windows.Interop;
 using System.Windows.Threading;
-using static SylverInk.XAMLUtils.MainWindowUtils;
 
 namespace SylverInk.XAML;
 
@@ -39,7 +38,6 @@ public partial class SearchResult : Window, IDisposable
     public DispatcherTimer? LeaveMonitor { get; set; }
     public long LeaveTime { get; set; }
     public DispatcherTimer? MouseMonitor { get; set; }
-    public int OriginalRevisionCount { get; set; }
     public double SnapTolerance { get; } = 20.0;
     public double StartOpacity { get; set; }
     public SearchResultViewModel ViewModel => (SearchResultViewModel)DataContext;
@@ -47,6 +45,7 @@ public partial class SearchResult : Window, IDisposable
     public SearchResult()
     {
         DataContext = new SearchResultViewModel();
+        ViewModel.ForceClose += (_, _) => HandleClose(true);
         ViewModel.RequestClose += (_, _) => HandleClose();
         InitializeComponent();
         InitMonitors();
@@ -84,20 +83,13 @@ public partial class SearchResult : Window, IDisposable
 
     private void HandleClose(bool force = false)
     {
-        if (ViewModel.Edited && !force)
+        if (ViewModel.Edited && !force && ViewModel.ConfirmExit())
+            return;
+
+        if (force)
         {
-            switch (MessageBox.Show(Strings.ExitMessage_SaveWork, Strings.Title_Notification, MessageBoxButton.YesNoCancel, MessageBoxImage.Information))
-            {
-                case MessageBoxResult.Cancel:
-                    return;
-                case MessageBoxResult.No:
-                    ViewModel.Edited = false;
-                    for (int i = (ViewModel.Record?.GetNumRevisions() ?? 1) - 1; i >= OriginalRevisionCount; i--)
-                        ViewModel.Record?.DeleteRevision(i);
-                    RecentNotesDirty = true;
-                    DeferUpdateRecentNotes();
-                    break;
-            }
+            ViewModel.Deconstruct();
+            NoteBox.Document = new(); // This window has to decouple from the underlying document before that document can be assigned to another parent.
         }
 
         Close();
@@ -170,7 +162,7 @@ public partial class SearchResult : Window, IDisposable
     private void Result_Closed(object? sender, EventArgs e)
     {
         StopMonitors();
-        PreviousOpenNote = ViewModel.Record;
+        ViewModel.Record.DB?.PushPreviousNote(ViewModel.Record);
 
         if (ViewModel.Edited)
             SaveRecord();
@@ -183,11 +175,15 @@ public partial class SearchResult : Window, IDisposable
     private void ResultBlock_TextChanged(object? sender, TextChangedEventArgs e)
     {
         ViewModel.TextChanged();
+
+        var caret = RichTextBoxUtils.GetDocumentCaret(NoteBox.Document);
+        if (caret != 0)
+            RichTextBoxUtils.SetDocumentCaret(NoteBox, caret); // Raise the event and let it fully go through once the document's parent reference is set.
     }
 
     public void RequestClose(NoteRecord? source = null)
     {
-        if (source is null || !ViewModel.Record.Equals(source))
+        if (source is not null && !ViewModel.Record.Equals(source))
             return;
 
         HandleClose(true);
@@ -209,7 +205,6 @@ public partial class SearchResult : Window, IDisposable
     public void SaveRecord()
     {
         ViewModel.SaveRecord();
-        DeferUpdateRecentNotes();
     }
 
     public bool SetWindowExTransparent()

@@ -59,8 +59,7 @@ public partial class Settings : Window
         var tag = new EnumConverter(typeof(SortType)).ConvertFromString((string?)item?.Tag ?? "ByChange") as SortType?;
 
         RecentEntriesSortMode = tag ?? SortType.ByChange;
-        RecentNotesDirty = true;
-        DeferUpdateRecentNotes();
+        RefreshRecentNotes();
     }
 
     private void StickyRibbonChanged(object? sender, SelectionChangedEventArgs e)

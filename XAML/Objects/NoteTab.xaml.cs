@@ -14,6 +14,18 @@ public partial class NoteTab : UserControl
         InitializeComponent();
     }
 
+    private void CanRedo(object sender, CanExecuteRoutedEventArgs e)
+    {
+        e.CanExecute = NoteBox.CanRedo && ViewModel.IsLive;
+        e.Handled = true;
+    }
+
+    private void CanUndo(object sender, CanExecuteRoutedEventArgs e)
+    {
+        e.CanExecute = NoteBox.CanUndo && ViewModel.IsLive;
+        e.Handled = true;
+    }
+
     private void ISPText_KeyDown(object sender, KeyEventArgs e)
     {
         switch (e.Key)
@@ -40,6 +52,10 @@ public partial class NoteTab : UserControl
     {
         ViewModel.TextChanged();
         UpdateTextColorButton();
+
+        var caret = RichTextBoxUtils.GetDocumentCaret(NoteBox.Document);
+        if (caret != 0)
+            RichTextBoxUtils.SetDocumentCaret(NoteBox, caret); // Raise the event and let it fully go through once the document's parent reference is set.
     }
 
     private void NoteTab_KeyDown(object sender, KeyEventArgs e)
@@ -56,11 +72,18 @@ public partial class NoteTab : UserControl
     private void NoteTab_Loaded(object sender, RoutedEventArgs e)
     {
         ViewModel.Construct();
+
         TextColorButton.Background = CommonUtils.Settings.ListForeground;
         TextColorPicker.Init(NoteBox);
     }
 
     private void NoteBox_SelectionChanged(object sender, RoutedEventArgs e) => UpdateTextColorButton();
+
+    private void Redo(object sender, ExecutedRoutedEventArgs e)
+    {
+        NoteBox.Redo();
+        e.Handled = true;
+    }
 
     public void RequestUnlock(NoteRecord record) => ViewModel.RequestUnlock(record);
 
@@ -68,6 +91,12 @@ public partial class NoteTab : UserControl
     {
         TextColorPicker.ColorTag = "PT";
         TextColorPicker.ColorSelection.IsOpen = true;
+    }
+
+    private void Undo(object sender, ExecutedRoutedEventArgs e)
+    {
+        NoteBox.Undo();
+        e.Handled = true;
     }
 
     private void UpdateTextColorButton()

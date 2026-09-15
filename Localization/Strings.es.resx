@@ -364,6 +364,9 @@ a un estado anterior</value>
   <data name="NewNote" xml:space="preserve">
     <value>Nueva nota</value>
   </data>
+  <data name="NewNoteButtonTooltip" xml:space="preserve">
+    <value>Crea y abre una nueva nota adhesiva. (Tecla de acceso rápido: Ctrl+N)</value>
+  </data>
   <data name="NewNoteTooltip" xml:space="preserve">
     <value>Escribe una línea de texto y presiona Enter para crear una nueva nota. También puedes presionar Ctrl+N para abrir una nota adhesiva en cualquier momento.</value>
   </data>
@@ -403,11 +406,14 @@ a un estado anterior</value>
   <data name="RecentNotes" xml:space="preserve">
     <value>Notas recientes</value>
   </data>
+  <data name="RecentNotesButtonTooltip" xml:space="preserve">
+    <value>Vuelve a abrir la nota adhesiva que cerraste más recientemente. (Tecla de acceso rápido: Ctrl+Mayús+T)</value>
+  </data>
   <data name="RecentNotesSortBy" xml:space="preserve">
     <value>Organizar notas recientes por...</value>
   </data>
   <data name="RecentNotesTooltip" xml:space="preserve">
-    <value>Puedes presionar Ctrl+L para reabrir la nota más reciente que has cerrado.</value>
+    <value>Puedes presionar Ctrl+Mayús+T para reabrir la nota más reciente que has cerrado.</value>
   </data>
   <data name="Rename_DatabaseAlreadyExists" xml:space="preserve">
     <value>Una base de datos con ese nombre ya existe en {0}.
@@ -561,6 +567,9 @@ a un estado anterior</value>
   </data>
   <data name="Word_Help" xml:space="preserve">
     <value>Ayuda</value>
+  </data>
+  <data name="Word_Image" xml:space="preserve">
+    <value>Imagen</value>
   </data>
   <data name="Word_Import" xml:space="preserve">
     <value>Importar</value>

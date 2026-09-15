@@ -469,7 +469,7 @@ public class ImportViewModel : ViewModelBase
         }
 
         DelayVisualUpdates = false;
-        Concurrent(DeferUpdateRecentNotes);
+        RefreshRecentNotes();
     }
 
     private async Task RefreshAsync()

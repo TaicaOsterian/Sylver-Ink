@@ -52,6 +52,7 @@ public class ContextSettings : ViewModelBase
     private double _noteClickthroughInverse = 4.0;
     private double _noteTransparency;
     private bool _queryAllDatabases;
+    private IReadOnlyList<NoteRecord> _recentNotes = [];
     private bool _searchResultsOnTop = true;
     private bool _searchResultsInTaskbar;
     private Theme _selectedTheme = Themes.Default;
@@ -281,7 +282,15 @@ public class ContextSettings : ViewModelBase
         }
     }
     public ObservableCollection<PathItem> RecentDatabases { get; } = [];
-    public ObservableCollection<NoteRecord> RecentNotes { get; } = [];
+    public IReadOnlyList<NoteRecord> RecentNotes
+    {
+        get => _recentNotes;
+        internal set
+        {
+            _recentNotes = value ?? [];
+            OnPropertyChanged();
+        }
+    }
     public ObservableCollection<NoteRecord> SearchResults { get; } = [];
     public bool SearchResultsOnTop
     {
@@ -552,17 +561,6 @@ public class ContextSettings : ViewModelBase
                 case "LastDatabases":
                     FirstRun = false;
                     LastDatabases.AddRange(keyValue[1].Replace("?\\", DocumentsFolder).Split(';').Distinct().Where(File.Exists));
-
-                    foreach (var file in LastDatabases)
-                    {
-                        if (!Databases.Any(db => Path.GetFullPath(db.DBFile).Equals(Path.GetFullPath(file), StringComparison.Ordinal)))
-                            await Database.Create(file);
-                    }
-
-                    if (Databases.Count != 0)
-                        break;
-
-                    await Database.Create(Path.Join(Subfolders[Strings.Subfolder_Databases], DefaultDatabase, $"{DefaultDatabase}.sidb"));
                     break;
                 case "ListBackground":
                     _listBackground = BrushFromBytes(keyValue[1]);

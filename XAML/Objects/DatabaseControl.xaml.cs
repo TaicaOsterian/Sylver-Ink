@@ -1,5 +1,4 @@
 using static SylverInk.Notes.DatabaseUtils;
-using static SylverInk.XAMLUtils.MainWindowUtils;
 
 namespace SylverInk.XAML.Objects;
 
@@ -8,6 +7,10 @@ namespace SylverInk.XAML.Objects;
 /// </summary>
 public partial class DatabaseControl : UserControl
 {
+    public double NoteListActualHeight => RecentNotesBox.ActualHeight;
+
+    public double NoteListActualWidth => RecentNotesBox.ActualWidth;
+
     public DatabaseControl()
     {
         DataContext = new DatabaseControlViewModel();
@@ -77,16 +80,10 @@ public partial class DatabaseControl : UserControl
         OpenQuery(RecentSelection);
     }
 
-    private void NewNoteKeydown(object? sender, KeyEventArgs e)
+    private void RecentNotesBox_SizeChanged(object sender, SizeChangedEventArgs e)
     {
-        if (e.Key != Key.Enter)
-            return;
-
-        if (sender is not TextBox box)
-            return;
-
-        CurrentDatabase.CreateRecord(box.Text);
-        box.Text = string.Empty;
-        DeferUpdateRecentNotes();
+        var viewModel = (MainWindowViewModel)Window.GetWindow(this).DataContext;
+        var dpi = VisualTreeHelper.GetDpi(this);
+        viewModel.OnViewportMetricsChanged(e.NewSize.Width, e.NewSize.Height, dpi.PixelsPerInchY);
     }
 }

@@ -110,9 +110,9 @@
 
         <Menu x:Name="DatabaseMenu">
             <MenuItem Header="{x:Static properties:Strings.Word_File}" Height="25">
-                <MenuItem Command="{Binding NewDatabaseCommand}" Header="{x:Static properties:Strings.Word_New}" Tag="Always"/>
-                <MenuItem Command="{Binding OpenDatabaseCommand}" Header="{x:Static properties:Strings.Label_Open}" Tag="Always"/>
-                <MenuItem Header="{x:Static properties:Strings.OpenRecent}" ItemsSource="{Binding AppSettings.RecentDatabases}" Tag="Recents">
+                <MenuItem Command="{Binding NewDatabaseCommand}" Header="{x:Static properties:Strings.Word_New}"/>
+                <MenuItem Command="{Binding OpenDatabaseCommand}" Header="{x:Static properties:Strings.Label_Open}"/>
+                <MenuItem Header="{x:Static properties:Strings.OpenRecent}" ItemsSource="{Binding AppSettings.RecentDatabases}">
                     <MenuItem.ItemContainerStyle>
                         <Style TargetType="MenuItem">
                             <Setter Property="Header" Value="{Binding}" />
@@ -124,28 +124,28 @@
                     </MenuItem.ItemContainerStyle>
                 </MenuItem>
                 <Separator/>
-                <MenuItem Command="{Binding SaveLocalCommand}" Header="{x:Static properties:Strings.SaveToDocuments}" Tag="NotInDocuments"/>
-                <MenuItem Command="{Binding SaveAsCommand}" Header="{x:Static properties:Strings.Label_SaveAs}" Tag="Always"/>
-                <MenuItem Command="{Binding BackupDatabaseCommand}" Header="{x:Static properties:Strings.Label_Backup}" Tag="Always"/>
+                <MenuItem Command="{Binding SaveLocalCommand}" Header="{x:Static properties:Strings.SaveToDocuments}"/>
+                <MenuItem Command="{Binding SaveAsCommand}" Header="{x:Static properties:Strings.Label_SaveAs}"/>
+                <MenuItem Command="{Binding BackupDatabaseCommand}" Header="{x:Static properties:Strings.Label_Backup}"/>
                 <Separator/>
                 <MenuItem Command="{Binding DeleteDatabaseCommand}" Header="{x:Static properties:Strings.Word_Delete}"/>
             </MenuItem>
             <MenuItem Header="{x:Static properties:Strings.Word_Database}" Height="25">
                 <MenuItem Command="{Binding CloseDatabaseCommand}" Header="{x:Static properties:Strings.Word_Close}"/>
-                <MenuItem Command="{Binding RenameDatabaseCommand}" Header="{x:Static properties:Strings.Word_Rename}" Tag="Always"/>
+                <MenuItem Command="{Binding RenameDatabaseCommand}" Header="{x:Static properties:Strings.Word_Rename}"/>
                 <Separator/>
-                <MenuItem Command="{Binding PropertiesCommand}" Header="{x:Static properties:Strings.Word_Properties}" Tag="Always"/>
+                <MenuItem Command="{Binding PropertiesCommand}" Header="{x:Static properties:Strings.Word_Properties}"/>
             </MenuItem>
             <MenuItem Header="{x:Static properties:Strings.Word_Network}" Height="25">
-                <MenuItem Command="{Binding ConnectCommand}" Header="{x:Static properties:Strings.Word_Connect}" Tag="NotConnected"/>
-                <MenuItem Command="{Binding DisconnectCommand}" Header="{x:Static properties:Strings.Word_Disconnect}" Tag="Connected"/>
+                <MenuItem Command="{Binding ConnectCommand}" Header="{x:Static properties:Strings.Word_Connect}"/>
+                <MenuItem Command="{Binding DisconnectCommand}" Header="{x:Static properties:Strings.Word_Disconnect}"/>
                 <Separator/>
-                <MenuItem Command="{Binding UnserveCommand}" Header="{x:Static properties:Strings.CloseToNetwork}" Tag="Serving"/>
-                <MenuItem Command="{Binding ServeCommand}" Header="{x:Static properties:Strings.OpenToNetwork}" Tag="NotServing"/>
-                <MenuItem Command="{Binding CopyCodeCommand}" Header="{x:Static properties:Strings.CopyAddressCode}" Tag="Serving"/>
+                <MenuItem Command="{Binding UnserveCommand}" Header="{x:Static properties:Strings.CloseToNetwork}"/>
+                <MenuItem Command="{Binding ServeCommand}" Header="{x:Static properties:Strings.OpenToNetwork}"/>
+                <MenuItem Command="{Binding CopyCodeCommand}" Header="{x:Static properties:Strings.CopyAddressCode}"/>
             </MenuItem>
             <MenuItem Header="{x:Static properties:Strings.Word_Help}" Height="25">
-                <MenuItem Command="{Binding AboutCommand}" Header="{x:Static properties:Strings.Word_About}" Tag="Always"/>
+                <MenuItem Command="{Binding AboutCommand}" Header="{x:Static properties:Strings.Word_About}"/>
             </MenuItem>
         </Menu>
 

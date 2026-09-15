@@ -1,9 +1,9 @@
 ﻿using SylverInk.Interop;
+using SylverInk.XAML.Objects;
 using System.ComponentModel;
 using static SylverInk.FileIO.FileUtils;
 using static SylverInk.Interop.VisualUtils;
 using static SylverInk.Notes.DatabaseUtils;
-using static SylverInk.XAMLUtils.MainWindowUtils;
 
 namespace SylverInk;
 
@@ -94,7 +94,7 @@ public partial class MainWindow : Window
 
     private void MainWindow_SizeChanged(object? sender, SizeChangedEventArgs e)
     {
-        MainWindowViewModel.OnSizeChanged();
+        PushViewportMetrics();
     }
 
     private void MenuTabChanged(object? sender, SelectionChangedEventArgs e)
@@ -102,13 +102,18 @@ public partial class MainWindow : Window
         if (sender is not TabControl control)
             return;
 
-        if (control.SelectedItem is TabItem item && item.Tag is Database newDB && !newDB.Equals(CurrentDatabase))
-        {
-            CurrentDatabase = newDB;
-            RecentNotesDirty = true;
-            Settings.SearchResults.Clear();
-            DeferUpdateRecentNotes();
-        }
+        if (control.SelectedItem is not TabItem item)
+            return;
+
+        if (item.Tag is not Database newDB)
+            return;
+
+        if (newDB.Equals(CurrentDatabase))
+            return;
+
+        CurrentDatabase = newDB;
+        RefreshRecentNotes();
+        Settings.SearchResults.Clear();
     }
 
     protected override void OnClosed(EventArgs e)
@@ -122,11 +127,7 @@ public partial class MainWindow : Window
     {
         base.OnSourceInitialized(e);
 
-        // Hotkey registration
-        HotKeyUtils.Init();
-
-        // Database initialization
-        HandleCheckInit();
+        //Mutex registration
         ShellVerbsPassed = MutexUtils.Init();
 
         if (InstanceRunning())
@@ -140,6 +141,9 @@ public partial class MainWindow : Window
             return;
         }
 
+        // Database initialization
+        HandleCheckInit();
+
         // Settings initialization
         await Settings.Load();
         SettingsLoaded = true;
@@ -150,6 +154,9 @@ public partial class MainWindow : Window
 
         // Style initialization
         SetMenuColors();
+
+        // Hotkey registration
+        HotKeyUtils.Init();
 
         // Documents subdirectory initialization
         foreach (var folder in Subfolders)
@@ -165,12 +172,15 @@ public partial class MainWindow : Window
         // Perform first run operations (if needed)
         await OnFirstRun();
 
+        // Perform secondary initialization once the settings have been loaded and the environment configured.
+        await HandleFinalInit();
+
         // If there are no active notes from last run, open an empty note and focus it.
         if (LastActiveNotes.Count == 0)
             CreateNewNote();
 
         // Refresh the display
-        DeferUpdateRecentNotes();
+        PushViewportMetrics();
 
         // Check for updates. This is a blocking call, so it has to be the very last thing that we do on startup.
         Erase(UpdateHandler.UpdateLockUri);
@@ -178,16 +188,27 @@ public partial class MainWindow : Window
         await UpdateHandler.CheckForUpdates();
     }
 
+    private void PushViewportMetrics()
+    {
+        if (DatabasesPanel?.SelectedItem is not TabItem { Content: DatabaseControl control })
+            return;
+
+        var dpi = VisualTreeHelper.GetDpi(this);
+        ViewModel.OnViewportMetricsChanged(
+            control.NoteListActualWidth,
+            control.NoteListActualHeight,
+            dpi.PixelsPerInchY);
+    }
+
     private void SelectDatabaseTab(string filePath)
     {
-        // Find the tab with the matching file path and select it
         foreach (TabItem item in DatabasesPanel.Items)
         {
-            if (item.Tag is Database db && Path.GetFullPath(db.DBFile) == filePath)
-            {
-                DatabasesPanel.SelectedItem = item;
-                break;
-            }
+            if (item.Tag is not Database db || Path.GetFullPath(db.DBFile) != filePath)
+                continue;
+
+            DatabasesPanel.SelectedItem = item;
+            break;
         }
     }
 }

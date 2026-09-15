@@ -132,14 +132,14 @@ public class MainWindowViewModel : ViewModelBase
         DisconnectCommand = new RelayCommand(MenuDisconnect, CanDisconnect);
         NewDatabaseCommand = new RelayCommand(MenuCreate);
         OpenDatabaseCommand = new RelayCommand(MenuOpen);
-        OpenRecentFileCommand = new RelayCommand(MenuOpenRecent);
+        OpenRecentFileCommand = new RelayCommand(MenuOpenRecent, CanOpenRecent);
         PropertiesCommand = new RelayCommand(MenuProperties);
         RenameDatabaseCommand = new RelayCommand(MenuRename);
         RenamePopupEnterCommand = new RelayCommand(PopupRenameClosed);
         RenamePopupEscapeCommand = new RelayCommand(_ => RenamePopupVisible = false);
         SaveAsCommand = new RelayCommand(MenuSaveAs);
         SaveConnectCommand = new RelayCommand(PopupSaveAddress);
-        SaveLocalCommand = new RelayCommand(MenuSaveLocal);
+        SaveLocalCommand = new RelayCommand(MenuSaveLocal, CanSaveLocal);
         SaveRenameCommand = new RelayCommand(PopupRenameClosed);
         ServeCommand = new RelayCommand(MenuServe, CanServe);
         UnserveCommand = new RelayCommand(MenuUnserve, CanUnserve);
@@ -147,17 +147,21 @@ public class MainWindowViewModel : ViewModelBase
 
     private static bool CanCloseDatabase(object? param) => Databases.Count > 1;
 
-    private static bool CanConnect(object? param) => CurrentDatabase?.Client?.Connected is not true;
+    private static bool CanConnect(object? param) => !CurrentDatabase.Client.Active && !CurrentDatabase.Server.Active;
 
-    private static bool CanCopyCode(object? param) => CurrentDatabase?.Server?.Serving is true;
+    private static bool CanCopyCode(object? param) => !CurrentDatabase.Client.Active && CurrentDatabase.Server.Active;
 
     private static bool CanDeleteDatabase(object? param) => Databases.Count > 1;
 
-    private static bool CanDisconnect(object? param) => CurrentDatabase?.Client?.Connected is true;
+    private static bool CanDisconnect(object? param) => CurrentDatabase.Client.Active && !CurrentDatabase.Server.Active;
 
-    private static bool CanServe(object? param) => CurrentDatabase?.Server?.Serving is not true;
+    private static bool CanOpenRecent(object? param) => CommonUtils.Settings.RecentDatabases.Count > 0;
 
-    private static bool CanUnserve(object? param) => CurrentDatabase?.Server?.Serving is true;
+    private static bool CanSaveLocal(object? param) => !CurrentDatabase.DBFile.Contains(Subfolders[Strings.Subfolder_Databases]);
+
+    private static bool CanServe(object? param) => !CurrentDatabase.Client.Active && !CurrentDatabase.Server.Active;
+
+    private static bool CanUnserve(object? param) => !CurrentDatabase.Client.Active && CurrentDatabase.Server.Active;
 
     private static void CopyCode()
     {
@@ -185,7 +189,6 @@ public class MainWindowViewModel : ViewModelBase
         }
 
         RemoveDatabase(CurrentDatabase);
-        DeferUpdateRecentNotes();
     }
 
     private void MenuConnect(object? param)
@@ -202,7 +205,6 @@ public class MainWindowViewModel : ViewModelBase
     private static void MenuCreate(object? param)
     {
         AddDatabase(new Database());
-        DeferUpdateRecentNotes();
     }
 
     private static void MenuDelete(object? param)
@@ -216,7 +218,6 @@ public class MainWindowViewModel : ViewModelBase
             Directory.Delete(BKPath, true);
 
         RemoveDatabase(CurrentDatabase);
-        DeferUpdateRecentNotes();
     }
 
     private static void MenuDisconnect(object? param)
@@ -240,7 +241,6 @@ public class MainWindowViewModel : ViewModelBase
         }
 
         await Database.Create(dbFile);
-        DeferUpdateRecentNotes();
     }
 
     private async void MenuOpenRecent(object? param)
@@ -259,7 +259,6 @@ public class MainWindowViewModel : ViewModelBase
         if (Path.Exists(path))
         {
             await Database.Create(dbFile);
-            DeferUpdateRecentNotes();
             return;
         }
 
@@ -267,7 +266,6 @@ public class MainWindowViewModel : ViewModelBase
             return;
 
         CommonUtils.Settings.RecentDatabases.Remove(new() { FullPath = path });
-        DeferUpdateRecentNotes();
     }
 
     private static void MenuProperties(object? param)
@@ -302,11 +300,6 @@ public class MainWindowViewModel : ViewModelBase
     private static void MenuShowAbout(object? param) => new About().Show();
 
     private static void MenuUnserve(object? param) => CurrentDatabase.Server.Close();
-
-    public static void OnSizeChanged()
-    {
-        DeferUpdateRecentNotes();
-    }
 
     private void PopupCodeClosed(object? param)
     {
@@ -363,5 +356,72 @@ public class MainWindowViewModel : ViewModelBase
         Database newDB = new();
         AddDatabase(newDB);
         await newDB.Client.Connect(AddressCode);
+    }
+
+    private double _viewportWidth;
+    private double _viewportHeight;
+    private double _pixelsPerInchY = 96.0;
+    private int _refreshToken;
+
+    public void OnViewportMetricsChanged(double width, double height, double pixelsPerInchY)
+    {
+        _viewportWidth = width;
+        _viewportHeight = height;
+        _pixelsPerInchY = pixelsPerInchY;
+        _ = RefreshRecentNotesAsync();
+    }
+
+    public async Task RefreshRecentNotesAsync()
+    {
+        if (!CanResize || CommonUtils.Settings.MainTypeFace is null || _viewportHeight <= 0)
+            return;
+
+        int token = ++_refreshToken;
+        double height = _viewportHeight;
+        double dpiY = _pixelsPerInchY;
+
+        IReadOnlyList<NoteRecord> snapshot;
+        try
+        {
+            snapshot = await Task.Run(() => BuildRecentNotesSnapshot(height, dpiY));
+        }
+        catch
+        {
+            return;
+        }
+
+        if (token != _refreshToken)
+            return; // superseded by a newer request
+
+        CommonUtils.Settings.RecentNotes = snapshot; // single PropertyChanged → single ListBox rebuild
+    }
+
+    private static List<NoteRecord> BuildRecentNotesSnapshot(double viewportHeight, double pixelsPerInchY)
+    {
+        var typeface = CommonUtils.Settings.MainTypeFace!;
+        var pixelRatio = CommonUtils.Settings.MainFontSize * pixelsPerInchY / 72.0;
+        var lineHeight = pixelRatio * typeface.FontFamily.LineSpacing;
+        var lineRatio = Math.Max(1.0, (viewportHeight / lineHeight) - 0.5);
+        var target = (int)Math.Min(lineRatio, CurrentDatabase.RecordCount);
+
+        if (target <= 0)
+            return [];
+
+        CurrentDatabase.Sort(RecentEntriesSortMode);
+        try
+        {
+            var result = new List<NoteRecord>(target);
+            for (int i = 0; i < target; i++)
+            {
+                if (CurrentDatabase.GetRecord(i) is not NoteRecord record)
+                    break;
+                result.Add(record);
+            }
+            return result;
+        }
+        finally
+        {
+            CurrentDatabase.Sort();
+        }
     }
 }

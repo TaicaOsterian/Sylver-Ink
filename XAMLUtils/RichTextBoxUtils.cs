@@ -12,10 +12,7 @@ public class RichTextBoxUtils
             "BoundCaret",
             typeof(TextPointer),
             typeof(RichTextBoxUtils),
-            new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnBoundCaretPositionChanged));
-
-    public static TextPointer GetBoundCaret(DependencyObject source) => (TextPointer)source.GetValue(BoundCaretProperty);
-    public static void SetBoundCaret(DependencyObject source, TextPointer value) => source.SetValue(BoundCaretProperty, value);
+            new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnBoundCaretChanged));
 
     public static readonly DependencyProperty DocumentProperty =
         DependencyProperty.RegisterAttached(
@@ -24,8 +21,12 @@ public class RichTextBoxUtils
             typeof(RichTextBoxUtils),
             new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnDocumentChanged));
 
-    public static FlowDocument GetDocument(DependencyObject source) => (FlowDocument)source.GetValue(DocumentProperty);
-    public static void SetDocument(DependencyObject source, FlowDocument value) => source.SetValue(DocumentProperty, value);
+    public static readonly DependencyProperty DocumentCaretProperty =
+        DependencyProperty.RegisterAttached(
+            "DocumentCaret",
+            typeof(int),
+            typeof(RichTextBoxUtils),
+            new PropertyMetadata(0, OnDocumentCaretChanged));
 
     public static readonly DependencyProperty ObserveCaretProperty =
         DependencyProperty.RegisterAttached(
@@ -34,20 +35,65 @@ public class RichTextBoxUtils
             typeof(RichTextBoxUtils),
             new PropertyMetadata(false, OnObserveCaretChanged));
 
+
+    public static TextPointer GetBoundCaret(DependencyObject source) => (TextPointer)source.GetValue(BoundCaretProperty);
+
+    public static FlowDocument GetDocument(DependencyObject source) => (FlowDocument)source.GetValue(DocumentProperty);
+
+    public static int GetDocumentCaret(DependencyObject source) => (int)source.GetValue(DocumentCaretProperty);
+
     public static bool GetObserveCaret(DependencyObject source) => (bool)source.GetValue(ObserveCaretProperty);
-    public static void SetObserveCaret(DependencyObject source, bool value) => source.SetValue(ObserveCaretProperty, value);
+
+    private static void OnBoundCaretChanged(DependencyObject source, DependencyPropertyChangedEventArgs e)
+    {
+        if (source is not RichTextBox rtb || e.NewValue is not TextPointer newCaret)
+            return;
+
+        if (!newCaret.IsInSameDocument(rtb.Document.ContentStart))
+            return;
+
+        if (rtb.CaretPosition == newCaret)
+            return;
+
+        rtb.Dispatcher.BeginInvoke(new Action(() =>
+        {
+            try
+            {
+                rtb.CaretPosition = newCaret;
+                rtb.Focus();
+            }
+            catch { /* Rarely, confusion can occur if the user clicks in the box the very moment it opens. */ }
+        }), DispatcherPriority.Background);
+    }
 
     private static void OnDocumentChanged(DependencyObject source, DependencyPropertyChangedEventArgs e)
     {
         if (source is not RichTextBox rtb || e.NewValue is not FlowDocument document)
             return;
 
+        if (document.Parent is not null)
+            return;
+
         rtb.Dispatcher.BeginInvoke(new Action(() =>
         {
-            rtb.Document = document;
-            rtb.CaretPosition = document.ContentStart;
-            FlowDocumentUtils.ScrollToText(document, (string?)document.Tag);
-            document.Tag = null;
+            try
+            {
+                rtb.Document = document;
+            }
+            catch { /* Rarely, confusion can occur if the user clicks in the box the very moment it opens. */ }
+        }), DispatcherPriority.Background);
+    }
+
+    private static void OnDocumentCaretChanged(DependencyObject source, DependencyPropertyChangedEventArgs e)
+    {
+        if (source is not RichTextBox rtb || e.NewValue is not int position)
+            return;
+
+        source.Dispatcher.BeginInvoke(new Action(() =>
+        {
+            FlowDocumentUtils.ScrollToPosition(rtb.Document, position);
+            SetDocumentCaret(rtb.Document, 0);
+            rtb.Focus();
         }), DispatcherPriority.Background);
     }
 
@@ -73,21 +119,11 @@ public class RichTextBoxUtils
         SetBoundCaret(rtb, rtb.CaretPosition);
     }
 
-    private static void OnBoundCaretPositionChanged(DependencyObject source, DependencyPropertyChangedEventArgs e)
-    {
-        if (source is not RichTextBox rtb || e.NewValue is not TextPointer newCaret)
-            return;
+    public static void SetBoundCaret(DependencyObject source, TextPointer value) => source.SetValue(BoundCaretProperty, value);
 
-        if (newCaret.Parent != rtb.Document)
-            return;
+    public static void SetDocument(DependencyObject source, FlowDocument value) => source.SetValue(DocumentProperty, value);
 
-        if (rtb.CaretPosition == newCaret)
-            return;
+    public static void SetDocumentCaret(DependencyObject source, int value) => source.SetValue(DocumentCaretProperty, value);
 
-        rtb.Dispatcher.BeginInvoke(new Action(() =>
-        {
-            rtb.CaretPosition = newCaret;
-            rtb.Focus();
-        }), DispatcherPriority.Background);
-    }
+    public static void SetObserveCaret(DependencyObject source, bool value) => source.SetValue(ObserveCaretProperty, value);
 }

@@ -73,7 +73,7 @@ public class SettingsViewModel : ViewModelBase
             CommonUtils.Settings.SnapSearchResults = true;
         }
 
-        DeferUpdateRecentNotes();
+        RefreshRecentNotes();
     }
 
     private void SmartAssistChanged(object? param = null)

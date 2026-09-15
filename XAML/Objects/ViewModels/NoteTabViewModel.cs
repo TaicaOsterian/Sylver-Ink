@@ -6,48 +6,27 @@ namespace SylverInk.XAML.Objects.ViewModels;
 
 public class NoteTabViewModel : NoteEditorViewModel
 {
-    private bool _canNavigateNext;
-    private bool _canNavigatePrevious;
-    private string _currentRevision = string.Empty;
-    private TextPointer _initialPointer;
+    private FlowDocument _historicalDocument;
+    private bool _isLive = true;
     private int _revisionIndex;
-    private bool _revisionView;
     private string _saveLabel = Strings.Word_Save;
     private string _searchText = string.Empty;
 
-    public bool CanNavigateNext
+    public FlowDocument HistoricalDocument
     {
-        get => _canNavigateNext;
+        get => _historicalDocument;
         set
         {
-            _canNavigateNext = value;
+            _historicalDocument = value;
             OnPropertyChanged();
         }
     }
-    public bool CanNavigatePrevious
+    public bool IsLive
     {
-        get => _canNavigatePrevious;
+        get => _isLive;
         set
         {
-            _canNavigatePrevious = value;
-            OnPropertyChanged();
-        }
-    }
-    public string CurrentRevision
-    {
-        get => _currentRevision;
-        set
-        {
-            _currentRevision = value;
-            OnPropertyChanged();
-        }
-    }
-    public TextPointer InitialPointer
-    {
-        get => _initialPointer;
-        set
-        {
-            _initialPointer = value;
+            _isLive = value;
             OnPropertyChanged();
         }
     }
@@ -57,15 +36,6 @@ public class NoteTabViewModel : NoteEditorViewModel
         set
         {
             _revisionIndex = value;
-            OnPropertyChanged();
-        }
-    }
-    public bool RevisionView
-    {
-        get => _revisionView;
-        set
-        {
-            _revisionView = value;
             OnPropertyChanged();
         }
     }
@@ -105,13 +75,17 @@ public class NoteTabViewModel : NoteEditorViewModel
         DeleteCommand = new RelayCommand(Delete);
         FindNextCommand = new RelayCommand(FindNext);
         FindPreviousCommand = new RelayCommand(FindPrevious);
-        NavigateNextCommand = new RelayCommand(NavigateNext);
-        NavigatePreviousCommand = new RelayCommand(NavigatePrevious);
+        NavigateNextCommand = new RelayCommand(NavigateNext, CanNavigateNext);
+        NavigatePreviousCommand = new RelayCommand(NavigatePrevious, CanNavigatePrevious);
         ReturnCommand = new RelayCommand(Return);
         SaveCommand = new RelayCommand(Save);
 
-        _initialPointer = Document.ContentStart;
+        _historicalDocument = new();
     }
+
+    private bool CanNavigateNext(object? param) => RevisionIndex > 0;
+
+    private bool CanNavigatePrevious(object? param) => RevisionIndex + 1 <= Record.GetNumRevisions();
 
     public override void Construct()
     {
@@ -120,20 +94,16 @@ public class NoteTabViewModel : NoteEditorViewModel
 
         base.Construct();
 
-        var offset = InitialPointer.DocumentStart.GetOffsetToPosition(InitialPointer);
-        CaretPosition = Document.ContentStart.GetPositionAtOffset(offset);
-
         IsEnabled = !Record.Locked;
-        Document.Focus();
 
-        CanNavigateNext = false;
-        CanNavigatePrevious = Record.GetNumRevisions() > 0;
         Edited = false;
         LastChange = Record.Locked ? Strings.NoteLocked : Record.GetNumRevisions() == 0 ? string.Format(CultureInfo.CurrentCulture, CacheNoteEntryCreated, Record.GetCreated()) : string.Format(CultureInfo.CurrentCulture, CacheNoteEntryModified, Record.GetLastChange());
     }
 
-    public void Deconstruct()
+    public override void Deconstruct()
     {
+        base.Deconstruct();
+
         if (!Record.Locked)
             Record.DB?.Unlock(Record.Index, true);
 
@@ -156,6 +126,8 @@ public class NoteTabViewModel : NoteEditorViewModel
 
             ChildPanel.Items.RemoveAt(i);
         }
+
+        RefreshRecentNotes();
     }
 
     private void Delete(object? param)
@@ -179,81 +151,90 @@ public class NoteTabViewModel : NoteEditorViewModel
 
     private void NavigateNext(object? param)
     {
-        RevisionIndex--;
+        do
+        {
+            RevisionIndex--;
+        } while (Record.IsAutosaveRevision(RevisionIndex));
+
         string revisionTime = RevisionIndex == 0 ? Record.GetLastChange() : Record.GetRevisionTime(RevisionIndex);
 
-        SetNavigation();
-        Document = RevisionIndex != 0 ? Record.GetDocument(RevisionIndex) : TextConverter.Parse(CurrentRevision, TextFormat.Xaml);
+        if (RevisionIndex != 0)
+            HistoricalDocument = Record.GetDocument(RevisionIndex);
+
         Edited = RevisionIndex != 0 || CalculateIsEdited();
-        LastChange = RevisionIndex != 0 ? string.Format(CultureInfo.CurrentCulture, CacheNoteRevisionID, Record.GetNumRevisions() - RevisionIndex, revisionTime) : string.Format(CultureInfo.CurrentCulture, CacheNoteEntryModified, revisionTime);
-        RevisionView = RevisionIndex != 0;
+        IsLive = RevisionIndex == 0;
+        LastChange = RevisionIndex != 0
+            ? string.Format(CultureInfo.CurrentCulture, CacheNoteRevisionID, Record.GetNumRevisions() - RevisionIndex, revisionTime)
+            : string.Format(CultureInfo.CurrentCulture, CacheNoteEntryModified, revisionTime);
         SaveLabel = RevisionIndex != 0 ? Strings.Word_Restore : Strings.Word_Save;
     }
 
     private void NavigatePrevious(object? param)
     {
-        if (RevisionIndex == 0)
-            CurrentRevision = TextConverter.Save(Document, TextFormat.Xaml);
+        do
+        {
+            RevisionIndex++;
+        } while (Record.IsAutosaveRevision(RevisionIndex));
 
-        RevisionIndex++;
         string revisionTime = RevisionIndex == Record.GetNumRevisions() ? Record.GetCreated() : Record.GetRevisionTime(RevisionIndex);
 
-        SetNavigation();
-        Document = Record.GetDocument(RevisionIndex);
         Edited = true;
-        LastChange = RevisionIndex == Record.GetNumRevisions() ? string.Format(CultureInfo.CurrentCulture, CacheNoteEntryCreated, revisionTime) : string.Format(CultureInfo.CurrentCulture, CacheNoteRevisionID, Record.GetNumRevisions() - RevisionIndex, revisionTime);
-        RevisionView = true;
+        HistoricalDocument = Record.GetDocument(RevisionIndex);
+        IsLive = false;
+        LastChange = RevisionIndex == Record.GetNumRevisions()
+            ? string.Format(CultureInfo.CurrentCulture, CacheNoteEntryCreated, revisionTime)
+            : string.Format(CultureInfo.CurrentCulture, CacheNoteRevisionID, Record.GetNumRevisions() - RevisionIndex, revisionTime);
         SaveLabel = Strings.Word_Restore;
     }
 
     private void Return(object? param)
     {
-        if (Edited)
-        {
-            switch (MessageBox.Show(Strings.ExitMessage_SaveWork, Strings.Title_Notification, MessageBoxButton.YesNoCancel, MessageBoxImage.Information))
-            {
-                case MessageBoxResult.Cancel:
-                    return;
-                case MessageBoxResult.Yes:
-                    CurrentDatabase.CreateRevision(Record, TextConverter.Save(Document, TextFormat.Xaml));
-                    DeferUpdateRecentNotes();
-                    break;
-            }
-        }
+        if (Edited && ConfirmExit())
+            return;
+
+        if (Record is null)
+            return;
+
         CurrentDatabase.Transmit(NetworkUtils.MessageType.RecordUnlock, Record.Index.ToByteArray());
-        PreviousOpenNote = Record;
+        CurrentDatabase.PushPreviousNote(Record);
+
         Deconstruct();
     }
 
     private void Save(object? param)
     {
+        EraseAutosave();
+
+        if (RevisionIndex != 0)
+        {
+            Document.Blocks.Clear();
+
+            for (int i = 0; i < HistoricalDocument.Blocks.Count; i++)
+            {
+                var item = HistoricalDocument.Blocks.ElementAt(i);
+                HistoricalDocument.Blocks.Remove(item);
+                Document.Blocks.Add(item);
+            }
+        }
+
         var newText = TextConverter.Save(Document, TextFormat.Xaml);
         Record.DB?.CreateRevision(Record, newText);
-        DeferUpdateRecentNotes();
 
-        CanNavigateNext = false;
-        CanNavigatePrevious = true;
         Edited = false;
         IsEnabled = true;
+        IsLive = true;
         LastChange = string.Format(CultureInfo.CurrentCulture, CacheNoteEntryModified, Record.GetLastChange());
         OriginalBlockCount = Document.Blocks.Count;
         OriginalPlaintext = new TextRange(Document.ContentStart, Document.ContentEnd).Text;
         OriginalRevisionCount = Record.GetNumRevisions();
         OriginalText = newText;
-        RevisionView = false;
         RevisionIndex = 0;
         SaveLabel = Strings.Word_Save;
     }
 
-    private void SetNavigation()
-    {
-        CanNavigateNext = RevisionIndex > 0;
-        CanNavigatePrevious = RevisionIndex + 1 <= Record.GetNumRevisions();
-    }
-
     public override void TextChanged()
     {
-        if (RevisionView)
+        if (!IsLive)
             return;
 
         base.TextChanged();

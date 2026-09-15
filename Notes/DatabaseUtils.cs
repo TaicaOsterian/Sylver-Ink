@@ -72,8 +72,7 @@ public static class DatabaseUtils
         control.Items.Add(item);
         control.SelectedItem = item;
 
-        RecentNotesDirty = true;
-        DeferUpdateRecentNotes();
+        RefreshRecentNotes();
 
         PathItem recentItem = new() { FullPath = db.DBFile };
 
@@ -113,22 +112,25 @@ public static class DatabaseUtils
     {
         foreach (SearchResult result in OpenQueries)
         {
-            if (result.RequestOpen(record))
-                return result;
+            if (!result.RequestOpen(record))
+                continue;
+
+            result.ViewModel.ScrollTo(scrollTo);
+            return result;
         }
 
         RemoveRecordTab(record);
 
         SearchResult resultWindow = new();
         resultWindow.ViewModel.Record = record;
-        resultWindow.ViewModel.ScrollTo = scrollTo;
+        resultWindow.ViewModel.ScrollTo(scrollTo);
 
         resultWindow.Show();
         OpenQueries.Add(resultWindow);
         if (!record?.Locked is true)
             record?.DB?.Lock(record.Index, true);
 
-        DeferUpdateRecentNotes();
+        RefreshRecentNotes();
 
         return resultWindow;
     }
@@ -165,8 +167,7 @@ public static class DatabaseUtils
                 Databases.RemoveAt(i);
         }
 
-        RecentNotesDirty = true;
-        DeferUpdateRecentNotes();
+        RefreshRecentNotes();
 
         if (!Path.Exists(db.DBFile))
             return;
@@ -192,6 +193,8 @@ public static class DatabaseUtils
             OpenTabs.RemoveAt(i);
             tab.ViewModel.Deconstruct();
         }
+
+        RefreshRecentNotes();
     }
 
     public static async Task SaveDatabases()

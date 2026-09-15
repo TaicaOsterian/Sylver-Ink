@@ -53,22 +53,7 @@ public static class HotKeyUtils
 
     private static void OnNewNoteHotkey() => CreateNewNote();
 
-    private static void OnPreviousNoteHotkey()
-    {
-        if (PreviousOpenNote is not null)
-        {
-            OpenQuery(PreviousOpenNote);
-            return;
-        }
-
-        int index = CurrentDatabase.CreateRecord(string.Empty);
-        var record = CurrentDatabase.GetRecord(index);
-
-        if (record is null)
-            return;
-
-        OpenQuery(record);
-    }
+    private static void OnPreviousNoteHotkey() => CurrentDatabase.PopPreviousNote();
 
     private static void RegisterHotKeys()
     {

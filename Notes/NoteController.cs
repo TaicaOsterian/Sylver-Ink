@@ -2,7 +2,6 @@
 using System.Globalization;
 using static SylverInk.FileIO.FileUtils;
 using static SylverInk.Notes.DatabaseUtils;
-using static SylverInk.XAMLUtils.MainWindowUtils;
 
 namespace SylverInk.Notes;
 
@@ -78,8 +77,8 @@ public partial class NoteController : IDisposable
 
     private int AddRecord(NoteRecord record)
     {
-        RecentNotesDirty = true;
         Records.Add(record);
+        RefreshRecentNotes();
         return record.Index;
     }
 
@@ -202,7 +201,7 @@ public partial class NoteController : IDisposable
         while (RecordCount > 0)
             DeleteRecord(0);
 
-        DeferUpdateRecentNotes();
+        RefreshRecentNotes();
     }
 
     private static string FindBackup(string dbFile)
@@ -325,9 +324,8 @@ public partial class NoteController : IDisposable
             }
         }
 
-        RecentNotesDirty = true;
+        RefreshRecentNotes();
         PropagateIndices();
-        DeferUpdateRecentNotes();
     }
 
     public byte[]? SerializeRecords(bool inMemory = false)

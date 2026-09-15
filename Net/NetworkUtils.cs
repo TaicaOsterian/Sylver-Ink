@@ -3,7 +3,6 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Windows.Shapes;
-using static SylverInk.XAMLUtils.MainWindowUtils;
 
 namespace SylverInk.Net;
 
@@ -125,14 +124,12 @@ public static class NetworkUtils
                 }
 
                 Concurrent(DB.CreateRecord, bufferString, false);
-                DeferUpdateRecentNotes();
                 break;
             case MessageType.RecordLock:
                 Concurrent(DB.Lock, recordIndex, false);
                 break;
             case MessageType.RecordRemove:
                 Concurrent(DB.DeleteRecord, recordIndex, false);
-                DeferUpdateRecentNotes();
                 break;
             case MessageType.RecordUnlock:
                 Concurrent(DB.Unlock, recordIndex, false);
@@ -151,7 +148,6 @@ public static class NetworkUtils
                 }
 
                 Concurrent(DB.CreateRevision, recordIndex, bufferString, false);
-                DeferUpdateRecentNotes();
                 break;
         }
 
@@ -180,6 +176,6 @@ public static class NetworkUtils
 
         Concurrent(DB.GetHeader);
 
-        DeferUpdateRecentNotes();
+        RefreshRecentNotes();
     });
 }

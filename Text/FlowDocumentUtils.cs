@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Globalization;
+using System.Text;
 
 namespace SylverInk.Text;
 
@@ -26,6 +27,32 @@ public static class FlowDocumentUtils
         return content.ToString().Trim();
     }
 
+    public static void ScrollToPosition(FlowDocument? document, int offset = 0, LogicalDirection direction = LogicalDirection.Forward)
+    {
+        if (document is null)
+            return;
+
+        if (document.Parent is not RichTextBox box)
+            return;
+
+        TextPointer pointer = direction == LogicalDirection.Forward
+            ? document.ContentStart
+            : document.ContentEnd;
+
+        if (offset == 0)
+        {
+            box.CaretPosition = pointer;
+            return;
+        }
+
+        pointer = pointer.GetPositionAtOffset(offset);
+        if (pointer is null)
+            return;
+
+        box.Focus();
+        box.CaretPosition = pointer;
+    }
+
     public static void ScrollToText(FlowDocument? document, string? text, LogicalDirection direction = LogicalDirection.Forward)
     {
         if (document is null)
@@ -37,8 +64,7 @@ public static class FlowDocumentUtils
         if (document.Parent is not RichTextBox box)
             return;
 
-        if (box.CaretPosition is null || !ReferenceEquals(box.CaretPosition.Parent, box.Document))
-            box.CaretPosition = document.ContentStart;
+        box.CaretPosition ??= document.ContentStart;
 
         int index = 0;
         string plaintext = (direction == LogicalDirection.Forward
@@ -108,14 +134,21 @@ public static class FlowDocumentUtils
             case TextPointerContext.ElementStart:
                 var element = textPointer.GetAdjacentElement(LogicalDirection.Forward);
 
-                if (element is Paragraph && content.Length > 0)
+                switch (element)
                 {
-                    content.AppendLine();
-                    content.AppendLine();
-                }
-                else if (element is LineBreak)
-                {
-                    content.AppendLine();
+                    case BlockUIContainer:
+                        content.Append(CultureInfo.CurrentCulture, $"({Strings.Word_Image.ToLower(CultureInfo.CurrentCulture)})");
+                        break;
+                    case LineBreak:
+                        content.AppendLine();
+                        break;
+                    case Paragraph paragraph:
+                        if (content.Length > 0)
+                        {
+                            content.AppendLine();
+                            content.AppendLine();
+                        }
+                        break;
                 }
 
                 return textPointer.GetNextContextPosition(LogicalDirection.Forward);
