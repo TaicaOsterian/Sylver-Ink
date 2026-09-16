@@ -10,6 +10,8 @@ public static class MutexUtils
     private static readonly CancellationTokenSource mutexTokenSource = new();
     private static readonly string MutexName = $"Sylver Ink/{typeof(MainWindow).GUID}";
 
+    public static int ShellVerbs { get; private set; }
+
     /// <summary>
     /// Mutex management in Sylver Ink allows passing shell verbs through a named pipe to an existing open instance.
     /// </summary>
@@ -26,21 +28,30 @@ public static class MutexUtils
         mutex = null;
         var args = Environment.GetCommandLineArgs();
 
-        var client = new NamedPipeClientStream(MutexName);
-        client.Connect();
+        try
+        {
+            var client = new NamedPipeClientStream(MutexName);
+            client.Connect(1000);
 
-        using (StreamWriter writer = new(client))
-            writer.Write(string.Join("\t", args));
+            using (StreamWriter writer = new(client))
+                writer.Write(string.Join("\t", args));
 
-        return args.Length > 1;
+            ShellVerbs = args.Length;
+
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
     }
 
     private async static void HandleMutexPipe(CancellationToken token)
     {
-        await using var server = new NamedPipeServerStream(MutexName);
-
         while (mutex != null)
         {
+            await using var server = new NamedPipeServerStream(MutexName);
+
             try
             {
                 await server.WaitForConnectionAsync(token);

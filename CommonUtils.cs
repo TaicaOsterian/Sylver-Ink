@@ -186,8 +186,6 @@ public static partial class CommonUtils
         Application.Current.MainWindow.ResizeMode = ResizeMode.CanResize;
     }
 
-    public static bool InstanceRunning() => Process.GetProcessesByName("Sylver Ink").Length > 1 && !File.Exists(UpdateHandler.UpdateLockUri);
-
     public static double Lerp(double x, double y, double a)
     {
         a = a > 1.0 ? 1.0 : a < 0.0 ? 0.0 : a;

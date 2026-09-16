@@ -12,8 +12,6 @@ namespace SylverInk;
 /// </summary>
 public partial class MainWindow : Window
 {
-    private bool ShellVerbsPassed;
-
     public MainWindowViewModel ViewModel => (MainWindowViewModel)DataContext;
 
     public MainWindow()
@@ -128,16 +126,13 @@ public partial class MainWindow : Window
         base.OnSourceInitialized(e);
 
         //Mutex registration
-        ShellVerbsPassed = MutexUtils.Init();
-
-        if (InstanceRunning())
+        if (MutexUtils.Init())
         {
-            if (!ShellVerbsPassed)
+            if (MutexUtils.ShellVerbs < 2)
                 MessageBox.Show(Strings.Error_InstanceRunning, Strings.Title_Error, MessageBoxButton.OK, MessageBoxImage.Error);
 
             // If shell verbs were passed to an existing instance, close this instance silently before a head is established.
             AbortRun = true;
-            Application.Current.Shutdown();
             Close();
             return;
         }

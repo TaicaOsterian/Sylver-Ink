@@ -294,5 +294,6 @@ public class NoteEditorViewModel : ViewModelBase
         // This base class contains no save function, so it's up to an inheritor (e.g. NoteTab or SearchResult) to reset the Edited variable when needed.
         Edited = Edited || CalculateIsEdited();
         Autosave();
+        RefreshRecentNotes();
     }
 }

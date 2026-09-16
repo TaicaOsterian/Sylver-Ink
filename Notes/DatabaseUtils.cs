@@ -1,8 +1,6 @@
 ﻿using SylverInk.XAML;
 using SylverInk.XAML.Objects;
 using System.Globalization;
-using System.Reflection.Metadata;
-using System.Windows.Media.Media3D;
 using static SylverInk.FileIO.FileUtils;
 using static SylverInk.XAMLUtils.MainWindowUtils;
 
@@ -92,7 +90,7 @@ public static class DatabaseUtils
         TabItem item = new()
         {
             Content = tab,
-            Header = GetRibbonHeader(record),
+            Header = record.GetRibbonHeader(),
             Margin = new(0, 2, 0, 0)
         };
 

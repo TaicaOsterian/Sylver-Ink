@@ -277,15 +277,15 @@ public partial class NoteRecord
 
     public DateTime GetCreatedObject() => DateTime.FromBinary(Created);
 
-    public override int GetHashCode() => int.Parse((UUID ??= MakeUUID(UUIDType.Record))[^8..], NumberStyles.HexNumber, NumberFormatInfo.CurrentInfo);
-
-    public DateTime GetLastChangeObject() => DateTime.FromBinary(LastChange);
-
-    public string GetLastChange() => GetLastChangeObject().ToLocalTime().ToString(DateFormat, CultureInfo.CurrentCulture);
-
     public FlowDocument GetDocument() => TextConverter.Parse(Reconstruct(), TextFormat.Xaml);
 
     public FlowDocument GetDocument(int backsteps = 0) => TextConverter.Parse(Reconstruct(backsteps), TextFormat.Xaml);
+
+    public override int GetHashCode() => int.Parse((UUID ??= MakeUUID(UUIDType.Record))[^8..], NumberStyles.HexNumber, NumberFormatInfo.CurrentInfo);
+
+    public string GetLastChange() => GetLastChangeObject().ToLocalTime().ToString(DateFormat, CultureInfo.CurrentCulture);
+
+    public DateTime GetLastChangeObject() => DateTime.FromBinary(LastChange);
 
     public int GetNumRevisions() => Revisions.Count;
 
@@ -296,6 +296,34 @@ public partial class NoteRecord
     public string GetRevisionTime(int index) => index < Revisions.Count
         ? DateTime.FromBinary(GetRevision(index).Created).ToLocalTime().ToString(DateFormat, CultureInfo.CurrentCulture)
         : GetCreated();
+
+    public Label GetRibbonHeader()
+    {
+        var tooltip = GetRibbonTooltip();
+        var content = tooltip;
+
+        if (content.Contains(Environment.NewLine))
+            content = content[..content.IndexOf(Environment.NewLine, StringComparison.OrdinalIgnoreCase)];
+
+        if (content.Length >= 13)
+            content = $"{content[..10]}...";
+
+        return new()
+        {
+            Content = content,
+            Margin = new(0, -4, 0, 0),
+            ToolTip = tooltip[..Math.Min(40, tooltip.Length)]
+        };
+    }
+
+    private string GetRibbonTooltip() => RibbonTabContent switch
+    {
+        DisplayType.Change => $"{ShortChange} — {Preview}",
+        DisplayType.Content => Preview,
+        DisplayType.Creation => $"{GetCreated()} — {Preview}",
+        DisplayType.Index => string.Format(CultureInfo.CurrentCulture, CacheNoteIndexLabel, Index + 1, Preview),
+        _ => Preview
+    };
 
     public bool IsAutosaveRevision(int index) => index < Revisions.Count && Revisions[Revisions.Count - 1 - index].IsAutosave;
 
