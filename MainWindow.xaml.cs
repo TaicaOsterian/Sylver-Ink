@@ -137,6 +137,7 @@ public partial class MainWindow : Window
 
             // If shell verbs were passed to an existing instance, close this instance silently before a head is established.
             AbortRun = true;
+            Application.Current.Shutdown();
             Close();
             return;
         }

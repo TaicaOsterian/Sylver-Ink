@@ -122,12 +122,13 @@ public partial class NoteController : IDisposable
 
         var record = Records[recordIndex];
         Records.RemoveAt(recordIndex);
-        record.Delete();
 
         for (int i = OpenQueries.Count - 1; i > -1; i--)
             OpenQueries[i].RequestClose(record);
 
+        DB?.RemovePreviousNote(record);
         RemoveRecordTab(record);
+        record.Delete();
 
         PropagateIndices();
         Changed = true;

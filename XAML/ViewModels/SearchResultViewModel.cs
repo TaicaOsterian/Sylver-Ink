@@ -34,18 +34,7 @@ public class SearchResultViewModel : NoteEditorViewModel
     {
         base.Construct();
 
-        var tabPanel = GetChildPanel("DatabasesPanel");
-        for (int i = tabPanel.Items.Count - 1; i > 0; i--)
-        {
-            if (tabPanel.Items[i] is not TabItem item)
-                continue;
-
-            if (item.Tag is not NoteRecord record)
-                continue;
-
-            if (record.Equals(Record))
-                tabPanel.Items.RemoveAt(i);
-        }
+        RemoveRecordTab(Record);
     }
 
     private void View(object? param)
@@ -63,22 +52,10 @@ public class SearchResultViewModel : NoteEditorViewModel
 
         SwitchDatabase(Record.DB);
 
-        NoteTab tab = new();
-        tab.ViewModel.Record = Record;
+        var tab = AddRecordTab(Record);
 
         tab.ViewModel.Document = Document;
         tab.ViewModel.CaretPosition = CaretPosition;
         tab.ViewModel.Edited = Edited;
-
-        TabItem item = new()
-        {
-            Content = tab,
-            Header = GetRibbonHeader(Record),
-            Margin = new(0, 2, 0, 0)
-        };
-
-        var ChildPanel = GetChildPanel("DatabasesPanel");
-        ChildPanel.SelectedIndex = ChildPanel.Items.Add(item);
-        OpenTabs.Add(item);
     }
 }

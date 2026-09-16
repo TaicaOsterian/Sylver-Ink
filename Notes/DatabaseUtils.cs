@@ -1,6 +1,8 @@
 ﻿using SylverInk.XAML;
 using SylverInk.XAML.Objects;
 using System.Globalization;
+using System.Reflection.Metadata;
+using System.Windows.Media.Media3D;
 using static SylverInk.FileIO.FileUtils;
 using static SylverInk.XAMLUtils.MainWindowUtils;
 
@@ -80,6 +82,25 @@ public static class DatabaseUtils
             return;
 
         CommonUtils.Settings.RecentDatabases.Remove(recentItem);
+    }
+
+    public static NoteTab AddRecordTab(NoteRecord record)
+    {
+        NoteTab tab = new();
+        tab.ViewModel.Record = record;
+
+        TabItem item = new()
+        {
+            Content = tab,
+            Header = GetRibbonHeader(record),
+            Margin = new(0, 2, 0, 0)
+        };
+
+        var ChildPanel = GetChildPanel("DatabasesPanel");
+        ChildPanel.SelectedIndex = ChildPanel.Items.Add(item);
+        OpenTabs.Add(item);
+
+        return tab;
     }
 
     public static void CreateNewNote()
@@ -192,6 +213,24 @@ public static class DatabaseUtils
 
             OpenTabs.RemoveAt(i);
             tab.ViewModel.Deconstruct();
+        }
+
+        var ChildPanel = GetChildPanel("DatabasesPanel");
+
+        for (int i = ChildPanel.Items.Count - 1; i > 0; i--)
+        {
+            var item = (TabItem)ChildPanel.Items[i];
+
+            if (item.Content is not NoteTab otherTab)
+                continue;
+
+            if (!otherTab.ViewModel.Record.Equals(record))
+                continue;
+
+            if (ChildPanel.SelectedIndex == i)
+                ChildPanel.SelectedIndex = Math.Max(0, Math.Min(i - 1, ChildPanel.Items.Count - 1));
+
+            ChildPanel.Items.RemoveAt(i);
         }
 
         RefreshRecentNotes();

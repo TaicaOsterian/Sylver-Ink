@@ -363,12 +363,12 @@ public class MainWindowViewModel : ViewModelBase
     private double _pixelsPerInchY = 96.0;
     private int _refreshToken;
 
-    public void OnViewportMetricsChanged(double width, double height, double pixelsPerInchY)
+    public async void OnViewportMetricsChanged(double width, double height, double pixelsPerInchY)
     {
         _viewportWidth = width;
         _viewportHeight = height;
         _pixelsPerInchY = pixelsPerInchY;
-        _ = RefreshRecentNotesAsync();
+        await RefreshRecentNotesAsync();
     }
 
     public async Task RefreshRecentNotesAsync()

@@ -199,14 +199,14 @@ public class NoteEditorViewModel : ViewModelBase
             case MessageBoxResult.Yes:
                 EraseAutosave();
                 SaveRecord();
-                RefreshRecentNotes();
                 break;
             case MessageBoxResult.No:
                 Edited = false;
                 EraseAutosave();
-                RefreshRecentNotes();
                 break;
         }
+
+        RefreshRecentNotes();
 
         return false;
     }
@@ -216,7 +216,7 @@ public class NoteEditorViewModel : ViewModelBase
         if (FinishedLoading)
             return;
 
-        Record.DB?.PreviousOpenNotes.Remove(Record);
+        Record.DB?.RemovePreviousNote(Record);
 
         if (Record.Locked)
         {
@@ -257,11 +257,10 @@ public class NoteEditorViewModel : ViewModelBase
         for (int i = Record.GetNumRevisions() - 1; i >= Math.Max(OriginalRevisionCount - 1, 0); i--)
         {
             if (Record.IsAutosaveRevision(i))
-            {
-                for (int j = Record.GetNumRevisions() - 1; j >= i; j--)
-                    Record.DeleteRevision(j);
-            }
+                Record.DeleteRevision(i);
         }
+
+        RefreshRecentNotes();
     }
 
     public void RequestUnlock(NoteRecord source)
@@ -280,6 +279,7 @@ public class NoteEditorViewModel : ViewModelBase
 
         Record?.DB?.CreateRevision(Record, TextConverter.Save(Document, TextFormat.Xaml));
         LastChange = Record?.GetLastChange();
+        RefreshRecentNotes();
     }
 
     public void ScrollTo(int position) => FlowDocumentUtils.ScrollToPosition(Document, position);

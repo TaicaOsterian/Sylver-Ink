@@ -174,7 +174,6 @@ public partial class NoteRecord
         TagsDirty = true;
 
         RefreshRecentNotes();
-        DB?.PreviousOpenNotes.Remove(this);
     }
 
     // In its current state, this function is only well-behaved when removing all subsequent revisions in addition to the one marked for deletion.
@@ -468,7 +467,7 @@ public partial class NoteRecord
 
     public override string ToString() => GetPlaintext();
 
-    public string ToXaml() => Reconstruct(0);
+    public string ToXaml() => Reconstruct();
 
     public void Unlock()
     {

@@ -113,6 +113,8 @@ public class NetServer : IDisposable
 
             await client.GetStream().WriteAsync(streamData);
         }
+
+        RefreshRecentNotes();
     }
 
     public void Close()

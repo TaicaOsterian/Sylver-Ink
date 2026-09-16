@@ -224,6 +224,10 @@ public static partial class CommonUtils
 
             Concurrent(UpdateRibbonTabs);
         }
+        catch
+        {
+            return;
+        }
         finally
         {
             DelayVisualUpdates = false;

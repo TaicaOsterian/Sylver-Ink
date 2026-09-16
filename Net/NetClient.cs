@@ -124,5 +124,9 @@ public class NetClient : IDisposable
             ShowTooltip("The network connection was unexpectedly closed.");
             Disconnect();
         }
+        finally
+        {
+            RefreshRecentNotes();
+        }
     }
 }

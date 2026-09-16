@@ -170,6 +170,8 @@ public partial class SearchResult : Window, IDisposable
         ViewModel.Record?.DB?.Transmit(NetworkUtils.MessageType.RecordUnlock, ViewModel.Record?.Index.ToByteArray());
 
         OpenQueries.RemoveAll(query => query.ViewModel.Record.Equals(ViewModel.Record));
+
+        RefreshRecentNotes();
     }
 
     private void ResultBlock_TextChanged(object? sender, TextChangedEventArgs e)

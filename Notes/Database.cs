@@ -18,7 +18,7 @@ public class Database : IDisposable
     public int Format { get => Controller.Format; set => Controller.Format = value; }
     public bool Loaded { get; private set; }
     public string? Name { get => Controller.Name; set => Controller.Name = value; }
-    public LinkedStack<NoteRecord> PreviousOpenNotes { get; set; } = [];
+    private LinkedStack<NoteRecord> PreviousOpenNotes { get; set; } = [];
     public int RecordCount => Controller.RecordCount;
     public NetServer Server { get; }
     public string UUID { get => Controller.UUID; set => Controller.UUID = value; }
@@ -355,6 +355,10 @@ public class Database : IDisposable
     }
 
     public void PushPreviousNote(NoteRecord record) => PreviousOpenNotes.Push(record);
+
+    public void RemovePreviousNote(int index) => PreviousOpenNotes.RemoveAt(index);
+
+    public void RemovePreviousNote(NoteRecord record) => PreviousOpenNotes.Remove(record);
 
     public void Rename(string newName)
     {

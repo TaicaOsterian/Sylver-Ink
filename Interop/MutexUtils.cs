@@ -58,11 +58,14 @@ public static class MutexUtils
             bool activated;
             var now = DateTime.UtcNow;
 
-            do
+            Concurrent(() =>
             {
-                activated = Concurrent(Application.Current.MainWindow.Activate);
-                Concurrent(Application.Current.MainWindow.Focus);
-            } while (!activated && !Application.Current.MainWindow.IsFocused && (DateTime.UtcNow - now).Seconds < 1);
+                do
+                {
+                    activated = Application.Current.MainWindow.Activate();
+                    Application.Current.MainWindow.Focus();
+                } while (!activated && !Application.Current.MainWindow.IsFocused && (DateTime.UtcNow - now).Seconds < 1);
+            });
 
             Concurrent(HandleShellVerbs, args);
         }

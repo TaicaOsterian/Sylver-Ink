@@ -3,7 +3,7 @@
 namespace SylverInk.Interop;
 
 /// <summary>
-/// A simple collection class with a List as its backing, which supports stack-like functions such as push-pop behavior.
+/// A simple collection class with a <seealso cref="List"/> as its backing, which supports stack-like functions such as push-pop behavior.
 /// </summary>
 public class LinkedStack<T> : IEnumerable<T>
 {
@@ -28,6 +28,9 @@ public class LinkedStack<T> : IEnumerable<T>
 
     public T Pop()
     {
+        if (_collection.Count == 0)
+            throw new InvalidOperationException("Attempted to pop from an empty stack.");
+
         int index = _collection.Count - 1;
         T item = _collection[index];
         _collection.RemoveAt(index);

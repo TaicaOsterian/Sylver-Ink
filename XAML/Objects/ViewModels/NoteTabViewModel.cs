@@ -131,26 +131,7 @@ public class NoteTabViewModel : NoteEditorViewModel
         if (!Record.Locked)
             Record.DB?.Unlock(Record.Index, true);
 
-        var ChildPanel = GetChildPanel("DatabasesPanel");
-
         RemoveRecordTab(Record);
-
-        for (int i = ChildPanel.Items.Count - 1; i > 0; i--)
-        {
-            var item = (TabItem)ChildPanel.Items[i];
-
-            if (item.Content is not NoteTab otherTab)
-                continue;
-
-            if (!otherTab.ViewModel.Record.Equals(Record))
-                continue;
-
-            if (ChildPanel.SelectedIndex == i)
-                ChildPanel.SelectedIndex = Math.Max(0, Math.Min(i - 1, ChildPanel.Items.Count - 1));
-
-            ChildPanel.Items.RemoveAt(i);
-        }
-
         RefreshRecentNotes();
     }
 
