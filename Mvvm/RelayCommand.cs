@@ -1,4 +1,4 @@
-﻿namespace SylverInk.XAML.Objects;
+﻿namespace SylverInk.Mvvm;
 
 /// <summary>
 /// Encodes the MVVM design flow of requests made from the View to the ViewModel.

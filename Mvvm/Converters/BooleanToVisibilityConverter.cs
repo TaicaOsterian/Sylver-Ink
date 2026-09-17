@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using System.Windows.Data;
 
-namespace SylverInk.XAML.Converters;
+namespace SylverInk.Mvvm.Converters;
 
 public class BooleanToVisibilityConverter : IValueConverter
 {

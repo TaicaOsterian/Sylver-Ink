@@ -475,6 +475,7 @@ public class Database : IDisposable
         if (type == SortType.ByIndex)
             Controller.PropagateIndices();
         Controller.Sort(type);
+        RefreshRecentNotes();
     }
 
     public void Transmit(NetworkUtils.MessageType type, byte[]? data)

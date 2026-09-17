@@ -1,7 +1,7 @@
-using static SylverInk.Interop.VisualUtils;
+using static SylverInk.Visuals.VisualUtils;
 using static SylverInk.XAMLUtils.SettingsUtils;
 
-namespace SylverInk.XAML.Objects;
+namespace SylverInk.XAML.Views;
 
 /// <summary>
 /// Interaction logic for ColorPicker.xaml

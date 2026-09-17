@@ -1,12 +1,14 @@
-﻿using SylverInk.XAML;
-using SylverInk.XAML.Objects;
+﻿using SylverInk.FileIO;
+using SylverInk.Mvvm;
+using SylverInk.Visuals;
+using SylverInk.XAML;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using static SylverInk.FileIO.FileUtils;
-using static SylverInk.Interop.VisualUtils;
 using static SylverInk.Notes.DatabaseUtils;
+using static SylverInk.Visuals.VisualUtils;
 using static SylverInk.XAMLUtils.MainWindowUtils;
 
 namespace SylverInk;

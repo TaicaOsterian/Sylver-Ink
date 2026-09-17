@@ -2,7 +2,6 @@ global using SylverInk.Localization;
 global using SylverInk.Net;
 global using SylverInk.Notes;
 global using SylverInk.Text;
-global using SylverInk.XAML.Objects.ViewModels;
 global using SylverInk.XAML.ViewModels;
 global using SylverInk.XAMLUtils;
 global using System;

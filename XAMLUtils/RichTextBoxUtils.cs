@@ -8,8 +8,11 @@ namespace SylverInk.XAMLUtils;
 public class RichTextBoxUtils
 {
     public static readonly DependencyProperty AtomicBlocksProperty =
-    DependencyProperty.RegisterAttached("AtomicBlocks", typeof(IEnumerable<Block>), typeof(RichTextBoxUtils),
-        new PropertyMetadata(null, OnAtomicBlocksChanged));
+        DependencyProperty.RegisterAttached(
+            "AtomicBlocks",
+            typeof(IEnumerable<Block>),
+            typeof(RichTextBoxUtils),
+            new PropertyMetadata(null, OnAtomicBlocksChanged));
 
     public static readonly DependencyProperty BoundCaretProperty =
         DependencyProperty.RegisterAttached(

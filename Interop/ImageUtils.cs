@@ -1,6 +1,6 @@
 ﻿using System.Windows.Media.Imaging;
 
-namespace SylverInk.XAMLUtils;
+namespace SylverInk.Interop;
 
 /// <summary>
 /// Static functions used for embedding images in Xaml object strings, for ease of use in Sylver Ink notes.

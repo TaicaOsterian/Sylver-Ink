@@ -1,4 +1,4 @@
-using SylverInk.XAML.Objects;
+using SylverInk.Mvvm;
 using System.Globalization;
 using static SylverInk.Notes.DatabaseUtils;
 

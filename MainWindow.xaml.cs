@@ -1,9 +1,9 @@
 ﻿using SylverInk.Interop;
-using SylverInk.XAML.Objects;
+using SylverInk.XAML.Views;
 using System.ComponentModel;
 using static SylverInk.FileIO.FileUtils;
-using static SylverInk.Interop.VisualUtils;
 using static SylverInk.Notes.DatabaseUtils;
+using static SylverInk.Visuals.VisualUtils;
 
 namespace SylverInk;
 

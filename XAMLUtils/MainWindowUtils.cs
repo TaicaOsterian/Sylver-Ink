@@ -1,4 +1,4 @@
-﻿using SylverInk.XAML.Objects;
+﻿using SylverInk.XAML.Views;
 
 namespace SylverInk.XAMLUtils;
 

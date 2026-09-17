@@ -1,5 +1,5 @@
 ﻿using SylverInk.FileIO;
-using SylverInk.XAML.Objects;
+using SylverInk.XAML.Views;
 using System.Globalization;
 using static SylverInk.Notes.DatabaseUtils;
 using static SylverInk.Text.FlowDocumentUtils;

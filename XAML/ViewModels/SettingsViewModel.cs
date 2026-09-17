@@ -1,4 +1,5 @@
-using SylverInk.XAML.Objects;
+using SylverInk.Mvvm;
+using SylverInk.Visuals;
 using static SylverInk.XAMLUtils.MainWindowUtils;
 
 namespace SylverInk.XAML.ViewModels;

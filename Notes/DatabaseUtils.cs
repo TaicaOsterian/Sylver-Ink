@@ -1,5 +1,6 @@
-﻿using SylverInk.XAML;
-using SylverInk.XAML.Objects;
+﻿using SylverInk.FileIO;
+using SylverInk.XAML;
+using SylverInk.XAML.Views;
 using System.Globalization;
 using static SylverInk.FileIO.FileUtils;
 using static SylverInk.XAMLUtils.MainWindowUtils;

@@ -1,9 +1,8 @@
-﻿using SylverInk.XAML.Objects;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 
-namespace SylverInk.Interop;
+namespace SylverInk.Visuals;
 
 /// <summary>
 /// Helper functions serving visual tree and Drawing type-conversion needs.

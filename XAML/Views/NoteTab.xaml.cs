@@ -1,6 +1,6 @@
-using SylverInk.XAML.Events;
+using SylverInk.Mvvm.Events;
 
-namespace SylverInk.XAML.Objects;
+namespace SylverInk.XAML.Views;
 
 /// <summary>
 /// Interaction logic for NoteTab.xaml

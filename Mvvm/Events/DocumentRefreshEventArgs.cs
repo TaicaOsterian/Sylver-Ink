@@ -1,4 +1,4 @@
-﻿namespace SylverInk.XAML.Events;
+﻿namespace SylverInk.Mvvm.Events;
 
 public class DocumentRefreshEventArgs(IEnumerable<Block> blocks) : EventArgs
 {

@@ -1,8 +1,9 @@
-using SylverInk.XAML.Events;
+using SylverInk.Mvvm;
+using SylverInk.Mvvm.Events;
 using System.Globalization;
 using static SylverInk.Notes.DatabaseUtils;
 
-namespace SylverInk.XAML.Objects.ViewModels;
+namespace SylverInk.XAML.ViewModels;
 
 public class NoteTabViewModel : NoteEditorViewModel
 {

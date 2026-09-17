@@ -1,6 +1,7 @@
+using SylverInk.Mvvm;
 using System.Threading;
 
-namespace SylverInk.XAML.Objects.ViewModels;
+namespace SylverInk.XAML.ViewModels;
 
 public class NoteEditorViewModel : ViewModelBase
 {

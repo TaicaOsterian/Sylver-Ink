@@ -1,6 +1,7 @@
+using SylverInk.Mvvm;
 using static SylverInk.Notes.DatabaseUtils;
 
-namespace SylverInk.XAML.Objects.ViewModels;
+namespace SylverInk.XAML.ViewModels;
 
 public class DatabaseControlViewModel : ViewModelBase
 {

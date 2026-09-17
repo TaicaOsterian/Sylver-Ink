@@ -199,13 +199,11 @@ public static partial class CommonUtils
         return uuid.ToUpper(CultureInfo.InvariantCulture);
     }
 
+    // Deprecated. (Possibly temporarily.)
     public async static Task OnFirstRun()
     {
         if (!Settings.FirstRun)
             return;
-
-        // Create an empty database if and only if we haven't loaded any from files
-        await Database.Create(Path.Join(Subfolders[Strings.Subfolder_Databases], DefaultDatabase, $"{DefaultDatabase}.sidb"));
     }
 
     public static async void RefreshRecentNotes()
@@ -217,7 +215,12 @@ public static partial class CommonUtils
 
         try
         {
-            var viewModel = Concurrent(() => (MainWindowViewModel)Application.Current.MainWindow.DataContext);
+            var viewModel = Concurrent(() =>
+            {
+                var window = Application.Current.MainWindow;
+                return (MainWindowViewModel)window.DataContext;
+            });
+
             await viewModel.RefreshRecentNotesAsync();
 
             Concurrent(UpdateRibbonTabs);

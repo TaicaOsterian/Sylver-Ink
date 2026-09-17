@@ -1,3 +1,5 @@
+using SylverInk.Visuals;
+
 namespace SylverInk.XAMLUtils;
 
 public static class SettingsUtils

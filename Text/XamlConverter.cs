@@ -1,5 +1,5 @@
 ﻿using System.Windows.Markup;
-using static SylverInk.XAMLUtils.ImageUtils;
+using static SylverInk.Interop.ImageUtils;
 
 namespace SylverInk.Text;
 

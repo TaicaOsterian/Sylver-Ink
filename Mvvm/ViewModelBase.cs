@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace SylverInk.XAML.Objects;
+namespace SylverInk.Mvvm;
 
 public abstract class ViewModelBase : INotifyPropertyChanged
 {

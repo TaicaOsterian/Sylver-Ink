@@ -1,12 +1,12 @@
-﻿<UserControl x:Class="SylverInk.XAML.Objects.ColorPicker"
+﻿<UserControl x:Class="SylverInk.XAML.Views.ColorPicker"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:SylverInk.XAML.Objects"
+             xmlns:local="clr-namespace:SylverInk.XAML.Views"
              xmlns:properties="clr-namespace:SylverInk.Localization"
              xmlns:sylverink="clr-namespace:SylverInk"
-             xmlns:vm="clr-namespace:SylverInk.XAML.Objects.ViewModels"
+             xmlns:vm="clr-namespace:SylverInk.XAML.ViewModels"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance Type=vm:ColorPickerViewModel}">
     <Grid>

@@ -9,7 +9,6 @@ public partial class NoteController : IDisposable
 {
     private short _canCompress; // -1 = Cannot compress, 1 = Can compress, 0 = Not tested.
     private bool _changed;
-    private int _nextIndex;
     private readonly List<NoteRecord> Records = [];
     private Serializer? _serializer;
     private byte? Structure;
@@ -32,16 +31,6 @@ public partial class NoteController : IDisposable
     public int RecordCount => Records.Count;
     public string UUID { get; set; } = MakeUUID(UUIDType.Database);
     public Dictionary<string, double> WordPercentages { get; } = [];
-
-    private int NextIndex
-    {
-        get
-        {
-            _nextIndex++;
-            return _nextIndex - 1;
-        }
-        set => _nextIndex = value;
-    }
 
     public NoteController(Database? DB = null)
     {
@@ -109,7 +98,8 @@ public partial class NoteController : IDisposable
     public int CreateRecord(string entry)
     {
         Changed = true;
-        return AddRecord(new(NextIndex, TextConverter.Convert(entry, TextFormat.Plaintext, TextFormat.Xaml), DB));
+        NoteRecord Record = new(Records.Count, TextConverter.Convert(entry, TextFormat.Plaintext, TextFormat.Xaml), DB);
+        return AddRecord(Record);
     }
 
     public void CreateRevision(int index, string NewVersion) => CreateRevision(GetRecord(index), NewVersion);
@@ -229,7 +219,7 @@ public partial class NoteController : IDisposable
 
     public override int GetHashCode() => int.Parse(UUID.Replace("-", string.Empty)[^8..], NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo);
 
-    public NoteRecord? GetRecord(int RecordIndex) => RecordIndex < Records.Count && RecordIndex > -1 ? Records[RecordIndex] : null;
+    public NoteRecord? GetRecord(int RecordIndex) => RecordIndex < Records.Count && RecordIndex > -1 ? Records.Find(record => record.Index == RecordIndex) : null;
 
     public bool HasRecord(int index)
     {
@@ -290,10 +280,8 @@ public partial class NoteController : IDisposable
 
     public void PropagateIndices()
     {
-        for (int i = 0; i < RecordCount; i++)
+        for (int i = 0; i < Records.Count; i++)
             Records[i].OverwriteIndex(i);
-
-        _nextIndex = RecordCount;
     }
 
     public void ReloadSerializer()

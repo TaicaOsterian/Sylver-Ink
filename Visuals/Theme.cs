@@ -1,16 +1,16 @@
-﻿namespace SylverInk.XAML.Objects;
+﻿namespace SylverInk.Visuals;
 
 /// <summary>
 /// A predefined set of Brush objects that may be selected by the user in the Settings menu.
 /// </summary>
-public class Theme(string name, Brush aB, Brush aF, Brush lB, Brush lF, Brush mB, Brush mF)
+public class Theme(string name, Brush accentBg, Brush accentFg, Brush listBg, Brush listFg, Brush menuBg, Brush menuFg)
 {
-    private readonly Brush _accentBackground = aB;
-    private readonly Brush _accentForeground = aF;
-    private readonly Brush _listBackground = lB;
-    private readonly Brush _listForeground = lF;
-    private readonly Brush _menuBackground = mB;
-    private readonly Brush _menuForeground = mF;
+    private readonly Brush _accentBackground = accentBg;
+    private readonly Brush _accentForeground = accentFg;
+    private readonly Brush _listBackground = listBg;
+    private readonly Brush _listForeground = listFg;
+    private readonly Brush _menuBackground = menuBg;
+    private readonly Brush _menuForeground = menuFg;
     private readonly string _name = name;
 
     public Brush AccentBackground => _accentBackground;

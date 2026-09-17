@@ -1,6 +1,6 @@
 using static SylverInk.Notes.DatabaseUtils;
 
-namespace SylverInk.XAML.Objects;
+namespace SylverInk.XAML.Views;
 
 /// <summary>
 /// Interaction logic for DatabaseControl.xaml
@@ -35,6 +35,11 @@ public partial class DatabaseControl : UserControl
             return;
 
         OpenQuery(RecentSelection);
+    }
+
+    private void Controller_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        RefreshRecentNotes();
     }
 
     private void CreateContextMenu()

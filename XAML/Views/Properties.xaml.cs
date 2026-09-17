@@ -1,5 +1,5 @@
 using System.Windows.Controls.Primitives;
-using static SylverInk.Interop.VisualUtils;
+using static SylverInk.Visuals.VisualUtils;
 
 namespace SylverInk.XAML;
 
