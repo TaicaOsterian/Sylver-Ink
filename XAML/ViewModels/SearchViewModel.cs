@@ -73,6 +73,7 @@ public class SearchViewModel : ViewModelBase, IDisposable
         }
         catch
         {
+            return;
         }
     }
 

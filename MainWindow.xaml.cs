@@ -111,8 +111,8 @@ public partial class MainWindow : Window
             return;
 
         CurrentDatabase = newDB;
-        RefreshRecentNotes();
         Settings.SearchResults.Clear();
+        RefreshRecentNotes();
     }
 
     protected override void OnClosed(EventArgs e)
@@ -210,6 +210,7 @@ public partial class MainWindow : Window
                 continue;
 
             DatabasesPanel.SelectedItem = item;
+            RefreshRecentNotes();
             break;
         }
     }

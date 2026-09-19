@@ -94,8 +94,13 @@ public partial class Search : Window
             CommonUtils.Settings.SearchResults.Clear();
 
             var token = ViewModel.StartNewSearch();
-            try { await ViewModel.SearchCurrentDatabase(token); }
-            catch (OperationCanceledException) { }
+            try {
+                await ViewModel.SearchCurrentDatabase(token);
+            }
+            catch (OperationCanceledException)
+            {
+                return;
+            }
         }
     }
 }

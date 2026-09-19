@@ -132,14 +132,14 @@ public partial class NoteController : IDisposable
         for (int i = OpenQueries.Count - 1; i > -1; i--)
             OpenQueries[i].RequestClose(record);
 
-        DB?.RemovePreviousNote(record);
         RemoveRecordTab(record);
         record.Delete();
 
         Changed = true;
         IndicesDirty = true;
-        PropagateIndices();
 
+        DB?.RemovePreviousNote(record);
+        PropagateIndices();
         RefreshRecentNotes();
     }
 

@@ -230,8 +230,6 @@ public static partial class CommonUtils
         if (DelayVisualUpdates)
             return;
 
-        DelayVisualUpdates = true;
-
         try
         {
             var viewModel = Concurrent(() =>
@@ -248,10 +246,6 @@ public static partial class CommonUtils
         catch
         {
             return;
-        }
-        finally
-        {
-            DelayVisualUpdates = false;
         }
     }
 

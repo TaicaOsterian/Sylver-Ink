@@ -150,6 +150,25 @@ public class MainWindowViewModel : ViewModelBase
         UnserveCommand = new RelayCommand(MenuUnserve, CanUnserve);
     }
 
+    private static List<NoteRecord> BuildRecentNotesSnapshot(double viewportHeight, double pixelsPerInchY)
+    {
+        var typeface = CommonUtils.Settings.MainTypeFace!;
+        var pixelRatio = CommonUtils.Settings.MainFontSize * pixelsPerInchY / 72.0;
+        var lineHeight = pixelRatio * typeface.FontFamily.LineSpacing;
+        var lineRatio = Math.Max(1.0, (viewportHeight / lineHeight) - 0.5);
+        var target = (int)Math.Min(lineRatio, CurrentDatabase.RecordCount);
+
+        if (target <= 0)
+            return [];
+
+        var records = CurrentDatabase.Sort(RecentEntriesSortMode);
+        var result = new List<NoteRecord>(target);
+        for (int i = 0; i < target; i++)
+            result.Add(records[i]);
+
+        return result;
+    }
+
     private static bool CanCloseDatabase(object? param) => Databases.Count > 1;
 
     private static bool CanConnect(object? param) => !CurrentDatabase.Client.Active && !CurrentDatabase.Server.Active;
@@ -194,6 +213,7 @@ public class MainWindowViewModel : ViewModelBase
         }
 
         RemoveDatabase(CurrentDatabase);
+        RefreshRecentNotes();
     }
 
     private void MenuConnect(object? param)
@@ -210,6 +230,7 @@ public class MainWindowViewModel : ViewModelBase
     private static void MenuCreate(object? param)
     {
         AddDatabase(new Database());
+        RefreshRecentNotes();
     }
 
     private static void MenuDelete(object? param)
@@ -223,6 +244,7 @@ public class MainWindowViewModel : ViewModelBase
             Directory.Delete(BKPath, true);
 
         RemoveDatabase(CurrentDatabase);
+        RefreshRecentNotes();
     }
 
     private static void MenuDisconnect(object? param)
@@ -246,6 +268,7 @@ public class MainWindowViewModel : ViewModelBase
         }
 
         await Database.Create(dbFile);
+        RefreshRecentNotes();
     }
 
     private async void MenuOpenRecent(object? param)
@@ -258,12 +281,14 @@ public class MainWindowViewModel : ViewModelBase
         if (DatabaseFiles.Contains(path))
         {
             RequestSelectDatabase?.Invoke(path);
+            RefreshRecentNotes();
             return;
         }
 
         if (Path.Exists(path))
         {
             await Database.Create(dbFile);
+            RefreshRecentNotes();
             return;
         }
 
@@ -346,6 +371,7 @@ public class MainWindowViewModel : ViewModelBase
 
         CurrentDatabase.Rename(RenameDatabaseName);
         RenamePopupVisible = false;
+        RefreshRecentNotes();
     }
 
     private async void PopupSaveAddress(object? param)
@@ -363,12 +389,12 @@ public class MainWindowViewModel : ViewModelBase
         await newDB.Client.Connect(AddressCode);
     }
 
-    public async void OnViewportMetricsChanged(double width, double height, double pixelsPerInchY)
+    public void OnViewportMetricsChanged(double width, double height, double pixelsPerInchY)
     {
         _viewportWidth = width;
         _viewportHeight = height;
         _pixelsPerInchY = pixelsPerInchY;
-        await RefreshRecentNotesAsync();
+        RefreshRecentNotes();
     }
 
     public async Task RefreshRecentNotesAsync()
@@ -395,25 +421,6 @@ public class MainWindowViewModel : ViewModelBase
 
         CommonUtils.Settings.RecentNotes = snapshot;
 
-        // UpdateRibbonTabs
-    }
-
-    private static List<NoteRecord> BuildRecentNotesSnapshot(double viewportHeight, double pixelsPerInchY)
-    {
-        var typeface = CommonUtils.Settings.MainTypeFace!;
-        var pixelRatio = CommonUtils.Settings.MainFontSize * pixelsPerInchY / 72.0;
-        var lineHeight = pixelRatio * typeface.FontFamily.LineSpacing;
-        var lineRatio = Math.Max(1.0, (viewportHeight / lineHeight) - 0.5);
-        var target = (int)Math.Min(lineRatio, CurrentDatabase.RecordCount);
-
-        if (target <= 0)
-            return [];
-
-        var records = CurrentDatabase.Sort(RecentEntriesSortMode);
-        var result = new List<NoteRecord>(target);
-        for (int i = 0; i < target; i++)
-            result.Add(records[i]);
-
-        return result;
+        Concurrent(UpdateRibbonTabs);
     }
 }

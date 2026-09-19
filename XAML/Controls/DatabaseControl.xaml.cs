@@ -34,6 +34,7 @@ public partial class DatabaseControl : UserControl
             return;
 
         CurrentDatabase.DeleteRecord(RecentSelection);
+        RefreshRecentNotes();
     }
 
     private void ContextOpen(object? sender, RoutedEventArgs e)
@@ -99,7 +100,7 @@ public partial class DatabaseControl : UserControl
         if (source is not DatabaseControl control)
             return;
 
-
+        RefreshRecentNotes();
     }
 
     private void RecentNotesBox_SizeChanged(object sender, SizeChangedEventArgs e)
