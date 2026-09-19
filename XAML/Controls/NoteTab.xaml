@@ -17,14 +17,15 @@
             <Style x:Key="ToolbarButton" TargetType="Button">
                 <Setter Property="Background"
                         Value="{Binding AppSettings.ListBackground}"/>
-
+                
                 <Setter Property="CommandTarget"
                         Value="{Binding ElementName=NoteBox}"/>
-
+                
                 <Setter Property="Foreground"
                         Value="{Binding AppSettings.ListForeground}"/>
-
-                <Setter Property="Width" Value="35"/>
+                
+                <Setter Property="Width"
+                        Value="35"/>
             </Style>
 
             <conv:BooleanToVisibilityConverter x:Key="BoolToVis"/>
@@ -46,7 +47,9 @@
                VerticalAlignment="Bottom"
                x:Name="RevisionLabel"/>
 
-        <Grid Grid.Row="1" HorizontalAlignment="Center" x:Name="NoteToolbar">
+        <Grid Grid.Row="1"
+              HorizontalAlignment="Center"
+              x:Name="NoteToolbar">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -62,11 +65,6 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-
-            <Separator Grid.ColumnSpan="8"
-                       Grid.Row="1"
-                       Foreground="{Binding AppSettings.AccentForeground}"
-                       Height="2"/>
 
             <Button Command="ApplicationCommands.Undo"
                     Style="{StaticResource ToolbarButton}"
@@ -128,24 +126,30 @@
                     Grid.Column="7"
                     Style="{StaticResource ToolbarButton}"
                     ToolTip="{x:Static properties:Strings.Label_TextColor}"
-                    x:Name="TextColorButton">
+            x:Name="TextColorButton">
                 <Path Data="M13.354.646a1.207 1.207 0 0 0-1.708 0L8.5 3.793l-.646-.647a.5.5 0 1 0-.708.708L8.293 5l-7.147 7.146A.5.5 0 0 0 1 12.5v1.793l-.854.853a.5.5 0 1 0 .708.707L1.707 15H3.5a.5.5 0 0 0 .354-.146L11 7.707l1.146 1.147a.5.5 0 0 0 .708-.708l-.647-.646 3.147-3.146a1.207 1.207 0 0 0 0-1.708zM2 12.707l7-7L10.293 7l-7 7H2z"
                       Fill="Black"
                       Stroke="White"
                       StrokeThickness="0.5"/>
             </Button>
 
+            <Separator Grid.ColumnSpan="8"
+                       Grid.Row="1"
+                       Foreground="{Binding AppSettings.AccentForeground}"
+                       Height="2"/>
+
             <Button Command="EditingCommands.AlignLeft"
                     Grid.Column="1"
                     Grid.Row="2"
+                    Style="{StaticResource ToolbarButton}"
                     ToolTip="{x:Static properties:Strings.Word_Left}">
                 <StackPanel>
                     <Line Stroke="{Binding AppSettings.ListForeground}"
                           StrokeThickness="1"
                           X1="0"
                           X2="16"
-                          Y1="2"
-                          Y2="2"/>
+                          Y1="3"
+                          Y2="3"/>
 
                     <Line Stroke="{Binding AppSettings.ListForeground}"
                           StrokeThickness="1"
@@ -173,14 +177,15 @@
             <Button Command="EditingCommands.AlignCenter"
                     Grid.Column="2"
                     Grid.Row="2"
+                    Style="{StaticResource ToolbarButton}"
                     ToolTip="{x:Static properties:Strings.Word_Center}">
                 <StackPanel>
                     <Line Stroke="{Binding AppSettings.ListForeground}"
                           StrokeThickness="1"
                           X1="0"
                           X2="16"
-                          Y1="2"
-                          Y2="2"/>
+                          Y1="3"
+                          Y2="3"/>
 
                     <Line Stroke="{Binding AppSettings.ListForeground}"
                           StrokeThickness="1"
@@ -208,14 +213,15 @@
             <Button Command="EditingCommands.AlignRight"
                     Grid.Column="3"
                     Grid.Row="2"
+                    Style="{StaticResource ToolbarButton}"
                     ToolTip="{x:Static properties:Strings.Word_Right}">
                 <StackPanel>
                     <Line Stroke="{Binding AppSettings.ListForeground}"
                           StrokeThickness="1"
                           X1="0"
                           X2="16"
-                          Y1="2"
-                          Y2="2"/>
+                          Y1="3"
+                          Y2="3"/>
 
                     <Line Stroke="{Binding AppSettings.ListForeground}"
                           StrokeThickness="1"
@@ -243,14 +249,15 @@
             <Button Command="EditingCommands.AlignJustify"
                     Grid.Column="4"
                     Grid.Row="2"
+                    Style="{StaticResource ToolbarButton}"
                     ToolTip="{x:Static properties:Strings.Word_Justify}">
                 <StackPanel>
                     <Line Stroke="{Binding AppSettings.ListForeground}"
                           StrokeThickness="1"
                           X1="0"
                           X2="16"
-                          Y1="2"
-                          Y2="2"/>
+                          Y1="3"
+                          Y2="3"/>
 
                     <Line Stroke="{Binding AppSettings.ListForeground}"
                           StrokeThickness="1"
@@ -278,6 +285,7 @@
             <Button Command="EditingCommands.ToggleBullets"
                     Grid.Column="5"
                     Grid.Row="2"
+                    Style="{StaticResource ToolbarButton}"
                     ToolTip="{x:Static properties:Strings.BulletList}">
                 <StackPanel>
                     <StackPanel Orientation="Horizontal">
@@ -323,7 +331,12 @@
                     </StackPanel>
                 </StackPanel>
             </Button>
-            <Button Command="EditingCommands.ToggleNumbering" Grid.Row="2" Grid.Column="6" ToolTip="{x:Static properties:Strings.NumberedList}">
+            
+            <Button Command="EditingCommands.ToggleNumbering"
+                    Grid.Row="2"
+                    Grid.Column="6"
+                    Style="{StaticResource ToolbarButton}"
+                    ToolTip="{x:Static properties:Strings.NumberedList}">
                 <StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock FontSize="4"
@@ -347,7 +360,7 @@
                               StrokeThickness="1"
                               X1="2"
                               X2="16"
-                              Y1="2" 
+                              Y1="2"
                               Y2="2"/>
                     </StackPanel>
 
@@ -488,7 +501,7 @@
                     Content="{Binding SaveLabel}"
                     Grid.Column="1"
                     Grid.Row="2"
-                    IsEnabled="{Binding Edited}"
+                    IsEnabled="{Binding CanSave}"
                     Margin="20,0"
                     x:Name="SaveButton"/>
 

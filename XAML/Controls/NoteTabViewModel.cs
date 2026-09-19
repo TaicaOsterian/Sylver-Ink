@@ -7,6 +7,7 @@ namespace SylverInk.XAML.Controls;
 
 public class NoteTabViewModel : NoteEditorViewModel
 {
+    private bool _canSave;
     private FlowDocument _historicalDocument;
     private bool _isLive = true;
     private int _revisionIndex;
@@ -16,6 +17,16 @@ public class NoteTabViewModel : NoteEditorViewModel
     private int BackstepIndex => Record.GetNumRevisions() - RevisionIndex + 1;
     private bool Saving;
     public Label TabHeader => Record.GetRibbonHeader();
+
+    public bool CanSave
+    {
+        get => _canSave;
+        set
+        {
+            _canSave = value;
+            OnPropertyChanged();
+        }
+    }
 
     public FlowDocument HistoricalDocument
     {
@@ -121,8 +132,13 @@ public class NoteTabViewModel : NoteEditorViewModel
 
         IsEnabled = !Record.Locked;
 
+        CanSave = false;
         Edited = false;
-        LastChange = Record.Locked ? Strings.NoteLocked : Record.GetNumRevisions() == 0 ? string.Format(CultureInfo.CurrentCulture, CacheNoteEntryCreated, Record.GetCreated()) : string.Format(CultureInfo.CurrentCulture, CacheNoteEntryModified, Record.GetLastChange());
+        LastChange = Record.Locked
+            ? Strings.NoteLocked
+            : Record.GetNumRevisions() == 0
+                ? string.Format(CultureInfo.CurrentCulture, CacheNoteEntryCreated, Record.GetCreated())
+                : string.Format(CultureInfo.CurrentCulture, CacheNoteEntryModified, Record.GetLastChange());
 
         RefreshRecentNotes();
     }
@@ -133,6 +149,8 @@ public class NoteTabViewModel : NoteEditorViewModel
 
         if (!Record.Locked)
             Record.DB?.Unlock(Record.UUID, true);
+
+        CurrentDatabase.PushPreviousNote(Record);
 
         RemoveRecordTab(Record);
         RefreshRecentNotes();
@@ -153,6 +171,7 @@ public class NoteTabViewModel : NoteEditorViewModel
         var newText = TextConverter.Save(Document, TextFormat.Xaml);
         Record.DB?.CreateRevision(Record, newText);
 
+        CanSave = false;
         Edited = false;
         IsLive = true;
         LastChange = string.Format(CultureInfo.CurrentCulture, CacheNoteEntryModified, Record.GetLastChange());
@@ -189,7 +208,7 @@ public class NoteTabViewModel : NoteEditorViewModel
         if (RevisionIndex != 0)
             HistoricalDocument = Record.GetDocument(RevisionIndex);
 
-        Edited = RevisionIndex != 0 || CalculateIsEdited();
+        CanSave = RevisionIndex != 0 || CalculateIsEdited();
         IsLive = RevisionIndex == 0;
         LastChange = RevisionIndex != 0
             ? string.Format(CultureInfo.CurrentCulture, CacheNoteRevisionID, BackstepIndex, revisionTime)
@@ -206,7 +225,7 @@ public class NoteTabViewModel : NoteEditorViewModel
 
         string revisionTime = RevisionIndex == Record.GetNumRevisions() ? Record.GetCreated() : Record.GetRevisionTime(RevisionIndex);
 
-        Edited = true;
+        CanSave = true;
         HistoricalDocument = Record.GetDocument(RevisionIndex);
         IsLive = false;
         LastChange = BackstepIndex == 0
@@ -223,11 +242,9 @@ public class NoteTabViewModel : NoteEditorViewModel
         if (Record is null)
             return;
 
-        CurrentDatabase.Transmit(NetworkUtils.MessageType.RecordUnlock, Record.UUID.ToString());
-        CurrentDatabase.PushPreviousNote(Record);
-
+        RevisionIndex = 0;
+        BeginSave(null);
         Deconstruct();
-        RefreshRecentNotes();
     }
 
     public override void TextChanged()
@@ -239,5 +256,7 @@ public class NoteTabViewModel : NoteEditorViewModel
             EndSave();
 
         base.TextChanged();
+
+        CanSave = Edited;
     }
 }
