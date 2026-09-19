@@ -37,6 +37,20 @@ public class SearchResultViewModel : NoteEditorViewModel
         RemoveRecordTab(Record);
     }
 
+    public override void Deconstruct()
+    {
+        base.Deconstruct();
+        
+        Record.DB?.PushPreviousNote(Record);
+
+        if (Edited)
+            SaveRecord();
+
+        Record?.DB?.Transmit(NetworkUtils.MessageType.RecordUnlock, Record?.UUID.ToString() ?? string.Empty);
+
+        OpenQueries.RemoveAll(query => query.ViewModel.Record.Equals(Record));
+    }
+
     private void View(object? param)
     {
         // To avoid cluttering the user's view

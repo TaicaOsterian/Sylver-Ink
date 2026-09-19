@@ -87,11 +87,10 @@ public partial class SearchResult : Window, IDisposable
         if (ViewModel.Edited && !force && ViewModel.ConfirmExit())
             return;
 
+        ViewModel.Deconstruct();
+
         if (force)
-        {
-            ViewModel.Deconstruct();
             NoteBox.Document = new(); // This window has to decouple from the underlying document before that document can be assigned to another parent.
-        }
 
         Close();
     }
@@ -105,9 +104,16 @@ public partial class SearchResult : Window, IDisposable
 
         EnterMonitor.Tick += (_, _) =>
         {
+            if (CommonUtils.Settings.NoteClickthrough == 0.0)
+            {
+                Concurrent(WindowActivated, this, EventArgs.Empty);
+                EnterMonitor.Stop();
+                return;
+            }
+
             var Seconds = (DateTime.UtcNow.Ticks - EnterTime) * 1E-7;
 
-            if (Seconds > CommonUtils.Settings.NoteClickthrough || CommonUtils.Settings.NoteClickthrough == 0.0 || CommonUtils.Settings.NoteTransparency == 0.0)
+            if (Seconds > CommonUtils.Settings.NoteClickthrough || CommonUtils.Settings.NoteTransparency == 0.0)
             {
                 Concurrent(UnsetWindowExTransparent);
                 Opacity = 1.0;
@@ -129,9 +135,16 @@ public partial class SearchResult : Window, IDisposable
 
         LeaveMonitor.Tick += (_, _) =>
         {
+            if (CommonUtils.Settings.NoteClickthrough == 0.0)
+            {
+                Concurrent(WindowDeactivated, this, EventArgs.Empty);
+                LeaveMonitor.Stop();
+                return;
+            }
+
             var Seconds = (DateTime.UtcNow.Ticks - LeaveTime) * 1E-7;
 
-            if (Seconds > CommonUtils.Settings.NoteClickthrough || CommonUtils.Settings.NoteClickthrough == 0.0 || CommonUtils.Settings.NoteTransparency == 0.0)
+            if (Seconds > CommonUtils.Settings.NoteClickthrough || CommonUtils.Settings.NoteTransparency == 0.0)
             {
                 Opacity = 1.0 - (CommonUtils.Settings.NoteTransparency * 0.01);
                 LeaveMonitor.Stop();
@@ -163,15 +176,6 @@ public partial class SearchResult : Window, IDisposable
     private void Result_Closed(object? sender, EventArgs e)
     {
         StopMonitors();
-        ViewModel.Record.DB?.PushPreviousNote(ViewModel.Record);
-
-        if (ViewModel.Edited)
-            SaveRecord();
-
-        ViewModel.Record?.DB?.Transmit(NetworkUtils.MessageType.RecordUnlock, ViewModel.Record?.UUID.ToString() ?? string.Empty);
-
-        OpenQueries.RemoveAll(query => query.ViewModel.Record.Equals(ViewModel.Record));
-
         RefreshRecentNotes();
     }
 
@@ -204,11 +208,6 @@ public partial class SearchResult : Window, IDisposable
     }
 
     public void RequestUnlock(NoteRecord record) => ViewModel.RequestUnlock(record);
-
-    public void SaveRecord()
-    {
-        ViewModel.SaveRecord();
-    }
 
     public bool SetWindowExTransparent()
     {

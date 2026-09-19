@@ -169,7 +169,7 @@ Record count -- [4 bytes: big-endian unsigned int]
         Revision creation date/time -- [4 bytes][n bytes: string from long. Date the change was made]
         Revision flags -- [1 byte]
             Bits 7-1 -- Reserved.
-            Bit 0 -- Autosave state flag
+            Bit 0 -- Autosave state flag. (0 = Full revision, 1 = autosaved revision)
         Revision start index -- [4 bytes][n bytes: string from signed int. Index of the change to the record string. Dependant on the state of the record after reconstruction from all previous revisions (see NoteRecord.Reconstruct)]
         Revision substring -- [4 bytes][n bytes: string. The text to insert in the record after removing all text after the revision start index. May be string.Empty]
 ```

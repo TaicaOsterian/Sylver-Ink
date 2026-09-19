@@ -1,7 +1,5 @@
 ﻿using Microsoft.Win32;
 using SylverInk.XAML;
-using SylverInk.XAML.Controls;
-using System.Globalization;
 using System.Threading;
 using static SylverInk.FileIO.FileUtils;
 using static SylverInk.Notes.DatabaseUtils;
@@ -14,18 +12,32 @@ namespace SylverInk;
 /// </summary>
 public static partial class CommonUtils
 {
+    // Options for what to display in the tab header of opened NoteTab objects in a DatabaseControl.
     public enum DisplayType
     {
+        // Displays a short preview of the NoteTab's content.
         Content,
+
+        // Displays the date and time the NoteTab's content was last modified.
         Change,
+
+        // Displays the date and time the NoteTab's content was created.
         Creation,
+
+        // Displays the propagated index number of the NoteTab's content.
         Index
     }
 
+    // Options for how records in the recent notes box should be sorted.
     public enum SortType
     {
+        // Recent notes sort by propagated index number (with index 0 at the top).
         ByIndex,
+
+        // Recent notes sort by date and time of last modification (with most recent at the top).
         ByChange,
+
+        // Recent notes sort by date and time of creation (with most recent at the top).
         ByCreation
     }
 

@@ -255,7 +255,15 @@ public partial class NoteController : IDisposable
     public NoteRecord? GetRecord(int index)
     {
         PropagateIndices();
-        return IndexedRecords[index];
+
+        try
+        {
+            return IndexedRecords[index];
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     public NoteRecord? GetRecord(Guid uuid) => Records[uuid] as NoteRecord;
