@@ -168,6 +168,9 @@ public class NoteTabViewModel : NoteEditorViewModel
 
     public void EndSave()
     {
+        if (!Saving)
+            return;
+
         var newText = TextConverter.Save(Document, TextFormat.Xaml);
         Record.DB?.CreateRevision(Record, newText);
 
@@ -242,8 +245,6 @@ public class NoteTabViewModel : NoteEditorViewModel
         if (Record is null)
             return;
 
-        RevisionIndex = 0;
-        BeginSave(null);
         Deconstruct();
     }
 
