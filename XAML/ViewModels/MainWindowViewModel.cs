@@ -13,8 +13,13 @@ public class MainWindowViewModel : ViewModelBase
     private bool _codePopupVisible;
     private bool _connectPopupVisible;
     private bool _gridEnabled = true;
+    private double _pixelsPerInchY = 96.0;
+    private int _refreshToken;
     private string _renameDatabaseName = string.Empty;
     private bool _renamePopupVisible;
+    private double _viewportHeight;
+    private double _viewportWidth;
+
 
     public string AddressCode
     {
@@ -358,11 +363,6 @@ public class MainWindowViewModel : ViewModelBase
         await newDB.Client.Connect(AddressCode);
     }
 
-    private double _viewportWidth;
-    private double _viewportHeight;
-    private double _pixelsPerInchY = 96.0;
-    private int _refreshToken;
-
     public async void OnViewportMetricsChanged(double width, double height, double pixelsPerInchY)
     {
         _viewportWidth = width;
@@ -391,9 +391,11 @@ public class MainWindowViewModel : ViewModelBase
         }
 
         if (token != _refreshToken)
-            return; // superseded by a newer request
+            return; // Superseded by a newer request
 
-        CommonUtils.Settings.RecentNotes = snapshot; // single PropertyChanged → single ListBox rebuild
+        CommonUtils.Settings.RecentNotes = snapshot;
+
+        // UpdateRibbonTabs
     }
 
     private static List<NoteRecord> BuildRecentNotesSnapshot(double viewportHeight, double pixelsPerInchY)
@@ -407,21 +409,11 @@ public class MainWindowViewModel : ViewModelBase
         if (target <= 0)
             return [];
 
-        CurrentDatabase.Sort(RecentEntriesSortMode);
-        try
-        {
-            var result = new List<NoteRecord>(target);
-            for (int i = 0; i < target; i++)
-            {
-                if (CurrentDatabase.GetRecord(i) is not NoteRecord record)
-                    break;
-                result.Add(record);
-            }
-            return result;
-        }
-        finally
-        {
-            CurrentDatabase.Sort();
-        }
+        var records = CurrentDatabase.Sort(RecentEntriesSortMode);
+        var result = new List<NoteRecord>(target);
+        for (int i = 0; i < target; i++)
+            result.Add(records[i]);
+
+        return result;
     }
 }

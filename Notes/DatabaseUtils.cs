@@ -1,6 +1,6 @@
 ﻿using SylverInk.FileIO;
 using SylverInk.XAML;
-using SylverInk.XAML.Views;
+using SylverInk.XAML.Controls;
 using System.Globalization;
 using static SylverInk.FileIO.FileUtils;
 using static SylverInk.XAMLUtils.MainWindowUtils;
@@ -19,6 +19,7 @@ public static class DatabaseUtils
     public static List<string> DatabaseFiles { get => [.. Databases.Select(db => db.DBFile)]; }
     public static List<Database> Databases { get; } = [];
     public static string DefaultDatabase { get; } = $"{Strings.Word_New}";
+    public static List<TabItem> OpenTabs { get; } = [];
     public static string ShellDB { get; set; } = string.Empty;
 
     public static void AddDatabase(Database db)
@@ -128,6 +129,13 @@ public static class DatabaseUtils
         OpenQuery(newRecord);
     }
 
+    public static TabControl GetChildPanel(string basePanel) => Concurrent(() =>
+    {
+        var db = (TabControl)Application.Current.MainWindow.FindName(basePanel);
+        var dbItem = (TabItem)db.SelectedItem;
+        return (TabControl)((DatabaseControl)dbItem.Content).Content;
+    });
+
     public static SearchResult? OpenQuery(NoteRecord record, string? scrollTo = null)
     {
         foreach (SearchResult result in OpenQueries)
@@ -148,7 +156,7 @@ public static class DatabaseUtils
         resultWindow.Show();
         OpenQueries.Add(resultWindow);
         if (!record?.Locked is true)
-            record?.DB?.Lock(record.Index, true);
+            record?.DB?.Lock(record.UUID, true);
 
         RefreshRecentNotes();
 
@@ -214,22 +222,17 @@ public static class DatabaseUtils
             tab.ViewModel.Deconstruct();
         }
 
-        var ChildPanel = GetChildPanel("DatabasesPanel");
-
-        for (int i = ChildPanel.Items.Count - 1; i > 0; i--)
+        var panel = GetChildPanel("DatabasesPanel");
+        foreach (TabItem item in panel.Items)
         {
-            var item = (TabItem)ChildPanel.Items[i];
-
-            if (item.Content is not NoteTab otherTab)
+            if (item.Content is not NoteTab tab)
                 continue;
 
-            if (!otherTab.ViewModel.Record.Equals(record))
-                continue;
-
-            if (ChildPanel.SelectedIndex == i)
-                ChildPanel.SelectedIndex = Math.Max(0, Math.Min(i - 1, ChildPanel.Items.Count - 1));
-
-            ChildPanel.Items.RemoveAt(i);
+            if (tab.ViewModel.Record.Equals(record))
+            {
+                panel.Items.Remove(item);
+                break;
+            }
         }
 
         RefreshRecentNotes();
@@ -274,6 +277,17 @@ public static class DatabaseUtils
 
             if (div[1].Equals(tag, StringComparison.Ordinal))
                 SwitchDatabase(db);
+        }
+    }
+
+    public static void UpdateRibbonTabs()
+    {
+        foreach (var item in OpenTabs)
+        {
+            if (item.Content is not NoteTab tab)
+                continue;
+
+            item.Header = tab.ViewModel.Record.GetRibbonHeader();
         }
     }
 }

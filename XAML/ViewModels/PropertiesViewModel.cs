@@ -178,11 +178,11 @@ public partial class PropertiesViewModel : ViewModelBase
         int noteTotalC = 0;
         int noteTotalW = 0;
 
-        for (int i = 0; i < CurrentDatabase.RecordCount; i++)
+        var records = CurrentDatabase.Sort();
+
+        for (int i = 0; i < records.Count; i++)
         {
-            var record = CurrentDatabase.GetRecord(i);
-            if (record is null)
-                continue;
+            var record = records[i];
 
             var recordText = Concurrent(record.ToString);
             var length = recordText.Length;

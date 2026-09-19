@@ -21,7 +21,7 @@ public class Database : IDisposable
     private LinkedStack<NoteRecord> PreviousOpenNotes { get; set; } = [];
     public int RecordCount => Controller.RecordCount;
     public NetServer Server { get; }
-    public string UUID { get => Controller.UUID; set => Controller.UUID = value; }
+    public Guid UUID { get => Controller.UUID; set => Controller.UUID = value; }
     public Dictionary<string, double> WordPercentages => Controller.WordPercentages;
 
     public Database()
@@ -49,9 +49,6 @@ public class Database : IDisposable
         if (string.IsNullOrWhiteSpace(DBFile))
             DBFile = GetDatabasePath(this);
 
-        if (string.IsNullOrWhiteSpace(UUID))
-            UUID = MakeUUID(UUIDType.Database);
-
         var lockFile = GetLockFile(DBFile);
 
         if (!Directory.Exists(Path.GetDirectoryName(lockFile)))
@@ -78,34 +75,55 @@ public class Database : IDisposable
         }
     }
 
-    public int CreateRecord(string entry, bool local = true)
+    public Guid CreateRecord(string entry, bool local = true)
     {
-        int index = Controller.CreateRecord(entry);
+        Guid uuid = Controller.CreateRecord(entry);
 
         if (local)
         {
-            var outBuffer = new List<byte>([0, 0, 0, 0, .. entry.Length.ToByteArray()]);
+            var uuidBuffer = Encoding.UTF8.GetBytes(uuid.ToString());
+            var outBuffer = new List<byte>([0, 0, 0, 0, .. uuidBuffer.Length.ToByteArray(), .. uuidBuffer, .. entry.Length.ToByteArray()]);
 
             if (entry.Length > 0)
-                outBuffer.AddRange(Encoding.UTF8.GetBytes(entry));
+                outBuffer.AddRange(Encoding.UTF8.GetBytes(entry.ToString()));
 
             Transmit(NetworkUtils.MessageType.RecordAdd, [.. outBuffer]);
         }
 
         RefreshRecentNotes();
 
-        return index;
+        return uuid;
     }
 
-    public void CreateRevision(int index, string newVersion, bool local = true)
+    public void CreateRecord(string entry, Guid uuid, bool local = true)
     {
-        Controller.CreateRevision(index, newVersion);
+        Controller.CreateRecord(entry, uuid);
+
+        if (local)
+        {
+            var uuidBuffer = Encoding.UTF8.GetBytes(uuid.ToString());
+            var outBuffer = new List<byte>([0, 0, 0, 0, .. uuidBuffer.Length.ToByteArray(), .. uuidBuffer, .. entry.Length.ToByteArray()]);
+
+            if (entry.Length > 0)
+                outBuffer.AddRange(Encoding.UTF8.GetBytes(entry.ToString()));
+
+            Transmit(NetworkUtils.MessageType.RecordAdd, [.. outBuffer]);
+        }
+
+        RefreshRecentNotes();
+    }
+
+    public void CreateRevision(Guid uuid, string newVersion, bool local = true)
+    {
+        Controller.CreateRevision(uuid, newVersion);
 
         if (!local)
             return;
 
+        var textBuffer = Encoding.UTF8.GetBytes(uuid.ToString());
         var outBuffer = new List<byte>([
-            .. index.ToByteArray(),
+            .. textBuffer.Length.ToByteArray(),
+            .. textBuffer,
             .. newVersion.Length.ToByteArray()
         ]);
 
@@ -115,28 +133,22 @@ public class Database : IDisposable
         Transmit(NetworkUtils.MessageType.TextInsert, [.. outBuffer]);
     }
 
-    public void CreateRevision(NoteRecord record, string newVersion, bool local = true) => CreateRevision(record.Index, newVersion, local);
+    public void CreateRevision(NoteRecord record, string newVersion, bool local = true) => CreateRevision(record.UUID, newVersion, local);
 
-    public void DeleteRecord(int index, bool local = true)
+    public void DeleteRecord(Guid uuid, bool local = true)
     {
-        Controller.DeleteRecord(index);
+        Controller.DeleteRecord(uuid);
 
         if (local)
-            Transmit(NetworkUtils.MessageType.RecordRemove, index.ToByteArray());
+            Transmit(NetworkUtils.MessageType.RecordRemove, uuid.ToString());
     }
 
     public void DeleteRecord(NoteRecord record, bool local = true)
     {
-        for (int index = RecordCount - 1; index > -1; index--)
-        {
-            if (!Controller.GetRecord(index)?.Equals(record) is true)
-                continue;
+        Controller.DeleteRecord(record.UUID);
 
-            Controller.DeleteRecord(index);
-
-            if (local)
-                Transmit(NetworkUtils.MessageType.RecordRemove, index.ToByteArray());
-        }
+        if (local)
+            Transmit(NetworkUtils.MessageType.RecordRemove, record.UUID.ToString());
     }
 
     public void Dispose()
@@ -152,7 +164,7 @@ public class Database : IDisposable
             if (!otherDB.Name?.Equals(Name, StringComparison.Ordinal) is true)
                 return false;
 
-            if (!otherDB.UUID.Equals(UUID, StringComparison.Ordinal))
+            if (!otherDB.UUID.Equals(UUID))
                 return false;
 
             return true;
@@ -163,7 +175,7 @@ public class Database : IDisposable
             if (!otherController.Name?.Equals(Name, StringComparison.Ordinal) is true)
                 return false;
 
-            if (!otherController.UUID.Equals(UUID, StringComparison.Ordinal))
+            if (!otherController.UUID.Equals(UUID))
                 return false;
 
             return true;
@@ -186,21 +198,19 @@ public class Database : IDisposable
             return DateTime.FromBinary((long)Created).ToLocalTime().ToString(DateFormat, CultureInfo.InvariantCulture);
 
         var CreatedObject = DateTime.UtcNow;
-        for (int i = 0; i < RecordCount; i++)
+        foreach (NoteRecord otherRecord in Controller.Records.Values)
         {
-            var other = Controller.GetRecord(i)?.GetCreatedObject();
-            if (other is null)
-                continue;
+            var other = otherRecord.GetCreatedObject();
 
             if (CreatedObject.CompareTo(other) > 0)
-                CreatedObject = (DateTime)other;
+                CreatedObject = other;
         }
 
         Created = CreatedObject.ToBinary();
         return CreatedObject.ToLocalTime().ToString(DateFormat, CultureInfo.InvariantCulture);
     }
 
-    public override int GetHashCode() => int.Parse(UUID.Replace("-", string.Empty)[^8..], NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo);
+    public override int GetHashCode() => Controller.GetHashCode();
 
     public StackPanel GetHeader()
     {
@@ -249,7 +259,9 @@ public class Database : IDisposable
 
     public NoteRecord? GetRecord(int index) => Controller.GetRecord(index);
 
-    public bool HasRecord(int index) => Controller.HasRecord(index);
+    public NoteRecord? GetRecord(Guid uuid) => Controller.GetRecord(uuid);
+
+    public bool HasRecord(Guid uuid) => Controller.HasRecord(uuid);
 
     public void Initialize(bool newDatabase = true)
     {
@@ -310,13 +322,13 @@ public class Database : IDisposable
         RefreshRecentNotes();
     }
 
-    public void Lock(int index, bool local = false)
+    public void Lock(Guid uuid, bool local = false)
     {
-        var record = Controller.GetRecord(index);
+        var record = Controller.GetRecord(uuid);
 
         if (local)
         {
-            Transmit(NetworkUtils.MessageType.RecordLock, [.. index.ToByteArray()]);
+            Transmit(NetworkUtils.MessageType.RecordLock, uuid.ToString());
             return;
         }
 
@@ -444,9 +456,6 @@ public class Database : IDisposable
         if (string.IsNullOrWhiteSpace(DBFile))
             DBFile = GetDatabasePath(this);
 
-        if (string.IsNullOrWhiteSpace(UUID))
-            UUID = MakeUUID(UUIDType.Database);
-
         if (string.IsNullOrWhiteSpace(targetFile))
             targetFile = DBFile;
 
@@ -462,7 +471,7 @@ public class Database : IDisposable
         Controller.SerializeRecords();
 
         if (targetFile.Contains(Subfolders[Strings.Subfolder_Databases]))
-            File.WriteAllText(Path.Join(Path.GetDirectoryName(targetFile), "uuid.dat"), UUID);
+            File.WriteAllText(Path.Join(Path.GetDirectoryName(targetFile), "uuid.dat"), UUID.ToString());
 
         var lockFile = GetLockFile(targetFile);
         FileIO.FileUtils.Erase(lockFile);
@@ -470,12 +479,12 @@ public class Database : IDisposable
 
     public byte[]? SerializeRecords(bool inMemory = false) => Controller.SerializeRecords(inMemory);
 
-    public void Sort(SortType type = SortType.ByIndex)
+    public List<NoteRecord> Sort(SortType type = SortType.ByIndex)
     {
         if (type == SortType.ByIndex)
             Controller.PropagateIndices();
-        Controller.Sort(type);
-        RefreshRecentNotes();
+
+        return Controller.Sort(type);
     }
 
     public void Transmit(NetworkUtils.MessageType type, byte[]? data)
@@ -490,18 +499,26 @@ public class Database : IDisposable
             Server.Broadcast(type, data);
     }
 
-    public void Unlock(int index, bool local = false)
+    public void Transmit(NetworkUtils.MessageType type, string data)
     {
-        if (index == -1)
-            return;
+        var buffer = Encoding.UTF8.GetBytes(data);
 
+        if (Client.Connected)
+            Client.Send(type, [.. buffer.Length.ToByteArray(), .. buffer]);
+
+        if (Server.Serving)
+            Server.Broadcast(type, [.. buffer.Length.ToByteArray(), .. buffer]);
+    }
+
+    public void Unlock(Guid uuid, bool local = false)
+    {
         if (local)
         {
-            Transmit(NetworkUtils.MessageType.RecordUnlock, [.. index.ToByteArray()]);
+            Transmit(NetworkUtils.MessageType.RecordUnlock, uuid.ToString());
             return;
         }
 
-        Controller.GetRecord(index)?.Unlock();
+        Controller.GetRecord(uuid)?.Unlock();
     }
 
     public void UpdateWordPercentages() => Controller.UpdateWordPercentages();

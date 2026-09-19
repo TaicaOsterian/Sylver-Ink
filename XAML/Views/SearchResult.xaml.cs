@@ -1,4 +1,5 @@
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows.Interop;
 using System.Windows.Threading;
 
@@ -167,7 +168,7 @@ public partial class SearchResult : Window, IDisposable
         if (ViewModel.Edited)
             SaveRecord();
 
-        ViewModel.Record?.DB?.Transmit(NetworkUtils.MessageType.RecordUnlock, ViewModel.Record?.Index.ToByteArray());
+        ViewModel.Record?.DB?.Transmit(NetworkUtils.MessageType.RecordUnlock, ViewModel.Record?.UUID.ToString() ?? string.Empty);
 
         OpenQueries.RemoveAll(query => query.ViewModel.Record.Equals(ViewModel.Record));
 

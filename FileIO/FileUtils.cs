@@ -75,14 +75,18 @@ public static class FileUtils
 
         while (File.Exists(dbFile))
         {
-            if (File.Exists(uuidFile) && File.ReadAllText(uuidFile).Equals(db.UUID, StringComparison.Ordinal))
-                return dbFile;
+            if (File.Exists(uuidFile))
+            {
+                string uuidData = File.ReadAllText(uuidFile);
+                if (Guid.TryParse(uuidData, out var uuid) && uuid.Equals(db.UUID))
+                    return dbFile;
+            }
 
             Database tmpDB = new();
             try
             {
                 tmpDB.Load(dbFile);
-                if (tmpDB.UUID?.Equals(db.UUID, StringComparison.Ordinal) is true)
+                if (tmpDB.UUID.Equals(db.UUID))
                     return dbFile;
                 if (tmpDB.Format < 7) // Database object UUID was added in SIDB v7
                     return dbFile;

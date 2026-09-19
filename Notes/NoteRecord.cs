@@ -1,5 +1,5 @@
 ﻿using SylverInk.FileIO;
-using SylverInk.XAML.Views;
+using SylverInk.XAML.Controls;
 using System.Globalization;
 using static SylverInk.Notes.DatabaseUtils;
 using static SylverInk.Text.FlowDocumentUtils;
@@ -7,13 +7,13 @@ using static SylverInk.XAMLUtils.MainWindowUtils;
 
 namespace SylverInk.Notes;
 
-public struct NoteRevision(long created = -1, bool isAutosave = false, int startIndex = -1, string? substring = null, string? uuid = null)
+public struct NoteRevision(long created = -1, bool isAutosave = false, int startIndex = -1, string? substring = null, Guid? uuid = null)
 {
     public long Created { get; set; } = created;
     public bool IsAutosave { get; set; } = isAutosave;
     public int StartIndex { get; set; } = startIndex;
     public string? Substring { get; set; } = substring;
-    public string? Uuid { get; set; } = uuid ?? MakeUUID(UUIDType.Revision);
+    public Guid Uuid { get; set; } = uuid ?? MakeUUID(UUIDType.Revision);
 }
 
 public partial class NoteRecord
@@ -27,13 +27,13 @@ public partial class NoteRecord
     private readonly List<NoteRevision> Revisions = [];
     private readonly List<string> Tags = [];
     private bool TagsDirty = true;
-    private string? _uuid;
+    private Guid _uuid;
 
     public Database? DB { get; set; }
     public int Index { get => _index; set => _index = value; }
     public int LastMatchCount { get; set; }
     public bool Locked { get; set; }
-    public string? UUID { get => _uuid; set => _uuid = value; }
+    public Guid UUID { get => _uuid; set => _uuid = value; }
 
     public string FullDateChange
     {
@@ -91,22 +91,21 @@ public partial class NoteRecord
     {
         Created = DateTime.UnixEpoch.ToBinary();
         this.DB = DB;
-        Index = -1;
         Initial = string.Empty;
         LastChange = Created;
         LastChangeObject = DateTime.FromBinary(LastChange);
-        UUID = MakeUUID(UUIDType.Record);
+        _uuid = MakeUUID(UUIDType.Record);
     }
 
-    public NoteRecord(int Index, string Initial, Database? DB = null, long Created = -1, string? UUID = null)
+    public NoteRecord(int Index, string Initial, Database? DB = null, long Created = -1, Guid? UUID = null)
     {
         this.Created = Created == -1 ? DateTime.UtcNow.ToBinary() : Created;
         this.DB = DB;
-        this.Index = Index;
+        _index = Index;
         this.Initial = Initial;
         LastChange = this.Created;
         LastChangeObject = DateTime.FromBinary(LastChange);
-        this.UUID = UUID ?? MakeUUID(UUIDType.Record);
+        _uuid = UUID ?? MakeUUID(UUIDType.Record);
     }
 
     private void Add(NoteRevision revision)
@@ -119,8 +118,6 @@ public partial class NoteRecord
             LastChange = revision.Created;
             LastChangeObject = DateTime.FromBinary(LastChange);
         }
-
-        revision.Uuid ??= MakeUUID(UUIDType.Revision);
 
         Revisions.Add(revision);
         TagsDirty = true;
@@ -167,7 +164,7 @@ public partial class NoteRecord
 
     public void Delete()
     {
-        Index = 0;
+        Index = -1;
         Initial = string.Empty;
         LastChange = DateTime.UtcNow.ToBinary();
         Revisions.Clear();
@@ -194,7 +191,12 @@ public partial class NoteRecord
     public NoteRecord Deserialize(Serializer? serializer)
     {
         if (serializer?.DatabaseFormat >= 5)
-            UUID = serializer?.ReadShortString();
+        {
+            string uuidString = serializer?.ReadShortString() ?? string.Empty;
+            if (!Guid.TryParse(uuidString, out var uuid))
+                uuid = MakeUUID(UUIDType.Record);
+            UUID = uuid;
+        }
         Created = serializer?.ReadLong() ?? DateTime.UtcNow.ToBinary();
         Index = serializer?.ReadInt32() ?? -1;
         Initial = serializer?.ReadString();
@@ -205,7 +207,12 @@ public partial class NoteRecord
         {
             NoteRevision _revision = new();
             if (serializer?.DatabaseFormat >= 7)
-                _revision.Uuid = serializer?.ReadShortString();
+            {
+                string uuidString = serializer?.ReadShortString() ?? string.Empty;
+                if (!Guid.TryParse(uuidString, out var uuid))
+                    uuid = MakeUUID(UUIDType.Revision);
+                _revision.Uuid = uuid;
+            }
             _revision.Created = serializer?.ReadLong() ?? DateTime.UtcNow.ToBinary();
             if (serializer?.DatabaseFormat >= 16)
             {
@@ -236,7 +243,7 @@ public partial class NoteRecord
                 && Index.Equals(recordObj?.Index)
                 && Initial?.Equals(recordObj?.Initial, StringComparison.Ordinal) is true
                 && LastChange.Equals(recordObj?.LastChange))
-            || (UUID?.Equals(recordObj?.UUID ?? string.Empty, StringComparison.Ordinal) is true);
+            || (UUID.Equals(recordObj?.UUID) is true);
     }
 
     private int ExtractTags()
@@ -281,7 +288,17 @@ public partial class NoteRecord
 
     public FlowDocument GetDocument(int backsteps = 0) => TextConverter.Parse(Reconstruct(backsteps), TextFormat.Xaml);
 
-    public override int GetHashCode() => int.Parse((UUID ??= MakeUUID(UUIDType.Record))[^8..], NumberStyles.HexNumber, NumberFormatInfo.CurrentInfo);
+    public override int GetHashCode()
+    {
+        int parse = 0;
+        var arr = UUID.ToByteArray();
+        for (int i = 0; i < 4; i++)
+        {
+            var span = arr.AsSpan(i, 4).ToArray();
+            parse ^= IntFromBytes(span);
+        }
+        return parse;
+    }
 
     public string GetLastChange() => GetLastChangeObject().ToLocalTime().ToString(DateFormat, CultureInfo.CurrentCulture);
 
@@ -325,7 +342,7 @@ public partial class NoteRecord
         _ => Preview
     };
 
-    public bool IsAutosaveRevision(int index) => index < Revisions.Count && Revisions[Revisions.Count - 1 - index].IsAutosave;
+    public bool IsAutosaveRevision(int index) => index < Revisions.Count && Revisions[index].IsAutosave;
 
     public void Lock()
     {
@@ -355,8 +372,6 @@ public partial class NoteRecord
         LastQuery = format;
         return LastMatchCount = outCount;
     }
-
-    public void OverwriteIndex(int Index) => this.Index = Index;
 
     /// <summary>
     /// <para>Reverts this record to a previous state by applying each of its stored revisions while leaving a requested count undone, specified by <paramref name="backsteps"/>.</para>
@@ -421,7 +436,7 @@ public partial class NoteRecord
             TargetPlaintext();
 
         if (serializer?.DatabaseFormat >= 5)
-            serializer?.WriteShortString(UUID);
+            serializer?.WriteShortString(UUID.ToString());
         serializer?.WriteLong(Created);
         serializer?.WriteInt32(Index);
         serializer?.WriteString(Initial);
@@ -431,7 +446,7 @@ public partial class NoteRecord
         for (int i = 0; i < Revisions.Count; i++)
         {
             if (serializer?.DatabaseFormat >= 7)
-                serializer?.WriteShortString(Revisions[i].Uuid);
+                serializer?.WriteShortString(Revisions[i].Uuid.ToString());
             serializer?.WriteLong(Revisions[i].Created);
             if (serializer?.DatabaseFormat > 15)
             {
@@ -500,17 +515,6 @@ public partial class NoteRecord
     public void Unlock()
     {
         Locked = false;
-
-        foreach (var query in OpenQueries)
-            query.RequestUnlock(this);
-
-        foreach (var item in OpenTabs)
-        {
-            if (item.Content is not NoteTab tab)
-                continue;
-
-            tab.RequestUnlock(this);
-        }
     }
 
     [GeneratedRegex(@"(\p{Ll}+)")]

@@ -1,4 +1,5 @@
 ﻿using SylverInk.FileIO;
+using System.Collections;
 using System.Globalization;
 using static SylverInk.FileIO.FileUtils;
 using static SylverInk.Notes.DatabaseUtils;
@@ -9,7 +10,6 @@ public partial class NoteController : IDisposable
 {
     private short _canCompress; // -1 = Cannot compress, 1 = Can compress, 0 = Not tested.
     private bool _changed;
-    private readonly List<NoteRecord> Records = [];
     private Serializer? _serializer;
     private byte? Structure;
 
@@ -22,14 +22,21 @@ public partial class NoteController : IDisposable
             DatabaseChanged = DatabaseChanged || value;
         }
     }
-
     public Database? DB { get; set; }
     public bool EnforceNoForwardCompatibility { get; private set; }
     public int Format { get; set; } = HighestSIDBFormat;
+    private bool IndicesDirty { get; set; } = true;
+    public List<NoteRecord> IndexedRecords { get; private set; } = [];
     public bool Loaded { get; set; }
     public string? Name { get; set; }
     public int RecordCount => Records.Count;
-    public string UUID { get; set; } = MakeUUID(UUIDType.Database);
+    private readonly Dictionary<SortType, Comparison<NoteRecord>> Sortings = new([
+        new(SortType.ByChange, new Comparison<NoteRecord>((_rev1, _rev2) => _rev2.GetLastChangeObject().CompareTo(_rev1.GetLastChangeObject()))),
+        new(SortType.ByCreation, new Comparison<NoteRecord>((_rev1, _rev2) => _rev2.GetCreatedObject().CompareTo(_rev1.GetCreatedObject()))),
+        new(SortType.ByIndex, new Comparison<NoteRecord>((_rev1, _rev2) => _rev1.Index.CompareTo(_rev2.Index)))
+        ]);
+    public Hashtable Records { get; } = [];
+    public Guid UUID { get; set; } = MakeUUID(UUIDType.Database);
     public Dictionary<string, double> WordPercentages { get; } = [];
 
     public NoteController(Database? DB = null)
@@ -64,11 +71,12 @@ public partial class NoteController : IDisposable
         Loaded = true;
     }
 
-    private int AddRecord(NoteRecord record)
+    private Guid AddRecord(NoteRecord record)
     {
-        Records.Add(record);
+        Records.Add(record.UUID, record);
+        IndicesDirty = true;
         RefreshRecentNotes();
-        return record.Index;
+        return record.UUID;
     }
 
     public void Autosave(string filename)
@@ -80,7 +88,7 @@ public partial class NoteController : IDisposable
             return;
 
         if (_serializer?.DatabaseFormat >= 7)
-            _serializer?.WriteShortString(UUID);
+            _serializer?.WriteShortString(UUID.ToString());
 
         if (!_serializer?.Headless is true)
             _serializer?.WriteShortString(Name);
@@ -89,29 +97,37 @@ public partial class NoteController : IDisposable
             _serializer?.WriteByte(Structure ??= 0);
 
         _serializer?.WriteInt32(Records.Count);
-        for (int i = 0; i < Records.Count; i++)
-            Records[i].Serialize(_serializer);
+        foreach (NoteRecord record in Records.Values)
+            record.Serialize(_serializer);
 
         ReloadSerializer();
     }
 
-    public int CreateRecord(string entry)
+    public Guid CreateRecord(string entry, Guid? uuid = null)
     {
         Changed = true;
-        NoteRecord Record = new(Records.Count, TextConverter.Convert(entry, TextFormat.Plaintext, TextFormat.Xaml), DB);
+        IndicesDirty = true;
+
+        NoteRecord Record = new(
+            Index: Records.Count,
+            Initial: TextConverter.Convert(entry, TextFormat.Plaintext, TextFormat.Xaml),
+            DB: DB,
+            UUID: uuid);
+
         return AddRecord(Record);
     }
 
-    public void CreateRevision(int index, string NewVersion) => CreateRevision(GetRecord(index), NewVersion);
+    public void CreateRevision(Guid uuid, string NewVersion) => CreateRevision(GetRecord(uuid), NewVersion);
 
     public static void CreateRevision(NoteRecord? record, string NewVersion) => record?.CreateRevision(NewVersion);
 
-    public void DeleteRecord(int index)
+    public void DeleteRecord(Guid uuid)
     {
-        var recordIndex = Records.FindIndex(new(record => record.Index == index));
+        NoteRecord? record = GetRecord(uuid);
+        if (record is null)
+            return;
 
-        var record = Records[recordIndex];
-        Records.RemoveAt(recordIndex);
+        Records.Remove(uuid);
 
         for (int i = OpenQueries.Count - 1; i > -1; i--)
             OpenQueries[i].RequestClose(record);
@@ -120,8 +136,9 @@ public partial class NoteController : IDisposable
         RemoveRecordTab(record);
         record.Delete();
 
-        PropagateIndices();
         Changed = true;
+        IndicesDirty = true;
+        PropagateIndices();
 
         RefreshRecentNotes();
     }
@@ -142,7 +159,12 @@ public partial class NoteController : IDisposable
         }
 
         if (Format >= 7)
-            UUID = _serializer?.ReadShortString() ?? MakeUUID(UUIDType.Database);
+        {
+            string uuidString = _serializer?.ReadShortString() ?? string.Empty;
+            if (!Guid.TryParse(uuidString, out var uuid))
+                uuid = MakeUUID(UUIDType.Database);
+            UUID = uuid;
+        }
 
         if (!_serializer?.Headless is true)
             Name = _serializer?.ReadShortString();
@@ -158,8 +180,9 @@ public partial class NoteController : IDisposable
         }
 
         _serializer?.Close();
-        PropagateIndices();
         Changed = false;
+        IndicesDirty = true;
+        PropagateIndices();
     }
 
     public void Dispose()
@@ -175,7 +198,7 @@ public partial class NoteController : IDisposable
             if (!otherDB.Name?.Equals(Name, StringComparison.Ordinal) is true)
                 return false;
 
-            if (!otherDB.UUID.Equals(UUID, StringComparison.Ordinal))
+            if (!otherDB.UUID.Equals(UUID))
                 return false;
 
             return true;
@@ -186,7 +209,7 @@ public partial class NoteController : IDisposable
             if (!otherController.Name?.Equals(Name, StringComparison.Ordinal) is true)
                 return false;
 
-            if (!otherController.UUID.Equals(UUID, StringComparison.Ordinal))
+            if (!otherController.UUID.Equals(UUID))
                 return false;
 
             return true;
@@ -197,10 +220,10 @@ public partial class NoteController : IDisposable
 
     public void EraseDatabase()
     {
-        PropagateIndices();
-        while (RecordCount > 0)
-            DeleteRecord(0);
+        foreach (NoteRecord record in Records.Values)
+            DeleteRecord(record.UUID);
 
+        IndicesDirty = true;
         RefreshRecentNotes();
     }
 
@@ -217,26 +240,29 @@ public partial class NoteController : IDisposable
         return string.Empty;
     }
 
-    public override int GetHashCode() => int.Parse(UUID.Replace("-", string.Empty)[^8..], NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo);
-
-    public NoteRecord? GetRecord(int RecordIndex) => RecordIndex < Records.Count && RecordIndex > -1 ? Records.Find(record => record.Index == RecordIndex) : null;
-
-    public bool HasRecord(int index)
+    public override int GetHashCode()
     {
-        try
+        int parse = 0;
+        var arr = UUID.ToByteArray();
+        for (int i = 0; i < 4; i++)
         {
-            if (index < 0)
-                return false;
-
-            if (index >= Records.Count)
-                return false;
-
-            return Records[index] != null;
+            var span = arr.AsSpan(i, 4).ToArray();
+            parse ^= IntFromBytes(span);
         }
-        catch
-        {
-            return false;
-        }
+        return parse;
+    }
+
+    public NoteRecord? GetRecord(int index)
+    {
+        PropagateIndices();
+        return IndexedRecords[index];
+    }
+
+    public NoteRecord? GetRecord(Guid uuid) => Records[uuid] as NoteRecord;
+
+    public bool HasRecord(Guid uuid)
+    {
+        return Records[uuid] != null;
     }
 
     public void InitializeRecords(bool newDatabase = true)
@@ -280,8 +306,20 @@ public partial class NoteController : IDisposable
 
     public void PropagateIndices()
     {
-        for (int i = 0; i < Records.Count; i++)
-            Records[i].OverwriteIndex(i);
+        if (!IndicesDirty)
+            return;
+
+        IndexedRecords.Clear();
+
+        foreach (NoteRecord record in Records.Values)
+            IndexedRecords.Add(record);
+
+        IndexedRecords.Sort((r1, r2) => r1.GetCreatedObject().CompareTo(r2.GetCreatedObject()));
+
+        for (int i = 0; i < IndexedRecords.Count; i++)
+            IndexedRecords[i].Index = i;
+
+        IndicesDirty = false;
     }
 
     public void ReloadSerializer()
@@ -304,12 +342,8 @@ public partial class NoteController : IDisposable
 
     public void Revert(DateTime targetDate)
     {
-        for (int i = RecordCount - 1; i > -1; i--)
+        foreach (NoteRecord record in Records.Values)
         {
-            var record = GetRecord(i);
-            if (record is null)
-                continue;
-
             for (int j = OpenQueries.Count - 1; j > -1; j--)
                 Concurrent(OpenQueries[j].RequestClose, record);
 
@@ -319,7 +353,7 @@ public partial class NoteController : IDisposable
             var comparison = RecordDate.CompareTo(targetDate);
             if (comparison > 0)
             {
-                DeleteRecord(i);
+                DeleteRecord(record.UUID);
                 continue;
             }
 
@@ -335,6 +369,8 @@ public partial class NoteController : IDisposable
             }
         }
 
+        Changed = true;
+        IndicesDirty = true;
         PropagateIndices();
         RefreshRecentNotes();
     }
@@ -350,7 +386,7 @@ public partial class NoteController : IDisposable
         }
 
         if (_serializer?.DatabaseFormat >= 7)
-            _serializer?.WriteShortString(UUID);
+            _serializer?.WriteShortString(UUID.ToString());
 
         if (!_serializer?.Headless is true)
             _serializer?.WriteShortString(Name);
@@ -359,8 +395,8 @@ public partial class NoteController : IDisposable
             _serializer?.WriteByte(Structure ??= 0);
 
         _serializer?.WriteInt32(Records.Count);
-        for (int i = 0; i < Records.Count; i++)
-            Records[i].Serialize(_serializer);
+        foreach (NoteRecord record in Records.Values)
+            record.Serialize(_serializer);
 
         if (inMemory)
             return _serializer?.GetOutgoingStream();
@@ -370,13 +406,17 @@ public partial class NoteController : IDisposable
         return null;
     }
 
-    public void Sort(SortType type = SortType.ByIndex) => Records.Sort(new Comparison<NoteRecord>((_rev1, _rev2) => type switch
+    public List<NoteRecord> Sort(SortType type = SortType.ByIndex)
     {
-        SortType.ByChange => _rev2.GetLastChangeObject().CompareTo(_rev1.GetLastChangeObject()),
-        SortType.ByCreation => _rev2.GetCreatedObject().CompareTo(_rev1.GetCreatedObject()),
-        SortType.ByIndex => _rev1.Index.CompareTo(_rev2.Index),
-        _ => _rev1.Index.CompareTo(_rev2.Index),
-    }));
+        List<NoteRecord> orderedList = [];
+
+        foreach (NoteRecord record in Records.Values)
+            orderedList.Add(record);
+
+        orderedList.Sort(Sortings[type]);
+
+        return orderedList;
+    }
 
     public bool TestCanCompress()
     {
@@ -395,8 +435,8 @@ public partial class NoteController : IDisposable
             _serializer?.BeginCompressionTest();
 
             _serializer?.WriteInt32(Records.Count);
-            for (int i = 0; i < Records.Count; i++)
-                Records[i].Serialize(_serializer);
+            foreach (NoteRecord record in Records.Values)
+                record.Serialize(_serializer);
             _serializer?.WriteString(_name);
             _serializer?.WriteByte(_structure ??= 1);
 
@@ -427,7 +467,7 @@ public partial class NoteController : IDisposable
         uint total = 0U;
         WordPercentages.Clear();
 
-        foreach (NoteRecord record in Records)
+        foreach (NoteRecord record in Records.Values)
         {
             string recordText = record.ToString();
             var matches = Lowercase().Matches(recordText.ToLowerInvariant());

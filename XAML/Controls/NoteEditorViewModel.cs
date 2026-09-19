@@ -1,7 +1,7 @@
 using SylverInk.Mvvm;
 using System.Threading;
 
-namespace SylverInk.XAML.ViewModels;
+namespace SylverInk.XAML.Controls;
 
 public class NoteEditorViewModel : ViewModelBase
 {
@@ -45,7 +45,7 @@ public class NoteEditorViewModel : ViewModelBase
         set
         {
             _document = value;
-            OnPropertyChanged();
+            OnPropertyChanged(null);
         }
     }
 
@@ -227,7 +227,7 @@ public class NoteEditorViewModel : ViewModelBase
         else
         {
             LastChange = Record.GetLastChange();
-            Record.DB?.Transmit(NetworkUtils.MessageType.RecordUnlock, Record.Index.ToByteArray());
+            Record.DB?.Transmit(NetworkUtils.MessageType.RecordUnlock, Record.UUID.ToString());
         }
 
         Document = Record.GetDocument() ?? new();

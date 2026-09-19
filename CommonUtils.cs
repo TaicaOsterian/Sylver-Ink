@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using SylverInk.XAML;
+using SylverInk.XAML.Controls;
 using System.Globalization;
 using System.Threading;
 using static SylverInk.FileIO.FileUtils;
@@ -186,17 +187,23 @@ public static partial class CommonUtils
         Application.Current.MainWindow.ResizeMode = ResizeMode.CanResize;
     }
 
+    public static int IntFromBytes(byte[] data) =>
+        (data[0] << 24)
+        + (data[1] << 16)
+        + (data[2] << 8)
+        + data[3];
+
     public static double Lerp(double x, double y, double a)
     {
         a = a > 1.0 ? 1.0 : a < 0.0 ? 0.0 : a;
         return (a * y) + ((1.0 - a) * x);
     }
 
-    public static string MakeUUID(UUIDType type = UUIDType.Record)
+    public static Guid MakeUUID(UUIDType type = UUIDType.Record)
     {
         var uuid = Guid.NewGuid().ToString("N");
         uuid = $"{uuid[..14]}{(byte)type:X2}{uuid[16..]}";
-        return uuid.ToUpper(CultureInfo.InvariantCulture);
+        return Guid.Parse(uuid);
     }
 
     // Deprecated. (Possibly temporarily.)
@@ -218,12 +225,13 @@ public static partial class CommonUtils
             var viewModel = Concurrent(() =>
             {
                 var window = Application.Current.MainWindow;
-                return (MainWindowViewModel)window.DataContext;
+                return (MainWindowViewModel?)window?.DataContext;
             });
 
-            await viewModel.RefreshRecentNotesAsync();
+            if (viewModel is null)
+                return;
 
-            Concurrent(UpdateRibbonTabs);
+            await viewModel.RefreshRecentNotesAsync();
         }
         catch
         {
@@ -243,7 +251,7 @@ public static partial class CommonUtils
             if (oSplit.Length < 2)
                 continue;
 
-            if (!int.TryParse(oSplit[1], out var iNote))
+            if (!Guid.TryParse(oSplit[1], out var gNote))
                 continue;
 
             Database? target = null;
@@ -256,25 +264,25 @@ public static partial class CommonUtils
             if (target is null)
                 continue;
 
-            if (!target.HasRecord(iNote))
+            if (!target.HasRecord(gNote))
                 continue;
 
-            if (target.GetRecord(iNote) is not NoteRecord note)
+            if (target.GetRecord(gNote) is not NoteRecord note)
                 continue;
 
             if (OpenQuery(note) is not SearchResult result)
                 continue;
 
-            if (LastActiveNotesHeight.TryGetValue($"{target.Name}:{iNote}", out var openHeight))
+            if (LastActiveNotesHeight.TryGetValue($"{target.Name}:{gNote}", out var openHeight))
                 result.Height = openHeight;
 
-            if (LastActiveNotesLeft.TryGetValue($"{target.Name}:{iNote}", out var openLeft))
+            if (LastActiveNotesLeft.TryGetValue($"{target.Name}:{gNote}", out var openLeft))
                 result.Left = openLeft;
 
-            if (LastActiveNotesTop.TryGetValue($"{target.Name}:{iNote}", out var openTop))
+            if (LastActiveNotesTop.TryGetValue($"{target.Name}:{gNote}", out var openTop))
                 result.Top = openTop;
 
-            if (LastActiveNotesWidth.TryGetValue($"{target.Name}:{iNote}", out var openWidth))
+            if (LastActiveNotesWidth.TryGetValue($"{target.Name}:{gNote}", out var openWidth))
                 result.Width = openWidth;
         }
 

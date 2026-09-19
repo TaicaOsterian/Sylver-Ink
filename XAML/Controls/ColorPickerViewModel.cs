@@ -1,7 +1,7 @@
 using SylverInk.Mvvm;
 using static SylverInk.Visuals.VisualUtils;
 
-namespace SylverInk.XAML.ViewModels;
+namespace SylverInk.XAML.Controls;
 
 public class ColorPickerViewModel : ViewModelBase
 {

@@ -74,12 +74,6 @@ public static class NetworkUtils
         return new([.. convertedList]);
     }
 
-    private static int IntFromBytes(byte[] data) =>
-        (data[0] << 24)
-        + (data[1] << 16)
-        + (data[2] << 8)
-        + data[3];
-
     public static async Task<byte[]> ReadFromStream(TcpClient client, Database DB)
     {
         int oldData;
@@ -100,13 +94,18 @@ public static class NetworkUtils
 
         var bufferString = string.Empty;
         var intBuffer = new byte[4];
-        var recordIndex = 0;
         byte[] textBuffer;
         var textCount = 0;
 
         stream.ReadExactly(intBuffer, 0, 4);
-        recordIndex = IntFromBytes(intBuffer);
-        outBuffer.AddRange(intBuffer);
+        textCount = IntFromBytes(intBuffer);
+        textBuffer = new byte[textCount];
+        stream.ReadExactly(textBuffer, 0, textCount);
+        string recordUuidString = Encoding.UTF8.GetString(textBuffer);
+        if (!Guid.TryParse(recordUuidString, out var recordUuid))
+            recordUuid = MakeUUID(UUIDType.Record);
+
+        outBuffer.AddRange(textBuffer);
 
         switch (type)
         {
@@ -123,16 +122,16 @@ public static class NetworkUtils
                     bufferString = Encoding.UTF8.GetString(textBuffer);
                 }
 
-                Concurrent(DB.CreateRecord, bufferString, false);
+                Concurrent(DB.CreateRecord, bufferString, recordUuid, false);
                 break;
             case MessageType.RecordLock:
-                Concurrent(DB.Lock, recordIndex, false);
+                Concurrent(DB.Lock, recordUuid, false);
                 break;
             case MessageType.RecordRemove:
-                Concurrent(DB.DeleteRecord, recordIndex, false);
+                Concurrent(DB.DeleteRecord, recordUuid, false);
                 break;
             case MessageType.RecordUnlock:
-                Concurrent(DB.Unlock, recordIndex, false);
+                Concurrent(DB.Unlock, recordUuid, false);
                 break;
             case MessageType.TextInsert:
                 stream.ReadExactly(intBuffer, 0, 4);
@@ -147,7 +146,7 @@ public static class NetworkUtils
                     bufferString = Encoding.UTF8.GetString(textBuffer);
                 }
 
-                Concurrent(DB.CreateRevision, recordIndex, bufferString, false);
+                Concurrent(DB.CreateRevision, recordUuid, bufferString, false);
                 break;
         }
 

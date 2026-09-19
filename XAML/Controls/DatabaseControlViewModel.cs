@@ -1,7 +1,7 @@
 using SylverInk.Mvvm;
 using static SylverInk.Notes.DatabaseUtils;
 
-namespace SylverInk.XAML.ViewModels;
+namespace SylverInk.XAML.Controls;
 
 public class DatabaseControlViewModel : ViewModelBase
 {

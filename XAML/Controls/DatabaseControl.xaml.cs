@@ -1,12 +1,19 @@
 using static SylverInk.Notes.DatabaseUtils;
 
-namespace SylverInk.XAML.Views;
+namespace SylverInk.XAML.Controls;
 
 /// <summary>
 /// Interaction logic for DatabaseControl.xaml
 /// </summary>
 public partial class DatabaseControl : UserControl
 {
+    public static readonly DependencyProperty DatabaseProperty =
+        DependencyProperty.RegisterAttached(
+            "Database",
+            typeof(Database),
+            typeof(DatabaseControl),
+            new PropertyMetadata(null, OnDatabaseChanged));
+
     public double NoteListActualHeight => RecentNotesBox.ActualHeight;
 
     public double NoteListActualWidth => RecentNotesBox.ActualWidth;
@@ -68,6 +75,8 @@ public partial class DatabaseControl : UserControl
         PlusTab.ContextMenu = menu;
     }
 
+    public static Database GetDatabase(DependencyObject source) => (Database)source.GetValue(DatabaseProperty);
+
     private void ListItemChosen(object sender, MouseButtonEventArgs e)
     {
         if (sender is not ListBox box)
@@ -85,10 +94,20 @@ public partial class DatabaseControl : UserControl
         OpenQuery(RecentSelection);
     }
 
+    private static void OnDatabaseChanged(DependencyObject source, DependencyPropertyChangedEventArgs e)
+    {
+        if (source is not DatabaseControl control)
+            return;
+
+
+    }
+
     private void RecentNotesBox_SizeChanged(object sender, SizeChangedEventArgs e)
     {
         var viewModel = (MainWindowViewModel)Window.GetWindow(this).DataContext;
         var dpi = VisualTreeHelper.GetDpi(this);
         viewModel.OnViewportMetricsChanged(e.NewSize.Width, e.NewSize.Height, dpi.PixelsPerInchY);
     }
+
+    public static void SetDatabase(DependencyObject source, Database value) => source.SetValue(DatabaseProperty, value);
 }

@@ -70,6 +70,6 @@ public partial class Settings : Window
         var tag = new EnumConverter(typeof(DisplayType)).ConvertFromString((string?)item?.Tag ?? "Content") as DisplayType?;
         RibbonTabContent = tag ?? DisplayType.Content;
 
-        UpdateRibbonTabs();
+        DatabaseUtils.UpdateRibbonTabs();
     }
 }

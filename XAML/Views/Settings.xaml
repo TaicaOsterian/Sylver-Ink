@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SylverInk"
-        xmlns:objects="clr-namespace:SylverInk.XAML.Views"
+        xmlns:ctrl="clr-namespace:SylverInk.XAML.Controls"
         xmlns:properties="clr-namespace:SylverInk.Localization"
         xmlns:vm="clr-namespace:SylverInk.XAML.ViewModels"
         mc:Ignorable="d"
@@ -75,7 +75,7 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <objects:ColorPicker x:Name="SettingsColorPicker"/>
+                    <ctrl:ColorPicker x:Name="SettingsColorPicker"/>
 
                     <Grid Background="{Binding AppSettings.MenuBackground}" Margin="0,10" Grid.ColumnSpan="2">
                         <Grid.ColumnDefinitions>
