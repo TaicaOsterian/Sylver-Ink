@@ -384,15 +384,9 @@ public partial class SearchResult : Window, IDisposable
         if (LeaveMonitor?.IsEnabled is true)
             return;
 
-        if (CommonUtils.Settings.NoteTransparency == 0.0)
-            return;
-
         EnterMonitor?.Stop();
 
         StartOpacity = Opacity;
-
-        if (StartOpacity == 1.0 - (CommonUtils.Settings.NoteTransparency * 0.01))
-            return;
 
         Concurrent(SetWindowExTransparent);
         LeaveTime = DateTime.UtcNow.Ticks;
