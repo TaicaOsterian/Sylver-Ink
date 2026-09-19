@@ -632,6 +632,8 @@ public class ContextSettings : ViewModelBase
                     break;
             }
         }
+
+        OnPropertyChanged(null);
     }
 
     public void Save() => File.WriteAllLines(SettingsFile, [

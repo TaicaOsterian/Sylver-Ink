@@ -62,8 +62,8 @@ public class SettingsViewModel : ViewModelBase
             CommonUtils.Settings.AccentForeground = theme.AccentForeground;
             CommonUtils.Settings.ListBackground = theme.ListBackground;
             CommonUtils.Settings.ListForeground = theme.ListForeground;
-            CommonUtils.Settings.MainFontFamily = CommonUtils.Settings.DefaultFont;
-            CommonUtils.Settings.MainFontSize = 11.0;
+            //CommonUtils.Settings.MainFontFamily = CommonUtils.Settings.DefaultFont;
+            //CommonUtils.Settings.MainFontSize = 11.0;
             CommonUtils.Settings.MenuBackground = theme.MenuBackground;
             CommonUtils.Settings.MenuForeground = theme.MenuForeground;
             CommonUtils.Settings.NoteClickthrough = 0.0;

@@ -45,7 +45,15 @@
                     <Setter.Value>
                         <ControlTemplate TargetType="ComboBox">
                             <Grid>
-                                <ToggleButton ClickMode="Press" Focusable="false" IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="20"/>
+                                </Grid.ColumnDefinitions>
+                                
+                                <ToggleButton ClickMode="Press"
+                                              Focusable="False"
+                                              Grid.ColumnSpan="2"
+                                              IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}">
                                     <ToggleButton.Template>
                                         <ControlTemplate TargetType="ToggleButton">
                                             <Border Background="{Binding AppSettings.ListBackground}"
@@ -53,9 +61,16 @@
                                                     BorderThickness="1"
                                                     SnapsToDevicePixels="true"
                                                     x:Name="templateRoot">
-                                                <Grid HorizontalAlignment="Right" Width="20">
+                                                <Grid HorizontalAlignment="Right"
+                                                      Width="20">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="20"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    
                                                     <Path Data="M0,0 L4,4 L8,0 Z"
                                                           Fill="{Binding AppSettings.AccentForeground}"
+                                                          Grid.Column="1"
                                                           HorizontalAlignment="Center"
                                                           VerticalAlignment="Center"
                                                           x:Name="arrow"/>
@@ -74,12 +89,13 @@
                                                   ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}"
                                                   ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
                                                   HorizontalAlignment="Left"
-                                                  IsHitTestVisible="false"
+                                                  IsHitTestVisible="False"
                                                   Margin="5,3,0,3"
                                                   VerticalAlignment="Center"
                                                   x:Name="contentPresenter"/>
 
                                 <Popup AllowsTransparency="true"
+                                       Grid.ColumnSpan="2"
                                        IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
                                        Placement="Bottom"
                                        PopupAnimation="{DynamicResource {x:Static SystemParameters.ComboBoxPopupAnimationKey}}"
@@ -89,7 +105,9 @@
                                             BorderThickness="1"
                                             MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}"
                                             x:Name="dropDownBorder">
-                                        <ScrollViewer x:Name="DropDownScrollViewer">
+                                        <ScrollViewer CanContentScroll="True"
+                                                      MaxHeight="{TemplateBinding MaxDropDownHeight}"
+                                                      x:Name="DropDownScrollViewer">
                                             <Grid RenderOptions.ClearTypeHint="Enabled" x:Name="grid">
                                                 <Canvas Height="0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="0" x:Name="canvas">
                                                     <Rectangle Fill="{Binding Background, ElementName=dropDownBorder}"

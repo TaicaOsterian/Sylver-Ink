@@ -124,9 +124,12 @@
     <value>With special thanks to Miles Farber for the priceless contribution of encouraging words and helpful brainstorming.</value>
   </data>
   <data name="AboutUs_Line3" xml:space="preserve">
-    <value>And to Norvinsk Hunter for his invaluable insight into the wants and needs of our target audience.</value>
+    <value>And to Keystone, for the countless hours of testing without which this application would not be complete.</value>
   </data>
   <data name="AboutUs_Line4" xml:space="preserve">
+    <value>And to Norvinsk Hunter for his invaluable insight into the wants and needs of our target audience.</value>
+  </data>
+  <data name="AboutUs_Line5" xml:space="preserve">
     <value>And finally, to Charly, whose translation work is second to none.</value>
   </data>
   <data name="About_Github" xml:space="preserve">
@@ -134,6 +137,10 @@
   </data>
   <data name="AdaptiveNotesTooltip" xml:space="preserve">
     <value>Attempt to automatically detect boundaries between notes.</value>
+  </data>
+  <data name="AverageLength" xml:space="preserve">
+    <value>Average note
+length</value>
   </data>
   <data name="BulletList" xml:space="preserve">
     <value>Bullet list</value>
@@ -343,7 +350,7 @@ to a previous state</value>
     <value>The number of blank lines to look for when separating the file into different notes.</value>
   </data>
   <data name="LongestNote" xml:space="preserve">
-    <value>Longest note:</value>
+    <value>Longest note</value>
   </data>
   <data name="Message_ConfirmDeleteDatabase" xml:space="preserve">
     <value>Are you sure you want to permanently delete this database?</value>
@@ -501,13 +508,13 @@ Do you want to overwrite it?</value>
     <value>Behavior</value>
   </data>
   <data name="Title_Error" xml:space="preserve">
-    <value>Error</value>
+    <value>Sylver Ink: Error</value>
   </data>
   <data name="Title_Import" xml:space="preserve">
     <value>Sylver Ink: Import</value>
   </data>
   <data name="Title_Notification" xml:space="preserve">
-    <value>Notification</value>
+    <value>Sylver Ink: Notification</value>
   </data>
   <data name="Title_Properties" xml:space="preserve">
     <value>Sylver Ink: Properties</value>
@@ -525,7 +532,7 @@ Do you want to overwrite it?</value>
     <value>Sylver Ink: Update</value>
   </data>
   <data name="Title_Warning" xml:space="preserve">
-    <value>Warning</value>
+    <value>Sylver Ink: Warning</value>
   </data>
   <data name="Tooltip_FailedCopy" xml:space="preserve">
     <value>Failed to copy the address code to the clipboard</value>
@@ -534,7 +541,7 @@ Do you want to overwrite it?</value>
     <value>When enabled, search all open databases for the query text. When disabled, search only the active database.</value>
   </data>
   <data name="TotalLength" xml:space="preserve">
-    <value>Total length:</value>
+    <value>Total length</value>
   </data>
   <data name="UnableToLoadDatabase" xml:space="preserve">
     <value>Unable to load database file: {0}</value>
@@ -558,6 +565,7 @@ Do you want to overwrite it?</value>
   </data>
   <data name="Word_Backup" xml:space="preserve">
     <value>Backup</value>
+    <comment>The verb, "to back something up".</comment>
   </data>
   <data name="Word_Bold" xml:space="preserve">
     <value>Bold</value>
@@ -576,8 +584,13 @@ Do you want to overwrite it?</value>
   <data name="Word_Connect" xml:space="preserve">
     <value>Connect</value>
   </data>
+  <data name="Word_Content" xml:space="preserve">
+    <value>Content</value>
+    <comment>As in, the contents of a file.</comment>
+  </data>
   <data name="Word_Copy" xml:space="preserve">
     <value>Copy</value>
+    <comment>The verb, "to copy something".</comment>
   </data>
   <data name="Word_Created" xml:space="preserve">
     <value>Created</value>
@@ -596,9 +609,11 @@ Do you want to overwrite it?</value>
   </data>
   <data name="Word_File" xml:space="preserve">
     <value>File</value>
+    <comment>The noun, a computer file.</comment>
   </data>
   <data name="Word_Foreground" xml:space="preserve">
     <value>Foreground</value>
+    <comment>As in a foreground color, the stroke color of text.</comment>
   </data>
   <data name="Word_Format" xml:space="preserve">
     <value>Format</value>
@@ -620,6 +635,7 @@ Do you want to overwrite it?</value>
   </data>
   <data name="Word_Justify" xml:space="preserve">
     <value>Justify</value>
+    <comment>The verb, "to place text in neat lines that are of equal length and spacing".</comment>
   </data>
   <data name="Word_Left" xml:space="preserve">
     <value>Left</value>
@@ -639,6 +655,7 @@ Do you want to overwrite it?</value>
   </data>
   <data name="Word_Open" xml:space="preserve">
     <value>Open</value>
+    <comment>The verb, "to open something".</comment>
   </data>
   <data name="Word_Path" xml:space="preserve">
     <value>Path</value>
@@ -652,6 +669,7 @@ Do you want to overwrite it?</value>
   </data>
   <data name="Word_Query" xml:space="preserve">
     <value>Query</value>
+    <comment>The verb, "to search for or identify something".</comment>
   </data>
   <data name="Word_Redo" xml:space="preserve">
     <value>Redo</value>
@@ -686,6 +704,7 @@ Do you want to overwrite it?</value>
   </data>
   <data name="Word_Underline" xml:space="preserve">
     <value>Underline</value>
+    <comment>The verb, "to draw a line underneath text in order to emphasize it".</comment>
   </data>
   <data name="Word_Undo" xml:space="preserve">
     <value>Undo</value>

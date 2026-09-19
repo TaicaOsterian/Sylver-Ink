@@ -11,10 +11,17 @@
         Background="{Binding AppSettings.MenuBackground}"
         Closing="MainWindow_Closing"
         Foreground="{Binding AppSettings.MenuForeground}"
-        Height="625" MinHeight="450" MinWidth="400"
-        MouseLeftButtonDown="Drag" ResizeMode="NoResize"
-        SizeChanged="MainWindow_SizeChanged" Title="Sylver Ink" Width="450">
-    <Grid Background="{Binding AppSettings.AccentBackground}" IsEnabled="{Binding GridEnabled}" x:Name="MainGrid">
+        Height="625"
+        MinHeight="450"
+        MinWidth="400"
+        MouseLeftButtonDown="Drag"
+        ResizeMode="NoResize"
+        SizeChanged="MainWindow_SizeChanged"
+        Title="Sylver Ink"
+        Width="450">
+    <Grid Background="{Binding AppSettings.AccentBackground}"
+          IsEnabled="{Binding GridEnabled}"
+          x:Name="MainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -23,134 +30,261 @@
         </Grid.RowDefinitions>
 
         <Popup IsOpen="{Binding RenamePopupVisible, Mode=TwoWay}"
-            Height="75" Placement="Mouse" PopupAnimation="Fade"
-            StaysOpen="False" Width="275" x:Name="RenameDatabase">
-            <Border BorderBrush="{Binding AppSettings.MenuForeground}" BorderThickness="1">
+               Height="75"
+               Placement="Mouse"
+               PopupAnimation="Fade"
+               StaysOpen="False"
+               Width="275"
+               x:Name="RenameDatabase">
+            <Border BorderBrush="{Binding AppSettings.MenuForeground}"
+                    BorderThickness="1">
                 <Grid Background="{Binding AppSettings.MenuBackground}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <TextBox Width="250" Margin="0,10" Text="{Binding RenameDatabaseName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" x:Name="DatabaseNameBox">
+                    <TextBox Margin="0,10"
+                             Text="{Binding RenameDatabaseName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             Width="250"
+                             x:Name="DatabaseNameBox">
                         <TextBox.InputBindings>
-                            <KeyBinding Key="Enter" Command="{Binding RenamePopupEnterCommand}" />
-                            <KeyBinding Key="Escape" Command="{Binding RenamePopupEscapeCommand}" />
+                            <KeyBinding Command="{Binding RenamePopupEnterCommand}"
+                                        Key="Enter"/>
+                            
+                            <KeyBinding Command="{Binding RenamePopupEscapeCommand}"
+                                        Key="Escape"/>
                         </TextBox.InputBindings>
                     </TextBox>
 
-                    <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center">
-                        <Button Command="{Binding SaveRenameCommand}" Content="{x:Static properties:Strings.Word_Save}" Margin="5"/>
-                        <Button Command="{Binding CancelRenameCommand}" Content="{x:Static properties:Strings.Word_Cancel}" Margin="5"/>
+                    <StackPanel Grid.Row="1"
+                                HorizontalAlignment="Center"
+                                Orientation="Horizontal">
+                        <Button Command="{Binding SaveRenameCommand}"
+                                Content="{x:Static properties:Strings.Word_Save}"
+                                Margin="5"/>
+                        
+                        <Button Command="{Binding CancelRenameCommand}"
+                                Content="{x:Static properties:Strings.Word_Cancel}"
+                                Margin="5"/>
                     </StackPanel>
                 </Grid>
             </Border>
         </Popup>
 
-        <Popup IsOpen="{Binding ConnectPopupVisible, Mode=TwoWay}"
-               Height="75" Placement="Mouse" PopupAnimation="Fade"
-               StaysOpen="False" Width="275" x:Name="ConnectAddress">
-            <Border BorderBrush="{Binding AppSettings.MenuForeground}" BorderThickness="1">
+        <Popup Height="75"
+               IsOpen="{Binding ConnectPopupVisible, Mode=TwoWay}"
+               Placement="Mouse"
+               PopupAnimation="Fade"
+               StaysOpen="False"
+               Width="275"
+               x:Name="ConnectAddress">
+            <Border BorderBrush="{Binding AppSettings.MenuForeground}"
+                    BorderThickness="1">
                 <Grid Background="{Binding AppSettings.MenuBackground}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" VerticalAlignment="Center">
+                    <StackPanel HorizontalAlignment="Center"
+                                Orientation="Horizontal"
+                                VerticalAlignment="Center">
                         <Label Content="{x:Static properties:Strings.Label_AddressCode}"/>
-                        <TextBox Width="75" Margin="0,10"
+                        
+                        <TextBox Margin="0,10"
                                  Text="{Binding AddressCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 Width="75"
                                  x:Name="AddressBox">
                             <TextBox.InputBindings>
-                                <KeyBinding Key="Enter" Command="{Binding ConnectPopupEnterCommand}" />
-                                <KeyBinding Key="Escape" Command="{Binding ConnectPopupEscapeCommand}" />
+                                <KeyBinding Command="{Binding ConnectPopupEnterCommand}"
+                                            Key="Enter"/>
+                                
+                                <KeyBinding Command="{Binding ConnectPopupEscapeCommand}"
+                                            Key="Escape"/>
                             </TextBox.InputBindings>
                         </TextBox>
-                        <Label Foreground="{Binding AppSettings.AccentForeground}" ToolTip="{x:Static properties:Strings.ConnectLabelTooltip}">
-                            <TextBlock Text="(?)" TextDecorations="Underline"/>
+                        
+                        <Label Foreground="{Binding AppSettings.AccentForeground}"
+                               ToolTip="{x:Static properties:Strings.ConnectLabelTooltip}">
+                            <TextBlock Text="(?)"
+                                       TextDecorations="Underline"/>
                         </Label>
                     </StackPanel>
 
-                    <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center">
-                        <Button Command="{Binding SaveConnectCommand}" Content="{x:Static properties:Strings.Word_Connect}" Margin="5"/>
-                        <Button Command="{Binding CancelConnectCommand}" Content="{x:Static properties:Strings.Word_Cancel}" Margin="5"/>
+                    <StackPanel Grid.Row="1"
+                                HorizontalAlignment="Center"
+                                Orientation="Horizontal">
+                        <Button Command="{Binding SaveConnectCommand}"
+                                Content="{x:Static properties:Strings.Word_Connect}"
+                                Margin="5"/>
+                        
+                        <Button Command="{Binding CancelConnectCommand}"
+                                Content="{x:Static properties:Strings.Word_Cancel}"
+                                Margin="5"/>
                     </StackPanel>
                 </Grid>
             </Border>
         </Popup>
 
-        <Popup IsOpen="{Binding CodePopupVisible, Mode=TwoWay}"
-               Height="75" Placement="Mouse" PopupAnimation="Fade"
-               StaysOpen="False" Width="275" x:Name="CodePopup">
-            <Border BorderBrush="{Binding AppSettings.MenuForeground}" BorderThickness="1">
+        <Popup Height="75"
+               IsOpen="{Binding CodePopupVisible, Mode=TwoWay}"
+               Placement="Mouse"
+               PopupAnimation="Fade"
+               StaysOpen="False"
+               Width="275"
+               x:Name="CodePopup">
+            <Border BorderBrush="{Binding AppSettings.MenuForeground}"
+                    BorderThickness="1">
                 <Grid Background="{Binding AppSettings.MenuBackground}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" VerticalAlignment="Center">
+                    <StackPanel HorizontalAlignment="Center"
+                                Orientation="Horizontal"
+                                VerticalAlignment="Center">
                         <Label Content="{x:Static properties:Strings.Label_AddressCode}"/>
-                        <TextBox Margin="0,10" IsReadOnly="True" Width="75"
+
+                        <TextBox IsReadOnly="True"
+                                 Margin="0,10"
                                  Text="{Binding AddressCodeDisplay, Mode=OneWay}"
+                                 Width="75"
                                  x:Name="CodeBox"/>
-                        <Label Foreground="{Binding AppSettings.AccentForeground}" ToolTip="{x:Static properties:Strings.ServerCodeLabelTooltip}">
-                            <TextBlock Text="(?)" TextDecorations="Underline"/>
+                        
+                        <Label Foreground="{Binding AppSettings.AccentForeground}"
+                               ToolTip="{x:Static properties:Strings.ServerCodeLabelTooltip}">
+                            <TextBlock Text="(?)"
+                                       TextDecorations="Underline"/>
                         </Label>
                     </StackPanel>
 
-                    <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center">
-                        <Button Command="{Binding CopyAddressCodeCommand}" Content="{x:Static properties:Strings.Word_Copy}" Margin="5"/>
-                        <Button Command="{Binding CloseCodePopupCommand}" Content="{x:Static properties:Strings.Word_Close}" Margin="5"/>
+                    <StackPanel Grid.Row="1"
+                                HorizontalAlignment="Center"
+                                Orientation="Horizontal">
+                        <Button Command="{Binding CopyAddressCodeCommand}"
+                                Content="{x:Static properties:Strings.Word_Copy}"
+                                Margin="5"/>
+                        
+                        <Button Command="{Binding CloseCodePopupCommand}"
+                                Content="{x:Static properties:Strings.Word_Close}"
+                                Margin="5"/>
                     </StackPanel>
                 </Grid>
             </Border>
         </Popup>
 
         <Menu x:Name="DatabaseMenu">
-            <MenuItem Header="{x:Static properties:Strings.Word_File}" Height="25">
-                <MenuItem Command="{Binding NewDatabaseCommand}" Header="{x:Static properties:Strings.Word_New}"/>
-                <MenuItem Command="{Binding OpenDatabaseCommand}" Header="{x:Static properties:Strings.Label_Open}"/>
-                <MenuItem Header="{x:Static properties:Strings.OpenRecent}" ItemsSource="{Binding AppSettings.RecentDatabases}">
+            <MenuItem Header="{x:Static properties:Strings.Word_File}"
+                      Height="25">
+                <MenuItem Command="{Binding NewDatabaseCommand}"
+                          Header="{x:Static properties:Strings.Word_New}"/>
+                
+                <MenuItem Command="{Binding OpenDatabaseCommand}"
+                          Header="{x:Static properties:Strings.Label_Open}"/>
+                
+                <MenuItem Header="{x:Static properties:Strings.OpenRecent}"
+                          ItemsSource="{Binding AppSettings.RecentDatabases}">
                     <MenuItem.ItemContainerStyle>
                         <Style TargetType="MenuItem">
-                            <Setter Property="Header" Value="{Binding}" />
+                            <Setter Property="Header"
+                                    Value="{Binding}" />
+                            
                             <Setter Property="Command"
                                     Value="{Binding DataContext.OpenRecentFileCommand,
                                             RelativeSource={RelativeSource AncestorType=Menu}}" />
-                            <Setter Property="CommandParameter" Value="{Binding FullPath}" />
+                            
+                            <Setter Property="CommandParameter"
+                                    Value="{Binding FullPath}" />
                         </Style>
                     </MenuItem.ItemContainerStyle>
                 </MenuItem>
+                
                 <Separator/>
-                <MenuItem Command="{Binding SaveLocalCommand}" Header="{x:Static properties:Strings.SaveToDocuments}"/>
-                <MenuItem Command="{Binding SaveAsCommand}" Header="{x:Static properties:Strings.Label_SaveAs}"/>
-                <MenuItem Command="{Binding BackupDatabaseCommand}" Header="{x:Static properties:Strings.Label_Backup}"/>
+                
+                <MenuItem Command="{Binding SaveLocalCommand}"
+                          Header="{x:Static properties:Strings.SaveToDocuments}"/>
+                
+                <MenuItem Command="{Binding SaveAsCommand}"
+                          Header="{x:Static properties:Strings.Label_SaveAs}"/>
+                
+                <MenuItem Command="{Binding BackupDatabaseCommand}"
+                          Header="{x:Static properties:Strings.Label_Backup}"/>
+                
                 <Separator/>
-                <MenuItem Command="{Binding DeleteDatabaseCommand}" Header="{x:Static properties:Strings.Word_Delete}"/>
+                
+                <MenuItem Command="{Binding DeleteDatabaseCommand}"
+                          Header="{x:Static properties:Strings.Word_Delete}"/>
             </MenuItem>
-            <MenuItem Header="{x:Static properties:Strings.Word_Database}" Height="25">
-                <MenuItem Command="{Binding CloseDatabaseCommand}" Header="{x:Static properties:Strings.Word_Close}"/>
-                <MenuItem Command="{Binding RenameDatabaseCommand}" Header="{x:Static properties:Strings.Word_Rename}"/>
+            
+            <MenuItem Header="{x:Static properties:Strings.Word_Database}"
+                      Height="25">
+                <MenuItem Command="{Binding CloseDatabaseCommand}"
+                          Header="{x:Static properties:Strings.Word_Close}"/>
+                
+                <MenuItem Command="{Binding RenameDatabaseCommand}"
+                          Header="{x:Static properties:Strings.Word_Rename}"/>
+                
                 <Separator/>
-                <MenuItem Command="{Binding PropertiesCommand}" Header="{x:Static properties:Strings.Word_Properties}"/>
+                
+                <MenuItem Command="{Binding PropertiesCommand}"
+                          Header="{x:Static properties:Strings.Word_Properties}"/>
             </MenuItem>
-            <MenuItem Header="{x:Static properties:Strings.Word_Network}" Height="25">
-                <MenuItem Command="{Binding ConnectCommand}" Header="{x:Static properties:Strings.Word_Connect}"/>
-                <MenuItem Command="{Binding DisconnectCommand}" Header="{x:Static properties:Strings.Word_Disconnect}"/>
+            
+            <MenuItem Header="{x:Static properties:Strings.Word_Network}"
+                      Height="25">
+                <MenuItem Command="{Binding ConnectCommand}"
+                          Header="{x:Static properties:Strings.Word_Connect}"/>
+                
+                <MenuItem Command="{Binding DisconnectCommand}"
+                          Header="{x:Static properties:Strings.Word_Disconnect}"/>
+                
                 <Separator/>
-                <MenuItem Command="{Binding UnserveCommand}" Header="{x:Static properties:Strings.CloseToNetwork}"/>
-                <MenuItem Command="{Binding ServeCommand}" Header="{x:Static properties:Strings.OpenToNetwork}"/>
-                <MenuItem Command="{Binding CopyCodeCommand}" Header="{x:Static properties:Strings.CopyAddressCode}"/>
+                
+                <MenuItem Command="{Binding UnserveCommand}"
+                          Header="{x:Static properties:Strings.CloseToNetwork}"/>
+                
+                <MenuItem Command="{Binding ServeCommand}"
+                          Header="{x:Static properties:Strings.OpenToNetwork}"/>
+                
+                <MenuItem Command="{Binding CopyCodeCommand}"
+                          Header="{x:Static properties:Strings.CopyAddressCode}"/>
             </MenuItem>
-            <MenuItem Header="{x:Static properties:Strings.Word_Help}" Height="25">
-                <MenuItem Command="{Binding AboutCommand}" Header="{x:Static properties:Strings.Word_About}"/>
+            
+            <MenuItem Header="{x:Static properties:Strings.Word_Help}"
+                      Height="25">
+                <MenuItem Command="{Binding AboutCommand}"
+                          Header="{x:Static properties:Strings.Word_About}"/>
             </MenuItem>
         </Menu>
 
-        <Label Content="Sylver Ink" FontSize="16" FontStyle="Italic" FontWeight="Light" Foreground="{Binding AppSettings.MenuForeground}" Grid.Row="1" HorizontalAlignment="Center" Margin="0,15" VerticalAlignment="Top"/>
-        <TabControl Background="{Binding AppSettings.MenuBackground}" BorderThickness="0" Foreground="{Binding AppSettings.MenuForeground}" Grid.Row="2" SelectionChanged="MenuTabChanged" x:Name="DatabasesPanel"/>
-        <Label Content="{Binding AppSettings.VersionString}" FontSize="9" FontStyle="Italic" FontWeight="Light" Foreground="{Binding AppSettings.MenuForeground}" HorizontalAlignment="Right" Margin="0,5" Grid.Row="3" VerticalAlignment="Bottom"/>
+        <Label Content="Sylver Ink"
+               FontSize="16"
+               FontStyle="Italic"
+               FontWeight="Light"
+               Foreground="{Binding AppSettings.MenuForeground}"
+               Grid.Row="1"
+               HorizontalAlignment="Center"
+               Margin="0,15"
+               VerticalAlignment="Top"/>
+        
+        <TabControl
+            Background="{Binding AppSettings.MenuBackground}"
+            BorderThickness="0"
+            Foreground="{Binding AppSettings.MenuForeground}"
+            Grid.Row="2"
+            SelectionChanged="MenuTabChanged"
+            x:Name="DatabasesPanel"/>
+        
+        <Label Content="{Binding AppSettings.VersionString}"
+               FontSize="9"
+               FontStyle="Italic"
+               FontWeight="Light"
+               Foreground="{Binding AppSettings.MenuForeground}"
+               Grid.Row="3"
+               HorizontalAlignment="Right"
+               Margin="0,5"
+               VerticalAlignment="Bottom"/>
     </Grid>
 </Window>

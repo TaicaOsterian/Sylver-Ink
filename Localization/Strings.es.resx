@@ -124,9 +124,12 @@
     <value>Agradecimientos especiales a Miles Farber por sus palabras de aliento y la ayuda que dio con sus ideas.</value>
   </data>
   <data name="AboutUs_Line3" xml:space="preserve">
-    <value>Y a Norvinsk Hunter por su visión invaluable sobre lo que quiere y necesita nuestra audiencia.</value>
+    <value>Y a Keystone por las horas de pruebas, sin las cuales esta aplicación estaría incompleta.</value>
   </data>
   <data name="AboutUs_Line4" xml:space="preserve">
+    <value>Y a Norvinsk Hunter por su visión invaluable sobre lo que quiere y necesita nuestra audiencia.</value>
+  </data>
+  <data name="AboutUs_Line5" xml:space="preserve">
     <value>Y por último a Charly, cuyo trabajo de traducción es insuperable.</value>
   </data>
   <data name="About_Github" xml:space="preserve">
@@ -134,6 +137,10 @@
   </data>
   <data name="AdaptiveNotesTooltip" xml:space="preserve">
     <value>Intentar detectar de forma automática los límites entre notas.</value>
+  </data>
+  <data name="AverageLength" xml:space="preserve">
+    <value>Longitud media
+de las notas</value>
   </data>
   <data name="BulletList" xml:space="preserve">
     <value>Lista de viñetas</value>
@@ -326,7 +333,7 @@ a un estado anterior</value>
     <value>El número de líneas en blanco que se deben buscar para separar el archivo en diferentes notas.</value>
   </data>
   <data name="LongestNote" xml:space="preserve">
-    <value>Nota más larga:</value>
+    <value>Nota más larga</value>
   </data>
   <data name="Message_ConfirmDeleteDatabase" xml:space="preserve">
     <value>¿Estás seguro de que quieres eliminar esta base de datos permanentemente?</value>
@@ -472,13 +479,13 @@ a un estado anterior</value>
     <value>Funcionamiento</value>
   </data>
   <data name="Title_Error" xml:space="preserve">
-    <value>Error</value>
+    <value>Sylver Ink: Error</value>
   </data>
   <data name="Title_Import" xml:space="preserve">
     <value>Sylver Ink: Importar</value>
   </data>
   <data name="Title_Notification" xml:space="preserve">
-    <value>Notificación</value>
+    <value>Sylver Ink: Notificación</value>
   </data>
   <data name="Title_Properties" xml:space="preserve">
     <value>Sylver Ink: Propiedades</value>
@@ -496,7 +503,7 @@ a un estado anterior</value>
     <value>Sylver Ink: Actualizar</value>
   </data>
   <data name="Title_Warning" xml:space="preserve">
-    <value>Advertencia</value>
+    <value>Sylver Ink: Advertencia</value>
   </data>
   <data name="Tooltip_FailedCopy" xml:space="preserve">
     <value>No se ha podido copiar la dirección del código al portapapeles</value>
@@ -505,7 +512,7 @@ a un estado anterior</value>
     <value>Cuando está activada, busca el texto de la consulta en todas las bases de datos abiertas. Cuando está desactivada, busca solo en la base de datos activa.</value>
   </data>
   <data name="TotalLength" xml:space="preserve">
-    <value>Longitud total:</value>
+    <value>Longitud total</value>
   </data>
   <data name="UnableToLoadDatabase" xml:space="preserve">
     <value>No se pudo cargar el archivo: {0}</value>
@@ -540,6 +547,9 @@ a un estado anterior</value>
   </data>
   <data name="Word_Connect" xml:space="preserve">
     <value>Conectar</value>
+  </data>
+  <data name="Word_Content" xml:space="preserve">
+    <value>Contenido</value>
   </data>
   <data name="Word_Copy" xml:space="preserve">
     <value>Copiar</value>

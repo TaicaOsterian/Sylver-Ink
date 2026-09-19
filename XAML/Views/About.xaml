@@ -8,7 +8,14 @@
         xmlns:vm="clr-namespace:SylverInk.XAML.ViewModels"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=vm:AboutViewModel}"
-        Background="{Binding AppSettings.MenuBackground}" Foreground="{Binding AppSettings.MenuForeground}" Height="325" MouseLeftButtonDown="Drag" Title="{x:Static properties:Strings.Title_About}" ShowInTaskbar="False" Topmost="True" Width="400">
+        Background="{Binding AppSettings.MenuBackground}"
+        Foreground="{Binding AppSettings.MenuForeground}"
+        Height="325"
+        MouseLeftButtonDown="Drag"
+        Title="{x:Static properties:Strings.Title_About}"
+        ShowInTaskbar="False"
+        Topmost="True"
+        Width="400">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -17,13 +24,46 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
-        <TextBlock FontFamily="{Binding AppSettings.MainFontFamily}" FontSize="{Binding AppSettings.MainFontSize}" Margin="15" TextWrapping="WrapWithOverflow">
-            <Run Text="{x:Static properties:Strings.AboutUs_Line1}"/><LineBreak/><LineBreak/>
-            <Run Text="{x:Static properties:Strings.AboutUs_Line2}"/><LineBreak/><LineBreak/>
-            <Run Text="{x:Static properties:Strings.AboutUs_Line3}"/><LineBreak/><LineBreak/>
-            <Run Text="{x:Static properties:Strings.AboutUs_Line4}"/><LineBreak/><LineBreak/>
-            <Hyperlink NavigateUri="{Binding AboutUsUri}" Command="{Binding NavigateCommand}" CommandParameter="{Binding AboutUsUri}" Foreground="{Binding AppSettings.AccentForeground}"><Run Text="{x:Static properties:Strings.About_Github}"/></Hyperlink>
+        
+        <TextBlock FontFamily="{Binding AppSettings.MainFontFamily}"
+                   FontSize="{Binding AppSettings.MainFontSize}"
+                   Margin="15"
+                   TextWrapping="WrapWithOverflow">
+            <Run Text="{x:Static properties:Strings.AboutUs_Line1}"/>
+            
+            <LineBreak/>
+            <LineBreak/>
+            
+            <Run Text="{x:Static properties:Strings.AboutUs_Line2}"/>
+            
+            <LineBreak/>
+            <LineBreak/>
+            
+            <Run Text="{x:Static properties:Strings.AboutUs_Line3}"/>
+            
+            <LineBreak/>
+            <LineBreak/>
+            
+            <Run Text="{x:Static properties:Strings.AboutUs_Line4}"/>
+            
+            <LineBreak/>
+            <LineBreak/>
+            
+            <Run Text="{x:Static properties:Strings.AboutUs_Line5}"/>
+            
+            <LineBreak/>
+            <LineBreak/>
+            
+            <Hyperlink Command="{Binding NavigateCommand}"
+                       CommandParameter="{Binding AboutUsUri}"
+                       Foreground="{Binding AppSettings.AccentForeground}"
+                       NavigateUri="{Binding AboutUsUri}">
+                <Run Text="{x:Static properties:Strings.About_Github}"/>
+            </Hyperlink>
         </TextBlock>
-        <Button Command="{Binding CloseCommand}" Content="{x:Static properties:Strings.Word_Close}" Grid.Row="1"/>
+        
+        <Button Command="{Binding CloseCommand}"
+                Content="{x:Static properties:Strings.Word_Close}"
+                Grid.Row="1"/>
     </Grid>
 </Window>

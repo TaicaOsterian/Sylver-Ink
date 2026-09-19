@@ -45,67 +45,115 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
-                        <Button Command="{Binding NewNoteCommand}" Height="24" Margin="5,0" ToolTip="{x:Static properties:Strings.NewNoteButtonTooltip}">
+                        <Button Command="{Binding NewNoteCommand}"
+                                Height="24"
+                                Margin="5,0"
+                                ToolTip="{x:Static properties:Strings.NewNoteButtonTooltip}">
                             <StackPanel Orientation="Horizontal">
                                 <Viewbox Margin="3" Stretch="Uniform">
                                     <Canvas Height="18" Width="14">
-                                        <Path Data="M0 18L0 0L11 0L14 3L14 18ZM11 0L11 3L14 3" Fill="{Binding AppSettings.ListBackground}" Stroke="{Binding AppSettings.ListForeground}" StrokeThickness="1.25" />
-                                        <Path Data="M3 12L11 12M7 8L7 16" Stroke="#00CC00" StrokeThickness="1.5"/>
+                                        <Path Data="M0 18L0 0L11 0L14 3L14 18ZM11 0L11 3L14 3"
+                                              Fill="{Binding AppSettings.ListBackground}"
+                                              Stroke="{Binding AppSettings.ListForeground}"
+                                              StrokeThickness="1.25" />
+                                        
+                                        <Path Data="M3 12L11 12M7 8L7 16"
+                                              Stroke="#00CC00"
+                                              StrokeThickness="1.5"/>
                                     </Canvas>
                                 </Viewbox>
 
-                                <TextBlock Margin="5" Text="{x:Static properties:Strings.Word_New}" VerticalAlignment="Center"/>
+                                <TextBlock Margin="5"
+                                           Text="{x:Static properties:Strings.Word_New}"
+                                           VerticalAlignment="Center"/>
                             </StackPanel>
                         </Button>
 
-                        <Button Grid.Column="1" Command="{Binding ReopenNoteCommand}" Height="24" Margin="5,0" ToolTip="{x:Static properties:Strings.RecentNotesButtonTooltip}">
+                        <Button Grid.Column="1"
+                                Command="{Binding ReopenNoteCommand}"
+                                Height="24"
+                                Margin="5,0"
+                                ToolTip="{x:Static properties:Strings.RecentNotesButtonTooltip}">
                             <StackPanel Orientation="Horizontal">
                                 <Viewbox Margin="3" Stretch="Uniform">
                                     <Canvas Height="18" Width="14">
-                                        <Path Data="M0 18L0 0L11 0L14 3L14 18ZM11 0L11 3L14 3" Fill="{Binding AppSettings.ListBackground}" Stroke="{Binding AppSettings.ListForeground}" StrokeThickness="1.25" />
-                                        <Path Stroke="{Binding AppSettings.AccentForeground}" StrokeThickness="1.5" Data="M10 16 V10 H3.5M6 7 L3.5 10 L6 13"/>
+                                        <Path Data="M0 18L0 0L11 0L14 3L14 18ZM11 0L11 3L14 3"
+                                              Fill="{Binding AppSettings.ListBackground}"
+                                              Stroke="{Binding AppSettings.ListForeground}"
+                                              StrokeThickness="1.25" />
+                                        
+                                        <Path Data="M10 16 V10 H3.5M6 7 L3.5 10 L6 13"
+                                              Stroke="{Binding AppSettings.AccentForeground}"
+                                              StrokeThickness="1.5"/>
                                     </Canvas>
                                 </Viewbox>
 
-                                <TextBlock Margin="5" Text="{x:Static properties:Strings.Word_Restore}" VerticalAlignment="Center"/>
+                                <TextBlock Margin="5"
+                                           Text="{x:Static properties:Strings.Word_Restore}"
+                                           VerticalAlignment="Center"/>
                             </StackPanel>
                         </Button>
                     </Grid>
 
-                    <StackPanel Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal" VerticalAlignment="Bottom">
-                        <Label Content="{x:Static properties:Strings.RecentNotes}" FontStyle="Italic"/>
-                        <Label Foreground="{Binding AppSettings.AccentForeground}" ToolTip="{x:Static properties:Strings.RecentNotesTooltip}">
+                    <StackPanel Grid.Column="1"
+                                HorizontalAlignment="Right"
+                                Orientation="Horizontal"
+                                VerticalAlignment="Bottom">
+                        <Label Content="{x:Static properties:Strings.RecentNotes}"
+                               FontStyle="Italic"/>
+                        
+                        <Label Foreground="{Binding AppSettings.AccentForeground}"
+                               ToolTip="{x:Static properties:Strings.RecentNotesTooltip}">
                             <TextBlock Text="(?)" TextDecorations="Underline"/>
                         </Label>
                     </StackPanel>
 
-                    <Border Grid.ColumnSpan="2" Grid.Row="1" BorderBrush="{Binding AppSettings.AccentBackground}" BorderThickness="1">
+                    <Border BorderBrush="{Binding AppSettings.AccentBackground}"
+                            BorderThickness="1"
+                            Grid.ColumnSpan="2"
+                            Grid.Row="1">
                         <Grid Background="{Binding AppSettings.AccentBackground}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <ListBox AlternationCount="2" BorderThickness="0" ClipToBounds="True" ItemsSource="{Binding AppSettings.RecentNotes}" Margin="0,0,1,0" MinWidth="60"
+                            <ListBox AlternationCount="2"
+                                     BorderThickness="0"
+                                     ClipToBounds="True"
+                                     ItemsSource="{Binding AppSettings.RecentNotes}"
+                                     Margin="0,0,1,0"
+                                     MinWidth="60"
                                      MouseUp="ListItemChosen"
                                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                      ScrollViewer.VerticalScrollBarVisibility="Disabled"
                                      x:Name="ShortChangesBox">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
-                                        <TextBlock HorizontalAlignment="Right" Text="{Binding ShortChange}" ToolTip="{Binding FullDateChange}" ToolTipService.InitialShowDelay="250"/>
+                                        <TextBlock HorizontalAlignment="Right"
+                                                   Text="{Binding ShortChange}"
+                                                   ToolTip="{Binding FullDateChange}"
+                                                   ToolTipService.InitialShowDelay="250"/>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                             </ListBox>
 
-                            <ListBox AlternationCount="2" BorderThickness="0" ClipToBounds="True" Grid.Column="1" ItemsSource="{Binding AppSettings.RecentNotes}" Margin="1,0,0,0"
+                            <ListBox AlternationCount="2"
+                                     BorderThickness="0"
+                                     ClipToBounds="True"
+                                     Grid.Column="1"
+                                     ItemsSource="{Binding AppSettings.RecentNotes}"
+                                     Margin="1,0,0,0"
                                      MouseUp="ListItemChosen"
                                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                      ScrollViewer.VerticalScrollBarVisibility="Disabled"
                                      x:Name="RecentNotesBox">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
-                                        <TextBlock ClipToBounds="True" HorizontalAlignment="Right" Text="{Binding Preview}" TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock ClipToBounds="True"
+                                                   HorizontalAlignment="Right"
+                                                   Text="{Binding Preview}"
+                                                   TextTrimming="CharacterEllipsis"/>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                             </ListBox>
@@ -127,10 +175,29 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <Button Command="{Binding SearchCommand}" Grid.Column="1" Content="{x:Static properties:Strings.Word_Search}" Margin="0,5"/>
-                    <Button Command="{Binding ImportCommand}" Grid.Column="3" Content="{x:Static properties:Strings.Word_Import}" Margin="0,5"/>
-                    <Button Command="{Binding SettingsCommand}" Grid.Column="1" Content="{x:Static properties:Strings.Word_Settings}" Margin="0,5" Grid.Row="2"/>
-                    <Button Background="{Binding AppSettings.AccentBackground}" Command="{Binding ExitCommand}" Grid.Column="3" Content="{x:Static properties:Strings.Word_Exit}" Foreground="{Binding AppSettings.AccentForeground}" Margin="0,5" Grid.Row="2"/>
+                    <Button Command="{Binding SearchCommand}"
+                            Grid.Column="1"
+                            Content="{x:Static properties:Strings.Word_Search}"
+                            Margin="0,5"/>
+                    
+                    <Button Command="{Binding ImportCommand}"
+                            Grid.Column="3"
+                            Content="{x:Static properties:Strings.Word_Import}"
+                            Margin="0,5"/>
+                    
+                    <Button Command="{Binding SettingsCommand}"
+                            Grid.Column="1"
+                            Content="{x:Static properties:Strings.Word_Settings}"
+                            Margin="0,5"
+                            Grid.Row="2"/>
+                    
+                    <Button Background="{Binding AppSettings.AccentBackground}"
+                            Command="{Binding ExitCommand}"
+                            Grid.Column="3"
+                            Content="{x:Static properties:Strings.Word_Exit}"
+                            Foreground="{Binding AppSettings.AccentForeground}"
+                            Margin="0,5"
+                            Grid.Row="2"/>
                 </Grid>
             </Grid>
         </TabItem>

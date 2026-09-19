@@ -9,93 +9,245 @@
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=vm:PropertiesViewModel}"
         Title="{x:Static properties:Strings.Title_Properties}"
-        Height="625" Width="350" MouseLeftButtonDown="Drag" ShowInTaskbar="False" Topmost="True">
+        Height="450"
+        MouseLeftButtonDown="Drag"
+        ShowInTaskbar="False"
+        Topmost="True"
+        Width="375">
     <Grid Background="{Binding AppSettings.MenuBackground}">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
 
-        <Popup Height="25" Placement="Mouse" PopupAnimation="Fade" StaysOpen="False" Width="160" x:Name="TimeSelector">
-            <Border BorderBrush="{Binding AppSettings.MenuForeground}" BorderThickness="1">
-                <Grid Background="{Binding AppSettings.MenuBackground}" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <TextBlock FontFamily="{Binding AppSettings.MainFontFamily}"
+                   FontSize="{Binding AppSettings.MainFontSize}"
+                   FontWeight="Bold"
+                   Foreground="{Binding AppSettings.MenuForeground}"
+                   Margin="15"
+                   Text="{Binding DBName}"
+                   TextAlignment="Center"
+                   TextWrapping="WrapWithOverflow"
+                   VerticalAlignment="Center"
+                   x:Name="DBNameLabel"/>
+
+        <TabControl Background="{Binding AppSettings.MenuBackground}"
+                    BorderThickness="0"
+                    Grid.Row="1">
+            <TabItem Margin="0,0,0,-2">
+                <TabItem.Header>
+                    <TextBlock Margin="3" Text="{x:Static properties:Strings.Word_File}"/>
+                </TabItem.Header>
+
+                <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Popup Height="25"
+                           Placement="Mouse"
+                           PopupAnimation="Fade"
+                           StaysOpen="False"
+                           Width="160"
+                           x:Name="TimeSelector">
+                        <Border BorderBrush="{Binding AppSettings.MenuForeground}"
+                                BorderThickness="1">
+                            <Grid Background="{Binding AppSettings.MenuBackground}"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <ComboBox ItemsSource="{Binding Hours}"
+                                          MaxDropDownHeight="160"
+                                          ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                          SelectedItem="{Binding Hour, Mode=TwoWay}"/>
+
+                                <ComboBox Grid.Column="1"
+                                          ItemsSource="{Binding Minutes}"
+                                          MaxDropDownHeight="160"
+                                          ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                          SelectedItem="{Binding Minute, Mode=TwoWay}"/>
+
+                                <ComboBox Grid.Column="2"
+                                          ItemsSource="{Binding Meridians}"
+                                          MaxDropDownHeight="160"
+                                          ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                          SelectedItem="{Binding Meridian, Mode=TwoWay}"/>
+                            </Grid>
+                        </Border>
+                    </Popup>
+
+                    <Label Content="{x:Static properties:Strings.Word_Created}"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Right"
+                           Margin="5,0"/>
+
+                    <Label Content="{x:Static properties:Strings.Word_Format}"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Right"
+                           Grid.Row="1"
+                           Margin="5,0"/>
+
+                    <Label Content="{x:Static properties:Strings.Word_Path}"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Right"
+                           Grid.Row="2"
+                           Margin="5,0"/>
+
+                    <Label Content="{Binding DBCreated}"
+                           Grid.Column="1"
+                           HorizontalAlignment="Left"
+                           x:Name="DBCreatedLabel"/>
+
+                    <Label Content="{Binding DBFormat}"
+                           Grid.Column="1"
+                           Grid.Row="1"
+                           HorizontalAlignment="Left"
+                           x:Name="DBFormatLabel"/>
+
+                    <TextBlock FontFamily="{Binding AppSettings.MainFontFamily}"
+                               FontSize="{Binding AppSettings.MainFontSize}"
+                               Foreground="{Binding AppSettings.MenuForeground}"
+                               Grid.Column="1"
+                               Grid.Row="2"
+                               HorizontalAlignment="Left"
+                               Text="{Binding DBPath}"
+                               TextAlignment="Center"
+                               TextWrapping="Wrap"
+                               VerticalAlignment="Center"
+                               x:Name="DBPathLabel"/>
+
+                    <Separator Grid.ColumnSpan="2"
+                               Grid.Row="3"
+                               Margin="0,3"/>
+
+                    <Label Content="{x:Static properties:Strings.Label_Restore}"
+                           FontStyle="Italic"
+                           Grid.Row="4"
+                           Grid.RowSpan="3"
+                           HorizontalAlignment="Right"
+                           Margin="10"
+                           VerticalAlignment="Center"/>
+
+                    <DatePicker CalendarOpened="CalendarOpened"
+                                Grid.Column="1"
+                                Grid.Row="4"
+                                Margin="0,5"
+                                MaxWidth="120"
+                                SelectedDate="{Binding RestoreDate, Mode=TwoWay}"/>
+
+                    <Button Click="SelectTime"
+                            Content="{Binding TimeString}"
+                            FontStyle="Normal"
+                            Grid.Column="1"
+                            Grid.Row="5"
+                            Margin="0,5"
+                            Width="70"
+                            x:Name="SelectedTime"/>
+
+                    <Button Command="{Binding RestoreCommand}"
+                            Content="{x:Static properties:Strings.Word_Restore}"
+                            Grid.Column="1"
+                            Grid.Row="6"
+                            Margin="0,10,0,5"/>
+                </Grid>
+            </TabItem>
+
+            <TabItem Margin="0,0,0,-2">
+                <TabItem.Header>
+                    <TextBlock Margin="3"
+                               Text="{x:Static properties:Strings.Word_Content}"/>
+                </TabItem.Header>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    
-                    <ComboBox ItemsSource="{Binding Hours}" SelectedItem="{Binding Hour, Mode=TwoWay}"/>
-                    
-                    <ComboBox Grid.Column="1" ItemsSource="{Binding Minutes}"  MaxDropDownHeight="80" SelectedItem="{Binding Minute, Mode=TwoWay}"/>
-                    <ComboBox Grid.Column="2" ItemsSource="{Binding Meridians}" MaxDropDownHeight="80" SelectedItem="{Binding Meridian, Mode=TwoWay}"/>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Label Content="{x:Static properties:Strings.NoteCount}"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Right"
+                           Margin="5,0"/>
+
+                    <Label FontWeight="Bold"
+                           HorizontalAlignment="Right"
+                           Margin="5,0"
+                           Grid.Row="1">
+                        <TextBlock Text="{x:Static properties:Strings.AverageLength}"
+                                   TextAlignment="Right"/>
+                    </Label>
+
+                    <Label Content="{x:Static properties:Strings.TotalLength}"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Right"
+                           Margin="5,0"
+                           Grid.Row="2"/>
+
+                    <Label Content="{x:Static properties:Strings.LongestNote}"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Right"
+                           Margin="5,0"
+                           Grid.Row="3"/>
+
+                    <Label Content="{Binding DBNotes}"
+                           Grid.Column="1"
+                           HorizontalAlignment="Left"
+                           x:Name="DBNotesLabel"/>
+
+                    <Label Content="{Binding DBAvg}"
+                           Grid.Column="1"
+                           Grid.Row="1"
+                           HorizontalAlignment="Left"
+                           x:Name="DBAvgLabel"/>
+
+                    <Label Content="{Binding DBTotal}"
+                           Grid.Column="1"
+                           Grid.Row="2"
+                           HorizontalAlignment="Left"
+                           x:Name="DBTotalLabel"/>
+
+                    <Label Content="{Binding DBLongest}"
+                           Grid.Column="1"
+                           Grid.Row="3"
+                           HorizontalAlignment="Left"
+                           x:Name="DBLongestLabel"/>
                 </Grid>
-            </Border>
-        </Popup>
+            </TabItem>
+        </TabControl>
 
-        <Grid Grid.ColumnSpan="2" Margin="0,5">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="3*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="2*"/>
-                <RowDefinition Height="2*"/>
-                <RowDefinition Height="2*"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*"/>
-                <ColumnDefinition Width="3*"/>
-            </Grid.ColumnDefinitions>
+        <Separator Grid.ColumnSpan="2"
+                   Grid.Row="2"
+                   Margin="0,3"/>
 
-            <Separator Grid.ColumnSpan="2" Grid.Row="2"/>
-            <Label Content="{x:Static properties:Strings.Word_Created}" FontWeight="Bold" HorizontalAlignment="Right" Margin="5,0" Grid.Row="3"/>
-            <Label Content="{x:Static properties:Strings.Word_Format}" FontWeight="Bold" HorizontalAlignment="Right" Margin="5,0" Grid.Row="4"/>
-            <Label Content="{x:Static properties:Strings.Word_Path}" FontWeight="Bold" HorizontalAlignment="Right" Margin="5,0" Grid.Row="5"/>
-            <Separator Grid.ColumnSpan="2" Grid.Row="6"/>
-            <Label Content="{x:Static properties:Strings.NoteCount}" FontWeight="Bold" HorizontalAlignment="Right" Margin="5,0" Grid.Row="7"/>
-            <Label FontWeight="Bold" HorizontalAlignment="Right" Margin="5,0" Grid.Row="8">
-                <TextBlock TextAlignment="Right">Average note<LineBreak/>length:</TextBlock>
-            </Label>
-            <Label Content="{x:Static properties:Strings.TotalLength}" FontWeight="Bold" HorizontalAlignment="Right" Margin="5,0" Grid.Row="9"/>
-            <Label Content="{x:Static properties:Strings.LongestNote}" FontWeight="Bold" HorizontalAlignment="Right" Margin="5,0" Grid.Row="10"/>
-
-            <TextBlock Grid.ColumnSpan="2" FontFamily="{Binding AppSettings.MainFontFamily}" FontSize="{Binding AppSettings.MainFontSize}" FontWeight="Bold" Foreground="{Binding AppSettings.MenuForeground}" Margin="5,0" Grid.Row="1" Text="{Binding DBName}" TextAlignment="Center" TextWrapping="WrapWithOverflow" VerticalAlignment="Center" x:Name="DBNameLabel"/>
-            <Label Grid.Column="1" Content="{Binding DBCreated}" HorizontalAlignment="Left" Grid.Row="3" x:Name="DBCreatedLabel"/>
-            <Label Grid.Column="1" Content="{Binding DBFormat}" HorizontalAlignment="Left" Grid.Row="4" x:Name="DBFormatLabel"/>
-            <TextBlock Grid.Column="1" FontFamily="{Binding AppSettings.MainFontFamily}" FontSize="{Binding AppSettings.MainFontSize}" Foreground="{Binding AppSettings.MenuForeground}" HorizontalAlignment="Left" Margin="5,0" Grid.Row="5" Text="{Binding DBPath}" TextAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Center" x:Name="DBPathLabel"/>
-            <Label Grid.Column="1" Content="{Binding DBNotes}" HorizontalAlignment="Left" Grid.Row="7" x:Name="DBNotesLabel"/>
-            <Label Grid.Column="1" Content="{Binding DBAvg}" HorizontalAlignment="Left" Grid.Row="8" x:Name="DBAvgLabel"/>
-            <Label Grid.Column="1" Content="{Binding DBTotal}" HorizontalAlignment="Left" Grid.Row="9" x:Name="DBTotalLabel"/>
-            <Label Grid.Column="1" Content="{Binding DBLongest}" HorizontalAlignment="Left" Grid.Row="10" x:Name="DBLongestLabel"/>
-        </Grid>
-        <Separator Grid.ColumnSpan="2" Grid.Row="1"/>
-        <Grid Margin="0,2" Grid.ColumnSpan="2" Grid.Row="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <Label Content="{x:Static properties:Strings.Label_Restore}" FontStyle="Italic" HorizontalAlignment="Right" Margin="10" VerticalAlignment="Center"/>
-
-            <StackPanel Grid.Column="1" Margin="0,2,0,0" VerticalAlignment="Center">
-                <DatePicker CalendarOpened="CalendarOpened" MaxWidth="120" SelectedDate="{Binding RestoreDate, Mode=TwoWay}"/>
-                <Button Click="SelectTime" Content="{Binding TimeString}" FontStyle="Normal" Margin="0,5" Width="70" x:Name="SelectedTime"/>
-                <Button Command="{Binding RestoreCommand}" Content="{x:Static properties:Strings.Word_Restore}" Margin="0,10,0,5"/>
-            </StackPanel>
-        </Grid>
-
-        <Separator Grid.ColumnSpan="2" Grid.Row="3"/>
-        <Button Grid.ColumnSpan="2" Command="{Binding CloseCommand}" Content="{x:Static properties:Strings.Word_Close}" Margin="0,20" Grid.Row="4"/>
+        <Button Command="{Binding CloseCommand}"
+                Content="{x:Static properties:Strings.Word_Close}"
+                Grid.ColumnSpan="2"
+                Grid.Row="3"
+                Margin="0,20"/>
     </Grid>
 </Window>

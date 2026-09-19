@@ -1,4 +1,5 @@
 ﻿using SylverInk.Interop;
+using SylverInk.Visuals;
 using SylverInk.XAML.Controls;
 using System.ComponentModel;
 using static SylverInk.FileIO.FileUtils;
@@ -146,7 +147,12 @@ public partial class MainWindow : Window
 
         // High-contrast theme detection
         Microsoft.Win32.SystemEvents.UserPreferenceChanged += CommonUtils.SystemPreferenceChanged;
-        Settings.HighContrast = SystemParameters.HighContrast;
+        if (SystemParameters.HighContrast && !Settings.HighContrast)
+        {
+            // If the user didn't previously have high contrast enabled, but the system reports that they now do, override existing theme settings and switch to high contrast.
+            Settings.HighContrast = SystemParameters.HighContrast;
+            SwitchTheme(Themes.HighContrast);
+        }
 
         // Style initialization
         SetMenuColors();
