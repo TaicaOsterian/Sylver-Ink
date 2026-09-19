@@ -40,7 +40,7 @@ public class SearchResultViewModel : NoteEditorViewModel
     public override void Deconstruct()
     {
         base.Deconstruct();
-        
+
         Record.DB?.PushPreviousNote(Record);
 
         if (Edited)

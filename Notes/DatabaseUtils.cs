@@ -3,7 +3,6 @@ using SylverInk.XAML;
 using SylverInk.XAML.Controls;
 using System.Globalization;
 using static SylverInk.FileIO.FileUtils;
-using static SylverInk.XAMLUtils.MainWindowUtils;
 
 namespace SylverInk.Notes;
 
