@@ -36,7 +36,8 @@ The Settings window provides options for customizing the user's experience; plac
 
 ## Contributions
 
-- [Taica](https://motebeta.com/) (frontend and backend design)
+- [Taica](https://motebeta.com/) (core design and engine programming)
+- Keystone (core testing)
 - N. Hunter (backend debugging and testing)
 - Charly S. (Spanish localization)
 - [Miles Farber](https://github.com/milesfarber/) (therapy)
