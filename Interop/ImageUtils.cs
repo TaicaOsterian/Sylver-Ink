@@ -21,9 +21,9 @@ public static class ImageUtils
         source.CopyPixels(pixels, stride, 0);
 
         img.BeginInit();
+        img.Margin = new Thickness(5, 0, 5, 0);
         img.Source = BitmapSource.Create(source.PixelWidth, source.PixelHeight, source.DpiX, source.DpiY, source.Format, source.Palette, pixels, stride);
         img.Stretch = Stretch.None;
-        img.Margin = new Thickness(5, 0, 5, 0);
         img.EndInit();
 
         return img;

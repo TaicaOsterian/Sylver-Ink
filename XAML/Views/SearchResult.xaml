@@ -43,17 +43,14 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <RichTextBox AcceptsReturn="True"
-                         utils:RichTextBoxUtils.BoundCaret="{Binding CaretPosition, Mode=TwoWay}"
+            <RichTextBox utils:RichTextBoxUtils.BoundCaret="{Binding CaretPosition, Mode=TwoWay}"
                          Grid.ColumnSpan="2"
                          utils:RichTextBoxUtils.Document="{Binding Document, Mode=TwoWay}"
                          Height="Auto"
                          IsEnabled="{Binding IsEnabled}"
                          Margin="5,5,5,0"
                          utils:RichTextBoxUtils.ObserveCaret="True"
-                         ScrollViewer.VerticalScrollBarVisibility="Auto"
                          TextChanged="ResultBlock_TextChanged"
-                         UndoLimit="20"
                          x:Name="NoteBox">
             </RichTextBox>
             

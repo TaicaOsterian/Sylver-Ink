@@ -440,17 +440,14 @@
             </Border>
         </Popup>
 
-        <RichTextBox AcceptsReturn="True"
-                     utils:RichTextBoxUtils.BoundCaret="{Binding CaretPosition, Mode=TwoWay}"
+        <RichTextBox utils:RichTextBoxUtils.BoundCaret="{Binding CaretPosition, Mode=TwoWay}"
                      utils:RichTextBoxUtils.Document="{Binding Document, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                      Focusable="{Binding IsLive, Converter={StaticResource BoolToVis}}"
+                     Grid.Row="2"
                      IsInactiveSelectionHighlightEnabled="True"
                      utils:RichTextBoxUtils.ObserveCaret="True"
-                     Grid.Row="2"
                      SelectionChanged="NoteBox_SelectionChanged"
                      TextChanged="NoteBox_TextChanged"
-                     UndoLimit="10"
-                     VerticalScrollBarVisibility="Auto"
                      Visibility="{Binding IsLive, Converter={StaticResource BoolToVis}}"
                      x:Name="NoteBox">
             <RichTextBox.CommandBindings>
@@ -464,14 +461,12 @@
             </RichTextBox.CommandBindings>
         </RichTextBox>
 
-        <RichTextBox
-            utils:RichTextBoxUtils.Document="{Binding HistoricalDocument, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-            Focusable="False"
-            IsReadOnly="True"
-            Grid.Row="2"
-            VerticalScrollBarVisibility="Auto"
-            Visibility="{Binding IsLive, Converter={StaticResource InvBoolToVis}}"
-            x:Name="RevisionBox"/>
+        <RichTextBox utils:RichTextBoxUtils.Document="{Binding HistoricalDocument, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     Focusable="False"
+                     Grid.Row="2"
+                     IsReadOnly="True"
+                     Visibility="{Binding IsLive, Converter={StaticResource InvBoolToVis}}"
+                     x:Name="RevisionBox"/>
 
         <Grid HorizontalAlignment="Center"
               Margin="0,20"

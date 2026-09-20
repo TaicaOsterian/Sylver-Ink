@@ -41,6 +41,7 @@ public partial class XamlConverter : ITextConverter
                     pointer = pointer.GetNextContextPosition(LogicalDirection.Forward);
 
                 var img = DecodeEmbed(pointer.GetTextInRun(LogicalDirection.Forward));
+
                 BlockUIContainer container = new(img);
                 document.Blocks.InsertBefore(paragraph, container);
                 document.Blocks.Remove(paragraph);
