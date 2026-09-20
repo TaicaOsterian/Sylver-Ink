@@ -43,10 +43,12 @@
                 
                 <Button Command="{Binding OpenCommand}"
                         Content="..."
-                        Height="20"
+                        Height="Auto"
                         HorizontalAlignment="Right"
                         Margin="5,5,5,5"
-                        Width="20"/>
+                        MinHeight="20"
+                        MinWidth="20"
+                        Width="Auto"/>
                 
                 <TextBox Grid.Column="1"
                          IsReadOnly="True"
@@ -62,11 +64,13 @@
 
                 <Button Command="{Binding ImportCommand}"
                         Content="{x:Static properties:Strings.Word_Import}"
-                        IsEnabled="{Binding CanImport}"/>
+                        IsEnabled="{Binding CanImport}"
+                        Width="Auto"/>
                 
                 <Button Command="{Binding CloseCommand}"
                         Content="{x:Static properties:Strings.Word_Close}"
-                        Grid.Column="1"/>
+                        Grid.Column="1"
+                        Width="Auto"/>
             </Grid>
         </StackPanel>
 
@@ -109,17 +113,20 @@
                 <Button Command="{Binding LineToleranceChangeCommand}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Self}}"
                         Content="-"
-                        Width="20"/>
+                        MinWidth="20"
+                        Width="Auto"/>
                 
                 <TextBox HorizontalContentAlignment="Center"
                          IsReadOnly="True"
                          Text="{Binding LineTolerance}"
-                         Width="20"/>
+                         MinWidth="25"
+                         Width="Auto"/>
                 
                 <Button Command="{Binding LineToleranceChangeCommand}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Self}}"
                         Content="+"
-                        Width="20"/>
+                        MinWidth="20"
+                        Width="Auto"/>
             </StackPanel>
             
             <Label Foreground="{Binding AppSettings.AccentForeground}"

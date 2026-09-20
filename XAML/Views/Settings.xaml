@@ -31,7 +31,10 @@
                     Foreground="{Binding AppSettings.MenuForeground}">
             <TabItem Margin="0,0,0,-2">
                 <TabItem.Header>
-                    <TextBlock Margin="3" Text="{x:Static properties:Strings.Title_Behavior}"/>
+                    <TextBlock FontFamily="{Binding AppSettings.MainFontFamily}"
+                               FontSize="{Binding AppSettings.MainFontSize}"
+                               Margin="3"
+                               Text="{x:Static properties:Strings.Title_Behavior}"/>
                 </TabItem.Header>
                 
                 <Grid Background="{Binding AppSettings.MenuBackground}"
@@ -167,7 +170,9 @@
             
             <TabItem Margin="0,0,0,-2">
                 <TabItem.Header>
-                    <TextBlock Margin="3"
+                    <TextBlock FontFamily="{Binding AppSettings.MainFontFamily}"
+                               FontSize="{Binding AppSettings.MainFontSize}"
+                               Margin="3"
                                Text="{x:Static properties:Strings.Title_Appearance}"/>
                 </TabItem.Header>
                 
@@ -295,17 +300,17 @@
                             <Button Command="{Binding FontSizeChangedCommand}"
                                     CommandParameter="{Binding RelativeSource={RelativeSource Self}}"
                                     Content="-"
-                                    Width="20"/>
+                                    MinWidth="20"/>
                             
                             <TextBox HorizontalContentAlignment="Center"
                                      IsReadOnly="True"
                                      Text="{Binding AppSettings.MainFontSize}"
-                                     Width="40"/>
+                                     MinWidth="40"/>
                             
                             <Button Command="{Binding FontSizeChangedCommand}"
                                     CommandParameter="{Binding RelativeSource={RelativeSource Self}}"
                                     Content="+"
-                                    Width="20"/>
+                                    MinWidth="20"/>
                         </StackPanel>
 
                         <StackPanel Grid.Column="1"
@@ -313,10 +318,13 @@
                                     HorizontalAlignment="Left"
                                     Orientation="Horizontal"
                                     VerticalAlignment="Center">
-                            <Button BorderBrush="Black"
+                            <Button BorderBrush="{Binding AppSettings.AccentBackground}"
                                     BorderThickness="1"
                                     Click="ColorPopup"
+                                    Height="20"
                                     Margin="20,0"
+                                    MinHeight="20"
+                                    MinWidth="20"
                                     Tag="P1B"
                                     Width="20">
                                 <Rectangle Fill="{Binding AppSettings.MenuBackground}"
@@ -324,11 +332,14 @@
                                            Stretch="UniformToFill"
                                            ToolTip="{x:Static properties:Strings.Word_Background}"/>
                             </Button>
-                            
-                            <Button BorderBrush="Black"
+
+                            <Button BorderBrush="{Binding AppSettings.AccentBackground}"
                                     BorderThickness="1"
                                     Click="ColorPopup"
+                                    Height="20"
                                     Margin="20,0"
+                                    MinHeight="20"
+                                    MinWidth="20"
                                     Tag="P1F"
                                     Width="20">
                                 <Rectangle Fill="{Binding AppSettings.MenuForeground}"
@@ -346,7 +357,10 @@
                             <Button BorderBrush="Black"
                                     BorderThickness="1"
                                     Click="ColorPopup"
+                                    Height="20"
                                     Margin="20,0"
+                                    MinHeight="20"
+                                    MinWidth="20"
                                     Tag="P2B"
                                     Width="20">
                                 <Rectangle Fill="{Binding AppSettings.ListBackground}"
@@ -358,7 +372,10 @@
                             <Button BorderBrush="Black"
                                     BorderThickness="1"
                                     Click="ColorPopup"
+                                    Height="20"
                                     Margin="20,0"
+                                    MinHeight="20"
+                                    MinWidth="20"
                                     Tag="P2F"
                                     Width="20">
                                 <Rectangle Fill="{Binding AppSettings.ListForeground}"
@@ -376,7 +393,10 @@
                             <Button BorderBrush="Black"
                                     BorderThickness="1"
                                     Click="ColorPopup"
+                                    Height="20"
                                     Margin="20,0"
+                                    MinHeight="20"
+                                    MinWidth="20"
                                     Tag="P3B"
                                     Width="20">
                                 <Rectangle Fill="{Binding AppSettings.AccentBackground}"
@@ -388,7 +408,10 @@
                             <Button BorderBrush="Black"
                                     BorderThickness="1"
                                     Click="ColorPopup"
+                                    Height="20"
                                     Margin="20,0"
+                                    MinHeight="20"
+                                    MinWidth="20"
                                     Tag="P3F"
                                     Width="20">
                                 <Rectangle Fill="{Binding AppSettings.AccentForeground}"

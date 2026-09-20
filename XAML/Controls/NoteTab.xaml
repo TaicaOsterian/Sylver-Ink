@@ -23,9 +23,18 @@
                 
                 <Setter Property="Foreground"
                         Value="{Binding AppSettings.ListForeground}"/>
-                
-                <Setter Property="Width"
+
+                <Setter Property="Height"
+                        Value="Auto"/>
+
+                <Setter Property="MinHeight"
+                        Value="20"/>
+
+                <Setter Property="MinWidth"
                         Value="35"/>
+
+                <Setter Property="Width"
+                        Value="Auto"/>
             </Style>
 
             <conv:BooleanToVisibilityConverter x:Key="BoolToVis"/>
@@ -482,14 +491,14 @@
             <Button Command="{Binding NavigatePreviousCommand}"
                     Content="←"
                     Grid.ColumnSpan="2"
-                    Width="50"
+                    MinWidth="50"
                     x:Name="PreviousButton"/>
 
             <Button Command="{Binding NavigateNextCommand}"
                     Content="→"
                     Grid.Column="1"
                     Grid.ColumnSpan="2"
-                    Width="50"
+                    MinWidth="50"
                     x:Name="NextButton"/>
 
             <Button Command="{Binding DeleteCommand}"

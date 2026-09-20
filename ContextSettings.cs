@@ -181,8 +181,10 @@ public class ContextSettings : ViewModelBase
         get => _mainFontFamily;
         set
         {
-            _mainFontFamily = value; MainTypeFace = new(value, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
-            OnPropertyChanged();
+            _mainFontFamily = value;
+            MainTypeFace = new(value, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
+            OnPropertyChanged(null);
+            RefreshRecentNotes();
         }
     }
     public double MainFontSize
@@ -191,7 +193,8 @@ public class ContextSettings : ViewModelBase
         set
         {
             _mainFontSize = Math.Min(24.0, Math.Max(10.0, value));
-            OnPropertyChanged();
+            OnPropertyChanged(null);
+            RefreshRecentNotes();
         }
     }
     public Typeface? MainTypeFace
@@ -200,7 +203,8 @@ public class ContextSettings : ViewModelBase
         set
         {
             _mainTypeFace = value;
-            OnPropertyChanged();
+            OnPropertyChanged(null);
+            RefreshRecentNotes();
         }
     }
     public Brush? MenuBackground

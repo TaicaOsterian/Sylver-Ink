@@ -94,7 +94,6 @@
                         
                         <TextBox Margin="0,10"
                                  Text="{Binding AddressCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                 Width="75"
                                  x:Name="AddressBox">
                             <TextBox.InputBindings>
                                 <KeyBinding Command="{Binding ConnectPopupEnterCommand}"
@@ -150,7 +149,6 @@
                         <TextBox IsReadOnly="True"
                                  Margin="0,10"
                                  Text="{Binding AddressCodeDisplay, Mode=OneWay}"
-                                 Width="75"
                                  x:Name="CodeBox"/>
                         
                         <Label Foreground="{Binding AppSettings.AccentForeground}"

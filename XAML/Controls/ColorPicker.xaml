@@ -46,7 +46,6 @@
                              ToolTip="{x:Static properties:Strings.HexCodeTooltip}"
                              VerticalAlignment="Center"
                              VerticalContentAlignment="Center"
-                             Width="75"
                              x:Name="CustomColorBox"/>
                 </Grid>
             </Border>

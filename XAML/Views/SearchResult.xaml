@@ -65,18 +65,20 @@
             
             <Button Command="{Binding ViewCommand}"
                     Content="{x:Static properties:Strings.Word_View}"
+                    Grid.Row="2"
                     IsEnabled="{Binding IsFocused}"
                     Margin="0,2"
-                    Grid.Row="2"
-                    Width="50"/>
+                    MinWidth="50"
+                    Padding="5"/>
             
             <Button Command="{Binding CloseCommand}"
                     Grid.Column="1"
+                    Grid.Row="2"
                     Content="{x:Static properties:Strings.Word_Close}"
                     IsEnabled="{Binding IsFocused}"
                     Margin="0,2"
-                    Grid.Row="2"
-                    Width="50"/>
+                    MinWidth="50"
+                    Padding="5"/>
         </Grid>
     </Border>
 </Window>

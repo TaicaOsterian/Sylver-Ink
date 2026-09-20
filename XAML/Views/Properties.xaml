@@ -10,10 +10,12 @@
         d:DataContext="{d:DesignInstance Type=vm:PropertiesViewModel}"
         Title="{x:Static properties:Strings.Title_Properties}"
         Height="450"
+        MinHeight="400"
+        MinWidth="275"
         MouseLeftButtonDown="Drag"
         ShowInTaskbar="False"
         Topmost="True"
-        Width="375">
+        Width="350">
     <Grid Background="{Binding AppSettings.MenuBackground}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -38,7 +40,10 @@
                     Grid.Row="1">
             <TabItem Margin="0,0,0,-2">
                 <TabItem.Header>
-                    <TextBlock Margin="3" Text="{x:Static properties:Strings.Word_File}"/>
+                    <TextBlock FontFamily="{Binding AppSettings.MainFontFamily}"
+                               FontSize="{Binding AppSettings.MainFontSize}"
+                               Margin="3"
+                               Text="{x:Static properties:Strings.Word_File}"/>
                 </TabItem.Header>
 
                 <Grid>
@@ -159,7 +164,6 @@
                             Grid.Column="1"
                             Grid.Row="5"
                             Margin="0,5"
-                            Width="70"
                             x:Name="SelectedTime"/>
 
                     <Button Command="{Binding RestoreCommand}"
@@ -172,7 +176,9 @@
 
             <TabItem Margin="0,0,0,-2">
                 <TabItem.Header>
-                    <TextBlock Margin="3"
+                    <TextBlock FontFamily="{Binding AppSettings.MainFontFamily}"
+                               FontSize="{Binding AppSettings.MainFontSize}"
+                               Margin="3"
                                Text="{x:Static properties:Strings.Word_Content}"/>
                 </TabItem.Header>
 
