@@ -20,7 +20,6 @@ public class MainWindowViewModel : ViewModelBase
     private double _viewportHeight;
     private double _viewportWidth;
 
-
     public string AddressCode
     {
         get => _addressCode;
@@ -154,8 +153,8 @@ public class MainWindowViewModel : ViewModelBase
 
     private static List<NoteRecord> BuildRecentNotesSnapshot(double viewportHeight, double pixelsPerInchY)
     {
-        var typeface = CommonUtils.Settings.MainTypeFace!;
         var pixelRatio = CommonUtils.Settings.MainFontSize * pixelsPerInchY / 72.0;
+        var typeface = CommonUtils.Settings.MainTypeFace!;
         var lineHeight = pixelRatio * typeface.FontFamily.LineSpacing;
         var lineRatio = Math.Max(1.0, (viewportHeight / lineHeight) - 0.5);
         var target = (int)Math.Min(lineRatio, CurrentDatabase.RecordCount);

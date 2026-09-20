@@ -258,23 +258,32 @@
             
             <Style x:Key="SliderThumbStyle" TargetType="{x:Type Thumb}">
                 <Setter Property="OverridesDefaultStyle" Value="True"/>
+                <Setter Property="Background" Value="{Binding AppSettings.ListBackground}"/>
+                <Setter Property="Foreground" Value="{Binding AppSettings.ListForeground}"/>
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type Thumb}">
                             <Viewbox Height="18" Width="18">
-                                <Polygon Fill="{Binding AppSettings.ListBackground}"
+                                <Polygon Fill="{TemplateBinding Background}"
                                          Height="36"
                                          Points="7,3 7.25,2 8,1 9,0.25 10,0 26,0 27,0.25 28,1 28.75,2 29,3 29,23 28.75,24.5 28,26 18,36 8,26 7.25,24.5 7,23"
-                                         Stroke="{Binding AppSettings.ListForeground}"
+                                         Stroke="{TemplateBinding Foreground}"
                                          StrokeThickness="2"
                                          Width="36"
                                          x:Name="Thumb_Polygon"/>
                             </Viewbox>
-
+                            
                             <ControlTemplate.Triggers>
+                                <Trigger Property="IsDragging" Value="True">
+                                    <Setter Property="Background"
+                                            Value="{Binding AppSettings.MenuBackground}"/>
+
+                                    <Setter Property="Foreground"
+                                            Value="{Binding AppSettings.AccentForeground}"/>
+                                </Trigger>
+                                
                                 <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Stroke"
-                                            TargetName="Thumb_Polygon"
+                                    <Setter Property="Foreground"
                                             Value="{Binding AppSettings.AccentForeground}"/>
                                 </Trigger>
                             </ControlTemplate.Triggers>
@@ -321,7 +330,7 @@
                                         </Track.DecreaseRepeatButton>
                                         
                                         <Track.Thumb>
-                                            <Thumb Style="{StaticResource SliderThumbStyle}"/>
+                                            <Thumb Style="{StaticResource SliderThumbStyle}" x:Name="Track_Thumb"/>
                                         </Track.Thumb>
                                         
                                         <Track.IncreaseRepeatButton>
@@ -339,8 +348,18 @@
                                          Visibility="Collapsed"
                                          x:Name="BottomTick"/>
                             </Grid>
-                            
+
                             <ControlTemplate.Triggers>
+                                <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                                    <Setter Property="Background"
+                                            TargetName="Track_Thumb"
+                                            Value="{Binding AppSettings.MenuBackground}"/>
+
+                                    <Setter Property="Foreground"
+                                            TargetName="Track_Thumb"
+                                            Value="{Binding AppSettings.AccentForeground}"/>
+                                </Trigger>
+                                
                                 <Trigger Property="TickPlacement" Value="TopLeft">
                                     <Setter Property="Visibility"
                                             TargetName="TopTick"
@@ -352,12 +371,12 @@
                                             TargetName="BottomTick"
                                             Value="Visible"/>
                                 </Trigger>
-                                
+
                                 <Trigger Property="TickPlacement" Value="Both">
                                     <Setter Property="Visibility"
                                             TargetName="TopTick"
                                             Value="Visible"/>
-                                    
+
                                     <Setter Property="Visibility"
                                             TargetName="BottomTick"
                                             Value="Visible"/>
@@ -389,13 +408,7 @@
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsSelected"
                                          Value="True">
-                                    <Setter Property="Panel.ZIndex"
-                                            Value="100"/>
-                                    
-                                    <Setter Property="Margin"
-                                            TargetName="ContentSite"
-                                            Value="0"/>
-                                    
+
                                     <Setter Property="Background"
                                             TargetName="Border"
                                             Value="{Binding AppSettings.ListBackground}"/>
@@ -403,6 +416,13 @@
                                     <Setter Property="TextElement.Foreground"
                                             TargetName="Border"
                                             Value="{Binding AppSettings.ListForeground}"/>
+
+                                    <Setter Property="Margin"
+                                            TargetName="ContentSite"
+                                            Value="0"/>
+
+                                    <Setter Property="Panel.ZIndex"
+                                            Value="100"/>
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
