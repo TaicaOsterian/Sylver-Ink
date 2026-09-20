@@ -95,6 +95,7 @@ public class MainWindowViewModel : ViewModelBase
     public ICommand BackupDatabaseCommand { get; }
     public ICommand CancelConnectCommand { get; }
     public ICommand CancelRenameCommand { get; }
+    public ICommand CheckForUpdatesCommand { get; }
     public ICommand CloseCodePopupCommand { get; }
     public ICommand CloseDatabaseCommand { get; }
     public ICommand ConnectCommand { get; }
@@ -126,6 +127,7 @@ public class MainWindowViewModel : ViewModelBase
         BackupDatabaseCommand = new RelayCommand(MenuBackup);
         CancelConnectCommand = new RelayCommand(_ => ConnectPopupVisible = false);
         CancelRenameCommand = new RelayCommand(_ => RenamePopupVisible = false);
+        CheckForUpdatesCommand = new RelayCommand(CheckForUpdates);
         CloseCodePopupCommand = new RelayCommand(_ => CodePopupVisible = false);
         CloseDatabaseCommand = new RelayCommand(MenuClose, CanCloseDatabase);
         ConnectCommand = new RelayCommand(MenuConnect, CanConnect);
@@ -186,6 +188,14 @@ public class MainWindowViewModel : ViewModelBase
     private static bool CanServe(object? param) => !CurrentDatabase.Client.Active && !CurrentDatabase.Server.Active;
 
     private static bool CanUnserve(object? param) => !CurrentDatabase.Client.Active && CurrentDatabase.Server.Active;
+
+    private static async void CheckForUpdates(object? param)
+    {
+        if (await UpdateHandler.CheckForUpdates(true))
+            return;
+
+        ShowTooltip(UpdateHandler.GracefulExit ? Strings.NoUpdateAvailable : Strings.FailedUpdateCheck);
+    }
 
     private static void CopyCode()
     {

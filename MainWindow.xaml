@@ -252,6 +252,11 @@
             
             <MenuItem Header="{x:Static properties:Strings.Word_Help}"
                       Height="25">
+                <MenuItem Command="{Binding CheckForUpdatesCommand}"
+                          Header="{x:Static properties:Strings.CheckForUpdates}"/>
+
+                <Separator/>
+
                 <MenuItem Command="{Binding AboutCommand}"
                           Header="{x:Static properties:Strings.Word_About}"/>
             </MenuItem>

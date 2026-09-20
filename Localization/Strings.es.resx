@@ -145,6 +145,9 @@ de las notas</value>
   <data name="BulletList" xml:space="preserve">
     <value>Lista de viñetas</value>
   </data>
+  <data name="CheckForUpdates" xml:space="preserve">
+    <value>Buscar actualizaciones</value>
+  </data>
   <data name="ClickthroughTooltip" xml:space="preserve">
     <value>El tiempo de duración (en segundos) que una nota adhesiva transparente debe tener el cursor encima antes de activarse.</value>
   </data>
@@ -226,6 +229,9 @@ de las notas</value>
   <data name="FailedToReadFile" xml:space="preserve">
     <value>No se pudo leer el archivo.</value>
   </data>
+  <data name="FailedUpdateCheck" xml:space="preserve">
+    <value>Se produjo un error al buscar actualizaciones.</value>
+  </data>
   <data name="HexCodeTooltip" xml:space="preserve">
     <value>Código Hex (RGB o ARGB)</value>
   </data>
@@ -305,8 +311,7 @@ Recuerda presionar Importar para finalizar tus cambios!</value>
     <value>Anterior...</value>
   </data>
   <data name="Label_Restore" xml:space="preserve">
-    <value>Restaurar la base de datos
-a un estado anterior</value>
+    <value>Restaurar la base de datos a un estado anterior</value>
   </data>
   <data name="Label_SaveAs" xml:space="preserve">
     <value>Guardar como...</value>
@@ -404,8 +409,14 @@ a un estado anterior</value>
   <data name="Note_RevisionID" xml:space="preserve">
     <value>Revisión {0} de {1}</value>
   </data>
+  <data name="NoUpdateAvailable" xml:space="preserve">
+    <value>Sylver Ink está actualizado.</value>
+  </data>
   <data name="NumberedList" xml:space="preserve">
     <value>Lista enumerada</value>
+  </data>
+  <data name="OfferUpdateInHelp" xml:space="preserve">
+    <value>Puedes actualizar Sylver Ink pulsando "Buscar actualizaciones" en el menú Ayuda.</value>
   </data>
   <data name="OpenRecent" xml:space="preserve">
     <value>Abrir reciente</value>

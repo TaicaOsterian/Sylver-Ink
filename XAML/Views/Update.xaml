@@ -12,8 +12,8 @@
         Foreground="{Binding AppSettings.MenuForeground}"
         MouseLeftButtonDown="Drag"
         Title="{x:Static properties:Strings.Title_Update}"
-        Height="150"
-        Width="450">
+        Height="125"
+        Width="400">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -30,7 +30,7 @@
                      Minimum="0"
                      Maximum="1"
                      Value="{Binding Progress}"
-                     Width="375"
+                     Width="350"
                      x:Name="UpdateProgress" />
 
         <Button Command="{Binding CancelCommand}"

@@ -12,6 +12,7 @@ namespace SylverInk.Net;
 public static class UpdateHandler
 {
     private static string GitReleasesURI { get; } = "https://api.github.com/repos/TaicaOsterian/Sylver-Ink/releases?per_page=1&page=1";
+    public static bool GracefulExit { get; private set; }
     public static string TempUri { get; } = Path.Join(DocumentsFolder, "SylverInk.msi");
     public static string UpdateLockUri { get; } = Path.Join(DocumentsFolder, "~si_update.lock");
     private static CancellationTokenSource UpdateTokenSource { get; } = new();
@@ -20,41 +21,46 @@ public static class UpdateHandler
     public static void CancelUpdate()
     {
         UpdateTokenSource.Cancel();
+        GracefulExit = false;
     }
 
-    public static async Task CheckForUpdates()
+    public static async Task<bool> CheckForUpdates(bool notifyOnFail = false)
     {
         using var httpClient = new HttpClient();
+        GracefulExit = false;
         Version? releaseVersion;
         string? uriNode = null;
 
         if (Assembly.GetExecutingAssembly().GetName().Version is not Version assemblyVersion)
-            return;
+            return false;
 
         if (Process.GetCurrentProcess().MainModule?.FileName is null)
-            return;
+            return false;
 
         try
         {
             if (!httpClient.DefaultRequestHeaders.UserAgent.TryParseAdd("request"))
-                return;
+                return false;
 
             var jsonString = await httpClient.GetStringAsync(GitReleasesURI);
             if (JsonSerializer.Deserialize<JsonArray>(jsonString)?[0]?.AsObject() is not JsonObject release)
-                return;
+                return false;
 
             if (!release.TryGetPropertyValue("tag_name", out var tagNode) || !release.TryGetPropertyValue("assets", out var assetNode))
-                return;
+                return false;
 
             var releaseString = tagNode?.ToString() ?? "0.0.0";
             if (releaseString.StartsWith('v'))
                 releaseString = releaseString[1..];
 
             if (!Version.TryParse(releaseString, out releaseVersion) || releaseVersion.CompareTo(assemblyVersion) < 1)
-                return;
+            {
+                GracefulExit = true;
+                return false;
+            }
 
             if (assetNode?.AsArray() is not JsonArray assetArray)
-                return;
+                return false;
 
             foreach (var asset in assetArray)
             {
@@ -75,17 +81,43 @@ public static class UpdateHandler
             }
 
             if (uriNode is null)
-                return;
+            {
+                GracefulExit = true;
+                return false;
+            }
         }
         catch
         {
-            return;
+            if (notifyOnFail)
+                ShowTooltip(Strings.FailedUpdateCheck);
+
+            GracefulExit = true;
+            return true;
         }
 
-        if (MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheMessageUpdateAvailable, assemblyVersion.ToString(3), releaseVersion.ToString(3)), Strings.Title_Notification, MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.No)
-            return;
+        if (MessageBox.Show(string.Format(
+                CultureInfo.CurrentCulture,
+                CacheMessageUpdateAvailable,
+                assemblyVersion.ToString(3),
+                releaseVersion.ToString(3)),
+            Strings.Title_Notification,
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Information) == MessageBoxResult.No)
+        {
+            if (!notifyOnFail)
+            {
+                ShowTooltip(Strings.OfferUpdateInHelp);
+                CommonUtils.Settings.PromptForUpdate = false;
+            }
+
+            GracefulExit = true;
+            return true;
+        }
 
         await DownloadAndInstallUpdate(httpClient, uriNode);
+
+        GracefulExit = true;
+        return true;
     }
 
     private static async Task DownloadAndInstallUpdate(HttpClient httpClient, string uriNode)
@@ -100,8 +132,6 @@ public static class UpdateHandler
             UpdateWindow.Show();
 
             await httpClient.DownloadFileTaskAsync(uriNode, TempUri, UpdateTokenSource);
-
-            UpdateWindow.Close();
 
             if (UpdateTokenSource.IsCancellationRequested)
                 return;
@@ -118,12 +148,22 @@ public static class UpdateHandler
         }
         catch (Exception ex)
         {
-            UpdateWindow?.Close();
-
             if (ex is not OperationCanceledException)
-                MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheUnableToUpdate, ex.Message), Strings.Title_Error, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(string.Format(
+                        CultureInfo.CurrentCulture,
+                        CacheUnableToUpdate,
+                        ex.Message),
+                    Strings.Title_Error,
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
 
+            GracefulExit = false;
             return;
+        }
+        finally
+        {
+            CommonUtils.Settings.PromptForUpdate = true;
+            UpdateWindow?.Close();
         }
     }
 }

@@ -10,15 +10,14 @@
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=vm:SettingsViewModel}"
         Background="{Binding AppSettings.AccentBackground}"
-        Height="450"
         Loaded="Settings_Loaded"
-        MinHeight="350"
-        MinWidth="300"
+        MinHeight="425"
+        MinWidth="325"
         MouseLeftButtonDown="Drag"
+        SizeToContent="WidthAndHeight"
         ShowInTaskbar="False"
         Title="{x:Static properties:Strings.Title_Settings}"
-        Topmost="True"
-        Width="325">
+        Topmost="True">
     <Grid Background="{Binding AppSettings.AccentBackground}"
           Margin="0,5,0,0">
         <Grid.RowDefinitions>

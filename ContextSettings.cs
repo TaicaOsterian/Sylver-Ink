@@ -53,6 +53,7 @@ public class ContextSettings : ViewModelBase
     private double _noteClickthrough;
     private double _noteClickthroughInverse = 4.0;
     private double _noteTransparency;
+    private bool _promptForUpdate = true;
     private bool _queryAllDatabases;
     private IReadOnlyList<NoteRecord> _recentNotes = [];
     private bool _searchResultsOnTop = true;
@@ -275,6 +276,16 @@ public class ContextSettings : ViewModelBase
                     note.Opacity = 1.0 - (value * 0.01);
             }
 
+            OnPropertyChanged();
+        }
+    }
+
+    public bool PromptForUpdate
+    {
+        get => _promptForUpdate;
+        set
+        {
+            _promptForUpdate = value;
             OnPropertyChanged();
         }
     }
@@ -661,6 +672,7 @@ public class ContextSettings : ViewModelBase
         $"MenuForeground:{BytesFromBrush(_menuForeground)}",
         $"NoteClickthrough:{(double)NoteClickthrough}",
         $"NoteTransparency:{(double)NoteTransparency}",
+        $"PromptForUpdate:{PromptForUpdate}",
         $"QueryAllDatabases:{QueryAllDatabases}",
         $"RecentDatabases:{string.Join(';', RecentDatabases.Distinct()).Replace(DocumentsFolder, "?\\")}",
         $"RecentNotesSortMode:{(int)RecentEntriesSortMode}",

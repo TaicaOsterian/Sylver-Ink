@@ -10,10 +10,11 @@
         d:DataContext="{d:DesignInstance Type=vm:AboutViewModel}"
         Background="{Binding AppSettings.MenuBackground}"
         Foreground="{Binding AppSettings.MenuForeground}"
-        Height="325"
+        MinHeight="325"
         MouseLeftButtonDown="Drag"
-        Title="{x:Static properties:Strings.Title_About}"
+        SizeToContent="Height"
         ShowInTaskbar="False"
+        Title="{x:Static properties:Strings.Title_About}"
         Topmost="True"
         Width="400">
     <Grid>

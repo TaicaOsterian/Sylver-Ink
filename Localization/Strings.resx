@@ -145,6 +145,9 @@ length</value>
   <data name="BulletList" xml:space="preserve">
     <value>Bullet list</value>
   </data>
+  <data name="CheckForUpdates" xml:space="preserve">
+    <value>Check for updates</value>
+  </data>
   <data name="ClickthroughTooltip" xml:space="preserve">
     <value>The duration of time (in seconds) a transparent sticky note must be hovered over before it activates.</value>
   </data>
@@ -235,6 +238,9 @@ length</value>
   <data name="FailedToReadFile" xml:space="preserve">
     <value>Failed to read file.</value>
   </data>
+  <data name="FailedUpdateCheck" xml:space="preserve">
+    <value>An error occurred while checking for updates.</value>
+  </data>
   <data name="HexCodeTooltip" xml:space="preserve">
     <value>Hex code (RGB or ARGB)</value>
   </data>
@@ -321,8 +327,7 @@ Remember to press Import to finalize your changes!</value>
     <value>Previous...</value>
   </data>
   <data name="Label_Restore" xml:space="preserve">
-    <value>Restore the database
-to a previous state</value>
+    <value>Restore the database to a previous state</value>
   </data>
   <data name="Label_SaveAs" xml:space="preserve">
     <value>Save as...</value>
@@ -429,8 +434,14 @@ Would you like to download and install it now?</value>
     <value>Revision {0} from {1}</value>
     <comment>{0} = The number of the revision we're viewing, {1} = The date and time the revision was created</comment>
   </data>
+  <data name="NoUpdateAvailable" xml:space="preserve">
+    <value>Sylver Ink is up to date.</value>
+  </data>
   <data name="NumberedList" xml:space="preserve">
     <value>Numbered list</value>
+  </data>
+  <data name="OfferUpdateInHelp" xml:space="preserve">
+    <value>You can update Sylver Ink by clicking "Check for updates" in the Help menu.</value>
   </data>
   <data name="OpenRecent" xml:space="preserve">
     <value>Open recent</value>
