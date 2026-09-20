@@ -14,10 +14,11 @@
         MinHeight="425"
         MinWidth="325"
         MouseLeftButtonDown="Drag"
-        SizeToContent="WidthAndHeight"
+        SizeToContent="Height"
         ShowInTaskbar="False"
         Title="{x:Static properties:Strings.Title_Settings}"
-        Topmost="True">
+        Topmost="True"
+        Width="350">
     <Grid Background="{Binding AppSettings.AccentBackground}"
           Margin="0,5,0,0">
         <Grid.RowDefinitions>
@@ -48,12 +49,14 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
                     <Label FontStyle="Italic"
                            HorizontalAlignment="Right"
                            Margin="10,0">
                         <TextBlock Text="{x:Static properties:Strings.RibbonTabsDisplay}"
+                                   TextAlignment="Right"
                                    TextWrapping="WrapWithOverflow"/>
                     </Label>
                     
@@ -62,24 +65,36 @@
                            Margin="10,0"
                            Grid.Row="1">
                         <TextBlock Text="{x:Static properties:Strings.RecentNotesSortBy}"
+                                   TextAlignment="Right"
                                    TextWrapping="WrapWithOverflow"/>
                     </Label>
-                    
+
                     <Label FontStyle="Italic"
                            HorizontalAlignment="Right"
                            Margin="10,0"
                            Grid.Row="2">
                         <TextBlock Text="{x:Static properties:Strings.SearchResultsOnTop}"
+                                   TextAlignment="Right"
                                    TextWrapping="WrapWithOverflow"/>
                     </Label>
-                    
+
+                    <Label FontStyle="Italic"
+                           HorizontalAlignment="Right"
+                           Margin="10,0"
+                           Grid.Row="3">
+                        <TextBlock Text="{x:Static properties:Strings.SnapSearchResults}"
+                                   TextAlignment="Right"
+                                   TextWrapping="WrapWithOverflow"/>
+                    </Label>
+
                     <Label FontStyle="Italic"
                            Foreground="{Binding AppSettings.AccentForeground}"
-                           Grid.Row="3"
+                           Grid.Row="4"
                            HorizontalAlignment="Right"
                            Margin="10,0"
                            ToolTip="{x:Static properties:Strings.ClickthroughTooltip}">
                         <TextBlock Text="{x:Static properties:Strings.NoteClickthrough}"
+                                   TextAlignment="Right"
                                    TextDecorations="Underline"
                                    TextWrapping="WrapWithOverflow" />
                     </Label>
@@ -87,8 +102,9 @@
                     <Label FontStyle="Italic"
                            HorizontalAlignment="Right"
                            Margin="10,0"
-                           Grid.Row="4">
+                           Grid.Row="5">
                         <TextBlock Text="{x:Static properties:Strings.NoteTransparency}"
+                                   TextAlignment="Right"
                                    TextWrapping="WrapWithOverflow"/>
                     </Label>
 
@@ -124,15 +140,21 @@
                         <ComboBoxItem Content="{x:Static properties:Strings.LastChangedDate}"
                                       Tag="ByChange"/>
                     </ComboBox>
-                    
+
                     <CheckBox Grid.Column="1"
                               HorizontalAlignment="Left"
                               IsChecked="{Binding AppSettings.SearchResultsOnTop}"
                               Margin="0,5"
                               Grid.Row="2"/>
 
+                    <CheckBox Grid.Column="1"
+                              HorizontalAlignment="Left"
+                              IsChecked="{Binding AppSettings.SnapSearchResults}"
+                              Margin="0,5"
+                              Grid.Row="3"/>
+
                     <Slider Grid.Column="1"
-                            Grid.Row="3"
+                            Grid.Row="4"
                             HorizontalAlignment="Left"
                             IsSnapToTickEnabled="True"
                             LargeChange="1"
@@ -147,15 +169,15 @@
                             VerticalAlignment="Center"
                             Width="125"
                             x:Name="NoteClickthroughSlider"/>
-                    
+
                     <Slider Grid.Column="1"
+                            Grid.Row="5"
                             HorizontalAlignment="Left"
                             IsSnapToTickEnabled="True"
                             LargeChange="10"
                             Margin="0,5"
                             Maximum="95"
                             Minimum="0"
-                            Grid.Row="4"
                             SmallChange="5"
                             TickFrequency="5"
                             TickPlacement="BottomRight"
@@ -208,6 +230,7 @@
                                Margin="10,0"
                                ToolTip="{x:Static properties:Strings.HighContrastAssistance}">
                             <TextBlock Text="{x:Static properties:Strings.Label_SmartAssist}"
+                                       TextAlignment="Right"
                                        TextDecorations="Underline"
                                        TextWrapping="WrapWithOverflow"/>
                         </Label>

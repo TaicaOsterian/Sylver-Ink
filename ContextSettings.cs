@@ -504,7 +504,7 @@ public class ContextSettings : ViewModelBase
                     break;
                 case "FontSize":
                     if (!double.TryParse(keyValue[1], CultureInfo.InvariantCulture, out var mainFontSize))
-                        mainFontSize = 12;
+                        mainFontSize = 11.0;
 
                     MainFontSize = mainFontSize;
                     break;
@@ -516,7 +516,7 @@ public class ContextSettings : ViewModelBase
                     break;
                 case "HighContrastAssist":
                     if (!bool.TryParse(keyValue[1], out var highContrastAssist))
-                        highContrastAssist = false;
+                        highContrastAssist = true;
 
                     HighContrastAssist = highContrastAssist;
                     break;
@@ -593,19 +593,19 @@ public class ContextSettings : ViewModelBase
                     break;
                 case "NoteClickthrough":
                     if (!double.TryParse(keyValue[1], out var clickthrough))
-                        clickthrough = 0.25;
+                        clickthrough = 0.0;
 
                     NoteClickthrough = clickthrough;
                     break;
                 case "NoteTransparency":
                     if (!double.TryParse(keyValue[1], out var transparency))
-                        transparency = 95.0;
+                        transparency = 0.0;
 
                     NoteTransparency = transparency;
                     break;
                 case "PromptForUpdate":
                     if (!bool.TryParse(keyValue[1], out var promptForUpdate))
-                        promptForUpdate = false;
+                        promptForUpdate = true;
 
                     PromptForUpdate = promptForUpdate;
                     break;
@@ -624,19 +624,19 @@ public class ContextSettings : ViewModelBase
                     break;
                 case "RecentNotesSortMode":
                     if (!int.TryParse(keyValue[1], out var sortMode))
-                        sortMode = 0;
+                        sortMode = (int)SortType.ByChange;
 
                     RecentEntriesSortMode = (SortType)sortMode;
                     break;
                 case "RibbonDisplayMode":
                     if (!int.TryParse(keyValue[1], out var displayMode))
-                        displayMode = 0;
+                        displayMode = (int)DisplayType.Content;
 
                     RibbonTabContent = (DisplayType)displayMode;
                     break;
                 case "SearchResultsOnTop":
                     if (!bool.TryParse(keyValue[1], out var searchResultsOnTop))
-                        searchResultsOnTop = false;
+                        searchResultsOnTop = true;
 
                     SearchResultsOnTop = searchResultsOnTop;
                     break;
@@ -645,7 +645,7 @@ public class ContextSettings : ViewModelBase
                     break;
                 case "SnapSearchResults":
                     if (!bool.TryParse(keyValue[1], out var snapSearchResults))
-                        snapSearchResults = false;
+                        snapSearchResults = true;
 
                     SnapSearchResults = snapSearchResults;
                     break;

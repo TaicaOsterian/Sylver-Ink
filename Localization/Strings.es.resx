@@ -459,6 +459,9 @@ Recuerda presionar Importar para finalizar tus cambios!</value>
   <data name="ServerCodeLabelTooltip" xml:space="preserve">
     <value>Introduce este código en otra instalación de Sylver Ink para conectarte a la base de datos.</value>
   </data>
+  <data name="SnapSearchResults" xml:space="preserve">
+    <value>Las notas adhesivas se pegan entre sí</value>
+  </data>
   <data name="Status_Importing" xml:space="preserve">
     <value>Importando</value>
   </data>

@@ -485,6 +485,9 @@ Do you want to overwrite it?</value>
   <data name="ServerCodeLabelTooltip" xml:space="preserve">
     <value>Enter this code in another Sylver Ink installation to connect to the database.</value>
   </data>
+  <data name="SnapSearchResults" xml:space="preserve">
+    <value>Sticky notes snap to each other</value>
+  </data>
   <data name="Status_Importing" xml:space="preserve">
     <value>Importing</value>
   </data>
