@@ -603,6 +603,12 @@ public class ContextSettings : ViewModelBase
 
                     NoteTransparency = transparency;
                     break;
+                case "PromptForUpdate":
+                    if (!bool.TryParse(keyValue[1], out var promptForUpdate))
+                        promptForUpdate = false;
+
+                    PromptForUpdate = promptForUpdate;
+                    break;
                 case "QueryAllDatabases":
                     if (!bool.TryParse(keyValue[1], out var queryAllDatabases))
                         queryAllDatabases = false;
