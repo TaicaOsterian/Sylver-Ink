@@ -74,7 +74,7 @@
                  x:Name="Results">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding Preview}" />
+                    <TextBlock Text="{Binding Preview}"/>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>

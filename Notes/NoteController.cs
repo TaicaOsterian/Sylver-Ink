@@ -260,8 +260,9 @@ public partial class NoteController : IDisposable
         {
             return IndexedRecords[index];
         }
-        catch
+        catch (Exception e)
         {
+            App.LogException(e);
             return null;
         }
     }
@@ -456,8 +457,9 @@ public partial class NoteController : IDisposable
             _serializer?.ReadString();
             _structure = _serializer?.ReadByte();
         }
-        catch
+        catch (Exception e)
         {
+            App.LogException(e);
             _serializer?.ClearCompressionTest();
             _canCompress = -1;
             ReloadSerializer();

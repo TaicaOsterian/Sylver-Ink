@@ -17,9 +17,10 @@ public abstract class ViewModelBase : INotifyPropertyChanged
 
             Concurrent(PropertyChanged.Invoke, this, new PropertyChangedEventArgs(name));
         }
-        catch
+        catch (Exception e)
         {
             // The most common cause of an exception here is a property changing while the application is shutting down.
+            App.LogException(e);
             return;
         }
     }

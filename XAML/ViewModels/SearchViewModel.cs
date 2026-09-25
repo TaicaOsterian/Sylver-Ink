@@ -71,8 +71,9 @@ public class SearchViewModel : ViewModelBase, IDisposable
         {
             await PerformSearch(token);
         }
-        catch
+        catch (Exception e)
         {
+            App.LogException(e);
             return;
         }
     }

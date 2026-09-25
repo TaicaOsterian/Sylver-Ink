@@ -346,6 +346,9 @@ Recuerda presionar Importar para finalizar tus cambios!</value>
   <data name="Message_ConfirmReversion" xml:space="preserve">
     <value>¿Estás seguro de que quieres revertir la base de datos a la fecha seleccionada?</value>
   </data>
+  <data name="Message_CriticalError" xml:space="preserve">
+    <value>Se ha producido un error crítico. Sylver Ink debe cerrarse.</value>
+  </data>
   <data name="Message_DatabaseAutosaved" xml:space="preserve">
     <value>{0} - La última base de datos se cerró de forma inesperada. ¿Quieres cargar el autoguardado más reciente?</value>
   </data>
@@ -524,6 +527,9 @@ Recuerda presionar Importar para finalizar tus cambios!</value>
   </data>
   <data name="Tooltip_SearchAllDatabases" xml:space="preserve">
     <value>Cuando está activada, busca el texto de la consulta en todas las bases de datos abiertas. Cuando está desactivada, busca solo en la base de datos activa.</value>
+  </data>
+  <data name="Tooltip_SearchButton" xml:space="preserve">
+    <value>Consulta todas las notas de la base de datos y busca texto dentro de ellas.</value>
   </data>
   <data name="TotalLength" xml:space="preserve">
     <value>Longitud total</value>

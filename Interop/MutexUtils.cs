@@ -40,8 +40,9 @@ public static class MutexUtils
 
             return true;
         }
-        catch
+        catch (Exception e)
         {
+            App.LogException(e);
             return false;
         }
     }
@@ -56,8 +57,9 @@ public static class MutexUtils
             {
                 await server.WaitForConnectionAsync(token);
             }
-            catch
+            catch (Exception e)
             {
+                App.LogException(e);
                 return;
             }
 

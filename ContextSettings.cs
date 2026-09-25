@@ -339,6 +339,7 @@ public class ContextSettings : ViewModelBase
             SwitchTheme(value);
         }
     }
+    public double SmallFontSize => MainFontSize - 1.0;
     public bool SnapSearchResults
     {
         get => _snapSearchResults;

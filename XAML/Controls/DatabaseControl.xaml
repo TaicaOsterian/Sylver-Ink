@@ -8,6 +8,44 @@
              xmlns:sylverink="clr-namespace:SylverInk"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance Type=local:DatabaseControlViewModel}">
+    <UserControl.Resources>
+        <Style TargetType="{x:Type Button}" x:Key="NoteToolbarButtonStyle">
+            <Setter Property="FontStyle" Value="Italic"/>
+            <Setter Property="Foreground" Value="{Binding AppSettings.ListForeground}"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="3,0"/>
+            <Setter Property="MinHeight" Value="0"/>
+            <Setter Property="MinWidth" Value="0"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{Binding AppSettings.ListBackground}"
+                                BorderBrush="Transparent"
+                                BorderThickness="0"
+                                x:Name="Border">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center"/>
+                        </Border>
+                        
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Background" TargetName="Border" Value="LightGray"/>
+                                <Setter Property="Foreground" Value="DimGray"/>
+                            </Trigger>
+
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" TargetName="Border" Value="{Binding AppSettings.AccentBackground}"/>
+                                <Setter Property="Foreground" Value="{Binding AppSettings.AccentForeground}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
     <TabControl Background="{Binding AppSettings.MenuBackground}"
                 BorderBrush="{Binding AppSettings.AccentBackground}"
                 BorderThickness="2"
@@ -32,7 +70,7 @@
                 <Grid Margin="10">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -43,53 +81,75 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
                         <Button Command="{Binding NewNoteCommand}"
-                                Height="24"
-                                Margin="5,0"
+                                Style="{StaticResource NoteToolbarButtonStyle}"
                                 ToolTip="{x:Static properties:Strings.NewNoteButtonTooltip}">
                             <StackPanel Orientation="Horizontal">
-                                <Viewbox Margin="3" Stretch="Uniform">
+                                <Viewbox Height="16" Margin="2" Stretch="Uniform" Width="Auto">
                                     <Canvas Height="18" Width="14">
                                         <Path Data="M0 18L0 0L11 0L14 3L14 18ZM11 0L11 3L14 3"
                                               Fill="{Binding AppSettings.ListBackground}"
                                               Stroke="{Binding AppSettings.ListForeground}"
-                                              StrokeThickness="1.25" />
+                                              StrokeThickness="1.25"/>
                                         
                                         <Path Data="M3 12L11 12M7 8L7 16"
-                                              Stroke="#00CC00"
+                                              Stroke="{Binding AppSettings.AccentForeground}"
                                               StrokeThickness="1.5"/>
                                     </Canvas>
                                 </Viewbox>
 
-                                <TextBlock Margin="5"
+                                <TextBlock FontSize="{Binding AppSettings.SmallFontSize}"
+                                           Margin="3,2"
                                            Text="{x:Static properties:Strings.Word_New}"
                                            VerticalAlignment="Center"/>
                             </StackPanel>
                         </Button>
 
-                        <Button Grid.Column="1"
-                                Command="{Binding ReopenNoteCommand}"
-                                Height="24"
-                                Margin="5,0"
+                        <Button Command="{Binding ReopenNoteCommand}"
+                                Grid.Column="1"
+                                Style="{StaticResource NoteToolbarButtonStyle}"
                                 ToolTip="{x:Static properties:Strings.RecentNotesButtonTooltip}">
                             <StackPanel Orientation="Horizontal">
-                                <Viewbox Margin="3" Stretch="Uniform">
+                                <Viewbox Height="16" Margin="2" Stretch="Uniform" Width="Auto">
                                     <Canvas Height="18" Width="14">
                                         <Path Data="M0 18L0 0L11 0L14 3L14 18ZM11 0L11 3L14 3"
                                               Fill="{Binding AppSettings.ListBackground}"
                                               Stroke="{Binding AppSettings.ListForeground}"
-                                              StrokeThickness="1.25" />
-                                        
+                                              StrokeThickness="1.25"/>
+
                                         <Path Data="M10 16 V10 H3.5M6 7 L3.5 10 L6 13"
                                               Stroke="{Binding AppSettings.AccentForeground}"
                                               StrokeThickness="1.5"/>
                                     </Canvas>
                                 </Viewbox>
 
-                                <TextBlock Margin="5"
+                                <TextBlock FontSize="{Binding AppSettings.SmallFontSize}"
+                                           Margin="3,2"
                                            Text="{x:Static properties:Strings.Word_Restore}"
+                                           VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Button Command="{Binding SearchCommand}"
+                                Grid.Column="2"
+                                Style="{StaticResource NoteToolbarButtonStyle}"
+                                ToolTip="{x:Static properties:Strings.Tooltip_SearchButton}">
+                            <StackPanel Orientation="Horizontal">
+                                <Viewbox Height="16" Margin="2" Stretch="Uniform" Width="Auto">
+                                    <Canvas Height="24" Width="24">
+                                        <Path Data="m 13.8,13.65 a 7.785,7.75 0 1 0 -0.1,0.1 l 8.65,8.6 m -4.65,-5.925 5.6,5.575 -1.325,1.325 -5.6,-5.575"
+                                              Fill="{Binding AppSettings.ListBackground}"
+                                              Stroke="{Binding AppSettings.ListForeground}"
+                                              StrokeThickness="1.25"/>
+                                    </Canvas>
+                                </Viewbox>
+
+                                <TextBlock FontSize="{Binding AppSettings.SmallFontSize}"
+                                           Margin="3,2"
+                                           Text="{x:Static properties:Strings.Word_Search}"
                                            VerticalAlignment="Center"/>
                             </StackPanel>
                         </Button>
@@ -99,8 +159,10 @@
                                 HorizontalAlignment="Right"
                                 Orientation="Horizontal"
                                 VerticalAlignment="Bottom">
-                        <Label Content="{x:Static properties:Strings.RecentNotes}"
-                               FontStyle="Italic"/>
+                        <Label FontStyle="Italic">
+                            <TextBlock Text="{x:Static properties:Strings.RecentNotes}"
+                                       TextWrapping="WrapWithOverflow"/>
+                        </Label>
                         
                         <Label Foreground="{Binding AppSettings.AccentForeground}"
                                ToolTip="{x:Static properties:Strings.RecentNotesTooltip}">
@@ -171,33 +233,19 @@
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <Button Command="{Binding SearchCommand}"
-                            Grid.Column="1"
-                            Content="{x:Static properties:Strings.Word_Search}"
-                            Margin="0,5"/>
-                    
-                    <Button Command="{Binding ImportCommand}"
-                            Grid.Column="3"
-                            Content="{x:Static properties:Strings.Word_Import}"
-                            Margin="0,5"/>
-                    
                     <Button Command="{Binding SettingsCommand}"
                             Grid.Column="1"
                             Content="{x:Static properties:Strings.Word_Settings}"
-                            Margin="0,5"
-                            Grid.Row="2"/>
+                            Margin="0,5"/>
                     
                     <Button Background="{Binding AppSettings.AccentBackground}"
                             Command="{Binding ExitCommand}"
                             Grid.Column="3"
                             Content="{x:Static properties:Strings.Word_Exit}"
                             Foreground="{Binding AppSettings.AccentForeground}"
-                            Margin="0,5"
-                            Grid.Row="2"/>
+                            Margin="0,5"/>
                 </Grid>
             </Grid>
         </TabItem>

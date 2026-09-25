@@ -86,8 +86,9 @@ public static class UpdateHandler
                 return false;
             }
         }
-        catch
+        catch (Exception e)
         {
+            App.LogException(e);
             if (notifyOnFail)
                 ShowTooltip(Strings.FailedUpdateCheck);
 
@@ -129,6 +130,7 @@ public static class UpdateHandler
 
             File.Create(UpdateLockUri, 0).Close();
 
+            UpdateWindow.Owner = Application.Current.MainWindow;
             UpdateWindow.Show();
 
             await httpClient.DownloadFileTaskAsync(uriNode, TempUri, UpdateTokenSource);
@@ -148,6 +150,8 @@ public static class UpdateHandler
         }
         catch (Exception ex)
         {
+            App.LogException(ex);
+
             if (ex is not OperationCanceledException)
                 MessageBox.Show(string.Format(
                         CultureInfo.CurrentCulture,

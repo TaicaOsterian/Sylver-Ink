@@ -31,8 +31,9 @@ public partial class MainWindow : Window
             Application.Current.ShutdownMode = Application.Current.ShutdownMode;
             return false;
         }
-        catch
+        catch (Exception e)
         {
+            App.LogException(e);
             return true;
         }
     }

@@ -58,8 +58,9 @@ public class NetServer : IDisposable
                         if (client.Available > 0)
                             await ReadFromStream(client, DB);
                     }
-                    catch
+                    catch (Exception e)
                     {
+                        App.LogException(e);
                         Clients[i].Close();
                         Clients.RemoveAt(i);
                     }
@@ -156,8 +157,9 @@ public class NetServer : IDisposable
             {
                 Clients[i].GetStream().Write(outBuffer);
             }
-            catch
+            catch (Exception e)
             {
+                App.LogException(e);
                 Clients[i].Close();
                 Clients.RemoveAt(i);
             }
@@ -184,8 +186,9 @@ public class NetServer : IDisposable
                     break;
                 }
             }
-            catch
+            catch (Exception e)
             {
+                App.LogException(e);
                 continue;
             }
         }
@@ -205,8 +208,9 @@ public class NetServer : IDisposable
             DBServer.Server.SendBufferSize = int.MaxValue;
             DBServer.Start(256);
         }
-        catch
+        catch (Exception e)
         {
+            App.LogException(e);
             ShowTooltip(string.Format(CultureInfo.CurrentCulture, CacheFailedToOpenServer, TcpPort));
             Active = false;
             Serving = false;

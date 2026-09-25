@@ -6,7 +6,6 @@ namespace SylverInk.XAML.Controls;
 public class DatabaseControlViewModel : ViewModelBase
 {
     public ICommand ExitCommand { get; }
-    public ICommand ImportCommand { get; }
     public ICommand NewNoteCommand { get; }
     public ICommand ReopenNoteCommand { get; }
     public ICommand SearchCommand { get; }
@@ -15,7 +14,6 @@ public class DatabaseControlViewModel : ViewModelBase
     public DatabaseControlViewModel()
     {
         ExitCommand = new RelayCommand(Exit);
-        ImportCommand = new RelayCommand(Import);
         NewNoteCommand = new RelayCommand(NewNote);
         ReopenNoteCommand = new RelayCommand(ReopenNote, CanPopPreviousNote);
         SearchCommand = new RelayCommand(Search);
@@ -25,8 +23,6 @@ public class DatabaseControlViewModel : ViewModelBase
     private static bool CanPopPreviousNote(object? param) => CurrentDatabase.GetPreviousNoteCount() > 0;
 
     private void Exit(object? param) => Application.Current.MainWindow.Close();
-
-    private void Import(object? param) => ImportWindow = new();
 
     private void NewNote(object? param) => CreateNewNote();
 

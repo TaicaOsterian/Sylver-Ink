@@ -86,7 +86,11 @@ public class RichTextBoxUtils
                 rtb.CaretPosition = newCaret;
                 rtb.Focus();
             }
-            catch { /* Rarely, confusion can occur if the user clicks in the box the very moment it opens. */ }
+            catch (Exception e)
+            {
+                // Rarely, confusion can occur if the user clicks in the box the very moment it opens.
+                App.LogException(e);
+            }
         }), DispatcherPriority.Background);
     }
 
@@ -104,7 +108,11 @@ public class RichTextBoxUtils
             {
                 rtb.Document = document;
             }
-            catch { /* Same rare race as with the caret binding. */ }
+            catch (Exception e)
+            {
+                /* Same rare race as with the caret binding. */
+                App.LogException(e);
+            }
         }), DispatcherPriority.Background);
     }
 

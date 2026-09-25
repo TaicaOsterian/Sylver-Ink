@@ -59,7 +59,9 @@ public static partial class CommonUtils
         get => _import;
         set
         {
-            _import?.Close(); _import = value; _import?.Show();
+            _import?.Close();
+            _import = value;
+            _import?.Show();
         }
     }
     public static bool InitComplete { get; set; }
@@ -75,7 +77,9 @@ public static partial class CommonUtils
         get => _search;
         set
         {
-            _search?.Close(); _search = value; _search?.Show();
+            _search?.Close();
+            _search = value;
+            _search?.Show();
         }
     }
     public static ContextSettings Settings { get; } = new();
@@ -85,7 +89,9 @@ public static partial class CommonUtils
         get => _settings;
         set
         {
-            _settings?.Close(); _settings = value; _settings?.Show();
+            _settings?.Close();
+            _settings = value;
+            _settings?.Show();
         }
     }
     public static bool UpdatesChecked { get; set; }
@@ -159,8 +165,9 @@ public static partial class CommonUtils
                         InitComplete = false;
                 } while (!InitComplete && !token.IsCancellationRequested);
             }
-            catch
+            catch (Exception e)
             {
+                App.LogException(e);
                 return;
             }
         }, token);
@@ -243,8 +250,9 @@ public static partial class CommonUtils
 
             await viewModel.RefreshRecentNotesAsync();
         }
-        catch
+        catch (Exception e)
         {
+            App.LogException(e);
             return;
         }
     }

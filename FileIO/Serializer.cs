@@ -147,8 +147,9 @@ public class Serializer : IDisposable
 
             ReadHeader();
         }
-        catch
+        catch (Exception e)
         {
+            App.LogException(e);
             _fileStream?.Dispose();
             return false;
         }
@@ -174,8 +175,9 @@ public class Serializer : IDisposable
 
             WriteHeader();
         }
-        catch
+        catch (Exception e)
         {
+            App.LogException(e);
             if (File.Exists(_pathTmp))
                 File.Delete(_pathTmp);
 
@@ -247,8 +249,9 @@ public class Serializer : IDisposable
 
             return null;
         }
-        catch
+        catch (Exception e)
         {
+            App.LogException(e);
             return null;
         }
     }
@@ -270,8 +273,9 @@ public class Serializer : IDisposable
 
             return null;
         }
-        catch
+        catch (Exception e)
         {
+            App.LogException(e);
             return null;
         }
     }
@@ -293,8 +297,9 @@ public class Serializer : IDisposable
             _buffer = ReadBytes(nextSize);
             return Encoding.UTF8.GetString(_buffer);
         }
-        catch
+        catch (Exception e)
         {
+            App.LogException(e);
             return null;
         }
     }
@@ -313,8 +318,9 @@ public class Serializer : IDisposable
             _buffer = ReadBytes(nextSize);
             return Encoding.UTF8.GetString(_buffer);
         }
-        catch
+        catch (Exception e)
         {
+            App.LogException(e);
             return null;
         }
     }

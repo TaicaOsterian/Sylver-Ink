@@ -39,7 +39,11 @@ public static class VisualUtils
                 B = byte.Parse(data[6..8], NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo)
             });
         }
-        catch { return Brushes.Transparent; }
+        catch (Exception e)
+        {
+            App.LogException(e);
+            return Brushes.Transparent;
+        }
     }
 
     /// <summary>

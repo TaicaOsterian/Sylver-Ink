@@ -96,7 +96,7 @@
                         <TextBlock Text="{x:Static properties:Strings.NoteClickthrough}"
                                    TextAlignment="Right"
                                    TextDecorations="Underline"
-                                   TextWrapping="WrapWithOverflow" />
+                                   TextWrapping="WrapWithOverflow"/>
                     </Label>
                     
                     <Label FontStyle="Italic"
@@ -309,7 +309,7 @@
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
                                     <TextBlock FontFamily="{Binding}"
-                                               Text="{Binding}" />
+                                               Text="{Binding}"/>
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>

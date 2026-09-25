@@ -42,8 +42,9 @@ public class NetClient : IDisposable
                     if (!DBClient.Connected || !DBClient.GetStream().Socket.Connected)
                         Concurrent(Disconnect);
                 }
-                catch
+                catch (Exception e)
                 {
+                    App.LogException(e);
                     Concurrent(Disconnect);
                 }
             }
@@ -74,8 +75,9 @@ public class NetClient : IDisposable
             await DBClient.ConnectAsync(Address, TcpPort);
             await DBClient.GetStream().WriteAsync(new List<byte>([Flags ?? 0]).ToArray());
         }
-        catch
+        catch (Exception e)
         {
+            App.LogException(e);
             ShowTooltip(Strings.FailedConnection);
             if (DB is not null)
                 Concurrent(RemoveDatabase, DB);
@@ -119,8 +121,9 @@ public class NetClient : IDisposable
         {
             await DBClient.GetStream().WriteAsync(streamData);
         }
-        catch
+        catch (Exception e)
         {
+            App.LogException(e);
             ShowTooltip("The network connection was unexpectedly closed.");
             Disconnect();
         }

@@ -98,8 +98,9 @@ public partial class Search : Window
             {
                 await ViewModel.SearchCurrentDatabase(token);
             }
-            catch (OperationCanceledException)
+            catch (Exception ex)
             {
+                App.LogException(ex);
                 return;
             }
         }

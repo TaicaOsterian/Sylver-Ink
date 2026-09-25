@@ -182,23 +182,27 @@
                 <MenuItem Command="{Binding OpenDatabaseCommand}"
                           Header="{x:Static properties:Strings.Label_Open}"/>
                 
-                <MenuItem Header="{x:Static properties:Strings.OpenRecent}"
+                <MenuItem Command="{Binding OpenRecentFileCommand}"
+                          Header="{x:Static properties:Strings.OpenRecent}"
                           ItemsSource="{Binding AppSettings.RecentDatabases}">
                     <MenuItem.ItemContainerStyle>
                         <Style TargetType="MenuItem">
                             <Setter Property="Header"
-                                    Value="{Binding}" />
+                                    Value="{Binding}"/>
                             
                             <Setter Property="Command"
                                     Value="{Binding DataContext.OpenRecentFileCommand,
-                                            RelativeSource={RelativeSource AncestorType=Menu}}" />
+                                            RelativeSource={RelativeSource AncestorType=Menu}}"/>
                             
                             <Setter Property="CommandParameter"
-                                    Value="{Binding FullPath}" />
+                                    Value="{Binding FullPath}"/>
                         </Style>
                     </MenuItem.ItemContainerStyle>
                 </MenuItem>
-                
+
+                <MenuItem Command="{Binding ImportCommand}"
+                          Header="{x:Static properties:Strings.Word_Import}"/>
+
                 <Separator/>
                 
                 <MenuItem Command="{Binding SaveLocalCommand}"

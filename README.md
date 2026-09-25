@@ -6,6 +6,7 @@ Sylver Ink is designed to streamline and simplify the ADHD brain process, a Sisy
 
 **Sylver Ink is currently in an early beta release.** Check frequently for updates!
 
+
 ## Usage
 
 Upon running Sylver Ink for the first time, the default database will be automatically created in the user's My Documents folder, blank and ready to be impregnated.
@@ -22,17 +23,27 @@ Below the context bar are two ribbons: The top displays the user's currently ope
 
 Opening a note will create a tiny sticky note window from which the note can be quickly viewed or edited. These note windows snap to each other for easy organization, and also provide a "View" button that will open the note in a larger tab within the main window. This tab provides access to previous versions of the note, which Sylver Ink saves along with the current version.
 
-### "Import"
+### Import
 
 The Import window allows the user to import multiple notes from plaintext files. Sylver Ink divides newly imported notes based on the number of empty lines between paragraphs in the text file. The Import window may also be used to import existing Sylver Ink databases, allowing the user to overwrite their currently open database or merge the two.
 
-### "Search"
+### Search
 
 The Search window allows the user to search for occurrences of a text string across the database, and display the results in a list. Sylver Ink uses a tagging system to assist in sorting search results: Notes are prioritized if they match words in the search query with an overall low occurrence rate in the database at large.
 
-### "Settings"
+### Settings
 
 The Settings window provides options for customizing the user's experience; placing sticky notes always on top, sorting note entries, and customizing the colors and visual style of the Sylver Ink interface are all options provided in this window.
+
+
+## Networking
+
+Sylver Ink supports peer-to-peer collaboration on note-taking via network connectivity.
+
+Any running instance of Sylver Ink can be opened to connections via the Network menu. This will produce a six-character address code which encodes the user's public IP address, as well as the identifier of the database that is open. This code can then be provided to a friend or colleague, and used to connect to the database with their own Sylver Ink installation.
+
+**The user's address code should only be shared with trusted partners.**
+
 
 ## Contributions
 

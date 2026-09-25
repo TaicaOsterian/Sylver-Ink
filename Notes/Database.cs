@@ -66,8 +66,9 @@ public class Database : IDisposable
             AddDatabase(db);
             await Task.Run(db.Load);
         }
-        catch
+        catch (Exception e)
         {
+            App.LogException(e);
             if (db is not null)
                 RemoveDatabase(db);
 

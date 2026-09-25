@@ -31,7 +31,7 @@
                      Maximum="1"
                      Value="{Binding Progress}"
                      Width="350"
-                     x:Name="UpdateProgress" />
+                     x:Name="UpdateProgress"/>
 
         <Button Command="{Binding CancelCommand}"
                 Content="{x:Static properties:Strings.Word_Cancel}"

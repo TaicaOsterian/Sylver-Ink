@@ -104,6 +104,7 @@ public class MainWindowViewModel : ViewModelBase
     public ICommand CopyCodeCommand { get; }
     public ICommand DeleteDatabaseCommand { get; }
     public ICommand DisconnectCommand { get; }
+    public ICommand ImportCommand { get; }
     public ICommand NewDatabaseCommand { get; }
     public ICommand OpenDatabaseCommand { get; }
     public ICommand OpenRecentFileCommand { get; }
@@ -136,6 +137,7 @@ public class MainWindowViewModel : ViewModelBase
         CopyCodeCommand = new RelayCommand(MenuCopyCode, CanCopyCode);
         DeleteDatabaseCommand = new RelayCommand(MenuDelete, CanDeleteDatabase);
         DisconnectCommand = new RelayCommand(MenuDisconnect, CanDisconnect);
+        ImportCommand = new RelayCommand(MenuImport);
         NewDatabaseCommand = new RelayCommand(MenuCreate);
         OpenDatabaseCommand = new RelayCommand(MenuOpen);
         OpenRecentFileCommand = new RelayCommand(MenuOpenRecent, CanOpenRecent);
@@ -202,8 +204,9 @@ public class MainWindowViewModel : ViewModelBase
         {
             Clipboard.SetText(CurrentDatabase.Server?.AddressCode);
         }
-        catch
+        catch (Exception e)
         {
+            App.LogException(e);
             ShowTooltip(Strings.Tooltip_FailedCopy);
         }
     }
@@ -261,6 +264,8 @@ public class MainWindowViewModel : ViewModelBase
         CurrentDatabase.Client.Disconnect();
         CurrentDatabase.Changed = true;
     }
+
+    private static void MenuImport(object? param) => ImportWindow = new();
 
     private async void MenuOpen(object? param)
     {
@@ -420,8 +425,9 @@ public class MainWindowViewModel : ViewModelBase
         {
             snapshot = await Task.Run(() => BuildRecentNotesSnapshot(height, dpiY));
         }
-        catch
+        catch (Exception e)
         {
+            App.LogException(e);
             return;
         }
 

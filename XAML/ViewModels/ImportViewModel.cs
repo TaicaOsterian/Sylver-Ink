@@ -190,6 +190,7 @@ public class ImportViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
+            App.LogException(ex);
             MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheImportFailed, ex.Message), Strings.Title_Error, MessageBoxButton.OK);
         }
         finally
@@ -517,6 +518,7 @@ public class ImportViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
+            App.LogException(ex);
             MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheFailedToProcessFile, ex.Message), Strings.Title_Error, MessageBoxButton.OK);
         }
         finally
@@ -536,8 +538,9 @@ public class ImportViewModel : ViewModelBase
             DataLines = [.. content.ReplaceLineEndings().Split(Environment.NewLine)];
             return true;
         }
-        catch
+        catch (Exception e)
         {
+            App.LogException(e);
             return false;
         }
     }

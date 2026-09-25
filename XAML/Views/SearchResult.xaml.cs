@@ -404,8 +404,9 @@ public partial class SearchResult : Window, IDisposable
         {
             position = PointFromScreen(new(screenPosition.X, screenPosition.Y));
         }
-        catch
+        catch (Exception ex)
         {
+            App.LogException(ex);
             return;
         }
 

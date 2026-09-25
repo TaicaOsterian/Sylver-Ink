@@ -363,6 +363,9 @@ Remember to press Import to finalize your changes!</value>
   <data name="Message_ConfirmReversion" xml:space="preserve">
     <value>Are you sure you want to revert the database to the selected date and time?</value>
   </data>
+  <data name="Message_CriticalError" xml:space="preserve">
+    <value>A critical error has occurred. Sylver Ink must close.</value>
+  </data>
   <data name="Message_DatabaseAutosaved" xml:space="preserve">
     <value>{0} - The database last closed unexpectedly. Do you want to load the most recent autosave?</value>
     <comment>{0} = The file path of the database.</comment>
@@ -553,6 +556,9 @@ Do you want to overwrite it?</value>
   </data>
   <data name="Tooltip_SearchAllDatabases" xml:space="preserve">
     <value>When enabled, search all open databases for the query text. When disabled, search only the active database.</value>
+  </data>
+  <data name="Tooltip_SearchButton" xml:space="preserve">
+    <value>View all notes in the database, and search for text within them.</value>
   </data>
   <data name="TotalLength" xml:space="preserve">
     <value>Total length</value>

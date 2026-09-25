@@ -50,8 +50,9 @@ public static class FileUtils
             File.Delete(filename);
             return true;
         }
-        catch
+        catch (Exception e)
         {
+            App.LogException(e);
             ShowTooltip(Strings.FailedDelete);
             return false;
         }
@@ -91,8 +92,9 @@ public static class FileUtils
                 if (tmpDB.Format < 7) // Database object UUID was added in SIDB v7
                     return dbFile;
             }
-            catch
+            catch (Exception e)
             {
+                App.LogException(e);
                 tmpDB.Dispose();
                 return string.Empty;
             }
