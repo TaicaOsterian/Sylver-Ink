@@ -146,6 +146,7 @@ public class ContextSettings : ViewModelBase
     private bool HighContrastAssistInProgress;
     public string LastActiveDatabase { get; set; } = string.Empty;
     public List<string> LastDatabases { get; } = [];
+    public long LastUpdate { get; set; }
     public int LineTolerance
     {
         get => _lineTolerance;
@@ -586,6 +587,12 @@ public class ContextSettings : ViewModelBase
                     FirstRun = false;
                     LastDatabases.AddRange(keyValue[1].Replace("?\\", DocumentsFolder).Split(';').Distinct().Where(File.Exists));
                     break;
+                case "LastUpdate":
+                    if (!long.TryParse(keyValue[1], out var lastUpdate))
+                        lastUpdate = 0;
+
+                    LastUpdate = lastUpdate;
+                    break;
                 case "ListBackground":
                     _listBackground = BrushFromBytes(keyValue[1]);
                     break;
@@ -679,12 +686,13 @@ public class ContextSettings : ViewModelBase
         $"LastActiveNotesTop:{string.Join(';', OpenQueries.Select(query => $"{query.ViewModel.Record.DB?.Name}:{query.ViewModel.Record.UUID}:{query.Top}"))}",
         $"LastActiveNotesWidth:{string.Join(';', OpenQueries.Select(query => $"{query.ViewModel.Record.DB?.Name}:{query.ViewModel.Record.UUID}:{query.Width}"))}",
         $"LastDatabases:{string.Join(';', DatabaseFiles.Distinct().Where(File.Exists)).Replace(DocumentsFolder, "?\\")}",
+        $"LastUpdate:{LastUpdate}",
         $"ListBackground:{BytesFromBrush(_listBackground)}",
         $"ListForeground:{BytesFromBrush(_listForeground)}",
         $"MenuBackground:{BytesFromBrush(_menuBackground)}",
         $"MenuForeground:{BytesFromBrush(_menuForeground)}",
-        $"NoteClickthrough:{(double)NoteClickthrough}",
-        $"NoteTransparency:{(double)NoteTransparency}",
+        $"NoteClickthrough:{NoteClickthrough}",
+        $"NoteTransparency:{NoteTransparency}",
         $"PromptForUpdate:{PromptForUpdate}",
         $"QueryAllDatabases:{QueryAllDatabases}",
         $"RecentDatabases:{string.Join(';', RecentDatabases.Distinct()).Replace(DocumentsFolder, "?\\")}",

@@ -37,6 +37,13 @@ public static class UpdateHandler
         if (Process.GetCurrentProcess().MainModule?.FileName is null)
             return false;
 
+        // We apply a cadence of 14 days inbetween automatic updating.
+        if (!notifyOnFail && DateTime.UtcNow.Subtract(DateTime.FromBinary(CommonUtils.Settings.LastUpdate)).TotalDays < 14.0)
+        {
+            GracefulExit = true;
+            return true;
+        }
+
         try
         {
             if (!httpClient.DefaultRequestHeaders.UserAgent.TryParseAdd("request"))
@@ -95,6 +102,8 @@ public static class UpdateHandler
             GracefulExit = true;
             return true;
         }
+
+        CommonUtils.Settings.LastUpdate = DateTime.UtcNow.ToBinary();
 
         if (MessageBox.Show(string.Format(
                 CultureInfo.CurrentCulture,
