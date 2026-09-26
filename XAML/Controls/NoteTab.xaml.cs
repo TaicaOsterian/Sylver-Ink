@@ -106,6 +106,7 @@ public partial class NoteTab : UserControl
 
     private void UpdateTextColorButton()
     {
-        TextColorButton.Background = NoteBox.Selection.End.Parent.GetValue(TextElement.ForegroundProperty) as Brush ?? CommonUtils.Settings.ListForeground;
+        var brush = NoteBox.Selection.End.Parent.GetValue(TextElement.ForegroundProperty) as Brush;
+        TextColorButton.Background = brush ?? CommonUtils.Settings.ListForeground;
     }
 }

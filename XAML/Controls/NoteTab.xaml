@@ -15,26 +15,38 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <Style x:Key="ToolbarButton" TargetType="Button">
-                <Setter Property="Background"
-                        Value="{Binding AppSettings.ListBackground}"/>
-                
-                <Setter Property="CommandTarget"
-                        Value="{Binding ElementName=NoteBox}"/>
-                
-                <Setter Property="Foreground"
-                        Value="{Binding AppSettings.ListForeground}"/>
+                <Setter Property="Background" Value="{Binding AppSettings.ListBackground}"/>
+                <Setter Property="CommandTarget" Value="{Binding ElementName=NoteBox}"/>
+                <Setter Property="Foreground" Value="{Binding AppSettings.ListForeground}"/>
+                <Setter Property="Height" Value="Auto"/>
+                <Setter Property="MinHeight" Value="20"/>
+                <Setter Property="MinWidth" Value="35"/>
+                <Setter Property="Width" Value="Auto"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Border Background="{TemplateBinding Background}"
+                                    BorderBrush="{Binding AppSettings.MenuForeground}"
+                                    BorderThickness="1"
+                                    x:Name="Border">
+                                <ContentPresenter HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center"/>
+                            </Border>
 
-                <Setter Property="Height"
-                        Value="Auto"/>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Background" Value="{Binding AppSettings.DisabledBackground}"/>
+                                    <Setter Property="Foreground" Value="{Binding AppSettings.DisabledForeground}"/>
+                                </Trigger>
 
-                <Setter Property="MinHeight"
-                        Value="20"/>
-
-                <Setter Property="MinWidth"
-                        Value="35"/>
-
-                <Setter Property="Width"
-                        Value="Auto"/>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="{Binding AppSettings.AccentBackground}"/>
+                                    <Setter Property="Foreground" Value="{Binding AppSettings.AccentForeground}"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
             </Style>
 
             <conv:BooleanToVisibilityConverter x:Key="BoolToVis"/>

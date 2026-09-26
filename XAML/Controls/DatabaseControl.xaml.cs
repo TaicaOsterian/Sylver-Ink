@@ -54,17 +54,19 @@ public partial class DatabaseControl : UserControl
     {
         ContextMenu menu = new()
         {
-            DataContext = CommonUtils.Settings
+            DataContext = CommonUtils.Settings,
         };
 
         MenuItem itemOpen = new()
         {
             Header = Strings.Word_Open,
+            Style = (Style)Application.Current.FindResource("ContextMenuItemStyle")
         };
 
         MenuItem itemDelete = new()
         {
             Header = Strings.Word_Delete,
+            Style = (Style)Application.Current.FindResource("ContextMenuItemStyle")
         };
 
         itemOpen.Click += ContextOpen;

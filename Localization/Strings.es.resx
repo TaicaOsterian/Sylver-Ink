@@ -553,6 +553,9 @@ Recuerda presionar Importar para finalizar tus cambios!</value>
   <data name="Word_Backup" xml:space="preserve">
     <value>Respaldo</value>
   </data>
+  <data name="Label_Berry" xml:space="preserve">
+    <value>Baya</value>
+  </data>
   <data name="Word_Bold" xml:space="preserve">
     <value>Negrita</value>
   </data>

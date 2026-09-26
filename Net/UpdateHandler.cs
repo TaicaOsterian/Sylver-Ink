@@ -142,8 +142,11 @@ public static class UpdateHandler
 
             Process.Start(new ProcessStartInfo()
             {
-                FileName = TempUri,
+                Arguments = $"/c start /wait msiexec.exe /i \"{TempUri}\" /qb & start \"\" \"{Process.GetCurrentProcess().MainModule?.FileName}\"",
+                CreateNoWindow = true,
+                FileName = "cmd.exe",
                 UseShellExecute = true,
+                WindowStyle = ProcessWindowStyle.Hidden,
             });
 
             Application.Current.Shutdown();

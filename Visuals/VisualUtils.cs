@@ -61,6 +61,26 @@ public static class VisualUtils
         return $"{scb?.Color.A:X2}{scb?.Color.R:X2}{scb?.Color.G:X2}{scb?.Color.B:X2}";
     }
 
+    public static Brush? Desaturate(Brush? brush)
+    {
+        if (brush is not SolidColorBrush scb)
+            return null;
+
+        var hsv = HSVFromRGB(scb);
+        var H = (hsv >> 16) & 0xFF;
+        var S = hsv >> 8 & 0xFF;
+        var V = hsv & 0xFF;
+
+        if (V > 127)
+            V = (uint)(V * 0.6);
+        else
+            V = (uint)(V / 0.6);
+
+        S = (uint)(S * 0.2);
+        hsv = (H << 16) + (S << 8) + V;
+        return HSVToRGB(hsv);
+    }
+
     public static T? FindVisualChildByName<T>(DependencyObject? parent, string name) where T : DependencyObject
     {
         for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
@@ -93,6 +113,60 @@ public static class VisualUtils
         return RsRGB * GetChannelLuminance(color.R * i)
              + GsRGB * GetChannelLuminance(color.G * i)
              + BsRGB * GetChannelLuminance(color.B * i);
+    }
+
+    public static uint HSVFromRGB(SolidColorBrush brush)
+    {
+        const double fInv = 1.0 / 255.0;
+        var (r_, g_, b_) = (brush.Color.R * fInv, brush.Color.G * fInv, brush.Color.B * fInv);
+        var Cmax = Math.Max(r_, Math.Max(g_, b_));
+        var Cmin = Math.Min(r_, Math.Min(g_, b_));
+        var delta = Cmax - Cmin;
+        var _h = 0.0;
+        var _s = Cmax == 0.0 ? 0.0 : (delta / Cmax);
+        var _v = Cmax;
+        if (delta != 0.0)
+        {
+            delta = 60.0 / delta;
+            if (Cmax == r_)
+                _h = (delta * (g_ - b_)) + 360.0;
+            else if (Cmax == g_)
+                _h = (delta * (b_ - r_)) + 120.0;
+            else if (Cmax == b_)
+                _h = (delta * (r_ - g_)) + 240.0;
+        }
+        var H = (uint)(_h % 360.0 * 0.7083333333);
+        var S = (uint)(_s * 255.0);
+        var V = (uint)(_v * 255.0);
+        return (H << 16) + (S << 8) + V;
+    }
+
+    public static SolidColorBrush HSVToRGB(uint hsv)
+    {
+        var H = (double)((hsv >> 16) & 0xFF);
+        var S = (double)(hsv >> 8 & 0xFF) / 255.0;
+        var V = (double)(hsv & 0xFF) / 255.0;
+        var C = V * S;
+        var m = V - C;
+        var X = C * (1.0 - Math.Abs((H / 60.0 % 2.0) - 1.0));
+        var (r_, g_, b_) = H switch
+        {
+            < 60.0 => (C, X, 0.0),
+            < 120.0 => (X, C, 0.0),
+            < 180.0 => (0.0, C, X),
+            < 240.0 => (0.0, X, C),
+            < 300.0 => (X, 0.0, C),
+            < 360.0 => (C, 0.0, X),
+            _ => (0.0, 0.0, 0.0)
+        };
+        var (R, G, B) = (r_ + m, g_ + m, b_ + m);
+        return new(new()
+        {
+            R = (byte)(R * 255.0),
+            G = (byte)(G * 255.0),
+            B = (byte)(B * 255.0),
+            A = 255
+        });
     }
 
     public static Color SetLuminance(Color color, double target, bool lighten)

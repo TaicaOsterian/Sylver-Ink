@@ -45,11 +45,13 @@ public partial class Search : Window
         MenuItem itemOpen = new()
         {
             Header = Strings.Word_Open,
+            Style = (Style)Application.Current.FindResource("ContextMenuItemStyle")
         };
 
         MenuItem itemDelete = new()
         {
             Header = Strings.Word_Delete,
+            Style = (Style)Application.Current.FindResource("ContextMenuItemStyle")
         };
 
         itemOpen.Click += ContextOpen;

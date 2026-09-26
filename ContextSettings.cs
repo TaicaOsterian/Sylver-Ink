@@ -40,6 +40,7 @@ public class ContextSettings : ViewModelBase
     private Brush? _accentBackground = Themes.Default.AccentBackground;
     private Brush? _accentForeground = Themes.Default.AccentForeground;
     private bool _firstRun = true;
+    private bool _gridEnabled = true;
     private bool _highContrast;
     private bool _highContrastAssist = true;
     private int _lineTolerance;
@@ -70,13 +71,11 @@ public class ContextSettings : ViewModelBase
 
             if (HighContrast)
             {
-                OnPropertyChanged(null);
                 HighContrastSmartAssist();
                 HighContrastAssistInProgress = false;
-                return;
             }
 
-            OnPropertyChanged();
+            OnPropertyChanged(null);
         }
     }
     public Brush? AccentForeground
@@ -88,13 +87,11 @@ public class ContextSettings : ViewModelBase
 
             if (HighContrast)
             {
-                OnPropertyChanged(null);
                 HighContrastSmartAssist();
                 HighContrastAssistInProgress = false;
-                return;
             }
 
-            OnPropertyChanged();
+            OnPropertyChanged(null);
         }
     }
     public List<FontFamily> AvailableFonts { get; } = [];
@@ -106,6 +103,23 @@ public class ContextSettings : ViewModelBase
         set
         {
             _firstRun = value;
+            OnPropertyChanged();
+        }
+    }
+    public Brush? DisabledBackground
+    {
+        get => Desaturate(ListBackground as SolidColorBrush);
+    }
+    public Brush? DisabledForeground
+    {
+        get => Desaturate(ListForeground as SolidColorBrush);
+    }
+    public bool GridEnabled
+    {
+        get => _gridEnabled;
+        set
+        {
+            _gridEnabled = value;
             OnPropertyChanged();
         }
     }
@@ -150,13 +164,11 @@ public class ContextSettings : ViewModelBase
 
             if (HighContrast)
             {
-                OnPropertyChanged(null);
                 HighContrastSmartAssist();
                 HighContrastAssistInProgress = false;
-                return;
             }
 
-            OnPropertyChanged();
+            OnPropertyChanged(null);
         }
     }
     public Brush? ListForeground
@@ -168,13 +180,11 @@ public class ContextSettings : ViewModelBase
 
             if (HighContrast)
             {
-                OnPropertyChanged(null);
                 HighContrastSmartAssist();
                 HighContrastAssistInProgress = false;
-                return;
             }
 
-            OnPropertyChanged();
+            OnPropertyChanged(null);
         }
     }
     public FontFamily? MainFontFamily
@@ -193,7 +203,7 @@ public class ContextSettings : ViewModelBase
         get => _mainFontSize;
         set
         {
-            _mainFontSize = Math.Min(24.0, Math.Max(10.0, value));
+            _mainFontSize = Math.Min(22.0, Math.Max(9.0, value));
             OnPropertyChanged(null);
             RefreshRecentNotes();
         }
@@ -217,13 +227,11 @@ public class ContextSettings : ViewModelBase
 
             if (HighContrast)
             {
-                OnPropertyChanged(null);
                 HighContrastSmartAssist();
                 HighContrastAssistInProgress = false;
-                return;
             }
 
-            OnPropertyChanged();
+            OnPropertyChanged(null);
         }
     }
     public Brush? MenuForeground
@@ -235,13 +243,11 @@ public class ContextSettings : ViewModelBase
 
             if (HighContrast)
             {
-                OnPropertyChanged(null);
                 HighContrastSmartAssist();
                 HighContrastAssistInProgress = false;
-                return;
             }
 
-            OnPropertyChanged();
+            OnPropertyChanged(null);
         }
     }
     public double NoteClickthrough

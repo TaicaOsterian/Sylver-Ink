@@ -59,7 +59,7 @@ public partial class MainWindow : Window
                     e.Cancel = true;
                     return;
                 case MessageBoxResult.Yes:
-                    ViewModel.GridEnabled = false;
+                    Settings.GridEnabled = false;
                     Application.Current.Shutdown();
                     return;
             }
@@ -72,7 +72,7 @@ public partial class MainWindow : Window
                 return;
             case MessageBoxResult.Yes:
                 e.Cancel = true;
-                ViewModel.GridEnabled = false;
+                Settings.GridEnabled = false;
 
                 foreach (Database db in Databases)
                     Erase(GetLockFile(db.DBFile));

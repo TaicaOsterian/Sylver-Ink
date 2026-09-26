@@ -7,6 +7,22 @@ Sylver Ink is designed to streamline and simplify the ADHD brain process, a Sisy
 **Sylver Ink is currently in an early beta release.** Check frequently for updates!
 
 
+## What Sylver Ink IS:
+
+- **A text editor**: Sylver Ink is a streamlined text editing program. It is designed to be as convenient as possible without stripping away what makes a rigorous notepad program so valuable: It keeps the tools, and makes them feel more like *tools* than a huge *Swiss-army knife*.
+
+- **A notebook**: Sylver Ink is designed to help you put your thoughts somewhere they will be safe and accessible. It isn't hard to review your past writing, because Sylver Ink doesn't overcomplicate the search.
+
+- **An organizer**: Sylver Ink takes on the work of sorting and collating your notes, tagging them, and making them simple to navigate. From the front, it may not seem like much is going on; and *that's the point.* You won't see a progress bar when searching for and opening a note. You will *feel* mentally unburdened.
+
+
+## What Sylver Ink is NOT:
+
+- **A word processor**: Sylver Ink is a journaling program, designed to be easy and intuitive for neurodivergent users. It has many features of a word processing program like Microsoft Word or LibreOffice Writer, but it is not a fully-fledged document editor. Sylver Ink also cannot edit files produced by fully-fledged document editors. *Sylver Ink is not a replacement for a true word processing program,* and it isn't trying to be one.
+
+- **A data encryptor**: Sylver Ink's file format, SIDB, is compressed using [LZW](https://en.wikipedia.org/wiki/Lempel%E2%80%93Ziv%E2%80%93Welch), an algorithm that has existed since the 1970s. LZW is extremely efficient for plaintext data, but it is not cryptographically secure. If your notes contain sensitive info, you should still securely encrypt them as you would any other file.
+
+
 ## Usage
 
 Upon running Sylver Ink for the first time, the default database will be automatically created in the user's My Documents folder, blank and ready to be impregnated.

@@ -587,6 +587,10 @@ Do you want to overwrite it?</value>
     <value>Backup</value>
     <comment>The verb, "to back something up".</comment>
   </data>
+  <data name="Label_Berry" xml:space="preserve">
+    <value>Berry</value>
+    <comment>The noun, a fruit</comment>
+  </data>
   <data name="Word_Bold" xml:space="preserve">
     <value>Bold</value>
     <comment>As in bold text.</comment>

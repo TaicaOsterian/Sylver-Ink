@@ -20,7 +20,7 @@
         Title="Sylver Ink"
         Width="450">
     <Grid Background="{Binding AppSettings.AccentBackground}"
-          IsEnabled="{Binding GridEnabled}"
+          IsEnabled="{Binding AppSettings.GridEnabled}"
           x:Name="MainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

@@ -12,7 +12,6 @@ public class MainWindowViewModel : ViewModelBase
     private string _addressCodeDisplay = string.Empty;
     private bool _codePopupVisible;
     private bool _connectPopupVisible;
-    private bool _gridEnabled = true;
     private double _pixelsPerInchY = 96.0;
     private int _refreshToken;
     private string _renameDatabaseName = string.Empty;
@@ -56,16 +55,6 @@ public class MainWindowViewModel : ViewModelBase
         set
         {
             _connectPopupVisible = value;
-            OnPropertyChanged();
-        }
-    }
-
-    public bool GridEnabled
-    {
-        get => _gridEnabled;
-        set
-        {
-            _gridEnabled = value;
             OnPropertyChanged();
         }
     }

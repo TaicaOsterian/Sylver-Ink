@@ -4,6 +4,14 @@ namespace SylverInk.Visuals;
 
 public static class Themes
 {
+    public static Theme Berry { get; } = new(Strings.Label_Berry,
+            accentBg: BrushFromBytes("B01366"),
+            accentFg: BrushFromBytes("18DE61"),
+            listBg: BrushFromBytes("150318"),
+            listFg: BrushFromBytes("FEF7FB"),
+            menuBg: BrushFromBytes("300C19"),
+            menuFg: BrushFromBytes("E4DAFC"));
+
     public static Theme Catpuccin { get; } = new(Strings.Label_Catpuccin,
             accentBg: BrushFromBytes("1E1E2E"),
             accentFg: BrushFromBytes("89B4FA"),
@@ -26,11 +34,11 @@ public static class Themes
             listBg: BrushFromBytes("FFFFFF"),
             listFg: BrushFromBytes("000000"),
             menuBg: BrushFromBytes("F5F5DC"),
-            menuFg: BrushFromBytes("696969"));
+            menuFg: BrushFromBytes("343434"));
 
     public static Theme Default => Manila;
 
-    public static ICollection<Theme> ThemeCollection { get; } = [Catpuccin, HighContrast, Manila];
+    public static ICollection<Theme> ThemeCollection { get; } = [Berry, Catpuccin, HighContrast, Manila];
 
     public static Theme GetTheme(string name)
     {
