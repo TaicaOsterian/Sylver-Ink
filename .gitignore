@@ -42,7 +42,6 @@ AssemblyInfo.cs
 DvlErrLog.txt
 LICENSE
 GlobalSuppressions.cs
-*.rtf
 *.jpg
 *.Designer.cs
 *.tmp
