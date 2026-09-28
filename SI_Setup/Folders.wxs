@@ -1,0 +1,11 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+	<Fragment>
+		<StandardDirectory Id="ProgramFiles6432Folder">
+			<Directory Id="INSTALLFOLDER" Name="Sylver Ink"/>
+		</StandardDirectory>
+
+		<StandardDirectory Id="StartMenuFolder">
+			<Directory Id="SylverInkStartMenuFolder" Name="Sylver Ink"/>
+		</StandardDirectory>
+	</Fragment>
+</Wix>

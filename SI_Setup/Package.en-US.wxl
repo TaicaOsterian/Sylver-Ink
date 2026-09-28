@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="en-US" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+	<String Id="DowngradeError" Value="A newer version of Sylver Ink is already installed."/>
+	<String Id="Feature0Desc" Value="Install the main Sylver Ink application."/>
+	<String Id="Feature1Desc" Value="Associate .sidb and .sibk files with Sylver Ink."/>
+	<String Id="Feature2Desc" Value="Open Sylver Ink when your computer is turned on."/>
+	<String Id="Feature0Title" Value="Sylver Ink"/>
+	<String Id="Feature1Title" Value="Register File Associations"/>
+	<String Id="Feature2Title" Value="Run on Startup"/>
+	<String Id="OpenCommand" Value="Open"/>
+	<String Id="RestoreCommand" Value="Restore"/>
+	<String Id="SidbDesc" Value="Sylver Ink database file"/>
+	<String Id="SibkDesc" Value="Sylver Ink backup file"/>
+</WixLocalization>

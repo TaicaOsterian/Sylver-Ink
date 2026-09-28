@@ -1,0 +1,96 @@
+﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util"
+	 xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+	
+	<Package Id="Taica.SylverInk" Name="Sylver Ink" Manufacturer="Taica" UpgradeCode="{3DAEECB4-374E-45BF-8E4F-D3514CB1DE36}" Version="1.10.0.0">
+		<MajorUpgrade AllowSameVersionUpgrades="yes" DowngradeErrorMessage="!(loc.DowngradeError)" IgnoreLanguage="yes"/>
+		
+		<MediaTemplate EmbedCab="yes"/>
+
+		<Icon Id="glasses.ico" SourceFile="res/glasses.ico"/>
+
+		<WixVariable Id="WixUILicenseRtf" Value="res/license.rtf"/>
+
+		<Property Id="ApplicationFolderName" Value="Sylver Ink"/>
+		<Property Id="WixAppFolder" Value="WixPerMachineFolder"/>
+
+		<Property Id="ARPPRODUCTICON" Value="glasses.ico"/>
+
+		<ui:WixUI Id="WixUI_FeatureTree"/>
+		<WixVariable Id="WixUIDialogBmp" Value="res/dialog.png"/>
+		<WixVariable Id="WixUIBannerBmp" Value="res/banner.png"/>
+
+		<Feature Id="MainFeature" AllowAbsent="no" ConfigurableDirectory="INSTALLFOLDER" Display="expand" Title="!(loc.Feature0Title)" Description="!(loc.Feature0Desc)">
+			<Files Include="../publish/win-x64/**">
+				<Exclude Files="../publish/win-x64/**/Sylver Ink.exe"/>
+				<Exclude Files="../publish/win-x64/**/*.ico"/>
+			</Files>
+			
+			<Component Id="SylverInk.exe">
+				<File KeyPath="yes" Id="SylverInk.exe" Name="Sylver Ink.exe" Source="../publish/win-x64/Sylver Ink.exe"/>
+			</Component>
+
+			<Component Id="readme.rtf">
+				<File KeyPath="yes" Id="readme.rtf" Name="readme.rtf" Source="res/readme.rtf"/>
+			</Component>
+
+			<Component Id="glasses.ico">
+				<File KeyPath="yes" Id="glasses.ico" Name="glasses.ico" Source="res/glasses.ico"/>
+			</Component>
+
+			<Component Id="sidb.ico">
+				<File KeyPath="yes" Id="sidb.ico" Name="sidb.ico" Source="res/sidb.ico"/>
+			</Component>
+
+			<Component Id="sibk.ico">
+				<File KeyPath="yes" Id="sibk.ico" Name="sibk.ico" Source="res/sibk.ico"/>
+			</Component>
+
+			<Component Id="ShortcutComponent">
+				<Shortcut Directory="DesktopFolder" Icon="glasses.ico" Id="ExeDesktopShortcut" Name="Sylver Ink" Target="[#SylverInk.exe]" WorkingDirectory="INSTALLFOLDER"/>
+				<Shortcut Directory="SylverInkStartMenuFolder" Icon="glasses.ico" Id="ExeStartMenuShortcut" Name="Sylver Ink" Target="[#SylverInk.exe]" WorkingDirectory="INSTALLFOLDER"/>
+
+				<Shortcut Directory="DesktopFolder" Id="RtfDesktopShortcut" Name="Sylver Ink README" Target="[#readme.rtf]" WorkingDirectory="INSTALLFOLDER"/>
+				<Shortcut Directory="SylverInkStartMenuFolder" Id="RtfStartMenuShortcut" Name="Sylver Ink README" Target="[#readme.rtf]" WorkingDirectory="INSTALLFOLDER"/>
+
+				<RegistryKey ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes" Id="InstalledKey" Root="HKCU" Key="Sylver Ink\installed">
+					<RegistryValue Id="InstalledValue" KeyPath="yes" Type="integer" Value="1"/>
+				</RegistryKey>
+			</Component>
+
+			<Feature Id="FileAssocFeature" AllowAbsent="yes" Title="!(loc.Feature1Title)" Description="!(loc.Feature1Desc)">
+				<Component Id="RegistryComponent">
+					<RegistryKey ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes" Id="SIDBShellKey" Root="HKCR" Key="SylverInk.SIDB\shell\open\command">
+						<RegistryValue Id="SIDBShellValue" Type="string" Value="[INSTALLFOLDER]Sylver Ink.exe &quot;%1&quot;"/>
+					</RegistryKey>
+
+					<RegistryKey ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes" Id="SIBKShellKey" Root="HKCR" Key="SylverInk.SIBK\shell\open\command">
+						<RegistryValue Id="SIBKShellValue" Type="string" Value="[INSTALLFOLDER]Sylver Ink.exe &quot;%1&quot;"/>
+					</RegistryKey>
+
+					<ProgId Id="SylverInk.SIDB" Description="Sylver Ink database file" Icon="sidb.ico">
+						<Extension Id="sidb" ContentType="application/octet-stream">
+							<Verb Id="open" Command="!(loc.OpenCommand)" TargetFile="SylverInk.exe" Argument="&quot;%1&quot;"/>
+						</Extension>
+					</ProgId>
+
+					<ProgId Id="SylverInk.SIBK" Description="Sylver Ink backup file" Icon="sibk.ico">
+						<Extension Id="sibk" ContentType="application/octet-stream">
+							<Verb Id="open" Command="!(loc.RestoreCommand)" TargetFile="SylverInk.exe" Argument="&quot;%1&quot;"/>
+						</Extension>
+					</ProgId>
+				</Component>
+			</Feature>
+
+			<Feature Id="StartupFeature" AllowAbsent="yes" Title="!(loc.Feature2Title)" Description="!(loc.Feature2Desc)">
+				<Component Id="StartupComponent">
+					<Shortcut Directory="StartupFolder" Icon="glasses.ico" Id="ExeStartupShortcut" Name="Sylver Ink" Target="[#SylverInk.exe]" WorkingDirectory="INSTALLFOLDER"/>
+
+					<RegistryKey ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes" Id="StartupKey" Root="HKCU" Key="Sylver Ink\startup">
+						<RegistryValue Id="StartupValue" KeyPath="yes" Type="integer" Value="1"/>
+					</RegistryKey>
+				</Component>
+			</Feature>
+		</Feature>
+	</Package>
+</Wix>

@@ -1,0 +1,37 @@
+﻿<Project Sdk="WixToolset.Sdk/7.0.0">
+
+	<PropertyGroup>
+		<OutputName>SylverInk</OutputName>
+		<OutputType>Package</OutputType>
+		<AcceptEula>wix7</AcceptEula>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<Cultures>en-US;es-ES</Cultures>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+		<SuppressValidation>true</SuppressValidation>
+		<SuppressIces>ICE64;ICE69</SuppressIces>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+		<SuppressValidation>true</SuppressValidation>
+		<SuppressIces>ICE64;ICE69</SuppressIces>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
+		<SuppressValidation>true</SuppressValidation>
+		<SuppressIces>ICE64;ICE69</SuppressIces>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
+		<SuppressValidation>true</SuppressValidation>
+		<SuppressIces>ICE64;ICE69</SuppressIces>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="WixToolset.UI.wixext" Version="7.0.0"/>
+		<PackageReference Include="WixToolset.Util.wixext" Version="7.0.0"/>
+	</ItemGroup>
+</Project>
