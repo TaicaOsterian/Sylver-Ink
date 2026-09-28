@@ -1,0 +1,72 @@
+name: Build, Sign, and Package WPF Application
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-and-package:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout Source Code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Install WiX Toolset CLI
+      run: dotnet tool install --global wix
+
+    - name: Accept WiX OSMF EULA
+      run: wix eula accept wix7
+      shell: pwsh
+
+    - name: Install WiX Extensions
+      run: |
+        wix extension add --global WixToolset.UI.wixext
+        wix extension add --global WixToolset.Util.wixext
+
+    - name: Install ResXFileCodeGenerator
+      run: dotnet add package VocaDb.ResXFileCodeGenerator
+
+    - name: Compile WPF Application
+      run: dotnet build "Sylver Ink.csproj" --configuration Release -r win-x64 --output ./build-output/unsigned/
+
+    - name: Publish WPF Application
+      run: dotnet publish "Sylver Ink.csproj" -c Release --runtime win-x64 --self-contained true -o ./publish/win-x64
+
+    - name: Build Raw MSI Installers
+      run: |
+        dotnet restore -r win-x64 ./SI_Setup/SI_Setup.wixproj
+        msbuild ./SI_Setup/SI_Setup.wixproj -p:Configuration=Release -p:Platform=x64
+      shell: pwsh
+
+    # TODO: Certificate signing goes here
+
+    - name: Run Localization & WiX Batch Script
+      id: locate-sdk
+      run: |
+        # Dynamically find the modern Windows 10/11 Kits x86 binary path on the runner
+        $sdkFolder = Get-ChildItem -Path "C:\Program Files (x86)\Windows Kits\10\bin\*" -Include "msitran.exe" -Recurse |
+                     Where-Object { $_.FullName -match 'x86' } |
+                     Select-Object -First 1 -ExpandProperty DirectoryName
+
+        Write-Host "Found Windows SDK Tools path at: $sdkFolder"
+
+        # Inject the path directly into the Batch execution context
+        $env:SdkPath = $sdkFolder
+        & .\AuthorMSI.bat
+      shell: pwsh
+
+    - name: Upload Final Multilingual MSI Installer
+      uses: actions/upload-artifact@v4
+      with:
+        name: SylverInk-Multilingual-Installer
+        path: ./SylverInk.msi
