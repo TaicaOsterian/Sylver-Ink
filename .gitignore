@@ -31,8 +31,9 @@
 *.out
 *.app
 
-bin/*
-obj/*
+**/bin/*
+**/obj/*
+*.msi
 Properties/*
 .vs/*
 publish/*
