@@ -13,7 +13,7 @@
   <PropertyGroup>
     <SourceRevisionId>build$([System.DateTime]::UtcNow.ToString("yyyyMMdd"))</SourceRevisionId>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <Version>1.10.0</Version>
+    <Version>1.10.1</Version>
     <UseWindowsForms>False</UseWindowsForms>
     <Title>Sylver Ink</Title>
     <Authors></Authors>
@@ -53,9 +53,17 @@
   
   <ItemGroup>
     <Compile Remove="publish\**" />
+    <Compile Remove="SI_Setup\**" />
     <EmbeddedResource Remove="publish\**" />
+    <EmbeddedResource Remove="SI_Setup\**" />
     <None Remove="publish\**" />
+    <None Remove="SI_Setup\**" />
     <Page Remove="publish\**" />
+    <Page Remove="SI_Setup\**" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="AuthorMSI.bat" />
   </ItemGroup>
   
   <ItemGroup>
@@ -66,6 +74,13 @@
   
   <ItemGroup>
     <PackageReference Include="System.Resources.ResourceManager" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="VocaDb.ResXFileCodeGenerator" Version="2.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
   
   <ItemGroup>
@@ -97,14 +112,6 @@
   
   <ItemGroup>
     <Page Include="App.xaml" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Compile Update="Localization\Strings.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Strings.resx</DependentUpon>
-    </Compile>
   </ItemGroup>
   
   <ItemGroup>

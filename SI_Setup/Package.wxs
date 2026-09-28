@@ -2,7 +2,7 @@
      xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util"
 	 xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
 	
-	<Package Id="Taica.SylverInk" Name="Sylver Ink" Manufacturer="Taica" UpgradeCode="{3DAEECB4-374E-45BF-8E4F-D3514CB1DE36}" Version="1.10.0.0">
+	<Package Id="Taica.SylverInk" Name="Sylver Ink" Manufacturer="Taica" UpgradeCode="{3DAEECB4-374E-45BF-8E4F-D3514CB1DE36}" Version="1.10.1.0">
 		<MajorUpgrade AllowSameVersionUpgrades="yes" DowngradeErrorMessage="!(loc.DowngradeError)" IgnoreLanguage="yes"/>
 		
 		<MediaTemplate EmbedCab="yes"/>
