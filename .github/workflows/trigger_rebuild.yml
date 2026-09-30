@@ -4,6 +4,7 @@ on:
     branches: [ main ]
 jobs:
   ping:
+    if: github.ref_type == 'branch'
     runs-on: ubuntu-latest
     steps:
       - name: Post Cloudflare Deploy Hook

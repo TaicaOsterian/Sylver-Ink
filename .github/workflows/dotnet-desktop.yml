@@ -85,3 +85,12 @@ jobs:
         files: |
           ./SylverInk.msi
           ./SylverInk.msi.sha256
+
+  rebuild-site:
+    needs: build-and-package
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Post Cloudflare Deploy Hook
+        run: curl -fsSL -X POST "${{ secrets.CF_DEPLOY_HOOK }}"
+
