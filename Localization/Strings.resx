@@ -241,6 +241,9 @@ length</value>
   <data name="FailedUpdateCheck" xml:space="preserve">
     <value>An error occurred while checking for updates.</value>
   </data>
+  <data name="HelpText_Rename" xml:space="preserve">
+    <value>Enter the new name of the database here.</value>
+  </data>
   <data name="HexCodeTooltip" xml:space="preserve">
     <value>Hex code (RGB or ARGB)</value>
   </data>
@@ -277,6 +280,10 @@ Remember to press Import to finalize your changes!</value>
   </data>
   <data name="Label_Backup" xml:space="preserve">
     <value>Backup...</value>
+  </data>
+  <data name="Label_Berry" xml:space="preserve">
+    <value>Berry</value>
+    <comment>The noun, a fruit</comment>
   </data>
   <data name="Label_Catpuccin" xml:space="preserve">
     <value>Catpuccin</value>
@@ -586,10 +593,6 @@ Do you want to overwrite it?</value>
   <data name="Word_Backup" xml:space="preserve">
     <value>Backup</value>
     <comment>The verb, "to back something up".</comment>
-  </data>
-  <data name="Label_Berry" xml:space="preserve">
-    <value>Berry</value>
-    <comment>The noun, a fruit</comment>
   </data>
   <data name="Word_Bold" xml:space="preserve">
     <value>Bold</value>

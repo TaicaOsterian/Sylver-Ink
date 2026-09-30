@@ -222,26 +222,26 @@ public class ImportViewModel : ViewModelBase
 
     private void MeasureNotesAdaptive()
     {
+        // We scan for the following character classes in order to build predicates.
         string[] classes = [@"\p{L}+", @"\p{Nd}+", @"[\p{Zs}\t]+", @"[\p{P}\p{S}]+"];
-        var frequencies = new Dictionary<string, double>();
-        var tokenCounts = new Dictionary<string, int>();
 
-        int lastPredicateSequence = 0;
-        double lastPredicateValue = 0.0;
-        double lineTotal = 0.0;
-        string newPredicate = string.Empty;
+        var predicates = new List<string> { string.Empty };
+        var predicateSet = new HashSet<string> { string.Empty };
+        var tokenCounts = new Dictionary<string, int> { [string.Empty] = 0 };
+        var matchCounts = new Dictionary<string, int> { [string.Empty] = 0 };
 
-        for (int length = 3; ; length++)
+        string bestPredicate = string.Empty;
+        double bestScore = double.NegativeInfinity;
+        int lineCount = DataLines.Count;
+
+        for (int length = 2; ; length++)
         {
-            double total = 0.0;
-            frequencies.Clear();
-            frequencies.Add(string.Empty, 0.0);
-            tokenCounts.Clear();
-            tokenCounts.Add(string.Empty, 0);
+            int predicateCount = predicateSet.Count;
 
-            for (int line = 0; line < DataLines.Count; line++, lineTotal++)
+            // Build new predicates by extending the surviving seeds.
+            for (int line = 0; line < lineCount; line++)
             {
-                var key = DataLines[line].Trim();
+                var key = DataLines[line];
                 if (string.IsNullOrWhiteSpace(key))
                     continue;
 
@@ -252,116 +252,176 @@ public class ImportViewModel : ViewModelBase
                         c++;
                         t = 0;
                     }
+
                     string type = classes[t];
                     if (!Regex.IsMatch(key.AsSpan(c, 1), type))
                         continue;
 
-                    for (int k = frequencies.Keys.Count - 1; k > -1; k--)
+                    for (int k = predicates.Count - 1; k > -1; k--)
                     {
-                        var pattern = frequencies.Keys.ElementAt(k);
+                        var pattern = predicates[k];
+
                         if (c + 1 < tokenCounts[pattern])
                             continue;
 
-                        if (pattern.EndsWith(type, StringComparison.Ordinal))
-                        {
-                            frequencies[pattern]++;
-                            total++;
-                            continue;
-                        }
+                        // Fold consecutive tokens of the same class.
+                        var pBrute = pattern.EndsWith(type, StringComparison.Ordinal)
+                            ? pattern
+                            : pattern + type;
 
-                        var pBrute = pattern + type;
+                        if (predicateSet.Contains(pBrute))
+                            continue;
+
+                        // Sanity check: Does the newly constructed predicate match the string it was just built from?
                         var keySpan = key.AsSpan(0, Math.Min(c + 1, key.Length));
                         if (!Regex.IsMatch(keySpan, pBrute))
                             continue;
-                        if (string.IsNullOrWhiteSpace(pBrute.Trim()))
-                            continue;
 
-                        total++;
-                        if (frequencies.TryAdd(pBrute, 1.0))
-                        {
-                            tokenCounts.TryAdd(pBrute, tokenCounts[pattern] + 1);
-                            frequencies.Remove(string.Empty);
-                            tokenCounts.Remove(string.Empty);
-                        }
-                        else
-                        {
-                            frequencies[pBrute]++;
-                            frequencies.Remove(pattern);
-                            tokenCounts.Remove(pattern);
-                        }
+                        predicates.Add(pBrute);
+                        predicateSet.Add(pBrute);
+                        tokenCounts.TryAdd(pBrute, tokenCounts[pattern] + 1);
                     }
                 }
             }
 
-            if (string.IsNullOrWhiteSpace(frequencies.Keys.ElementAt(0)))
-                continue;
-
-            foreach (string key in frequencies.Keys)
-                frequencies[key] /= total;
-
-            var orderedEnum = frequencies.OrderByDescending(pair => pair.Value).GetEnumerator();
-            if (!orderedEnum.MoveNext())
+            // If we didn't build any new predicates this iteration, the search has exhausted and it's time to abort.
+            if (predicateCount == predicateSet.Count)
                 break;
 
-            while (orderedEnum.Current.Value >= 0.001)
-            {
-                if (orderedEnum.Current.Value >= lastPredicateValue
-                    || (!orderedEnum.Current.Key.StartsWith(classes[0], StringComparison.Ordinal)
-                        && newPredicate.StartsWith("^" + classes[0], StringComparison.Ordinal)))
-                {
-                    newPredicate = "^" + orderedEnum.Current.Key;
-                    if (AdaptivePredicate == newPredicate)
-                        break;
+            predicates = [.. predicates.Distinct()];
 
-                    AdaptivePredicate = newPredicate;
-                    lastPredicateSequence = 0;
-                    lastPredicateValue = orderedEnum.Current.Value;
+            // Count matches, cached. Only newly-added predicates need to be counted.
+            foreach (string predicate in predicates)
+            {
+                if (matchCounts.ContainsKey(predicate))
+                    continue;
+
+                var regex = new Regex($@"^{predicate}");
+                int matches = 0;
+
+                for (int i = 0; i < lineCount; i++)
+                {
+                    if (regex.IsMatch(DataLines[i]))
+                        matches++;
                 }
 
-                if (!orderedEnum.MoveNext())
-                    break;
+                matchCounts[predicate] = matches;
             }
 
-            if (AdaptivePredicate == newPredicate)
-                lastPredicateSequence++;
+            // Score viable predicates.
+            var entropies = new Dictionary<string, double>();
+            var tfScores = new Dictionary<string, double>();
 
-            if (lastPredicateSequence > 6)
-                break;
+            foreach (string predicate in predicates)
+            {
+                if (string.IsNullOrEmpty(predicate))
+                    continue;
+
+                int matches = matchCounts[predicate];
+
+                // Hard floor / ceiling on what can be a separator.
+                if (matches < 2 || matches > lineCount * 0.5)
+                    continue;
+
+                // W(x) = log10(L / l(x)), where: x is a predicate; L is the total number of text lines; and l(x) is the number of text lines matching x.
+                double tfScore = Math.Log10((double)lineCount / matches);
+                tfScores[predicate] = tfScore;
+
+                // Shannon entropy over class tokens.
+                var probabilities = new Dictionary<string, double>();
+                var split = predicate.Split('+');
+
+                for (int i = 0; i < split.Length; i++)
+                {
+                    string token = split[i];
+
+                    if (string.IsNullOrWhiteSpace(token))
+                        continue;
+
+                    if (!probabilities.TryAdd(token, 1.0))
+                        probabilities[token] += 1.0;
+                }
+
+                // H(x) = -sum(p(x) * log2(p(x))), where: x is a predicate; and p(x) is the probability distribution of each single character (or in this case, token) within x.
+                double sum = 0.0;
+
+                foreach (double val in probabilities.Values)
+                {
+                    double prob = val / tokenCounts[predicate];
+                    sum += prob * Math.Log2(prob);
+                }
+
+                entropies[predicate] = -sum;
+            }
+
+            // Prune seeds for the next iteration.
+            var survivors = predicates.Where(p => matchCounts[p] >= 2).ToList();
+            predicates = survivors;
+            predicateSet = [.. survivors];
+
+            if (entropies.Count == 0)
+                continue;
+
+            // Final score: S(x) = W(x) * (1 - H(x) / Hmax), where: x is a predicate; W(x) is the TF-IDF score of x; H(x) is the Shannon entropy of x; and Hmax is the highest Shannon entropy among all predicates.
+
+            double highestEntropy = entropies.Values.Max();
+
+            foreach (var (predicate, tfScore) in tfScores)
+            {
+                double factor = highestEntropy > 0
+                    ? 1.0 - entropies[predicate] / highestEntropy
+                    : 1.0;
+
+                double score = tfScore * factor;
+
+                if (score <= bestScore)
+                    continue;
+
+                // Our chosen predicate is the one with the best combined TF-IDF and Shannon entropy score.
+                bestScore = score;
+                bestPredicate = predicate;
+            }
         }
+
+        AdaptivePredicate = bestPredicate;
 
         if (!string.IsNullOrWhiteSpace(AdaptivePredicate.Trim()))
         {
             StringBuilder recordData = new();
             RunningAverage = 0.0;
-            RunningCount = 0;
+            RunningCount = 1;
 
             for (int i = 0; i < DataLines.Count; i++)
             {
-                var line = DataLines[i].Trim();
-                if (Regex.IsMatch(line, AdaptivePredicate))
+                var line = DataLines[i];
+                RunningAverage += line.Length;
+
+                if (!Regex.IsMatch(line, $@"^{AdaptivePredicate}"))
                 {
                     if (recordData.Length > 0)
                     {
-                        RunningAverage += recordData.Length;
-                        RunningCount++;
-                    }
-                    recordData.Clear();
-                    recordData.Append(line);
-                }
-                else
-                {
-                    if (i > 0)
                         recordData.AppendLine();
-                    recordData.Append(DataLines[i]);
+                        RunningAverage += Environment.NewLine.Length;
+                    }
+
+                    recordData.Append(line);
+                    continue;
                 }
+
+                if (recordData.Length > 0)
+                    RunningCount++;
+
+                recordData.Clear();
+                recordData.Append(line);
             }
 
             RunningAverage /= RunningCount;
             return;
         }
 
-        MessageBox.Show(Strings.FailedAutodetect, Strings.Title_Error, MessageBoxButton.OK);
+        Concurrent(ShowTooltip, Strings.FailedAutodetect);
         AdaptivePredicate = string.Empty;
+        RunningAverage = 0.0;
         RunningCount = 0;
     }
 
@@ -374,9 +434,15 @@ public class ImportViewModel : ViewModelBase
 
         for (int i = 0; i < DataLines.Count; i++)
         {
-            var line = DataLines[i];
-            if (i > 0)
+            var line = DataLines[i].Trim();
+            RunningAverage += line.Length;
+
+            if (recordData.Length > 0)
+            {
                 recordData.AppendLine();
+                RunningAverage += Environment.NewLine.Length;
+            }
+
             recordData.Append(line);
 
             if (line.Length == 0)
@@ -390,19 +456,13 @@ public class ImportViewModel : ViewModelBase
             if (recordData.Length == 0 || blankCount < LineTolerance)
                 continue;
 
-            blankCount = 0;
-            RunningAverage += recordData.Length;
             recordData.Clear();
+
+            blankCount = 0;
             RunningCount++;
         }
 
-        if (recordData.Length > 0)
-        {
-            RunningAverage += recordData.Length;
-            RunningCount++;
-        }
-
-        RunningAverage /= RunningCount;
+        RunningAverage = RunningCount > 0 ? RunningAverage / RunningCount : 0.0;
     }
 
     private async Task OpenFileAsync()
@@ -429,21 +489,31 @@ public class ImportViewModel : ViewModelBase
         {
             string line = DataLines[i];
 
+            // Adaptive
             if (AdaptiveImport)
             {
-                if (Regex.IsMatch(line, AdaptivePredicate) && recordData.Length > 0)
+                if (recordData.Length > 0 && Regex.IsMatch(line, $@"^{AdaptivePredicate}"))
                 {
                     CurrentDatabase.CreateRecord(recordData.ToString());
                     Imported++;
                     recordData.Clear();
                 }
-                if (i > 0) recordData.AppendLine();
+
+                if (recordData.Length > 0)
+                    recordData.AppendLine();
+
                 recordData.Append(line);
                 continue;
             }
 
-            if (i > 0) recordData.AppendLine();
+            // Manual
+            line = line.Trim();
+
+            if (recordData.Length > 0)
+                recordData.AppendLine();
+
             recordData.Append(line);
+
             if (line.Length == 0)
                 blankCount++;
             else
@@ -451,16 +521,16 @@ public class ImportViewModel : ViewModelBase
 
             StatusText = $"{i * 100.0 / DataLines.Count:N2}% {Strings.Word_Imported}...";
 
-            if (blankCount < LineTolerance && i < DataLines.Count - 1)
+            if (i < DataLines.Count - 1 && blankCount < LineTolerance)
                 continue;
 
-            if (recordData.Length > 0)
-            {
-                CurrentDatabase.CreateRecord(recordData.ToString());
-                Imported++;
-                recordData.Clear();
-                blankCount = 0;
-            }
+            if (recordData.Length == 0)
+                continue;
+
+            CurrentDatabase.CreateRecord(recordData.ToString());
+            blankCount = 0;
+            Imported++;
+            recordData.Clear();
         }
 
         if (recordData.Length > 0)

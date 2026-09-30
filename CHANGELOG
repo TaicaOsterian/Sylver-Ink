@@ -1,0 +1,3 @@
+Good morning, writers! This latest release includes a major overhaul of the Import window's backend. You'll find that adaptive scanning now runs a lot more smoothly, and returns much more sensible notes.
+
+For those interested, a lot of the work that was done here includes changing from a purely repetitive approach to more deeply analyzing the text according to TF-IDF and Shannon entropy calculations. (Say that five times fast.) I'd love to do some discussion about it, but for now, just know that your notes will be split up in a much more *human*-feeling way.

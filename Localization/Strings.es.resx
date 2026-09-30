@@ -232,6 +232,9 @@ de las notas</value>
   <data name="FailedUpdateCheck" xml:space="preserve">
     <value>Se produjo un error al buscar actualizaciones.</value>
   </data>
+  <data name="HelpText_Rename" xml:space="preserve">
+    <value>Escriba aquí el nuevo nombre para la base de datos.</value>
+  </data>
   <data name="HexCodeTooltip" xml:space="preserve">
     <value>Código Hex (RGB o ARGB)</value>
   </data>
@@ -264,6 +267,9 @@ Recuerda presionar Importar para finalizar tus cambios!</value>
   </data>
   <data name="Label_Backup" xml:space="preserve">
     <value>Respaldo...</value>
+  </data>
+  <data name="Label_Berry" xml:space="preserve">
+    <value>Baya</value>
   </data>
   <data name="Label_Catpuccin" xml:space="preserve">
     <value>Catpuccín</value>
@@ -552,9 +558,6 @@ Recuerda presionar Importar para finalizar tus cambios!</value>
   </data>
   <data name="Word_Backup" xml:space="preserve">
     <value>Respaldo</value>
-  </data>
-  <data name="Label_Berry" xml:space="preserve">
-    <value>Baya</value>
   </data>
   <data name="Word_Bold" xml:space="preserve">
     <value>Negrita</value>

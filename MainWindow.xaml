@@ -29,7 +29,8 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Popup IsOpen="{Binding RenamePopupVisible, Mode=TwoWay}"
+        <Popup Focusable="True"
+               IsOpen="{Binding RenamePopupVisible, Mode=TwoWay}"
                Height="75"
                Placement="Mouse"
                PopupAnimation="Fade"
@@ -44,7 +45,9 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <TextBox Margin="0,10"
+                    <TextBox AutomationProperties.HelpText="{x:Static properties:Strings.HelpText_Rename}"
+                             AutomationProperties.Name="{x:Static properties:Strings.Word_Rename}"
+                             Margin="0,10"
                              Text="{Binding RenameDatabaseName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              Width="250"
                              x:Name="DatabaseNameBox">
@@ -63,7 +66,7 @@
                         <Button Command="{Binding SaveRenameCommand}"
                                 Content="{x:Static properties:Strings.Word_Save}"
                                 Margin="5"/>
-                        
+
                         <Button Command="{Binding CancelRenameCommand}"
                                 Content="{x:Static properties:Strings.Word_Cancel}"
                                 Margin="5"/>
@@ -72,7 +75,8 @@
             </Border>
         </Popup>
 
-        <Popup Height="75"
+        <Popup Focusable="True"
+               Height="75"
                IsOpen="{Binding ConnectPopupVisible, Mode=TwoWay}"
                Placement="Mouse"
                PopupAnimation="Fade"
@@ -90,9 +94,12 @@
                     <StackPanel HorizontalAlignment="Center"
                                 Orientation="Horizontal"
                                 VerticalAlignment="Center">
-                        <Label Content="{x:Static properties:Strings.Label_AddressCode}"/>
-                        
-                        <TextBox Margin="0,10"
+                        <Label AutomationProperties.HelpText="{x:Static properties:Strings.ConnectLabelTooltip}"
+                               Content="{x:Static properties:Strings.Label_AddressCode}"
+                               x:Name="AddressCodeLabel"/>
+
+                        <TextBox AutomationProperties.LabeledBy="{Binding ElementName=AddressCodeLabel}"
+                                 Margin="0,10"
                                  Text="{Binding AddressCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                  x:Name="AddressBox">
                             <TextBox.InputBindings>

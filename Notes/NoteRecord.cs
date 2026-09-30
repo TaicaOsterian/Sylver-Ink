@@ -56,7 +56,13 @@ public partial class NoteRecord
     {
         get
         {
-            var _preview = FlowDocumentPreview(TextConverter.Parse(Reconstruct(), TextFormat.Xaml)).ReplaceLineEndings().Replace(Environment.NewLine, " ").Replace('\t', ' ');
+            var _preview = FlowDocumentPreview(TextConverter.Parse(Reconstruct(), TextFormat.Xaml))
+                .ReplaceLineEndings()
+                .Replace(Environment.NewLine, " ")
+                .Replace('\t', ' ');
+
+            while (_preview.Contains("  "))
+                _preview = _preview.Replace("  ", " ");
 
             return string.IsNullOrEmpty(_preview) ? Strings.EmptyNote : _preview;
         }
