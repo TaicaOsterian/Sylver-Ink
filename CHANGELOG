@@ -1,3 +1,84 @@
 Good morning, writers! This latest release includes a major overhaul of the Import window's backend. You'll find that adaptive scanning now runs a lot more smoothly, and returns much more sensible notes.
 
-For those interested, a lot of the work that was done here includes changing from a purely repetitive approach to more deeply analyzing the text according to TF-IDF and Shannon entropy calculations. (Say that five times fast.) I'd love to do some discussion about it, but for now, just know that your notes will be split up in a much more *human*-feeling way.
+For those interested, a lot of the work that was done here includes changing from a purely repetitive approach to more deeply analyzing the text according to TF-IDF and Shannon entropy calculations. (Say that five times fast.)
+
+A deep dive is available below for those who are interested. For those with less time, just know that your notes will be split up in a much more *human*-feeling way from now on.
+
+<details>
+<summary>Click here to expand.</summary>
+
+What hasn't changed between the old and new methods is that Sylver Ink uses Regex to separate imported text files into notes. There's no neural networking involved.
+
+The routine's first steps involve building what I call a *predicate*: A Regex pattern computed from the text, that is then used on that same text in order to split it up.
+
+Sylver Ink considers four groups of character classes when it looks for a predicate. These are: <code>\p{L}</code> (letters); <code>\p{Nd}</code> (number digits); <code>[\p{P}\p{S}]</code> (punctuation and symbols); and <code>[\p{Zs}\p{Cc}]</code> (spaces, including tabs).
+
+Starting from an empty string, Sylver Ink tries to match each of these four classes at the starting position of every line of text in the file. This sounds like it would grow to be a very large list very quickly, but the four classes catch so many possible characters that the list only grows by a factor of four at most. And that's if every single line swaps from punctuation, to number, to letter, to space, so on and so forth. In practice, only a handful of unique, new predicates (as in, between two and five) are added to the list with every scan.
+
+This part of the routine essentially did not change from the old to new methods. It's what comes next, the part that selects the best predicate to use, that has been overhauled.
+
+
+### The Old Method
+
+Once every line had been factored in, the old routine sorted each predicate by how many lines it matched in the file. It then discarded all predicates that matched fewer than 5% of all lines; or, if the predicate was purely punctuation, then it needed to match only at least 1% of all lines to be kept.
+
+Given a certain bias factor, the routine then chose a predicate according to the following rule: The most common predicate containing only punctuation wins, unless it is significantly less common than the most common predicate that contains non-punctuation.
+
+The intent in biasing the function towards punctuation-only predicates was to separate the data if it contained, say, lines of all equals signs ("========") that are clearly better separators than the timestamps that might begin a single copy-pasted message ("[12:30 PM]").
+
+The problem is that the values I chose for these bias factors &mdash; 5%, 1%, "significantly less common", etc. &mdash; were all basically completely arbitrary, and there wasn't a more rigorous way to decide what they should be.
+
+In general, this method *sometimes* worked, but it worked (when it did) in a way that never really made practical sense.
+
+
+### The New Method
+
+To explain the new way predicates are selected, I have to explain two concepts: IDF and Shannon entropy.
+
+Inverse document frequency, or IDF, is the inverse of the rate at which a single word appears across a collection of documents.
+
+$$W(t) = \log \left( \frac{\text{# of all documents}}{\text{# of documents containing word } t} \right)$$
+
+In the case of Sylver Ink, the "word" in question is a predicate, and a "document" is a line of text in the file.
+
+What comes next is called Shannon entropy, which is a little more complicated. Shannon entropy considers every Regex token inside a predicate, and weighs it by how frequently it appears across the predicate.
+
+In other words, it's a similar process to IDF, but done for every token within a single predicate rather than for every predicate across the entire file.
+
+$$p(t) = \frac{\text{# of times token } t \text{ appears in predicate } p}{\text{Total # of tokens in } p}$$
+
+$$H(p) = -\sum p(t) \log_2 p(t)$$
+
+Shannon entropy is also weighted differently than IDF. It is measured on a scale from 0.0 to 1.0, where 0.0 is a predicate where every single token is different, and 1.0 is a predicate consisting entirely of the exact same token.
+
+It measures how <i>uniform</i> the predicate is, and therefore how much information it most likely encodes.
+
+A uniform predicate, one that doesn't encode nearly any information at all, is highly likely to be a valid separator; whereas one that is very random is more likely to be human-written text, and therefore not a separator.
+
+Sylver Ink computes the Shannon entropy for every predicate in the list, just like it computed their IDF scores. And finally, the routine combines these values to produce a final score:
+
+$$S(p) = W(p) \times \left( 1 - \frac{H(p)}{H_{\max}} \right)$$
+
+$$\text{Where } H_{\max} \text{ is the highest } H \text{ among all predicates}$$
+
+The predicate that wins is the one that has the highest final score.
+
+Sylver Ink starts from a length of 2, and then runs the above method out to, technically, an arbitrarily long length.
+
+What causes it to settle on a final predicate comes down to the initial building step: The routine stops trying to build longer predicates when it simply finds that it no longer can.
+
+I mentioned earlier that the routine tacks on Regex tokens to the ends of existing predicates. But in order to actually be saved, the new predicates have to actually match at least one line of text in the file. If they don't, they don't get added to the list.
+
+If the list of predicates is the same length before and after attempting to build new ones, then the search has been exhausted. The routine stops, throws up the last winning predicate, and that's the one that gets used to split up the file.
+
+
+### What's The Difference?
+
+For starters, the notes that come out of the import function will make a lot more coherent sense! There'll be a lot fewer instances of importing 300-plus notes, all containing a single line of text and completely detached from each other.
+
+But this doesn't mean the program will be importing a single note containing an entire novel, either.
+
+The long and short is, if you <i>do</i> import a novel, Sylver Ink will separate it by chapter, which is the most sensible way to do something like that. Sensibility: That's the name of Sylver Ink's game, after all.
+
+I hope you've enjoyed joining me for this diatribe! Happy journaling, everyone.
+</details>
