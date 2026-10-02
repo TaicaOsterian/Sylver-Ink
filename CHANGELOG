@@ -37,7 +37,7 @@ To explain the new way predicates are selected, I have to explain two concepts: 
 
 Inverse document frequency, or IDF, is the inverse of the rate at which a single word appears across a collection of documents.
 
-$$W(t) = \log \left( \frac{\text{# of all documents}}{\text{# of documents containing word } t} \right)$$
+<img width="543" height="94" alt="wt" src="https://github.com/user-attachments/assets/7e4fffde-dd1f-4df4-b748-b8fc0f8771c5">
 
 In the case of Sylver Ink, the "word" in question is a predicate, and a "document" is a line of text in the file.
 
@@ -45,11 +45,9 @@ What comes next is called Shannon entropy, which is a little more complicated. S
 
 In other words, it's a similar process to IDF, but done for every token within a single predicate rather than for every predicate across the entire file.
 
-$$p(t) = \frac{\text{# of times token } t \text{ appears in predicate } p}{\text{Total # of tokens in } p}$$
+<img width="548" height="165" alt="pt" src="https://github.com/user-attachments/assets/be620602-5052-4e31-be28-ea673b962696">
 
-$$H(p) = -\sum p(t) \log_2 p(t)$$
-
-Shannon entropy is also weighted differently than IDF. It is measured on a scale from 0.0 to 1.0, where 0.0 is a predicate where every single token is different, and 1.0 is a predicate consisting entirely of the exact same token.
+Shannon entropy is also weighted differently than IDF. It is measured on a scale from 0.0 to 1.0, where 1.0 is a predicate where every single token is different, and 0.0 is a predicate consisting entirely of the exact same token.
 
 It measures how <i>uniform</i> the predicate is, and therefore how much information it most likely encodes.
 
@@ -57,9 +55,7 @@ A uniform predicate, one that doesn't encode nearly any information at all, is h
 
 Sylver Ink computes the Shannon entropy for every predicate in the list, just like it computed their IDF scores. And finally, the routine combines these values to produce a final score:
 
-$$S(p) = W(p) \times \left( 1 - \frac{H(p)}{H_{\max}} \right)$$
-
-$$\text{Where } H_{\max} \text{ is the highest } H \text{ among all predicates}$$
+<img width="575" height="182" alt="sp" src="https://github.com/user-attachments/assets/f428c9c2-f574-462e-b7e7-5b3ff4db44b7">
 
 The predicate that wins is the one that has the highest final score.
 

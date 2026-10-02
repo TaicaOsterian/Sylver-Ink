@@ -223,7 +223,13 @@ public class ImportViewModel : ViewModelBase
     private void MeasureNotesAdaptive()
     {
         // We scan for the following character classes in order to build predicates.
-        string[] classes = [@"\p{L}+", @"\p{Nd}+", @"[\p{Zs}\t]+", @"[\p{P}\p{S}]+"];
+        string[] classes = [@"\p{L}", @"\p{Nd}", @"[\p{Zs}\t]", @"[\p{P}\p{S}]"];
+        var weights = new Dictionary<string, double> {
+            [@"\p{L}"] = 1.0,
+            [@"\p{Nd}"] = 2.0,
+            [@"[\p{Zs}\t]"] = 2.0,
+            [@"[\p{P}\p{S}]"] = 4.0,
+        };
 
         var predicates = new List<string> { string.Empty };
         var predicateSet = new HashSet<string> { string.Empty };
@@ -233,8 +239,9 @@ public class ImportViewModel : ViewModelBase
         string bestPredicate = string.Empty;
         double bestScore = double.NegativeInfinity;
         int lineCount = DataLines.Count;
+        int sequenceCount = 0;
 
-        for (int length = 2; ; length++)
+        for (int limit = 2; ; limit++)
         {
             int predicateCount = predicateSet.Count;
 
@@ -245,7 +252,7 @@ public class ImportViewModel : ViewModelBase
                 if (string.IsNullOrWhiteSpace(key))
                     continue;
 
-                for (var (c, t) = (0, 0); c < Math.Max(0, Math.Min(key.Length, length) - 1); t++)
+                for (var (c, t) = (0, 0); c < Math.Max(0, Math.Min(key.Length, limit) - 1); t++)
                 {
                     if (t >= classes.Length)
                     {
@@ -264,17 +271,15 @@ public class ImportViewModel : ViewModelBase
                         if (c + 1 < tokenCounts[pattern])
                             continue;
 
-                        // Fold consecutive tokens of the same class.
-                        var pBrute = pattern.EndsWith(type, StringComparison.Ordinal)
-                            ? pattern
-                            : pattern + type;
+                        // We insert a special character to later serve as a separator.
+                        var pBrute = $"{pattern}={type}";
 
                         if (predicateSet.Contains(pBrute))
                             continue;
 
                         // Sanity check: Does the newly constructed predicate match the string it was just built from?
                         var keySpan = key.AsSpan(0, Math.Min(c + 1, key.Length));
-                        if (!Regex.IsMatch(keySpan, pBrute))
+                        if (!Regex.IsMatch(keySpan, pBrute.Replace("=", string.Empty)))
                             continue;
 
                         predicates.Add(pBrute);
@@ -296,7 +301,7 @@ public class ImportViewModel : ViewModelBase
                 if (matchCounts.ContainsKey(predicate))
                     continue;
 
-                var regex = new Regex($@"^{predicate}");
+                var regex = new Regex($@"^{predicate.Replace("=", string.Empty)}");
                 int matches = 0;
 
                 for (int i = 0; i < lineCount; i++)
@@ -317,19 +322,21 @@ public class ImportViewModel : ViewModelBase
                 if (string.IsNullOrEmpty(predicate))
                     continue;
 
+                // IDF score over predicate.
+
                 int matches = matchCounts[predicate];
 
                 // Hard floor / ceiling on what can be a separator.
-                if (matches < 2 || matches > lineCount * 0.5)
+                if (matches < 2 || matches > lineCount * 0.75)
                     continue;
 
                 // W(x) = log10(L / l(x)), where: x is a predicate; L is the total number of text lines; and l(x) is the number of text lines matching x.
-                double tfScore = Math.Log10((double)lineCount / matches);
-                tfScores[predicate] = tfScore;
+                double tfScore = Math.Log10(1.0 + (double)lineCount / matches);
+                tfScores[predicate] = tfScore * weights.Sum(pair => Regex.Count(predicate, pair.Key) * pair.Value);
 
                 // Shannon entropy over class tokens.
                 var probabilities = new Dictionary<string, double>();
-                var split = predicate.Split('+');
+                var split = predicate.Split('=');
 
                 for (int i = 0; i < split.Length; i++)
                 {
@@ -380,10 +387,16 @@ public class ImportViewModel : ViewModelBase
                 // Our chosen predicate is the one with the best combined TF-IDF and Shannon entropy score.
                 bestScore = score;
                 bestPredicate = predicate;
+                sequenceCount = 0;
             }
+
+            // If no new best predicate has been found in a certain number of steps, take what we've got and don't loop forever.
+            sequenceCount++;
+            if (sequenceCount > 5)
+                break;
         }
 
-        AdaptivePredicate = bestPredicate;
+        AdaptivePredicate = bestPredicate.Replace("=", string.Empty);
 
         if (!string.IsNullOrWhiteSpace(AdaptivePredicate.Trim()))
         {
