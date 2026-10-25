@@ -1,4 +1,4 @@
-using SylverInk.Mvvm.Events;
+﻿using SylverInk.Mvvm.Events;
 
 namespace SylverInk.XAML.Controls;
 

@@ -29,3 +29,5 @@ cscript "%SdkPath%\wisubstg.vbs" .\SylverInk.msi es-ES.mst 3082
 cscript "%SdkPath%\wilangid.vbs" .\SylverInk.msi Package 1033,3082
 
 del es-ES.mst
+
+pause

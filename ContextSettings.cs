@@ -1,4 +1,5 @@
 ﻿using SylverInk.FileIO;
+using SylverInk.Interop;
 using SylverInk.Mvvm;
 using SylverInk.Visuals;
 using SylverInk.XAML;
@@ -51,9 +52,19 @@ public class ContextSettings : ViewModelBase
     private Typeface? _mainTypeFace;
     private Brush? _menuBackground = Themes.Default.MenuBackground;
     private Brush? _menuForeground = Themes.Default.MenuForeground;
+    private HotKey _newNoteHotKey = new()
+    {
+        Key = Key.N,
+        Modifiers = ModifierKeys.Control
+    };
     private double _noteClickthrough;
     private double _noteClickthroughInverse = 4.0;
     private double _noteTransparency;
+    private HotKey _previousNoteHotKey = new()
+    {
+        Key = Key.T,
+        Modifiers = ModifierKeys.Control | ModifierKeys.Shift
+    };
     private bool _promptForUpdate = true;
     private bool _queryAllDatabases;
     private IReadOnlyList<NoteRecord> _recentNotes = [];
@@ -93,6 +104,14 @@ public class ContextSettings : ViewModelBase
 
             OnPropertyChanged(null);
         }
+    }
+    public Brush? ActivatedBackground
+    {
+        get => Deluminate(AccentBackground as SolidColorBrush);
+    }
+    public Brush? ActivatedForeground
+    {
+        get => Deluminate(AccentForeground as SolidColorBrush);
     }
     public List<FontFamily> AvailableFonts { get; } = [];
     public FontFamily? DefaultFont { get; private set; }
@@ -251,6 +270,20 @@ public class ContextSettings : ViewModelBase
             OnPropertyChanged(null);
         }
     }
+    public HotKey NewNoteHotKey
+    {
+        get => _newNoteHotKey;
+        set
+        {
+            if (!HotKeyUtils.ReRegisterHotKey(HotKeyUtils.NewNoteHotKeyID, value))
+            {
+                ShowTooltip(Strings.BadHotKey);
+                return;
+            }
+            _newNoteHotKey = value;
+            OnPropertyChanged();
+        }
+    }
     public double NoteClickthrough
     {
         get => _noteClickthrough;
@@ -286,7 +319,20 @@ public class ContextSettings : ViewModelBase
             OnPropertyChanged();
         }
     }
-
+    public HotKey PreviousNoteHotKey
+    {
+        get => _previousNoteHotKey;
+        set
+        {
+            if (!HotKeyUtils.ReRegisterHotKey(HotKeyUtils.PreviousNoteHotKeyID, value))
+            {
+                ShowTooltip(Strings.BadHotKey);
+                return;
+            }
+            _previousNoteHotKey = value;
+            OnPropertyChanged();
+        }
+    }
     public bool PromptForUpdate
     {
         get => _promptForUpdate;
@@ -309,7 +355,7 @@ public class ContextSettings : ViewModelBase
     public IReadOnlyList<NoteRecord> RecentNotes
     {
         get => _recentNotes;
-        internal set
+        set
         {
             _recentNotes = value ?? [];
             OnPropertyChanged();
@@ -605,6 +651,10 @@ public class ContextSettings : ViewModelBase
                 case "MenuForeground":
                     _menuForeground = BrushFromBytes(keyValue[1]);
                     break;
+                case "NewNoteHotKey":
+                    _newNoteHotKey = HotKey.FromString(keyValue[1]);
+                    _newNoteHotKey.KeyID = HotKeyUtils.NewNoteHotKeyID;
+                    break;
                 case "NoteClickthrough":
                     if (!double.TryParse(keyValue[1], out var clickthrough))
                         clickthrough = 0.0;
@@ -616,6 +666,10 @@ public class ContextSettings : ViewModelBase
                         transparency = 0.0;
 
                     NoteTransparency = transparency;
+                    break;
+                case "PreviousNoteHotKey":
+                    _previousNoteHotKey = HotKey.FromString(keyValue[1]);
+                    _previousNoteHotKey.KeyID = HotKeyUtils.PreviousNoteHotKeyID;
                     break;
                 case "PromptForUpdate":
                     if (!bool.TryParse(keyValue[1], out var promptForUpdate))
@@ -691,8 +745,10 @@ public class ContextSettings : ViewModelBase
         $"ListForeground:{BytesFromBrush(_listForeground)}",
         $"MenuBackground:{BytesFromBrush(_menuBackground)}",
         $"MenuForeground:{BytesFromBrush(_menuForeground)}",
+        $"NewNoteHotKey:{NewNoteHotKey}",
         $"NoteClickthrough:{NoteClickthrough}",
         $"NoteTransparency:{NoteTransparency}",
+        $"PreviousNoteHotKey:{PreviousNoteHotKey}",
         $"PromptForUpdate:{PromptForUpdate}",
         $"QueryAllDatabases:{QueryAllDatabases}",
         $"RecentDatabases:{string.Join(';', RecentDatabases.Distinct()).Replace(DocumentsFolder, "?\\")}",

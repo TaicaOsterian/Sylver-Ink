@@ -1,4 +1,4 @@
-using SylverInk.Mvvm;
+﻿using SylverInk.Mvvm;
 
 namespace SylverInk.XAML.ViewModels;
 

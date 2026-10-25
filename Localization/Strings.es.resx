@@ -142,6 +142,9 @@
     <value>Longitud media
 de las notas</value>
   </data>
+  <data name="BadHotKey" xml:space="preserve">
+    <value>No se pudo registrar la combinación de teclas. Compruebe que no esté siendo utilizada por otro programa.</value>
+  </data>
   <data name="BulletList" xml:space="preserve">
     <value>Lista de viñetas</value>
   </data>
@@ -301,6 +304,9 @@ Recuerda presionar Importar para finalizar tus cambios!</value>
   <data name="Label_MenuColors" xml:space="preserve">
     <value>Menú de colores</value>
   </data>
+  <data name="Label_NewNoteHotkey" xml:space="preserve">
+    <value>Atajo de teclado para nueva nota</value>
+  </data>
   <data name="Label_Next" xml:space="preserve">
     <value>Siguiente...</value>
   </data>
@@ -315,6 +321,9 @@ Recuerda presionar Importar para finalizar tus cambios!</value>
   </data>
   <data name="Label_Previous" xml:space="preserve">
     <value>Anterior...</value>
+  </data>
+  <data name="Label_PreviousNoteHotkey" xml:space="preserve">
+    <value>Atajo de teclado para nota anterior</value>
   </data>
   <data name="Label_Restore" xml:space="preserve">
     <value>Restaurar la base de datos a un estado anterior</value>
@@ -504,6 +513,9 @@ Recuerda presionar Importar para finalizar tus cambios!</value>
   <data name="Title_Error" xml:space="preserve">
     <value>Sylver Ink: Error</value>
   </data>
+  <data name="Title_Hotkeys" xml:space="preserve">
+    <value>Atajos</value>
+  </data>
   <data name="Title_Import" xml:space="preserve">
     <value>Sylver Ink: Importar</value>
   </data>
@@ -530,6 +542,9 @@ Recuerda presionar Importar para finalizar tus cambios!</value>
   </data>
   <data name="Tooltip_FailedCopy" xml:space="preserve">
     <value>No se ha podido copiar la dirección del código al portapapeles</value>
+  </data>
+  <data name="Tooltip_KeyInUse" xml:space="preserve">
+    <value>La combinación de teclas {0} ya está en uso.</value>
   </data>
   <data name="Tooltip_SearchAllDatabases" xml:space="preserve">
     <value>Cuando está activada, busca el texto de la consulta en todas las bases de datos abiertas. Cuando está desactivada, busca solo en la base de datos activa.</value>

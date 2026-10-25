@@ -1,4 +1,4 @@
-namespace SylverInk.XAML;
+﻿namespace SylverInk.XAML;
 
 /// <summary>
 /// Interaction logic for Update.xaml

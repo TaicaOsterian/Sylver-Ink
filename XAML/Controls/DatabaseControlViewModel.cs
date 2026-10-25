@@ -1,4 +1,4 @@
-using SylverInk.Mvvm;
+﻿using SylverInk.Mvvm;
 using static SylverInk.Notes.DatabaseUtils;
 
 namespace SylverInk.XAML.Controls;

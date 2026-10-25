@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SylverInk"
+        xmlns:inter="clr-namespace:SylverInk.Interop"
         xmlns:ctrl="clr-namespace:SylverInk.XAML.Controls"
         xmlns:properties="clr-namespace:SylverInk.Localization"
         xmlns:vm="clr-namespace:SylverInk.XAML.ViewModels"
@@ -11,7 +12,7 @@
         d:DataContext="{d:DesignInstance Type=vm:SettingsViewModel}"
         Background="{Binding AppSettings.AccentBackground}"
         Loaded="Settings_Loaded"
-        MinHeight="425"
+        MinHeight="475"
         MinWidth="325"
         MouseLeftButtonDown="Drag"
         SizeToContent="Height"
@@ -48,6 +49,9 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
@@ -104,6 +108,27 @@
                            Margin="10,0"
                            Grid.Row="5">
                         <TextBlock Text="{x:Static properties:Strings.NoteTransparency}"
+                                   TextAlignment="Right"
+                                   TextWrapping="WrapWithOverflow"/>
+                    </Label>
+
+                    <Separator Grid.ColumnSpan="2"
+                               Grid.Row="6"/>
+
+                    <Label FontStyle="Italic"
+                           HorizontalAlignment="Right"
+                           Margin="10,0"
+                           Grid.Row="7">
+                        <TextBlock Text="{x:Static properties:Strings.Label_NewNoteHotkey}"
+                                   TextAlignment="Right"
+                                   TextWrapping="WrapWithOverflow"/>
+                    </Label>
+
+                    <Label FontStyle="Italic"
+                           HorizontalAlignment="Right"
+                           Margin="10,0"
+                           Grid.Row="8">
+                        <TextBlock Text="{x:Static properties:Strings.Label_PreviousNoteHotkey}"
                                    TextAlignment="Right"
                                    TextWrapping="WrapWithOverflow"/>
                     </Label>
@@ -188,9 +213,29 @@
                             VerticalAlignment="Center"
                             Width="125"
                             x:Name="NoteTransparentSlider"/>
+
+                    <ToggleButton Grid.Column="1"
+                                  Grid.Row="7"
+                                  inter:HotKeyUtils.HotKeyCommand="{Binding ChooseHotKeyCommand}"
+                                  IsChecked="{Binding PreviousHotKeyButtonChecked}"
+                                  Style="{StaticResource ToggleButtonStyle}"
+                                  Tag="{x:Static inter:HotKeyUtils.NewNoteHotKeyID}"
+                                  Width="100">
+                        <TextBlock Text="{Binding AppSettings.NewNoteHotKey}"/>
+                    </ToggleButton>
+
+                    <ToggleButton Grid.Column="1"
+                                  Grid.Row="8"
+                                  inter:HotKeyUtils.HotKeyCommand="{Binding ChooseHotKeyCommand}"
+                                  IsChecked="{Binding NewHotKeyButtonChecked}"
+                                  Style="{StaticResource ToggleButtonStyle}"
+                                  Tag="{x:Static inter:HotKeyUtils.PreviousNoteHotKeyID}"
+                                  Width="100">
+                        <TextBlock Text="{Binding AppSettings.PreviousNoteHotKey}"/>
+                    </ToggleButton>
                 </Grid>
             </TabItem>
-            
+
             <TabItem Margin="0,0,0,-2">
                 <TabItem.Header>
                     <TextBlock FontFamily="{Binding AppSettings.MainFontFamily}"
@@ -225,7 +270,7 @@
                                FontStyle="Italic"
                                HorizontalAlignment="Right"
                                Margin="10,0"/>
-                        
+
                         <Label FontStyle="Italic"
                                Foreground="{Binding AppSettings.AccentForeground}"
                                Grid.Row="1"
@@ -277,25 +322,25 @@
                                FontStyle="Italic"
                                HorizontalAlignment="Right"
                                Margin="10,0"/>
-                        
+
                         <Label Content="{x:Static properties:Strings.Label_FontSize}"
                                FontStyle="Italic"
                                Grid.Row="1"
                                HorizontalAlignment="Right"
                                Margin="10,0"/>
-                        
+
                         <Label Content="{x:Static properties:Strings.Label_MenuColors}"
                                FontStyle="Italic"
                                Grid.Row="2"
                                HorizontalAlignment="Right"
                                Margin="10,0"/>
-                        
+
                         <Label Content="{x:Static properties:Strings.Label_TextColors}"
                                FontStyle="Italic"
                                Grid.Row="3"
                                HorizontalAlignment="Right"
                                Margin="10,0"/>
-                        
+
                         <Label Content="{x:Static properties:Strings.Label_AccentColors}"
                                FontStyle="Italic"
                                Grid.Row="4"
@@ -326,12 +371,12 @@
                                     CommandParameter="{Binding RelativeSource={RelativeSource Self}}"
                                     Content="-"
                                     MinWidth="20"/>
-                            
+
                             <TextBox HorizontalContentAlignment="Center"
                                      IsReadOnly="True"
                                      Text="{Binding AppSettings.MainFontSize}"
                                      MinWidth="40"/>
-                            
+
                             <Button Command="{Binding FontSizeChangedCommand}"
                                     CommandParameter="{Binding RelativeSource={RelativeSource Self}}"
                                     Content="+"
@@ -393,7 +438,7 @@
                                            Stretch="UniformToFill"
                                            ToolTip="{x:Static properties:Strings.Word_Background}"/>
                             </Button>
-                            
+
                             <Button BorderBrush="Black"
                                     BorderThickness="1"
                                     Click="ColorPopup"
@@ -429,7 +474,7 @@
                                            Stretch="UniformToFill"
                                            ToolTip="{x:Static properties:Strings.Word_Background}"/>
                             </Button>
-                            
+
                             <Button BorderBrush="Black"
                                     BorderThickness="1"
                                     Click="ColorPopup"

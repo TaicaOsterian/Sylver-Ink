@@ -1,4 +1,4 @@
-using SylverInk.Mvvm;
+﻿using SylverInk.Mvvm;
 using System.Threading;
 
 namespace SylverInk.XAML.Controls;

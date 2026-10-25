@@ -1,4 +1,4 @@
-using System.Windows.Controls.Primitives;
+﻿using System.Windows.Controls.Primitives;
 using static SylverInk.Visuals.VisualUtils;
 
 namespace SylverInk.XAML;

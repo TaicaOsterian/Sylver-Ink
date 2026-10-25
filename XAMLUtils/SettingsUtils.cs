@@ -1,4 +1,4 @@
-using SylverInk.Visuals;
+﻿using SylverInk.Visuals;
 
 namespace SylverInk.XAMLUtils;
 

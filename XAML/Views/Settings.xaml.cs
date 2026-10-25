@@ -1,4 +1,4 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using static SylverInk.XAMLUtils.MainWindowUtils;
 
 namespace SylverInk.XAML;

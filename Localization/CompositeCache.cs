@@ -11,6 +11,7 @@ public static class CompositeCache
     public static readonly CompositeFormat CacheDaysPassed = CompositeFormat.Parse(Strings.DaysPassed);
     public static readonly CompositeFormat CacheFailedToOpenServer = CompositeFormat.Parse(Strings.FailedToOpenServer);
     public static readonly CompositeFormat CacheFailedToProcessFile = CompositeFormat.Parse(Strings.FailedToProcessFile);
+    public static readonly CompositeFormat CacheKeyInUse = CompositeFormat.Parse(Strings.Tooltip_KeyInUse);
     public static readonly CompositeFormat CacheImportFailed = CompositeFormat.Parse(Strings.ImportFailed);
     public static readonly CompositeFormat CacheImportMeasurementText = CompositeFormat.Parse(Strings.Import_MeasurementText);
     public static readonly CompositeFormat CacheLabelNoteNumber = CompositeFormat.Parse(Strings.Label_NoteNumber);

@@ -1,5 +1,7 @@
+﻿using SylverInk.Interop;
 using SylverInk.Mvvm;
 using SylverInk.Visuals;
+using System.Globalization;
 using static SylverInk.XAMLUtils.MainWindowUtils;
 
 namespace SylverInk.XAML.ViewModels;
@@ -29,6 +31,7 @@ public class SettingsViewModel : ViewModelBase
         }
     }
 
+    public ICommand ChooseHotKeyCommand { get; }
     public ICommand CloseCommand { get; }
     public ICommand FontSizeChangedCommand { get; }
     public ICommand ResetCommand { get; }
@@ -38,10 +41,37 @@ public class SettingsViewModel : ViewModelBase
 
     public SettingsViewModel()
     {
+        ChooseHotKeyCommand = new RelayCommand(ChooseHotKey);
         CloseCommand = new RelayCommand(_ => RequestClose?.Invoke(this, EventArgs.Empty));
         FontSizeChangedCommand = new RelayCommand(FontSizeChanged);
         ResetCommand = new RelayCommand(Reset);
         SmartAssistCommand = new RelayCommand(SmartAssistChanged);
+    }
+
+    private void ChooseHotKey(object? param = null)
+    {
+        if (param is not HotKey hotKey)
+            return;
+
+        switch (hotKey.KeyID)
+        {
+            case HotKeyUtils.NewNoteHotKeyID:
+                if (AppSettings.PreviousNoteHotKey.CombinationEquals(hotKey))
+                {
+                    ShowTooltip(string.Format(CultureInfo.CurrentCulture, CacheKeyInUse, hotKey));
+                    return;
+                }
+                AppSettings.NewNoteHotKey = hotKey;
+                break;
+            case HotKeyUtils.PreviousNoteHotKeyID:
+                if (AppSettings.NewNoteHotKey.CombinationEquals(hotKey))
+                {
+                    ShowTooltip(string.Format(CultureInfo.CurrentCulture, CacheKeyInUse, hotKey));
+                    return;
+                }
+                AppSettings.PreviousNoteHotKey = hotKey;
+                break;
+        }
     }
 
     private void FontSizeChanged(object? param = null)
@@ -66,8 +96,20 @@ public class SettingsViewModel : ViewModelBase
             //CommonUtils.Settings.MainFontSize = 11.0;
             CommonUtils.Settings.MenuBackground = theme.MenuBackground;
             CommonUtils.Settings.MenuForeground = theme.MenuForeground;
+            CommonUtils.Settings.NewNoteHotKey = new()
+            {
+                Key = Key.N,
+                KeyID = HotKeyUtils.NewNoteHotKeyID,
+                Modifiers = ModifierKeys.Control
+            };
             CommonUtils.Settings.NoteClickthrough = 0.0;
             CommonUtils.Settings.NoteTransparency = 0.0;
+            CommonUtils.Settings.PreviousNoteHotKey = new()
+            {
+                Key = Key.T,
+                KeyID = HotKeyUtils.PreviousNoteHotKeyID,
+                Modifiers = ModifierKeys.Control | ModifierKeys.Shift
+            };
             RecentEntriesSortMode = SortType.ByChange;
             RibbonTabContent = DisplayType.Content;
             CommonUtils.Settings.SearchResultsOnTop = true;

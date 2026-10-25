@@ -61,6 +61,25 @@ public static class VisualUtils
         return $"{scb?.Color.A:X2}{scb?.Color.R:X2}{scb?.Color.G:X2}{scb?.Color.B:X2}";
     }
 
+    public static Brush? Deluminate(Brush? brush)
+    {
+        if (brush is not SolidColorBrush scb)
+            return null;
+
+        var hsv = HSVFromRGB(scb);
+        var H = (hsv >> 16) & 0xFF;
+        var S = hsv >> 8 & 0xFF;
+        var V = hsv & 0xFF;
+
+        if (V > 127)
+            V = (uint)(V * 0.7);
+        else
+            V = (uint)(V / 0.7);
+
+        hsv = (H << 16) + (S << 8) + V;
+        return HSVToRGB(hsv);
+    }
+
     public static Brush? Desaturate(Brush? brush)
     {
         if (brush is not SolidColorBrush scb)

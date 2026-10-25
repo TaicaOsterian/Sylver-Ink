@@ -1,4 +1,5 @@
 ﻿using System.Runtime.InteropServices;
+using System.Windows.Controls.Primitives;
 using System.Windows.Interop;
 using static SylverInk.Notes.DatabaseUtils;
 
@@ -15,10 +16,61 @@ public static class HotKeyUtils
     [DllImport("User32.dll")]
     private static extern bool UnregisterHotKey(nint hWnd, int id);
 
+    public static readonly DependencyProperty HotKeyCommandProperty =
+        DependencyProperty.RegisterAttached(
+            "HotKeyCommand",
+            typeof(ICommand),
+            typeof(HotKeyUtils),
+            new PropertyMetadata(null, OnCommandChanged));
     private static WindowInteropHelper? hWndHelper;
-    private const int NewNoteHotKeyID = 5911;
-    private const int PreviousNoteHotKeyID = 37193;
+    public const int NewNoteHotKeyID = 114455722;
+    public const int PreviousNoteHotKeyID = 180604626;
+    private readonly static Dictionary<int, bool> RegistrationStatus = new([
+        new(NewNoteHotKeyID, false),
+        new(PreviousNoteHotKeyID, false),
+    ]);
     private static HwndSource? WindowSource;
+
+    private static void Button_LostFocus(object sender, RoutedEventArgs e)
+    {
+        if (sender is not ToggleButton button)
+            return;
+
+        RoutedEventArgs uncheckedArgs = new()
+        {
+            RoutedEvent = ToggleButton.UncheckedEvent,
+            Source = button
+        };
+
+        button.RaiseEvent(uncheckedArgs);
+    }
+
+    private static void Button_PreviewKeyDown(object sender, KeyEventArgs e)
+    {
+        e.Handled = true;
+        if (e.Key is Key.LeftCtrl or Key.RightCtrl or Key.LeftAlt or Key.RightAlt or Key.LeftShift or Key.RightShift)
+            return;
+
+        var button = (ToggleButton)sender;
+        var command = GetHotKeyCommand(button);
+
+        Key key = (e.Key == Key.System) ? e.SystemKey : e.Key;
+        ModifierKeys modifiers = Keyboard.Modifiers;
+
+        var result = new HotKey()
+        {
+            Key = key,
+            KeyID = (int)button.Tag,
+            Modifiers = modifiers,
+        };
+
+        if (command?.CanExecute(result) == true)
+            command.Execute(result);
+
+        button.IsChecked = false;
+    }
+
+    public static ICommand GetHotKeyCommand(DependencyObject obj) => (ICommand)obj.GetValue(HotKeyCommandProperty);
 
     private static nint HwndHook(nint hwnd, int msg, nint wParam, nint lParam, ref bool handled)
     {
@@ -28,10 +80,10 @@ public static class HotKeyUtils
                 switch (wParam.ToInt32())
                 {
                     case NewNoteHotKeyID:
-                        OnNewNoteHotkey();
+                        OnNewNoteHotKey();
                         break;
                     case PreviousNoteHotKeyID:
-                        OnPreviousNoteHotkey();
+                        OnPreviousNoteHotKey();
                         break;
                 }
                 break;
@@ -51,17 +103,52 @@ public static class HotKeyUtils
         RegisterHotKeys();
     }
 
-    private static void OnNewNoteHotkey() => CreateNewNote();
+    private static void OnCommandChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is not ToggleButton button)
+            return;
 
-    private static void OnPreviousNoteHotkey() => CurrentDatabase.PopPreviousNote();
+        button.Checked += (s, ae) =>
+        {
+            UnregisterHotKeys();
+            button.Focus();
+            Keyboard.Focus(button);
+            button.LostFocus += Button_LostFocus;
+            button.PreviewKeyDown += Button_PreviewKeyDown;
+        };
+
+        button.Unchecked += (s, ae) =>
+        {
+            button.PreviewKeyDown -= Button_PreviewKeyDown;
+            button.LostFocus -= Button_LostFocus;
+            RegisterHotKeys();
+        };
+    }
+
+    private static void OnNewNoteHotKey() => CreateNewNote();
+
+    private static void OnPreviousNoteHotKey() => CurrentDatabase.PopPreviousNote();
 
     private static void RegisterHotKeys()
     {
-        if (hWndHelper is null)
-            return;
+        RegisterHotKey(NewNoteHotKeyID, CommonUtils.Settings.NewNoteHotKey);
+        RegisterHotKey(PreviousNoteHotKeyID, CommonUtils.Settings.PreviousNoteHotKey);
+    }
 
-        RegisterHotKey(hWndHelper.Handle, NewNoteHotKeyID, 2, (uint)KeyInterop.VirtualKeyFromKey(Key.N));
-        RegisterHotKey(hWndHelper.Handle, PreviousNoteHotKeyID, 6, (uint)KeyInterop.VirtualKeyFromKey(Key.T));
+    public static bool RegisterHotKey(int hotKeyID, HotKey gesture)
+    {
+        if (hWndHelper is null)
+            return false;
+
+        if (RegistrationStatus.TryGetValue(hotKeyID, out var register) && register)
+            return true;
+
+        if (!TestHotKey(gesture))
+            return false;
+
+        register = RegisterHotKey(hWndHelper.Handle, hotKeyID, (uint)gesture.Modifiers, (uint)KeyInterop.VirtualKeyFromKey(gesture.Key));
+        RegistrationStatus[hotKeyID] = register;
+        return register;
     }
 
     public static void Release()
@@ -71,12 +158,50 @@ public static class HotKeyUtils
         UnregisterHotKeys();
     }
 
-    private static void UnregisterHotKeys()
+    public static bool ReRegisterHotKey(int hotKeyID, HotKey gesture)
+    {
+        if (!UnregisterHotKey(hotKeyID))
+            return false;
+
+        if (!RegisterHotKey(hotKeyID, gesture))
+            return false;
+
+        return true;
+    }
+
+    public static void SetHotKeyCommand(DependencyObject obj, ICommand value) => obj.SetValue(HotKeyCommandProperty, value);
+
+    private static bool TestHotKey(HotKey gesture)
     {
         if (hWndHelper is null)
-            return;
+            return false;
 
-        UnregisterHotKey(hWndHelper.Handle, NewNoteHotKeyID);
-        UnregisterHotKey(hWndHelper.Handle, PreviousNoteHotKeyID);
+        var result = RegisterHotKey(hWndHelper.Handle, 99999, (uint)gesture.Modifiers, (uint)KeyInterop.VirtualKeyFromKey(gesture.Key));
+        if (result)
+        {
+            UnregisterHotKey(hWndHelper.Handle, 99999);
+            return true;
+        }
+
+        return false;
+    }
+
+    private static void UnregisterHotKeys()
+    {
+        UnregisterHotKey(NewNoteHotKeyID);
+        UnregisterHotKey(PreviousNoteHotKeyID);
+    }
+
+    public static bool UnregisterHotKey(int hotKeyID)
+    {
+        if (hWndHelper is null)
+            return false;
+
+        if (RegistrationStatus.TryGetValue(hotKeyID, out var unregister) && !unregister)
+            return true;
+
+        unregister = UnregisterHotKey(hWndHelper.Handle, hotKeyID);
+        RegistrationStatus[hotKeyID] = unregister;
+        return !unregister;
     }
 }

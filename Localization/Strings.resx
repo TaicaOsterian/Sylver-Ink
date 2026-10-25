@@ -142,6 +142,9 @@
     <value>Average note
 length</value>
   </data>
+  <data name="BadHotKey" xml:space="preserve">
+    <value>Failed to register hotkey. Check that it is not in use by another program.</value>
+  </data>
   <data name="BulletList" xml:space="preserve">
     <value>Bullet list</value>
   </data>
@@ -316,6 +319,9 @@ Remember to press Import to finalize your changes!</value>
   <data name="Label_MenuColors" xml:space="preserve">
     <value>Menu colors</value>
   </data>
+  <data name="Label_NewNoteHotkey" xml:space="preserve">
+    <value>New note hotkey</value>
+  </data>
   <data name="Label_Next" xml:space="preserve">
     <value>Next...</value>
   </data>
@@ -332,6 +338,9 @@ Remember to press Import to finalize your changes!</value>
   </data>
   <data name="Label_Previous" xml:space="preserve">
     <value>Previous...</value>
+  </data>
+  <data name="Label_PreviousNoteHotkey" xml:space="preserve">
+    <value>Previous note hotkey</value>
   </data>
   <data name="Label_Restore" xml:space="preserve">
     <value>Restore the database to a previous state</value>
@@ -534,6 +543,9 @@ Do you want to overwrite it?</value>
   <data name="Title_Error" xml:space="preserve">
     <value>Sylver Ink: Error</value>
   </data>
+  <data name="Title_Hotkeys" xml:space="preserve">
+    <value>Hotkeys</value>
+  </data>
   <data name="Title_Import" xml:space="preserve">
     <value>Sylver Ink: Import</value>
   </data>
@@ -560,6 +572,10 @@ Do you want to overwrite it?</value>
   </data>
   <data name="Tooltip_FailedCopy" xml:space="preserve">
     <value>Failed to copy the address code to the clipboard</value>
+  </data>
+  <data name="Tooltip_KeyInUse" xml:space="preserve">
+    <value>The key combination {0} is already in use.</value>
+    <comment>{0} = A short string of keys, like "Ctrl+N" or "Ctrl+Shift+E".</comment>
   </data>
   <data name="Tooltip_SearchAllDatabases" xml:space="preserve">
     <value>When enabled, search all open databases for the query text. When disabled, search only the active database.</value>
