@@ -1,4 +1,4 @@
-﻿namespace SylverInk.FileIO;
+namespace SylverInk.FileIO;
 
 /// <summary>
 /// Encapsulates a file path and provides properties for ease of display purposes.
@@ -11,7 +11,7 @@ public class PathItem : IEquatable<PathItem>
     {
         get
         {
-            string path = FullPath.Replace(FileUtils.Subfolders[Strings.Subfolder_Databases], string.Empty);
+            string path = FullPath.Replace(FileUtils.Subfolders["Databases"], string.Empty);
 
             char sep = Path.DirectorySeparatorChar;
             if (path.StartsWith(sep))

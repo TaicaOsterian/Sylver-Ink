@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Globalization;
 using System.Net;
 using System.Net.Http;
@@ -14,7 +14,7 @@ public class NetServer : IDisposable
     private IPAddress? Address;
     private readonly List<TcpClient> Clients = [];
     private TcpListener DBServer = new(IPAddress.Any, TcpPort);
-    private readonly static string[] DNSAddresses = [
+    private static readonly string[] DNSAddresses = [
         "http://checkip.dyndns.org",
         "https://ifconfig.me/ip",
         "https://icanhazip.com"

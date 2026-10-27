@@ -1,4 +1,4 @@
-﻿namespace SylverInk.XAMLUtils;
+namespace SylverInk.XAMLUtils;
 
 /// <summary>
 /// Static properties aiding in the display of specific data to the main application window.

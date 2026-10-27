@@ -1,4 +1,4 @@
-﻿namespace SylverInk.Text;
+namespace SylverInk.Text;
 
 public enum TextFormat
 {

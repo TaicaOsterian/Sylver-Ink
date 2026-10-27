@@ -1,4 +1,4 @@
-﻿global using SylverInk.Localization;
+global using SylverInk.Localization;
 global using SylverInk.Net;
 global using SylverInk.Notes;
 global using SylverInk.Text;

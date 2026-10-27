@@ -1,4 +1,4 @@
-﻿using System.Windows.Markup;
+using System.Windows.Markup;
 using static SylverInk.Interop.ImageUtils;
 
 namespace SylverInk.Text;

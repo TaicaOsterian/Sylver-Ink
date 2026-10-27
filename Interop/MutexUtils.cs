@@ -1,4 +1,4 @@
-﻿using System.IO.Pipes;
+using System.IO.Pipes;
 using System.Threading;
 using static SylverInk.Notes.DatabaseUtils;
 
@@ -47,7 +47,7 @@ public static class MutexUtils
         }
     }
 
-    private async static void HandleMutexPipe(CancellationToken token)
+    private static async void HandleMutexPipe(CancellationToken token)
     {
         while (mutex != null)
         {
@@ -100,7 +100,7 @@ public static class MutexUtils
         }
     }
 
-    private async static void HandleVerbOpen(string filename)
+    private static async void HandleVerbOpen(string filename)
     {
         if (string.IsNullOrWhiteSpace(filename))
             return;
