@@ -217,7 +217,6 @@
                     <ToggleButton Grid.Column="1"
                                   Grid.Row="7"
                                   inter:HotKeyUtils.HotKeyCommand="{Binding ChooseHotKeyCommand}"
-                                  IsChecked="{Binding PreviousHotKeyButtonChecked}"
                                   Style="{StaticResource ToggleButtonStyle}"
                                   Tag="{x:Static inter:HotKeyUtils.NewNoteHotKeyID}"
                                   Width="100">
@@ -227,7 +226,6 @@
                     <ToggleButton Grid.Column="1"
                                   Grid.Row="8"
                                   inter:HotKeyUtils.HotKeyCommand="{Binding ChooseHotKeyCommand}"
-                                  IsChecked="{Binding NewHotKeyButtonChecked}"
                                   Style="{StaticResource ToggleButtonStyle}"
                                   Tag="{x:Static inter:HotKeyUtils.PreviousNoteHotKeyID}"
                                   Width="100">

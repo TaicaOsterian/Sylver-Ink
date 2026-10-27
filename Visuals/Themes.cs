@@ -1,44 +1,56 @@
-﻿using static SylverInk.Visuals.VisualUtils;
+using static SylverInk.Visuals.VisualUtils;
 
 namespace SylverInk.Visuals;
 
 public static class Themes
 {
-    public static Theme Berry { get; } = new(Strings.Label_Berry,
-            accentBg: BrushFromBytes("B01366"),
-            accentFg: BrushFromBytes("18DE61"),
-            listBg: BrushFromBytes("150318"),
-            listFg: BrushFromBytes("FEF7FB"),
-            menuBg: BrushFromBytes("300C19"),
-            menuFg: BrushFromBytes("E4DAFC"));
+    public static Theme Berry { get; } = new(
+        name: Strings.Label_Berry,
+        accentBg: BrushFromBytes("B01366"),
+        accentFg: BrushFromBytes("18DE61"),
+        listBg: BrushFromBytes("150318"),
+        listFg: BrushFromBytes("FEF7FB"),
+        menuBg: BrushFromBytes("300C19"),
+        menuFg: BrushFromBytes("E4DAFC"));
 
-    public static Theme Catpuccin { get; } = new(Strings.Label_Catpuccin,
-            accentBg: BrushFromBytes("1E1E2E"),
-            accentFg: BrushFromBytes("89B4FA"),
-            listBg: BrushFromBytes("11111B"),
-            listFg: BrushFromBytes("CDD6F4"),
-            menuBg: BrushFromBytes("313244"),
-            menuFg: BrushFromBytes("A6ADC8"));
+    public static Theme Catpuccin { get; } = new(
+        name: Strings.Label_Catpuccin,
+        accentBg: BrushFromBytes("1E1E2E"),
+        accentFg: BrushFromBytes("89B4FA"),
+        listBg: BrushFromBytes("11111B"),
+        listFg: BrushFromBytes("CDD6F4"),
+        menuBg: BrushFromBytes("313244"),
+        menuFg: BrushFromBytes("A6ADC8"));
 
-    public static Theme HighContrast { get; } = new(Strings.Label_HighContrast,
-            accentBg: BrushFromBytes("000000"),
-            accentFg: BrushFromBytes("00FFFF"),
-            listBg: BrushFromBytes("1E1E1E"),
-            listFg: BrushFromBytes("FFFFFF"),
-            menuBg: BrushFromBytes("121212"),
-            menuFg: BrushFromBytes("FFFFFF"));
+    public static Theme HighContrast { get; } = new(
+        name: Strings.Label_HighContrast,
+        accentBg: BrushFromBytes("000000"),
+        accentFg: BrushFromBytes("00FFFF"),
+        listBg: BrushFromBytes("1E1E1E"),
+        listFg: BrushFromBytes("FFFFFF"),
+        menuBg: BrushFromBytes("121212"),
+        menuFg: BrushFromBytes("FFFFFF"));
 
-    public static Theme Manila { get; } = new(Strings.Label_Manila,
-            accentBg: BrushFromBytes("EEE8AA"),
-            accentFg: BrushFromBytes("0000FF"),
-            listBg: BrushFromBytes("FFFFFF"),
-            listFg: BrushFromBytes("000000"),
-            menuBg: BrushFromBytes("F5F5DC"),
-            menuFg: BrushFromBytes("343434"));
+    public static Theme Ice { get; } = new(
+        name: Strings.Label_Ice,
+        accentBg: BrushFromBytes("E0FFFF"),
+        accentFg: BrushFromBytes("0000DD"),
+        listBg: BrushFromBytes("F4FFFA"),
+        listFg: BrushFromBytes("000044"),
+        menuBg: BrushFromBytes("FDFFFF"),
+        menuFg: BrushFromBytes("000011"));
+
+    public static Theme Manila { get; } = new(
+        name: Strings.Label_Manila,
+        accentBg: BrushFromBytes("EEE8AA"),
+        accentFg: BrushFromBytes("0000FF"),
+        listBg: BrushFromBytes("FFFFFF"),
+        listFg: BrushFromBytes("000000"),
+        menuBg: BrushFromBytes("F5F5DC"),
+        menuFg: BrushFromBytes("262626"));
 
     public static Theme Default => Manila;
-
-    public static ICollection<Theme> ThemeCollection { get; } = [Berry, Catpuccin, HighContrast, Manila];
+    public static ICollection<Theme> ThemeCollection { get; } = [Berry, Catpuccin, HighContrast, Ice, Manila];
 
     public static Theme GetTheme(string name)
     {

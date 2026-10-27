@@ -9,8 +9,6 @@ namespace SylverInk.XAML.Controls;
 public partial class ColorPicker : UserControl
 {
     public List<SolidColorBrush> AvailableBrushes { get; } = [];
-
-
     public string? ColorTag { get; set; }
     public Brush? LastColorSelection { get; set; }
     public RichTextBox? TextTarget { get; set; }
@@ -83,8 +81,8 @@ public partial class ColorPicker : UserControl
 
     private void InitColorGrid()
     {
-        var column = 3;
-        var row = 0;
+        var column = 0;
+        var row = 1;
 
         ColorGrid.Children.Clear();
         ColorGrid.ColumnDefinitions.Clear();
@@ -107,8 +105,10 @@ public partial class ColorPicker : UserControl
                 Content = colorRect,
                 Height = 20,
                 Margin = new(2.5),
-                TabIndex = i,
-                Width = 20,
+                MinHeight = 0,
+                MinWidth = 0,
+                Padding = new Thickness(0),
+                Width = 20
             };
 
             option.Click += (sender, _) =>
@@ -136,19 +136,19 @@ public partial class ColorPicker : UserControl
         for (int i = 0; i < 10; i++)
             ColorGrid.ColumnDefinitions.Add(new() { Width = new(1.0, GridUnitType.Star) });
 
-        for (int i = 0; i < 15; i++)
+        for (int i = 0; i < row; i++)
             ColorGrid.RowDefinitions.Add(new() { Height = new(1.0, GridUnitType.Star) });
 
         System.Windows.Shapes.Rectangle rainbowRect = new()
         {
             Fill = new LinearGradientBrush([
                 new(Colors.Red, 0.0),
-                new(Colors.Orange, 0.167),
-                new(Colors.Yellow, 0.33),
-                new(Colors.Green, 0.5),
-                new(Colors.Blue, 0.667),
-                new(Colors.Violet, 0.833),
-            ], new(0, 0), new(1, 1)),
+                new(Colors.Orange, 0.2),
+                new(Colors.Yellow, 0.4),
+                new(Colors.Green, 0.6),
+                new(Colors.Blue, 0.8),
+                new(Colors.Violet, 1.0),
+            ], new Point(0, 0), new Point(1, 1)),
             Margin = new(-1),
             Stretch = Stretch.UniformToFill,
             ToolTip = Strings.Label_CustomColor
@@ -173,6 +173,9 @@ public partial class ColorPicker : UserControl
             Content = rainbowRect,
             Height = 20,
             Margin = new(2.5),
+            MinHeight = 0,
+            MinWidth = 0,
+            Padding = new Thickness(0),
             Width = 20
         };
 
@@ -181,6 +184,9 @@ public partial class ColorPicker : UserControl
             Content = clearRect,
             Height = 20,
             Margin = new(2.5),
+            MinHeight = 0,
+            MinWidth = 0,
+            Padding = new Thickness(0),
             Width = 20
         };
 
