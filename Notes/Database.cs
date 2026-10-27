@@ -1,4 +1,4 @@
-﻿using SylverInk.Interop;
+using SylverInk.Interop;
 using System.Globalization;
 using System.Text;
 using static SylverInk.FileIO.FileUtils;
@@ -395,7 +395,7 @@ public class Database : IDisposable
         if (!Directory.Exists(oldPath))
             return;
 
-        var directorySearch = Directory.GetDirectories(Subfolders[Strings.Subfolder_Databases], "*", new EnumerationOptions() { IgnoreInaccessible = true, RecurseSubdirectories = true, MaxRecursionDepth = 3 });
+        var directorySearch = Directory.GetDirectories(Subfolders["Databases"], "*", new EnumerationOptions() { IgnoreInaccessible = true, RecurseSubdirectories = true, MaxRecursionDepth = 3 });
         if (oldPath is not null && newPath is not null && directorySearch.Contains(oldPath))
         {
             if (Directory.Exists(newPath))
@@ -457,25 +457,27 @@ public class Database : IDisposable
         if (string.IsNullOrWhiteSpace(DBFile))
             DBFile = GetDatabasePath(this);
 
+        FileIO.FileUtils.Erase(GetLockFile(DBFile));
+        FileIO.FileUtils.Erase(GetLockFile(targetFile));
+
         if (string.IsNullOrWhiteSpace(targetFile))
             targetFile = DBFile;
 
+        var targetDir = Path.GetDirectoryName(targetFile);
+
+        if (!Directory.Exists(targetDir))
+            Directory.CreateDirectory(targetDir ?? targetFile);
+
         if (DBFile.Equals(targetFile, StringComparison.Ordinal))
             MakeBackup(true);
-
-        if (!Directory.Exists(Path.GetDirectoryName(targetFile)))
-            Directory.CreateDirectory(Path.GetDirectoryName(targetFile) ?? targetFile);
 
         if (!Controller.Open($"{targetFile}", true))
             return;
 
         Controller.SerializeRecords();
 
-        if (targetFile.Contains(Subfolders[Strings.Subfolder_Databases]))
-            File.WriteAllText(Path.Join(Path.GetDirectoryName(targetFile), "uuid.dat"), UUID.ToString());
-
-        var lockFile = GetLockFile(targetFile);
-        FileIO.FileUtils.Erase(lockFile);
+        if (targetFile.Contains(Subfolders["Databases"]))
+            File.WriteAllText(Path.Join(targetDir, "uuid.dat"), UUID.ToString());
     }
 
     public byte[]? SerializeRecords(bool inMemory = false) => Controller.SerializeRecords(inMemory);

@@ -1,4 +1,4 @@
-﻿namespace SylverInk.FileIO;
+namespace SylverInk.FileIO;
 
 /// <summary>
 /// The LZW state engine handles compressing and decompressing data into and out of Lempel-Ziv-Welch (LZW) formatted block text.

@@ -1,4 +1,4 @@
-﻿using Microsoft.Win32;
+using Microsoft.Win32;
 using System.Globalization;
 using static SylverInk.Notes.DatabaseUtils;
 
@@ -9,12 +9,13 @@ namespace SylverInk.FileIO;
 /// </summary>
 public static class FileUtils
 {
-    public static string DocumentsFolder { get; } = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Sylver Ink");
-    public static string SettingsFile { get; } = Path.Join(DocumentsFolder, $"{Strings.Word_Settings.ToLower(CultureInfo.CurrentCulture)}.sis");
+    public static string DocumentsFolder { get; private set; } = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Sylver Ink");
+    public static string LocalizationFile { get; } = Path.Join(DocumentsFolder, "loc.sis"); // A single source of truth for other file and folder targets.
+    public static string SettingsFile { get; private set; } = Path.Join(DocumentsFolder, $"{Strings.Word_Settings.ToLower(CultureInfo.CurrentCulture)}.sis");
     public static int HighestSIDBFormat { get; } = 16;
     public static char[] InvalidPathChars { get; } = ['/', '\\', ':', '*', '"', '?', '<', '>', '|'];
     public static Dictionary<string, string> Subfolders { get; } = new([
-        new(Strings.Subfolder_Databases, Path.Join(DocumentsFolder, Strings.Subfolder_Databases))
+        new("Databases", Path.Join(DocumentsFolder, Strings.Subfolder_Databases))
         ]);
 
     public static string DialogFileSelect(bool outgoing = false, int filterIndex = 3, string? defaultName = null)
@@ -27,7 +28,7 @@ public static class FileUtils
         {
             CheckFileExists = true,
             Filter = Strings.DatabaseAndTextFileFilter,
-            InitialDirectory = Subfolders[Strings.Subfolder_Databases],
+            InitialDirectory = Subfolders["Databases"],
         };
 
         dialog.FilterIndex = filterIndex;
@@ -58,7 +59,7 @@ public static class FileUtils
         }
     }
 
-    public static string GetBackupPath(Database db) => Path.Join(Subfolders[Strings.Subfolder_Databases], db.Name, db.Name);
+    public static string GetBackupPath(Database db) => Path.Join(Subfolders["Databases"], db.Name, db.Name);
 
     /// <summary>
     /// Get the default file path for a Sylver Ink database, based on its name and the working directory.
@@ -70,7 +71,7 @@ public static class FileUtils
         if ((match = IndexDigits().Match(db.Name ?? string.Empty)).Success)
             index = int.Parse(match.Groups[1].Value, NumberFormatInfo.InvariantInfo);
 
-        var path = Path.Join(Subfolders[Strings.Subfolder_Databases], db.Name);
+        var path = Path.Join(Subfolders["Databases"], db.Name);
         var dbFile = Path.Join(path, $"{db.Name}.sidb");
         var uuidFile = Path.Join(path, "uuid.dat");
 
@@ -83,7 +84,7 @@ public static class FileUtils
                     return dbFile;
             }
 
-            Database tmpDB = new();
+            using Database tmpDB = new();
             try
             {
                 tmpDB.Load(dbFile);
@@ -95,7 +96,6 @@ public static class FileUtils
             catch (Exception e)
             {
                 App.LogException(e);
-                tmpDB.Dispose();
                 return string.Empty;
             }
 
@@ -109,4 +109,48 @@ public static class FileUtils
     }
 
     public static string GetLockFile(string? dbFile = null) => Path.Join(Path.GetDirectoryName(dbFile ?? CurrentDatabase.DBFile) ?? ".", "_lock.sidb");
+
+    public static void LoadPaths(string? source = null)
+    {
+        source ??= LocalizationFile;
+
+        if (!File.Exists(source))
+            return;
+
+        foreach (string setting in File.ReadAllLines(source))
+        {
+            var keyValue = setting.Trim().Split(':', 2);
+
+            if (string.IsNullOrWhiteSpace(keyValue[0]))
+                continue;
+
+            if (string.IsNullOrWhiteSpace(keyValue[1]))
+                continue;
+
+            switch (keyValue[0])
+            {
+                case "Settings":
+                    SettingsFile = keyValue[1].Replace("?\\", DocumentsFolder);
+                    break;
+                default:
+                    if (!Subfolders.ContainsKey(keyValue[0]))
+                        break;
+
+                    Subfolders[keyValue[0]] = keyValue[1].Replace("?\\", DocumentsFolder);
+                    break;
+            }
+        }
+
+        return;
+    }
+
+    public static void SavePaths(string? target = null)
+    {
+        target ??= LocalizationFile;
+
+        var items = Subfolders.ToList().Select(item => $"{item.Key}:{item.Value.Replace(DocumentsFolder, "?\\")}");
+        items = items.Append($"Settings:{SettingsFile.Replace(DocumentsFolder, "?\\")}");
+
+        File.WriteAllLines(LocalizationFile, items);
+    }
 }

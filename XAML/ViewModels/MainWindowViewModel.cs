@@ -173,7 +173,7 @@ public class MainWindowViewModel : ViewModelBase
 
     private static bool CanOpenRecent(object? param) => CommonUtils.Settings.RecentDatabases.Count > 0;
 
-    private static bool CanSaveLocal(object? param) => !CurrentDatabase.DBFile.Contains(Subfolders[Strings.Subfolder_Databases]);
+    private static bool CanSaveLocal(object? param) => !CurrentDatabase.DBFile.Contains(Subfolders["Databases"]);
 
     private static bool CanServe(object? param) => !CurrentDatabase.Client.Active && !CurrentDatabase.Server.Active;
 
@@ -318,12 +318,13 @@ public class MainWindowViewModel : ViewModelBase
         if (!string.IsNullOrWhiteSpace(newPath))
             CurrentDatabase.DBFile = newPath;
         CurrentDatabase.Format = HighestSIDBFormat;
+        CurrentDatabase.Save();
     }
 
     private static void MenuSaveLocal(object? param)
     {
         CurrentDatabase.Changed = true;
-        CurrentDatabase.DBFile = Path.Join(Subfolders[Strings.Subfolder_Databases], Path.GetFileNameWithoutExtension(CurrentDatabase.DBFile), Path.GetFileName(CurrentDatabase.DBFile));
+        CurrentDatabase.DBFile = Path.Join(Subfolders["Databases"], Path.GetFileNameWithoutExtension(CurrentDatabase.DBFile), Path.GetFileName(CurrentDatabase.DBFile));
         CurrentDatabase.Format = HighestSIDBFormat;
         CurrentDatabase.Save();
     }

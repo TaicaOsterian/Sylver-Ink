@@ -1,4 +1,4 @@
-﻿using Microsoft.Win32;
+using Microsoft.Win32;
 using SylverInk.XAML;
 using System.Threading;
 using static SylverInk.FileIO.FileUtils;
@@ -65,11 +65,6 @@ public static partial class CommonUtils
         }
     }
     public static bool InitComplete { get; set; }
-    public static List<string> LastActiveNotes { get; } = [];
-    public static Dictionary<string, double> LastActiveNotesHeight { get; } = [];
-    public static Dictionary<string, double> LastActiveNotesLeft { get; } = [];
-    public static Dictionary<string, double> LastActiveNotesTop { get; } = [];
-    public static Dictionary<string, double> LastActiveNotesWidth { get; } = [];
     public static List<SearchResult> OpenQueries { get; } = [];
     public static NoteRecord? RecentSelection { get; set; }
     public static Search? SearchWindow
@@ -190,7 +185,7 @@ public static partial class CommonUtils
         }
 
         if (Databases.Count == 0)
-            await Database.Create(Path.Join(Subfolders[Strings.Subfolder_Databases], DefaultDatabase, $"{DefaultDatabase}.sidb"));
+            await Database.Create(Path.Join(Subfolders["Databases"], DefaultDatabase, $"{DefaultDatabase}.sidb"));
 
         // Swap to the user's last active database, if one was set.
         if (string.IsNullOrEmpty(ShellDB))
@@ -199,7 +194,7 @@ public static partial class CommonUtils
             SwitchDatabase($"~F:{ShellDB}");
 
         // Reopen the user's last active notes, if any were set.
-        RestoreActiveNotes();
+        Settings.RestoreActiveNotes();
 
         // Finally, unlock the main window and hand over control to the user.
         CanResize = true;
@@ -226,7 +221,7 @@ public static partial class CommonUtils
     }
 
     // Deprecated. (Possibly temporarily.)
-    public async static Task OnFirstRun()
+    public static async Task OnFirstRun()
     {
         if (!Settings.FirstRun)
             return;
@@ -255,56 +250,6 @@ public static partial class CommonUtils
             App.LogException(e);
             return;
         }
-    }
-
-    private static void RestoreActiveNotes()
-    {
-        foreach (var openNote in LastActiveNotes)
-        {
-            var oSplit = openNote.Split(':');
-            if (oSplit.Length < 2)
-                continue;
-
-            if (!Guid.TryParse(oSplit[1], out var gNote))
-                continue;
-
-            Database? target = null;
-            foreach (Database db in Databases)
-            {
-                if (oSplit[0].Equals(db.Name, StringComparison.Ordinal))
-                    target = db;
-            }
-
-            if (target is null)
-                continue;
-
-            if (!target.HasRecord(gNote))
-                continue;
-
-            if (target.GetRecord(gNote) is not NoteRecord note)
-                continue;
-
-            if (OpenQuery(note) is not SearchResult result)
-                continue;
-
-            if (LastActiveNotesHeight.TryGetValue($"{target.Name}:{gNote}", out var openHeight))
-                result.Height = openHeight;
-
-            if (LastActiveNotesLeft.TryGetValue($"{target.Name}:{gNote}", out var openLeft))
-                result.Left = openLeft;
-
-            if (LastActiveNotesTop.TryGetValue($"{target.Name}:{gNote}", out var openTop))
-                result.Top = openTop;
-
-            if (LastActiveNotesWidth.TryGetValue($"{target.Name}:{gNote}", out var openWidth))
-                result.Width = openWidth;
-        }
-
-        LastActiveNotes.Clear();
-        LastActiveNotesHeight.Clear();
-        LastActiveNotesLeft.Clear();
-        LastActiveNotesTop.Clear();
-        LastActiveNotesWidth.Clear();
     }
 
     public static void ShowTooltip(string text)

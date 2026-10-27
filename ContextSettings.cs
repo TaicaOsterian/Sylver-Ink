@@ -1,4 +1,4 @@
-﻿using SylverInk.FileIO;
+using SylverInk.FileIO;
 using SylverInk.Interop;
 using SylverInk.Mvvm;
 using SylverInk.Visuals;
@@ -164,6 +164,11 @@ public class ContextSettings : ViewModelBase
     }
     private bool HighContrastAssistInProgress;
     public string LastActiveDatabase { get; set; } = string.Empty;
+    public List<string> LastActiveNotes { get; } = [];
+    public Dictionary<string, double> LastActiveNotesHeight { get; } = [];
+    public Dictionary<string, double> LastActiveNotesLeft { get; } = [];
+    public Dictionary<string, double> LastActiveNotesTop { get; } = [];
+    public Dictionary<string, double> LastActiveNotesWidth { get; } = [];
     public List<string> LastDatabases { get; } = [];
     public long LastUpdate { get; set; }
     public int LineTolerance
@@ -592,7 +597,7 @@ public class ContextSettings : ViewModelBase
                         if (hSplit.Length < 3)
                             continue;
 
-                        if (int.TryParse(hSplit[2], out var dHeight))
+                        if (int.TryParse(hSplit[2], CultureInfo.InvariantCulture, out var dHeight))
                             LastActiveNotesHeight.TryAdd(hSplit[0] + ":" + hSplit[1], dHeight);
                     }
                     break;
@@ -603,7 +608,7 @@ public class ContextSettings : ViewModelBase
                         if (lSplit.Length < 3)
                             continue;
 
-                        if (int.TryParse(lSplit[2], out var dLeft))
+                        if (int.TryParse(lSplit[2], CultureInfo.InvariantCulture, out var dLeft))
                             LastActiveNotesLeft.TryAdd(lSplit[0] + ":" + lSplit[1], dLeft);
                     }
                     break;
@@ -614,7 +619,7 @@ public class ContextSettings : ViewModelBase
                         if (tSplit.Length < 3)
                             continue;
 
-                        if (int.TryParse(tSplit[2], out var dTop))
+                        if (int.TryParse(tSplit[2], CultureInfo.InvariantCulture, out var dTop))
                             LastActiveNotesTop.TryAdd(tSplit[0] + ":" + tSplit[1], dTop);
                     }
                     break;
@@ -625,7 +630,7 @@ public class ContextSettings : ViewModelBase
                         if (wSplit.Length < 3)
                             continue;
 
-                        if (int.TryParse(wSplit[2], out var dWidth))
+                        if (int.TryParse(wSplit[2], CultureInfo.InvariantCulture, out var dWidth))
                             LastActiveNotesWidth.TryAdd(wSplit[0] + ":" + wSplit[1], dWidth);
                     }
                     break;
@@ -634,7 +639,7 @@ public class ContextSettings : ViewModelBase
                     LastDatabases.AddRange(keyValue[1].Replace("?\\", DocumentsFolder).Split(';').Distinct().Where(File.Exists));
                     break;
                 case "LastUpdate":
-                    if (!long.TryParse(keyValue[1], out var lastUpdate))
+                    if (!long.TryParse(keyValue[1], CultureInfo.InvariantCulture, out var lastUpdate))
                         lastUpdate = 0;
 
                     LastUpdate = lastUpdate;
@@ -656,13 +661,13 @@ public class ContextSettings : ViewModelBase
                     _newNoteHotKey.KeyID = HotKeyUtils.NewNoteHotKeyID;
                     break;
                 case "NoteClickthrough":
-                    if (!double.TryParse(keyValue[1], out var clickthrough))
+                    if (!double.TryParse(keyValue[1], CultureInfo.InvariantCulture, out var clickthrough))
                         clickthrough = 0.0;
 
                     NoteClickthrough = clickthrough;
                     break;
                 case "NoteTransparency":
-                    if (!double.TryParse(keyValue[1], out var transparency))
+                    if (!double.TryParse(keyValue[1], CultureInfo.InvariantCulture, out var transparency))
                         transparency = 0.0;
 
                     NoteTransparency = transparency;
@@ -691,13 +696,13 @@ public class ContextSettings : ViewModelBase
 
                     break;
                 case "RecentNotesSortMode":
-                    if (!int.TryParse(keyValue[1], out var sortMode))
+                    if (!int.TryParse(keyValue[1], CultureInfo.InvariantCulture, out var sortMode))
                         sortMode = (int)SortType.ByChange;
 
                     RecentEntriesSortMode = (SortType)sortMode;
                     break;
                 case "RibbonDisplayMode":
-                    if (!int.TryParse(keyValue[1], out var displayMode))
+                    if (!int.TryParse(keyValue[1], CultureInfo.InvariantCulture, out var displayMode))
                         displayMode = (int)DisplayType.Content;
 
                     RibbonTabContent = (DisplayType)displayMode;
@@ -725,35 +730,85 @@ public class ContextSettings : ViewModelBase
         OnPropertyChanged(null);
     }
 
+    public void RestoreActiveNotes()
+    {
+        foreach (var openNote in LastActiveNotes)
+        {
+            var oSplit = openNote.Split(':');
+            if (oSplit.Length < 2)
+                continue;
+
+            if (!Guid.TryParse(oSplit[1], out var gNote))
+                continue;
+
+            Database? target = null;
+            foreach (Database db in Databases)
+            {
+                if (oSplit[0].Equals(db.Name, StringComparison.Ordinal))
+                    target = db;
+            }
+
+            if (target is null)
+                continue;
+
+            if (!target.HasRecord(gNote))
+                continue;
+
+            if (target.GetRecord(gNote) is not NoteRecord note)
+                continue;
+
+            if (OpenQuery(note) is not SearchResult result)
+                continue;
+
+            if (LastActiveNotesHeight.TryGetValue($"{target.Name}:{gNote}", out var openHeight))
+                result.Height = openHeight;
+
+            if (LastActiveNotesLeft.TryGetValue($"{target.Name}:{gNote}", out var openLeft))
+                result.Left = openLeft;
+
+            if (LastActiveNotesTop.TryGetValue($"{target.Name}:{gNote}", out var openTop))
+                result.Top = openTop;
+
+            if (LastActiveNotesWidth.TryGetValue($"{target.Name}:{gNote}", out var openWidth))
+                result.Width = openWidth;
+        }
+
+        LastActiveNotes.Clear();
+        LastActiveNotesHeight.Clear();
+        LastActiveNotesLeft.Clear();
+        LastActiveNotesTop.Clear();
+        LastActiveNotesWidth.Clear();
+    }
+
     public void Save() => File.WriteAllLines(SettingsFile, [
         $"AccentBackground:{BytesFromBrush(_accentBackground)}",
         $"AccentForeground:{BytesFromBrush(_accentForeground)}",
         $"FirstRun:{FirstRun}",
         $"FontFamily:{MainFontFamily?.Source}",
-        $"FontSize:{MainFontSize}",
+        $"FontSize:{MainFontSize.ToString(CultureInfo.InvariantCulture)}",
         $"HighContrast:{HighContrast}",
         $"HighContrastAssist:{HighContrastAssist}",
         $"LastActiveDatabase:{CurrentDatabase.Name}",
         $"LastActiveNotes:{string.Join(';', OpenQueries.Select(query => $"{query.ViewModel.Record.DB?.Name}:{query.ViewModel.Record.UUID}"))}",
-        $"LastActiveNotesHeight:{string.Join(';', OpenQueries.Select(query => $"{query.ViewModel.Record.DB?.Name}:{query.ViewModel.Record.UUID}:{query.Height}"))}",
-        $"LastActiveNotesLeft:{string.Join(';', OpenQueries.Select(query => $"{query.ViewModel.Record.DB?.Name}:{query.ViewModel.Record.UUID}:{query.Left}"))}",
-        $"LastActiveNotesTop:{string.Join(';', OpenQueries.Select(query => $"{query.ViewModel.Record.DB?.Name}:{query.ViewModel.Record.UUID}:{query.Top}"))}",
-        $"LastActiveNotesWidth:{string.Join(';', OpenQueries.Select(query => $"{query.ViewModel.Record.DB?.Name}:{query.ViewModel.Record.UUID}:{query.Width}"))}",
+        $"LastActiveNotesHeight:{string.Join(';', OpenQueries.Select(query => $"{query.ViewModel.Record.DB?.Name}:{query.ViewModel.Record.UUID}:{query.Height.ToString(CultureInfo.InvariantCulture)}"))}",
+        $"LastActiveNotesLeft:{string.Join(';', OpenQueries.Select(query => $"{query.ViewModel.Record.DB?.Name}:{query.ViewModel.Record.UUID}:{query.Left.ToString(CultureInfo.InvariantCulture)}"))}",
+        $"LastActiveNotesTop:{string.Join(';', OpenQueries.Select(query => $"{query.ViewModel.Record.DB?.Name}:{query.ViewModel.Record.UUID}:{query.Top.ToString(CultureInfo.InvariantCulture)}"))}",
+        $"LastActiveNotesWidth:{string.Join(';', OpenQueries.Select(query => $"{query.ViewModel.Record.DB?.Name}:{query.ViewModel.Record.UUID}:{query.Width.ToString(CultureInfo.InvariantCulture)}"))}",
         $"LastDatabases:{string.Join(';', DatabaseFiles.Distinct().Where(File.Exists)).Replace(DocumentsFolder, "?\\")}",
-        $"LastUpdate:{LastUpdate}",
+        $"LastUpdate:{LastUpdate.ToString(CultureInfo.InvariantCulture)}",
         $"ListBackground:{BytesFromBrush(_listBackground)}",
         $"ListForeground:{BytesFromBrush(_listForeground)}",
         $"MenuBackground:{BytesFromBrush(_menuBackground)}",
         $"MenuForeground:{BytesFromBrush(_menuForeground)}",
-        $"NewNoteHotKey:{NewNoteHotKey}",
-        $"NoteClickthrough:{NoteClickthrough}",
-        $"NoteTransparency:{NoteTransparency}",
-        $"PreviousNoteHotKey:{PreviousNoteHotKey}",
+        $"NewNoteHotKey:{NewNoteHotKey.ToString(false)}",
+        $"NoteClickthrough:{NoteClickthrough.ToString(CultureInfo.InvariantCulture)}",
+        $"NoteTransparency:{NoteTransparency.ToString(CultureInfo.InvariantCulture)}",
+        $"PreviousNoteHotKey:{PreviousNoteHotKey.ToString(false)}",
         $"PromptForUpdate:{PromptForUpdate}",
         $"QueryAllDatabases:{QueryAllDatabases}",
         $"RecentDatabases:{string.Join(';', RecentDatabases.Distinct()).Replace(DocumentsFolder, "?\\")}",
-        $"RecentNotesSortMode:{(int)RecentEntriesSortMode}",
-        $"RibbonDisplayMode:{(int)RibbonTabContent}",
+        $"RecentNotesSortMode:{((int)RecentEntriesSortMode).ToString(CultureInfo.InvariantCulture)}",
+        $"RibbonDisplayMode:{((int)RibbonTabContent).ToString(CultureInfo.InvariantCulture)}",
         $"SearchResultsOnTop:{SearchResultsOnTop}",
         $"SelectedTheme:{SelectedTheme}",
         $"SnapSearchResults:{SnapSearchResults}",

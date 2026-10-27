@@ -1,4 +1,5 @@
-﻿using SylverInk.Interop;
+using SylverInk.FileIO;
+using SylverInk.Interop;
 using SylverInk.Visuals;
 using SylverInk.XAML.Controls;
 using System.ComponentModel;
@@ -113,11 +114,13 @@ public partial class MainWindow : Window
 
         CurrentDatabase = newDB;
         Settings.SearchResults.Clear();
+        PushViewportMetrics();
         RefreshRecentNotes();
     }
 
     protected override void OnClosed(EventArgs e)
     {
+        FileUtils.SavePaths();
         HotKeyUtils.Release();
         MutexUtils.Release();
         base.OnClosed(e);
@@ -138,6 +141,9 @@ public partial class MainWindow : Window
             Close();
             return;
         }
+
+        // Path initialization
+        FileUtils.LoadPaths();
 
         // Database initialization
         HandleCheckInit();
