@@ -1,4 +1,4 @@
-using SylverInk.FileIO;
+﻿using SylverInk.FileIO;
 using System.Collections;
 using System.Globalization;
 using static SylverInk.FileIO.FileUtils;
@@ -127,18 +127,18 @@ public partial class NoteController : IDisposable
         if (record is null)
             return;
 
+        DB?.RemovePreviousNote(record);
+        RemoveRecordTab(record);
         Records.Remove(uuid);
 
         for (int i = OpenQueries.Count - 1; i > -1; i--)
             OpenQueries[i].RequestClose(record);
 
-        RemoveRecordTab(record);
         record.Delete();
 
         Changed = true;
         IndicesDirty = true;
 
-        DB?.RemovePreviousNote(record);
         PropagateIndices();
         RefreshRecentNotes();
     }

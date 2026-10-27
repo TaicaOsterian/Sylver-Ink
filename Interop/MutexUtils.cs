@@ -1,4 +1,4 @@
-using System.IO.Pipes;
+﻿using System.IO.Pipes;
 using System.Threading;
 using static SylverInk.Notes.DatabaseUtils;
 

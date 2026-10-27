@@ -1,4 +1,4 @@
-using SylverInk.XAML;
+﻿using SylverInk.XAML;
 using System.Globalization;
 using System.Net.Http;
 using System.Reflection;

@@ -1,4 +1,4 @@
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using System.Windows.Controls.Primitives;
 using System.Windows.Interop;
 using static SylverInk.Notes.DatabaseUtils;

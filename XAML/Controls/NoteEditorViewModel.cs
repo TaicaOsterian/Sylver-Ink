@@ -1,4 +1,5 @@
 ﻿using SylverInk.Mvvm;
+using System.Reflection;
 using System.Threading;
 
 namespace SylverInk.XAML.Controls;
@@ -17,7 +18,6 @@ public class NoteEditorViewModel : ViewModelBase
     private int _originalRevisionCount;
     private string _originalText = string.Empty;
     private NoteRecord _record;
-    private DateTime _timeSinceAutosave = DateTime.UtcNow;
 
     public bool Autosaving
     {
@@ -140,16 +140,6 @@ public class NoteEditorViewModel : ViewModelBase
         }
     }
 
-    public DateTime TimeSinceAutosave
-    {
-        get => _timeSinceAutosave;
-        set
-        {
-            _timeSinceAutosave = value;
-            OnPropertyChanged();
-        }
-    }
-
     public NoteEditorViewModel()
     {
         _record = new();
@@ -157,7 +147,7 @@ public class NoteEditorViewModel : ViewModelBase
         _caretPosition = _document.ContentStart;
     }
 
-    private void Autosave()
+    private async void Autosave()
     {
         if (!FinishedLoading)
             return;
@@ -168,16 +158,26 @@ public class NoteEditorViewModel : ViewModelBase
         if (!Edited)
             return;
 
+        using var cts = new CancellationTokenSource();
         Autosaving = true;
-        Task.Factory.StartNew(() =>
-        {
-            SpinWait.SpinUntil(() => (DateTime.UtcNow - TimeSinceAutosave).Seconds >= 1);
 
+        try
+        {
+            await Task.Delay(1000, cts.Token);
             Concurrent(Record.Autosave, Document);
-            TimeSinceAutosave = DateTime.UtcNow;
-            Autosaving = false;
+        }
+        catch (TaskCanceledException)
+        {
             return;
-        }, TaskCreationOptions.LongRunning);
+        }
+        catch (Exception e)
+        {
+            App.LogException(e);
+        }
+        finally
+        {
+            Autosaving = false;
+        }
     }
 
     public bool CalculateIsEdited()

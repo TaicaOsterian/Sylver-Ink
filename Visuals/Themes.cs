@@ -1,4 +1,4 @@
-using static SylverInk.Visuals.VisualUtils;
+﻿using static SylverInk.Visuals.VisualUtils;
 
 namespace SylverInk.Visuals;
 

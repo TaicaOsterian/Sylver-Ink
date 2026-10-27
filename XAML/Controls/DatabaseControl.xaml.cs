@@ -34,7 +34,7 @@ public partial class DatabaseControl : UserControl
             return;
 
         CurrentDatabase.DeleteRecord(RecentSelection);
-        RefreshRecentNotes();
+        ResetViewport();
     }
 
     private void ContextOpen(object? sender, RoutedEventArgs e)
@@ -45,10 +45,7 @@ public partial class DatabaseControl : UserControl
         OpenQuery(RecentSelection);
     }
 
-    private void Controller_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        RefreshRecentNotes();
-    }
+    private void Controller_SelectionChanged(object sender, SelectionChangedEventArgs e) => ResetViewport();
 
     private void CreateContextMenu()
     {
@@ -99,18 +96,24 @@ public partial class DatabaseControl : UserControl
 
     private static void OnDatabaseChanged(DependencyObject source, DependencyPropertyChangedEventArgs e)
     {
-        if (source is not DatabaseControl control)
+        if (source is not DatabaseControl)
             return;
 
         RefreshRecentNotes();
     }
 
-    private void RecentNotesBox_SizeChanged(object sender, SizeChangedEventArgs e)
+    private void ResetViewport()
     {
-        var viewModel = (MainWindowViewModel)Window.GetWindow(this).DataContext;
+        var window = Window.GetWindow(this);
+        if (window is null)
+            return;
+
+        var viewModel = (MainWindowViewModel)window.DataContext;
         var dpi = VisualTreeHelper.GetDpi(this);
-        viewModel.OnViewportMetricsChanged(e.NewSize.Width, e.NewSize.Height, dpi.PixelsPerInchY);
+        viewModel.OnViewportMetricsChanged(NoteListActualWidth, NoteListActualHeight, dpi.PixelsPerInchY);
     }
+
+    private void RecentNotesBox_SizeChanged(object sender, SizeChangedEventArgs e) => ResetViewport();
 
     public static void SetDatabase(DependencyObject source, Database value) => source.SetValue(DatabaseProperty, value);
 }

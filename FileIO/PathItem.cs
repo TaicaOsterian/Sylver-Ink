@@ -1,4 +1,4 @@
-namespace SylverInk.FileIO;
+﻿namespace SylverInk.FileIO;
 
 /// <summary>
 /// Encapsulates a file path and provides properties for ease of display purposes.

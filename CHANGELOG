@@ -1,5 +1,5 @@
-Good evening, writers! This release is a relatively simple one, but it comes with a crucial quality-of-life improvement: **The app's hotkeys can now be customized.**
+For the most part, this release is mostly cleaning up rough edges! You'll find improved responsiveness in a lot of menus and cleaner styling on buttons and selectors. Under the hood, this release also cleans up some errant code in saving and loading database files, which will leave them much healthier in the long term.
 
-That is, key combinations to open a new note and to open the most-recently closed note. By default, these are Ctrl+N and Ctrl+Shift+T respectively. But there are now options to change them in the Settings menu!
+For multilingual users, a niche bug has been fixed which would have caused filename conflicts when switching the OS display language.
 
-As aside also, the app's buttons now visually react when actively pressed and held.
+I've also taken the opportunity to add an **Ice** theme to the predefined list. It's a bright light-mode selection that fills in a niche the existing set didn't have. Users who rely on bright aesthetics for vision or focus will have a much easier time now!

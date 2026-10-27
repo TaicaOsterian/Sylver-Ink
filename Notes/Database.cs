@@ -1,4 +1,4 @@
-using SylverInk.Interop;
+﻿using SylverInk.Interop;
 using System.Globalization;
 using System.Text;
 using static SylverInk.FileIO.FileUtils;

@@ -1,4 +1,4 @@
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using SylverInk.XAML;
 using System.Threading;
 using static SylverInk.FileIO.FileUtils;

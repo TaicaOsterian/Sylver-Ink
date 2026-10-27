@@ -218,6 +218,7 @@
                                      MouseUp="ListItemChosen"
                                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                      ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                     SizeChanged="RecentNotesBox_SizeChanged"
                                      x:Name="RecentNotesBox"
                                      Visibility="{Binding AppSettings.GridEnabled, Converter={StaticResource BoolToVis}}">
                                 <ListBox.ItemTemplate>

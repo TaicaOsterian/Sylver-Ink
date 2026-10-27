@@ -1,4 +1,4 @@
-using SylverInk.FileIO;
+﻿using SylverInk.FileIO;
 using SylverInk.Interop;
 using SylverInk.Mvvm;
 using SylverInk.Visuals;

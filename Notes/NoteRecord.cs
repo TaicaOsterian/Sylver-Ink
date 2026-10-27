@@ -1,4 +1,4 @@
-using SylverInk.FileIO;
+﻿using SylverInk.FileIO;
 using SylverInk.Interop;
 using System.Globalization;
 using static SylverInk.Notes.DatabaseUtils;
@@ -24,6 +24,7 @@ public partial class NoteRecord
     private long LastChange = -1;
     private DateTime LastChangeObject = DateTime.UtcNow;
     private string LastQuery = string.Empty;
+    private bool LatestDirty = true;
     private readonly LinkedStack<NoteRevision> Revisions = [];
     private readonly List<string> Tags = [];
     private bool TagsDirty = true;
@@ -32,6 +33,7 @@ public partial class NoteRecord
     public Database? DB { get; set; }
     public int Index { get => _index; set => _index = value; }
     public int LastMatchCount { get; set; }
+    public string Latest { get; private set; }
     public bool Locked { get; set; }
     public Guid UUID { get => _uuid; set => _uuid = value; }
 
@@ -100,6 +102,7 @@ public partial class NoteRecord
         Initial = string.Empty;
         LastChange = Created;
         LastChangeObject = DateTime.FromBinary(LastChange);
+        Latest = Initial;
         _uuid = MakeUUID(UUIDType.Record);
     }
 
@@ -111,6 +114,7 @@ public partial class NoteRecord
         this.Initial = Initial;
         LastChange = this.Created;
         LastChangeObject = DateTime.FromBinary(LastChange);
+        Latest = Initial;
         _uuid = UUID ?? MakeUUID(UUIDType.Record);
     }
 
@@ -126,6 +130,7 @@ public partial class NoteRecord
         }
 
         Revisions.Push(revision);
+        LatestDirty = true;
         TagsDirty = true;
     }
 
@@ -173,6 +178,7 @@ public partial class NoteRecord
         Index = -1;
         Initial = string.Empty;
         LastChange = DateTime.UtcNow.ToBinary();
+        LatestDirty = true;
         Revisions.Clear();
         TagsDirty = true;
 
@@ -185,6 +191,7 @@ public partial class NoteRecord
 
         LastChange = GetNumRevisions() == 0 ? Created : Revisions.Peek().Created;
         LastChangeObject = DateTime.FromBinary(LastChange);
+        LatestDirty = true;
 
         RefreshRecentNotes();
     }
@@ -387,23 +394,34 @@ public partial class NoteRecord
     /// <returns>The text of this record after undoing the requested number of revisions.</returns>
     public string Reconstruct(int backsteps = 0)
     {
+        if (backsteps == 0 && !LatestDirty)
+            return Latest;
+
         // We don't use an unsigned int here because the number of upstream conversions would increase exponentially if we did.
         backsteps = Math.Max(backsteps, 0);
 
-        var latest = Initial ?? string.Empty;
+        var final = Initial ?? string.Empty;
         if (!Revisions.Any())
-            return latest;
+            return final;
 
         for (int i = 0; i < Revisions.Count() - Math.Min(backsteps, Revisions.Count()); i++)
         {
             var revision = Revisions.Seek(i);
-            if (revision.StartIndex > -1 && revision.StartIndex < latest.Length)
-                latest = latest[..revision.StartIndex];
+            if (revision.StartIndex > -1 && revision.StartIndex < final.Length)
+                final = final[..revision.StartIndex];
 
-            latest += revision.Substring;
+            final += revision.Substring;
         }
 
-        return latest ?? string.Empty;
+        final ??= string.Empty;
+
+        if (backsteps == 0)
+        {
+            Latest = final;
+            LatestDirty = false;
+        }
+
+        return final;
     }
 
     private void ReconstructRevisions(List<long> CreatedTags, List<string> Substrings)
@@ -480,7 +498,7 @@ public partial class NoteRecord
     private void TargetPlaintext()
     {
         List<long> CreatedTags = [];
-        var ParsedInitial = TextConverter.Convert(Initial ??= string.Empty, TextFormat.Xaml, TextFormat.Plaintext);
+        var ParsedInitial = TextConverter.Convert(Initial ?? string.Empty, TextFormat.Xaml, TextFormat.Plaintext);
         var RCount = Revisions.Count();
         List<string> ReconstructedSubstrings = [];
 
@@ -494,6 +512,7 @@ public partial class NoteRecord
 
         Revisions.Clear();
         Initial = ParsedInitial;
+        LatestDirty = true;
 
         ReconstructRevisions(CreatedTags, ReconstructedSubstrings);
     }
@@ -515,6 +534,7 @@ public partial class NoteRecord
 
         Revisions.Clear();
         Initial = ParsedInitial;
+        LatestDirty = true;
 
         ReconstructRevisions(CreatedTags, ReconstructedSubstrings);
     }

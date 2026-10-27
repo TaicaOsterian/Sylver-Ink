@@ -1,4 +1,4 @@
-namespace SylverInk.Visuals;
+﻿namespace SylverInk.Visuals;
 
 /// <summary>
 /// A predefined set of Brush objects that may be selected by the user in the Settings menu.

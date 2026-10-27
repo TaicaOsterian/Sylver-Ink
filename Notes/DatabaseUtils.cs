@@ -1,4 +1,4 @@
-using SylverInk.FileIO;
+﻿using SylverInk.FileIO;
 using SylverInk.XAML;
 using SylverInk.XAML.Controls;
 using System.Globalization;

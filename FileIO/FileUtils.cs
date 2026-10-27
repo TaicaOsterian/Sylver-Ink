@@ -1,4 +1,4 @@
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using System.Globalization;
 using static SylverInk.Notes.DatabaseUtils;
 

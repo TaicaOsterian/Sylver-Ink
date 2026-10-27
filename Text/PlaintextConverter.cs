@@ -1,4 +1,4 @@
-using System.Text;
+﻿using System.Text;
 using static SylverInk.Text.FlowDocumentUtils;
 
 namespace SylverInk.Text;
