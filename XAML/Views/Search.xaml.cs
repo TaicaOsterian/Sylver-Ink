@@ -25,7 +25,9 @@ public partial class Search : Window
         if (MessageBox.Show(Strings.ConfirmDeleteNote, Strings.Title_Notification, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
             return;
 
+        CommonUtils.Settings.SearchResults.Remove(RecentSelection);
         CurrentDatabase.DeleteRecord(RecentSelection);
+        RefreshRecentNotes();
     }
 
     private void ContextOpen(object? sender, RoutedEventArgs e)
@@ -34,6 +36,7 @@ public partial class Search : Window
             return;
 
         OpenQuery(RecentSelection);
+        RefreshRecentNotes();
     }
     private void CreateContextMenu()
     {
@@ -79,17 +82,20 @@ public partial class Search : Window
             return;
 
         OpenQuery(record, scrollTo: ViewModel.QueryString);
+        RefreshRecentNotes();
     }
 
     private void OnClose(object? sender, EventArgs e)
     {
         ViewModel.CancelSearch();
         CommonUtils.Settings.SearchResults.Clear();
+        RefreshRecentNotes();
     }
 
     protected override async void OnSourceInitialized(EventArgs e)
     {
         base.OnSourceInitialized(e);
+        RefreshRecentNotes();
 
         if (string.IsNullOrWhiteSpace(ViewModel.QueryString))
         {
