@@ -1,10 +1,15 @@
 ﻿using SylverInk.Mvvm;
+using System.Globalization;
 using static SylverInk.Notes.DatabaseUtils;
 
 namespace SylverInk.XAML.Controls;
 
 public class DatabaseControlViewModel : ViewModelBase
 {
+    public static string NewNoteButtonTooltip => string.Format(CultureInfo.CurrentCulture, CacheNewNoteButtonTooltip.Format, AppSettings.NewNoteHotKey);
+    public static string RecentNotesTooltip => string.Format(CultureInfo.CurrentCulture, CacheRecentNotesTooltip.Format, AppSettings.PreviousNoteHotKey);
+    public static string ReopenNoteButtonTooltip => string.Format(CultureInfo.CurrentCulture, CacheRecentNotesButtonTooltip.Format, AppSettings.PreviousNoteHotKey);
+
     public ICommand ExitCommand { get; }
     public ICommand NewNoteCommand { get; }
     public ICommand ReopenNoteCommand { get; }

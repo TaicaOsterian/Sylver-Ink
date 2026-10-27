@@ -138,6 +138,9 @@
   <data name="AdaptiveNotesTooltip" xml:space="preserve">
     <value>Intentar detectar de forma automática los límites entre notas.</value>
   </data>
+  <data name="AttemptedPopEmptyStack" xml:space="preserve">
+    <value>Se intentó extraer un elemento de una pila vacía.</value>
+  </data>
   <data name="AverageLength" xml:space="preserve">
     <value>Longitud media
 de las notas</value>
@@ -259,6 +262,30 @@ Recuerda presionar Importar para finalizar tus cambios!</value>
   <data name="IndexNumber" xml:space="preserve">
     <value>Número índice</value>
   </data>
+  <data name="Key_Alt" xml:space="preserve">
+    <value>Alt</value>
+  </data>
+  <data name="Key_Backspace" xml:space="preserve">
+    <value>Retroceso</value>
+  </data>
+  <data name="Key_Ctrl" xml:space="preserve">
+    <value>Ctrl</value>
+  </data>
+  <data name="Key_Enter" xml:space="preserve">
+    <value>Intro</value>
+  </data>
+  <data name="Key_Shift" xml:space="preserve">
+    <value>Mayús</value>
+  </data>
+  <data name="Key_Space" xml:space="preserve">
+    <value>Espacio</value>
+  </data>
+  <data name="Key_Tab" xml:space="preserve">
+    <value>Tab</value>
+  </data>
+  <data name="Key_Win" xml:space="preserve">
+    <value>Win</value>
+  </data>
   <data name="Label_AccentColors" xml:space="preserve">
     <value>Colores de acento</value>
   </data>
@@ -294,6 +321,9 @@ Recuerda presionar Importar para finalizar tus cambios!</value>
   </data>
   <data name="Label_HighContrast" xml:space="preserve">
     <value>Alto Contraste</value>
+  </data>
+  <data name="Label_Ice" xml:space="preserve">
+    <value>Hielo</value>
   </data>
   <data name="Label_LineTolerance" xml:space="preserve">
     <value>Tolerancia de líneas</value>
@@ -394,14 +424,17 @@ Recuerda presionar Importar para finalizar tus cambios!</value>
 
 ¿Quieres actualizar e instalarla ahora?</value>
   </data>
+  <data name="NetClosed" xml:space="preserve">
+    <value>La conexión de red se cerró inesperadamente.</value>
+  </data>
   <data name="NewNote" xml:space="preserve">
     <value>Nueva nota</value>
   </data>
   <data name="NewNoteButtonTooltip" xml:space="preserve">
-    <value>Crea y abre una nueva nota adhesiva. (Tecla de acceso rápido: Ctrl+N)</value>
+    <value>Crea y abre una nueva nota adhesiva. (Tecla de acceso rápido: {0})</value>
   </data>
   <data name="NewNoteTooltip" xml:space="preserve">
-    <value>Escribe una línea de texto y presiona Enter para crear una nueva nota. También puedes presionar Ctrl+N para abrir una nota adhesiva en cualquier momento.</value>
+    <value>Escribe una línea de texto y presiona Enter para crear una nueva nota. También puedes presionar {0} para abrir una nota adhesiva en cualquier momento.</value>
   </data>
   <data name="NoteClickthrough" xml:space="preserve">
     <value>Clic a través de la nota</value>
@@ -446,13 +479,13 @@ Recuerda presionar Importar para finalizar tus cambios!</value>
     <value>Notas recientes</value>
   </data>
   <data name="RecentNotesButtonTooltip" xml:space="preserve">
-    <value>Vuelve a abrir la nota adhesiva que cerraste más recientemente. (Tecla de acceso rápido: Ctrl+Mayús+T)</value>
+    <value>Vuelve a abrir la nota adhesiva que cerraste más recientemente. (Tecla de acceso rápido: {0})</value>
   </data>
   <data name="RecentNotesSortBy" xml:space="preserve">
     <value>Organizar notas recientes por...</value>
   </data>
   <data name="RecentNotesTooltip" xml:space="preserve">
-    <value>Puedes presionar Ctrl+Mayús+T para reabrir la nota más reciente que has cerrado.</value>
+    <value>Puedes presionar {0} para reabrir la nota más reciente que has cerrado.</value>
   </data>
   <data name="Rename_DatabaseAlreadyExists" xml:space="preserve">
     <value>Una base de datos con ese nombre ya existe en {0}.

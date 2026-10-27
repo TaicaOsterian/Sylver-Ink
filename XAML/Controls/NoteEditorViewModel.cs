@@ -198,7 +198,6 @@ public class NoteEditorViewModel : ViewModelBase
             case MessageBoxResult.Cancel:
                 return true;
             case MessageBoxResult.Yes:
-                EraseAutosave();
                 SaveRecord();
                 break;
             case MessageBoxResult.No:
@@ -255,11 +254,8 @@ public class NoteEditorViewModel : ViewModelBase
         if (Record is null)
             return;
 
-        for (int i = Record.GetNumRevisions() - 1; i >= Math.Max(OriginalRevisionCount - 1, 0); i--)
-        {
-            if (Record.IsAutosaveRevision(i))
-                Record.DeleteRevision(i);
-        }
+        while (Record.IsAutosaveRevision())
+            Record.DeleteRevision();
 
         RefreshRecentNotes();
     }
@@ -278,6 +274,7 @@ public class NoteEditorViewModel : ViewModelBase
         if (Record is null)
             return;
 
+        EraseAutosave();
         Record?.DB?.CreateRevision(Record, TextConverter.Save(Document, TextFormat.Xaml));
         LastChange = Record?.GetLastChange();
         RefreshRecentNotes();

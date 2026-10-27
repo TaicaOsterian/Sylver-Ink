@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -124,7 +124,7 @@ public class NetClient : IDisposable
         catch (Exception e)
         {
             App.LogException(e);
-            ShowTooltip("The network connection was unexpectedly closed.");
+            ShowTooltip(Strings.NetClosed);
             Disconnect();
         }
         finally

@@ -1,4 +1,4 @@
-﻿using SylverInk.FileIO;
+using SylverInk.FileIO;
 using System.Collections;
 using System.Globalization;
 using static SylverInk.FileIO.FileUtils;
@@ -351,7 +351,9 @@ public partial class NoteController : IDisposable
 
     public void Revert(DateTime targetDate)
     {
-        foreach (NoteRecord record in Records.Values)
+        var recordSnapshot = Records.Values.Cast<NoteRecord>().ToList();
+
+        foreach (NoteRecord record in recordSnapshot)
         {
             for (int j = OpenQueries.Count - 1; j > -1; j--)
                 Concurrent(OpenQueries[j].RequestClose, record);
@@ -359,21 +361,20 @@ public partial class NoteController : IDisposable
             RemoveRecordTab(record);
 
             var RecordDate = record.GetCreatedObject().ToLocalTime();
-            var comparison = RecordDate.CompareTo(targetDate);
-            if (comparison > 0)
+            if (RecordDate.CompareTo(targetDate) > 0)
             {
                 DeleteRecord(record.UUID);
                 continue;
             }
 
-            for (int j = record.GetNumRevisions(); j > 0; j--)
+            while (record.GetNumRevisions() > 0)
             {
-                var RevisionDate = DateTime.FromBinary(record.GetRevision(j - 1).Created).ToLocalTime();
-                comparison = RevisionDate.CompareTo(targetDate);
-                if (comparison <= 0)
-                    continue;
+                var newest = record.GetRevision();
+                var newestDate = DateTime.FromBinary(newest.Created).ToLocalTime();
+                if (newestDate.CompareTo(targetDate) <= 0)
+                    break;
 
-                record.DeleteRevision(j - 1);
+                record.DeleteRevision();
                 Changed = true;
             }
         }
@@ -384,6 +385,10 @@ public partial class NoteController : IDisposable
         RefreshRecentNotes();
     }
 
+    /// <summary>
+    /// Opens a serializer instance to a file or memory stream, writes the entire contents of the database to the serializer, and then closes the serializer.
+    /// </summary>
+    /// <returns>If and only if <paramref name="inMemory"/> is <seealso cref="true"/>, a byte array containing the serialized database. Otherwise, <seealso cref="null"/>.</returns>
     public byte[]? SerializeRecords(bool inMemory = false)
     {
         PropagateIndices();

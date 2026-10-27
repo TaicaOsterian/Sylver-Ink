@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 
 namespace SylverInk.Localization;
 
@@ -20,10 +20,14 @@ public static class CompositeCache
     public static readonly CompositeFormat CacheMessageFileMovedOrDeleted = CompositeFormat.Parse(Strings.Message_FileMovedOrDeleted);
     public static readonly CompositeFormat CacheMessageInvalidPath = CompositeFormat.Parse(Strings.Message_InvalidPath);
     public static readonly CompositeFormat CacheMessageUpdateAvailable = CompositeFormat.Parse(Strings.Message_UpdateAvailable);
+    public static readonly CompositeFormat CacheNewNoteButtonTooltip = CompositeFormat.Parse(Strings.NewNoteButtonTooltip);
+    public static readonly CompositeFormat CacheNewNoteTooltip = CompositeFormat.Parse(Strings.NewNoteTooltip);
     public static readonly CompositeFormat CacheNoteEntryCreated = CompositeFormat.Parse(Strings.Note_EntryCreated);
     public static readonly CompositeFormat CacheNoteEntryModified = CompositeFormat.Parse(Strings.Note_EntryModified);
     public static readonly CompositeFormat CacheNoteIndexLabel = CompositeFormat.Parse(Strings.Note_IndexLabel);
     public static readonly CompositeFormat CacheNoteRevisionID = CompositeFormat.Parse(Strings.Note_RevisionID);
+    public static readonly CompositeFormat CacheRecentNotesButtonTooltip = CompositeFormat.Parse(Strings.RecentNotesButtonTooltip);
+    public static readonly CompositeFormat CacheRecentNotesTooltip = CompositeFormat.Parse(Strings.RecentNotesTooltip);
     public static readonly CompositeFormat CacheRenameDatabaseAlreadyExists = CompositeFormat.Parse(Strings.Rename_DatabaseAlreadyExists);
     public static readonly CompositeFormat CacheTextNoConverterRegistered = CompositeFormat.Parse(Strings.Text_NoConverterRegistered);
     public static readonly CompositeFormat CacheTextNoParserRegistered = CompositeFormat.Parse(Strings.Text_NoParserRegistered);

@@ -138,6 +138,9 @@
   <data name="AdaptiveNotesTooltip" xml:space="preserve">
     <value>Attempt to automatically detect boundaries between notes.</value>
   </data>
+  <data name="AttemptedPopEmptyStack" xml:space="preserve">
+    <value>Attempted to pop from an empty stack.</value>
+  </data>
   <data name="AverageLength" xml:space="preserve">
     <value>Average note
 length</value>
@@ -271,6 +274,34 @@ Remember to press Import to finalize your changes!</value>
     <value>Index number</value>
     <comment>"ID number of a note or other item"</comment>
   </data>
+  <data name="Key_Alt" xml:space="preserve">
+    <value>Alt</value>
+    <comment>The Alt key on the keyboard.</comment>
+  </data>
+  <data name="Key_Backspace" xml:space="preserve">
+    <value>Backspace</value>
+  </data>
+  <data name="Key_Ctrl" xml:space="preserve">
+    <value>Ctrl</value>
+    <comment>The Control/Ctrl key on the keyboard.</comment>
+  </data>
+  <data name="Key_Enter" xml:space="preserve">
+    <value>Enter</value>
+  </data>
+  <data name="Key_Shift" xml:space="preserve">
+    <value>Shift</value>
+    <comment>The Shift key on the keyboard.</comment>
+  </data>
+  <data name="Key_Space" xml:space="preserve">
+    <value>Space</value>
+  </data>
+  <data name="Key_Tab" xml:space="preserve">
+    <value>Tab</value>
+  </data>
+  <data name="Key_Win" xml:space="preserve">
+    <value>Win</value>
+    <comment>The Windows key on the keyboard.</comment>
+  </data>
   <data name="Label_AccentColors" xml:space="preserve">
     <value>Accent colors</value>
     <comment>"Colors used for accenting and decoration"</comment>
@@ -309,6 +340,9 @@ Remember to press Import to finalize your changes!</value>
   </data>
   <data name="Label_HighContrast" xml:space="preserve">
     <value>High Contrast</value>
+  </data>
+  <data name="Label_Ice" xml:space="preserve">
+    <value>Ice</value>
   </data>
   <data name="Label_LineTolerance" xml:space="preserve">
     <value>Line tolerance</value>
@@ -416,14 +450,17 @@ Do you want to overwrite your current database instead?</value>
 Would you like to download and install it now?</value>
     <comment>{0} = The old version number of the program, {1} = The new version number</comment>
   </data>
+  <data name="NetClosed" xml:space="preserve">
+    <value>The network connection was unexpectedly closed.</value>
+  </data>
   <data name="NewNote" xml:space="preserve">
     <value>New note</value>
   </data>
   <data name="NewNoteButtonTooltip" xml:space="preserve">
-    <value>Create and open a new sticky note. (Hotkey: Ctrl+N)</value>
+    <value>Create and open a new sticky note. (Hotkey: {0})</value>
   </data>
   <data name="NewNoteTooltip" xml:space="preserve">
-    <value>Write a line of text and press Enter to create a new note. You can also press Ctrl+N to open a sticky note at any time.</value>
+    <value>Write a line of text and press Enter to create a new note. You can also press {0} to open a sticky note at any time.</value>
   </data>
   <data name="NoteClickthrough" xml:space="preserve">
     <value>Note clickthrough</value>
@@ -472,13 +509,13 @@ Would you like to download and install it now?</value>
     <value>Recent notes</value>
   </data>
   <data name="RecentNotesButtonTooltip" xml:space="preserve">
-    <value>Reopen the most recently closed note. (Hotkey: Ctrl+Shift+T)</value>
+    <value>Reopen the most recently closed note. (Hotkey: {0})</value>
   </data>
   <data name="RecentNotesSortBy" xml:space="preserve">
     <value>Recent notes sort by...</value>
   </data>
   <data name="RecentNotesTooltip" xml:space="preserve">
-    <value>You can press Ctrl+Shift+T to re-open the note you most recently closed.</value>
+    <value>You can press {0} to re-open the note you most recently closed.</value>
   </data>
   <data name="Rename_DatabaseAlreadyExists" xml:space="preserve">
     <value>A database with that name already exists in {0}.
@@ -575,7 +612,7 @@ Do you want to overwrite it?</value>
   </data>
   <data name="Tooltip_KeyInUse" xml:space="preserve">
     <value>The key combination {0} is already in use.</value>
-    <comment>{0} = A short string of keys, like "Ctrl+N" or "Ctrl+Shift+E".</comment>
+    <comment>{0} = A short string of keys, like "Ctrl+N" or "Ctrl+Shift+T".</comment>
   </data>
   <data name="Tooltip_SearchAllDatabases" xml:space="preserve">
     <value>When enabled, search all open databases for the query text. When disabled, search only the active database.</value>

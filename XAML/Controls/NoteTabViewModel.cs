@@ -14,7 +14,7 @@ public class NoteTabViewModel : NoteEditorViewModel
     private string _saveLabel = Strings.Word_Save;
     private string _searchText = string.Empty;
 
-    private int BackstepIndex => Record.GetNumRevisions() - RevisionIndex + 1;
+    private int BackstepIndex => Record.GetNumRevisions() - RevisionIndex;
     private bool Saving;
     public Label TabHeader => Record.GetRibbonHeader();
 
@@ -121,7 +121,7 @@ public class NoteTabViewModel : NoteEditorViewModel
 
     private bool CanNavigateNext(object? param) => RevisionIndex > 0;
 
-    private bool CanNavigatePrevious(object? param) => RevisionIndex < Record.GetNumRevisions() + 1;
+    private bool CanNavigatePrevious(object? param) => RevisionIndex < Record.GetNumRevisions();
 
     public override void Construct()
     {
@@ -204,9 +204,9 @@ public class NoteTabViewModel : NoteEditorViewModel
         do
         {
             RevisionIndex--;
-        } while (RevisionIndex > 0 && Record.IsAutosaveRevision(BackstepIndex - 1));
+        } while (RevisionIndex > 0 && Record.IsAutosaveRevision(RevisionIndex));
 
-        string revisionTime = RevisionIndex == 0 ? Record.GetLastChange() : Record.GetRevisionTime(RevisionIndex);
+        string revisionTime = RevisionIndex == 0 ? Record.GetLastChange() : Record.GetRevisionTime();
 
         if (RevisionIndex != 0)
             HistoricalDocument = Record.GetDocument(RevisionIndex);
@@ -224,9 +224,9 @@ public class NoteTabViewModel : NoteEditorViewModel
         do
         {
             RevisionIndex++;
-        } while (RevisionIndex < Record.GetNumRevisions() + 1 && Record.IsAutosaveRevision(BackstepIndex - 1));
+        } while (RevisionIndex < Record.GetNumRevisions() && Record.IsAutosaveRevision(RevisionIndex));
 
-        string revisionTime = RevisionIndex == Record.GetNumRevisions() ? Record.GetCreated() : Record.GetRevisionTime(RevisionIndex);
+        string revisionTime = RevisionIndex == Record.GetNumRevisions() ? Record.GetCreated() : Record.GetRevisionTime();
 
         CanSave = true;
         HistoricalDocument = Record.GetDocument(RevisionIndex);

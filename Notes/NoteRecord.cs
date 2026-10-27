@@ -1,4 +1,5 @@
-﻿using SylverInk.FileIO;
+using SylverInk.FileIO;
+using SylverInk.Interop;
 using System.Globalization;
 using static SylverInk.Notes.DatabaseUtils;
 using static SylverInk.Text.FlowDocumentUtils;
@@ -23,7 +24,7 @@ public partial class NoteRecord
     private long LastChange = -1;
     private DateTime LastChangeObject = DateTime.UtcNow;
     private string LastQuery = string.Empty;
-    private readonly List<NoteRevision> Revisions = [];
+    private readonly LinkedStack<NoteRevision> Revisions = [];
     private readonly List<string> Tags = [];
     private bool TagsDirty = true;
     private Guid _uuid;
@@ -124,7 +125,7 @@ public partial class NoteRecord
             LastChangeObject = DateTime.FromBinary(LastChange);
         }
 
-        Revisions.Add(revision);
+        Revisions.Push(revision);
         TagsDirty = true;
     }
 
@@ -178,16 +179,11 @@ public partial class NoteRecord
         RefreshRecentNotes();
     }
 
-    // In its current state, this function is only well-behaved when removing all subsequent revisions in addition to the one marked for deletion.
-    public void DeleteRevision(int index)
+    public void DeleteRevision()
     {
-        if (index >= GetNumRevisions())
-            return;
+        Revisions.Pop();
 
-        if (GetNumRevisions() > 0)
-            Revisions.RemoveAt(index);
-
-        LastChange = GetNumRevisions() == 0 ? Created : Revisions[GetNumRevisions() - 1].Created;
+        LastChange = GetNumRevisions() == 0 ? Created : Revisions.Peek().Created;
         LastChangeObject = DateTime.FromBinary(LastChange);
 
         RefreshRecentNotes();
@@ -223,7 +219,7 @@ public partial class NoteRecord
             {
                 byte flags = serializer?.ReadByte() ?? 0;
 
-                _revision.IsAutosave = (flags & 1) == 0;
+                _revision.IsAutosave = (flags & 1) == 1;
             }
             _revision.StartIndex = serializer?.ReadInt32() ?? 0;
             _revision.Substring = serializer?.ReadString();
@@ -244,11 +240,11 @@ public partial class NoteRecord
 
         var recordObj = (NoteRecord?)obj;
         return base.Equals(obj)
+            || (UUID.Equals(recordObj?.UUID) is true)
             || (Created.Equals(recordObj?.Created)
                 && Index.Equals(recordObj?.Index)
                 && Initial?.Equals(recordObj?.Initial, StringComparison.Ordinal) is true
-                && LastChange.Equals(recordObj?.LastChange))
-            || (UUID.Equals(recordObj?.UUID) is true);
+                && LastChange.Equals(recordObj?.LastChange));
     }
 
     private int ExtractTags()
@@ -309,13 +305,17 @@ public partial class NoteRecord
 
     public DateTime GetLastChangeObject() => DateTime.FromBinary(LastChange);
 
-    public int GetNumRevisions() => Revisions.Count;
+    public int GetNumRevisions() => Revisions.Count();
 
     private string GetPlaintext() => TextConverter.Convert(Reconstruct(), TextFormat.Xaml, TextFormat.Plaintext);
 
-    public NoteRevision GetRevision(int index) => Revisions[Revisions.Count - 1 - index];
+    public NoteRevision GetRevision() => Revisions.Peek();
 
-    public string GetRevisionTime(int index) => index < Revisions.Count
+    public NoteRevision GetRevision(int index) => Revisions.Peek(index);
+
+    public string GetRevisionTime() => DateTime.FromBinary(GetRevision().Created).ToLocalTime().ToString(DateFormat, CultureInfo.CurrentCulture);
+
+    public string GetRevisionTime(int index) => index < Revisions.Count()
         ? DateTime.FromBinary(GetRevision(index).Created).ToLocalTime().ToString(DateFormat, CultureInfo.CurrentCulture)
         : GetCreated();
 
@@ -347,7 +347,9 @@ public partial class NoteRecord
         _ => Preview
     };
 
-    public bool IsAutosaveRevision(int index) => index < Revisions.Count && Revisions[index].IsAutosave;
+    public bool IsAutosaveRevision() => Revisions.Peek().IsAutosave;
+
+    public bool IsAutosaveRevision(int index) => Revisions.Peek(index).IsAutosave;
 
     public void Lock()
     {
@@ -389,15 +391,16 @@ public partial class NoteRecord
         backsteps = Math.Max(backsteps, 0);
 
         var latest = Initial ?? string.Empty;
-        if (Revisions.Count == 0)
+        if (!Revisions.Any())
             return latest;
 
-        for (int i = 0; i < Revisions.Count - Math.Min(backsteps, Revisions.Count); i++)
+        for (int i = 0; i < Revisions.Count() - Math.Min(backsteps, Revisions.Count()); i++)
         {
-            if (Revisions[i].StartIndex > -1 && Revisions[i].StartIndex < latest.Length)
-                latest = latest[..Revisions[i].StartIndex];
+            var revision = Revisions.Seek(i);
+            if (revision.StartIndex > -1 && revision.StartIndex < latest.Length)
+                latest = latest[..revision.StartIndex];
 
-            latest += Revisions[i].Substring;
+            latest += revision.Substring;
         }
 
         return latest ?? string.Empty;
@@ -447,12 +450,13 @@ public partial class NoteRecord
         serializer?.WriteString(Initial);
         serializer?.WriteLong(LastChange);
 
-        serializer?.WriteInt32(Revisions.Count);
-        for (int i = 0; i < Revisions.Count; i++)
+        serializer?.WriteInt32(Revisions.Count());
+        for (int i = 0; i < Revisions.Count(); i++)
         {
+            var revision = Revisions.Seek(i);
             if (serializer?.DatabaseFormat >= 7)
-                serializer?.WriteShortString(Revisions[i].Uuid.ToString());
-            serializer?.WriteLong(Revisions[i].Created);
+                serializer?.WriteShortString(revision.Uuid.ToString());
+            serializer?.WriteLong(revision.Created);
             if (serializer?.DatabaseFormat > 15)
             {
                 byte flags = (byte)(
@@ -463,13 +467,13 @@ public partial class NoteRecord
                     //0 << 3 |
                     //0 << 2 |
                     //0 << 1 |
-                    (Revisions[i].IsAutosave ? 1 : 0) // << 0
+                    (revision.IsAutosave ? 1 : 0) // << 0
                 );
 
                 serializer?.WriteByte(flags);
             }
-            serializer?.WriteInt32(Revisions[i].StartIndex);
-            serializer?.WriteString(Revisions[i].Substring);
+            serializer?.WriteInt32(revision.StartIndex);
+            serializer?.WriteString(revision.Substring);
         }
     }
 
@@ -477,13 +481,14 @@ public partial class NoteRecord
     {
         List<long> CreatedTags = [];
         var ParsedInitial = TextConverter.Convert(Initial ??= string.Empty, TextFormat.Xaml, TextFormat.Plaintext);
-        var RCount = Revisions.Count;
+        var RCount = Revisions.Count();
         List<string> ReconstructedSubstrings = [];
 
-        for (int i = RCount - 1; i > -1; i--)
+        for (int i = 0; i < RCount; i++)
         {
+            var revision = Revisions.Seek(i);
             var oldText = Reconstruct(i);
-            CreatedTags.Add(Revisions[i].Created);
+            CreatedTags.Add(revision.Created);
             ReconstructedSubstrings.Add(TextConverter.Convert(oldText, TextFormat.Xaml, TextFormat.Plaintext));
         }
 
@@ -497,13 +502,14 @@ public partial class NoteRecord
     {
         List<long> CreatedTags = [];
         var ParsedInitial = TextConverter.Convert(Initial ?? string.Empty, TextFormat.Plaintext, TextFormat.Xaml);
-        var RCount = Revisions.Count;
+        var RCount = Revisions.Count();
         List<string> ReconstructedSubstrings = [];
 
-        for (int i = RCount - 1; i > -1; i--)
+        for (int i = 0; i < RCount; i++)
         {
+            var revision = Revisions.Seek(i);
             var oldText = Reconstruct(i);
-            CreatedTags.Add(Revisions[i].Created);
+            CreatedTags.Add(revision.Created);
             ReconstructedSubstrings.Add(TextConverter.Convert(oldText, TextFormat.Plaintext, TextFormat.Xaml));
         }
 

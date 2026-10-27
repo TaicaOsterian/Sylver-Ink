@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 
 namespace SylverInk.Interop;
 
@@ -26,10 +26,20 @@ public class LinkedStack<T> : IEnumerable<T>
         return ((IEnumerable<T>)_collection).GetEnumerator();
     }
 
+    public T? Peek(int depth = 0)
+    {
+        int index = _collection.Count - 1 - depth;
+        if (index < 0)
+            return default;
+
+        T item = _collection[index];
+        return item;
+    }
+
     public T Pop()
     {
         if (_collection.Count == 0)
-            throw new InvalidOperationException("Attempted to pop from an empty stack.");
+            throw new InvalidOperationException(Strings.AttemptedPopEmptyStack);
 
         int index = _collection.Count - 1;
         T item = _collection[index];
@@ -42,4 +52,10 @@ public class LinkedStack<T> : IEnumerable<T>
     public void Remove(T item) => _collection.Remove(item);
 
     public void RemoveAt(int index) => _collection.RemoveAt(index);
+
+    public T? Seek(int depth = 0)
+    {
+        T item = _collection[depth];
+        return item;
+    }
 }
