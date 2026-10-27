@@ -224,7 +224,8 @@ public class ImportViewModel : ViewModelBase
     {
         // We scan for the following character classes in order to build predicates.
         string[] classes = [@"\p{L}", @"\p{Nd}", @"[\p{Zs}\t]", @"[\p{P}\p{S}]"];
-        var weights = new Dictionary<string, double> {
+        var weights = new Dictionary<string, double>
+        {
             [@"\p{L}"] = 1.0,
             [@"\p{Nd}"] = 2.0,
             [@"[\p{Zs}\t]"] = 2.0,
@@ -493,67 +494,72 @@ public class ImportViewModel : ViewModelBase
         if (CurrentDatabase == null)
             return;
 
-        int blankCount = 0;
-        DelayVisualUpdates = true;
-        Imported = 0;
-        StringBuilder recordData = new();
-
-        for (int i = 0; i < DataLines.Count; i++)
+        try
         {
-            string line = DataLines[i];
+            int blankCount = 0;
+            DelayVisualUpdates = true;
+            Imported = 0;
+            StringBuilder recordData = new();
 
-            // Adaptive
-            if (AdaptiveImport)
+            for (int i = 0; i < DataLines.Count; i++)
             {
-                if (recordData.Length > 0 && Regex.IsMatch(line, $@"^{AdaptivePredicate}"))
+                string line = DataLines[i];
+
+                // Adaptive
+                if (AdaptiveImport)
                 {
-                    CurrentDatabase.CreateRecord(recordData.ToString());
-                    Imported++;
-                    recordData.Clear();
+                    if (recordData.Length > 0 && Regex.IsMatch(line, $@"^{AdaptivePredicate}"))
+                    {
+                        CurrentDatabase.CreateRecord(recordData.ToString());
+                        Imported++;
+                        recordData.Clear();
+                    }
+
+                    if (recordData.Length > 0)
+                        recordData.AppendLine();
+
+                    recordData.Append(line);
+                    continue;
                 }
+
+                // Manual
+                line = line.Trim();
 
                 if (recordData.Length > 0)
                     recordData.AppendLine();
 
                 recordData.Append(line);
-                continue;
+
+                if (line.Length == 0)
+                    blankCount++;
+                else
+                    blankCount = 0;
+
+                StatusText = $"{i * 100.0 / DataLines.Count:N2}% {Strings.Word_Imported}...";
+
+                if (i < DataLines.Count - 1 && blankCount < LineTolerance)
+                    continue;
+
+                if (recordData.Length == 0)
+                    continue;
+
+                CurrentDatabase.CreateRecord(recordData.ToString());
+                blankCount = 0;
+                Imported++;
+                recordData.Clear();
             }
 
-            // Manual
-            line = line.Trim();
-
             if (recordData.Length > 0)
-                recordData.AppendLine();
-
-            recordData.Append(line);
-
-            if (line.Length == 0)
-                blankCount++;
-            else
-                blankCount = 0;
-
-            StatusText = $"{i * 100.0 / DataLines.Count:N2}% {Strings.Word_Imported}...";
-
-            if (i < DataLines.Count - 1 && blankCount < LineTolerance)
-                continue;
-
-            if (recordData.Length == 0)
-                continue;
-
-            CurrentDatabase.CreateRecord(recordData.ToString());
-            blankCount = 0;
-            Imported++;
-            recordData.Clear();
+            {
+                CurrentDatabase.CreateRecord(recordData.ToString());
+                Imported++;
+            }
         }
-
-        if (recordData.Length > 0)
+        finally
         {
-            CurrentDatabase.CreateRecord(recordData.ToString());
-            Imported++;
+            DelayVisualUpdates = false;
+            RefreshRecentNotes();
         }
-
-        DelayVisualUpdates = false;
-        RefreshRecentNotes();
     }
 
     private async Task RefreshAsync()
