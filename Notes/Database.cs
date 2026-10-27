@@ -282,34 +282,19 @@ public class Database : IDisposable
 
     public void Load(string dbFile)
     {
-        var lockFile = GetLockFile(dbFile);
-        if (File.Exists(lockFile) && MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheMessageDatabaseAutosaved, Path.GetFileName(dbFile)), Strings.Title_Notification, MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes)
-        {
-            Controller.Open(lockFile);
-            Initialize();
-
-            if (Controller.EnforceNoForwardCompatibility)
-            {
-                Loaded = false;
-                throw new NotSupportedException(Strings.DatabaseTooNew);
-            }
-
-            if (string.IsNullOrWhiteSpace(Name))
-                Name = Path.GetFileNameWithoutExtension(DBFile);
-
-            Changed = true;
-            Loaded = Controller.Loaded = true;
-            RefreshRecentNotes();
-
-            return;
-        }
-
         Controller = new(DBFile = dbFile, this);
 
         if (Controller.EnforceNoForwardCompatibility)
         {
             Loaded = false;
             throw new NotSupportedException(Strings.DatabaseTooNew);
+        }
+
+        var lockFile = GetLockFile(dbFile);
+        if (File.Exists(lockFile) && MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheMessageDatabaseAutosaved, Path.GetFileName(dbFile)), Strings.Title_Notification, MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes)
+        {
+            Controller.RestoreAutosave(lockFile);
+            Changed = true;
         }
 
         Loaded = Controller.Loaded;

@@ -96,9 +96,19 @@ public partial class NoteController : IDisposable
         if (_serializer?.DatabaseFormat >= 9)
             _serializer?.WriteByte(Structure ??= 0);
 
-        _serializer?.WriteInt32(Records.Count);
+        var RecordCount = 0;
         foreach (NoteRecord record in Records.Values)
-            record.Serialize(_serializer);
+        {
+            if (record.GetRevision().IsAutosave)
+                RecordCount++;
+        }
+
+        _serializer?.WriteInt32(RecordCount);
+        foreach (NoteRecord record in Records.Values)
+        {
+            if (record.GetRevision().IsAutosave)
+                record.EndAutosave(_serializer);
+        }
 
         ReloadSerializer();
     }
@@ -146,7 +156,7 @@ public partial class NoteController : IDisposable
     public void DeserializeRecords()
     {
         if (_serializer is null)
-            ReloadSerializer();
+            return;
 
         Format = _serializer?.DatabaseFormat ?? HighestSIDBFormat;
 
@@ -347,6 +357,56 @@ public partial class NoteController : IDisposable
             else
                 _serializer.DatabaseFormat--;
         }
+    }
+
+    public void RestoreAutosave(string filename)
+    {
+        if (_serializer is null)
+            ReloadSerializer();
+
+        if (!Open(filename))
+            return;
+
+        Format = _serializer?.DatabaseFormat ?? HighestSIDBFormat;
+
+        if (Format > HighestSIDBFormat)
+        {
+            EnforceNoForwardCompatibility = true;
+            _serializer?.Close();
+            MessageBox.Show(Strings.Message_DatabaseTooNew, Strings.Title_Error, MessageBoxButton.OK, MessageBoxImage.Error);
+            return;
+        }
+
+        if (Format >= 7)
+        {
+            string uuidString = _serializer?.ReadShortString() ?? string.Empty;
+            if (!Guid.TryParse(uuidString, out var uuid))
+                uuid = MakeUUID(UUIDType.Database);
+            UUID = uuid;
+        }
+
+        if (!_serializer?.Headless is true)
+            Name = _serializer?.ReadShortString();
+
+        if (Format >= 9)
+            Structure = _serializer?.ReadByte();
+
+        int recordCount = _serializer?.ReadInt32() ?? 0;
+        for (int i = 0; i < recordCount; i++)
+        {
+            string uuidString = _serializer?.ReadShortString() ?? string.Empty;
+
+            if (!Guid.TryParse(uuidString, out var uuid))
+                uuid = MakeUUID(UUIDType.Record);
+
+            if (Records[uuid] is NoteRecord record)
+                record.RestoreFromAutosave(_serializer);
+        }
+
+        _serializer?.Close();
+        Changed = true;
+        IndicesDirty = true;
+        PropagateIndices();
     }
 
     public void Revert(DateTime targetDate)

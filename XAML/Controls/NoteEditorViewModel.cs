@@ -158,13 +158,12 @@ public class NoteEditorViewModel : ViewModelBase
         if (!Edited)
             return;
 
-        using var cts = new CancellationTokenSource();
-        Autosaving = true;
-
         try
         {
-            await Task.Delay(1000, cts.Token);
-            Concurrent(Record.Autosave, Document);
+            using var cts = new CancellationTokenSource();
+            Autosaving = true;
+            await Task.Delay(5000, cts.Token);
+            Record.BeginAutosave(Document);
         }
         catch (TaskCanceledException)
         {

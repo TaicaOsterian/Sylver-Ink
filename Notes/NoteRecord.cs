@@ -136,7 +136,7 @@ public partial class NoteRecord
 
     // This function doesn't consume autosaved revisions to preserve continuity.
     // The onus is on the object initiating the call chain to track which revisions to discard if the user chooses not to save their changes.
-    public void Autosave(FlowDocument document)
+    public void BeginAutosave(FlowDocument document)
     {
         CreateRevision(TextConverter.Save(document, TextFormat.Xaml), Autosave: true);
         DB?.Autosave();
@@ -201,10 +201,13 @@ public partial class NoteRecord
         if (serializer?.DatabaseFormat >= 5)
         {
             string uuidString = serializer?.ReadShortString() ?? string.Empty;
+
             if (!Guid.TryParse(uuidString, out var uuid))
                 uuid = MakeUUID(UUIDType.Record);
+
             UUID = uuid;
         }
+
         Created = serializer?.ReadLong() ?? DateTime.UtcNow.ToBinary();
         Index = serializer?.ReadInt32() ?? -1;
         Initial = serializer?.ReadString();
@@ -214,22 +217,29 @@ public partial class NoteRecord
         for (int i = 0; i < RevisionsCount; i++)
         {
             NoteRevision _revision = new();
+
             if (serializer?.DatabaseFormat >= 7)
             {
                 string uuidString = serializer?.ReadShortString() ?? string.Empty;
+
                 if (!Guid.TryParse(uuidString, out var uuid))
                     uuid = MakeUUID(UUIDType.Revision);
+
                 _revision.Uuid = uuid;
             }
+
             _revision.Created = serializer?.ReadLong() ?? DateTime.UtcNow.ToBinary();
+            
             if (serializer?.DatabaseFormat >= 16)
             {
                 byte flags = serializer?.ReadByte() ?? 0;
 
                 _revision.IsAutosave = (flags & 1) == 1;
             }
+            
             _revision.StartIndex = serializer?.ReadInt32() ?? 0;
             _revision.Substring = serializer?.ReadString();
+            
             Add(_revision);
         }
 
@@ -238,6 +248,59 @@ public partial class NoteRecord
             TargetXaml();
 
         return this;
+    }
+
+    public void EndAutosave(Serializer? serializer)
+    {
+        if (serializer?.DatabaseFormat < 9)
+            TargetPlaintext();
+
+        if (serializer?.DatabaseFormat >= 5)
+            serializer?.WriteShortString(UUID.ToString());
+
+        int RevisionCount = 0;
+
+        for (int i = 0; i < Revisions.Count(); i++)
+        {
+            var revision = Revisions.Seek(i);
+
+            if (!revision.IsAutosave)
+                continue;
+
+            RevisionCount++;
+        }
+
+        serializer?.WriteInt32(RevisionCount);
+        for (int i = 0; i < Revisions.Count(); i++)
+        {
+            var revision = Revisions.Seek(i);
+
+            if (!revision.IsAutosave)
+                continue;
+
+            if (serializer?.DatabaseFormat >= 7)
+                serializer?.WriteShortString(revision.Uuid.ToString());
+
+            serializer?.WriteLong(revision.Created);
+            if (serializer?.DatabaseFormat > 15)
+            {
+                byte flags = (byte)(
+                    //0 << 7 |
+                    //0 << 6 |
+                    //0 << 5 |
+                    //0 << 4 |
+                    //0 << 3 |
+                    //0 << 2 |
+                    //0 << 1 |
+                    1 // << 0
+                );
+
+                serializer?.WriteByte(flags);
+            }
+
+            serializer?.WriteInt32(revision.StartIndex);
+            serializer?.WriteString(revision.Substring);
+        }
     }
 
     public override bool Equals(object? obj)
@@ -456,6 +519,46 @@ public partial class NoteRecord
         }
     }
 
+    public NoteRecord RestoreFromAutosave(Serializer? serializer)
+    {
+        // The serializer has already read this record's UUID during the NoteController's workflow.
+        // That is how the NoteController knew to call RestoreFromAutosave on this particular record.
+
+        int RevisionsCount = serializer?.ReadInt32() ?? 0;
+        for (int i = 0; i < RevisionsCount; i++)
+        {
+            NoteRevision _revision = new();
+
+            if (serializer?.DatabaseFormat >= 7)
+            {
+                string uuidString = serializer?.ReadShortString() ?? string.Empty;
+                if (!Guid.TryParse(uuidString, out var uuid))
+                    uuid = MakeUUID(UUIDType.Revision);
+                _revision.Uuid = uuid;
+            }
+
+            _revision.Created = serializer?.ReadLong() ?? DateTime.UtcNow.ToBinary();
+
+            if (serializer?.DatabaseFormat >= 16)
+            {
+                byte flags = serializer?.ReadByte() ?? 0;
+
+                _revision.IsAutosave = (flags & 1) == 1;
+            }
+
+            _revision.StartIndex = serializer?.ReadInt32() ?? 0;
+            _revision.Substring = serializer?.ReadString();
+
+            Add(_revision);
+        }
+
+        // SIDB v.9 introduced XAML rich text formatting. Its absence in earlier versions must be accounted for.
+        if (serializer?.DatabaseFormat < 9)
+            TargetXaml();
+
+        return this;
+    }
+
     public void Serialize(Serializer? serializer)
     {
         if (serializer?.DatabaseFormat < 9)
@@ -463,6 +566,7 @@ public partial class NoteRecord
 
         if (serializer?.DatabaseFormat >= 5)
             serializer?.WriteShortString(UUID.ToString());
+
         serializer?.WriteLong(Created);
         serializer?.WriteInt32(Index);
         serializer?.WriteString(Initial);
@@ -472,9 +576,12 @@ public partial class NoteRecord
         for (int i = 0; i < Revisions.Count(); i++)
         {
             var revision = Revisions.Seek(i);
+
             if (serializer?.DatabaseFormat >= 7)
                 serializer?.WriteShortString(revision.Uuid.ToString());
+
             serializer?.WriteLong(revision.Created);
+
             if (serializer?.DatabaseFormat > 15)
             {
                 byte flags = (byte)(
@@ -490,6 +597,7 @@ public partial class NoteRecord
 
                 serializer?.WriteByte(flags);
             }
+
             serializer?.WriteInt32(revision.StartIndex);
             serializer?.WriteString(revision.Substring);
         }
