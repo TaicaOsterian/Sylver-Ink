@@ -2,14 +2,14 @@
      xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util"
      xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
     
-    <Package Id="Taica.SylverInk" Name="Sylver Ink" Manufacturer="Taica" UpgradeCode="{3DAEECB4-374E-45BF-8E4F-D3514CB1DE36}" Version="1.10.3.0">
+    <Package Id="Taica.SylverInk" Name="Sylver Ink" Manufacturer="Taica" UpgradeCode="{3DAEECB4-374E-45BF-8E4F-D3514CB1DE36}" Version="1.10.4.0">
         <MajorUpgrade AllowSameVersionUpgrades="yes" DowngradeErrorMessage="!(loc.DowngradeError)" IgnoreLanguage="yes"/>
         
         <MediaTemplate EmbedCab="yes"/>
 
-        <Icon Id="glasses.ico" SourceFile="res/glasses.ico"/>
+        <Icon Id="glasses.ico" SourceFile="../res/glasses.ico"/>
 
-        <WixVariable Id="WixUILicenseRtf" Value="res/license.rtf"/>
+        <WixVariable Id="WixUILicenseRtf" Value="../res/license.rtf"/>
 
         <Property Id="ApplicationFolderName" Value="Sylver Ink"/>
         <Property Id="WixAppFolder" Value="WixPerMachineFolder"/>
@@ -17,8 +17,8 @@
         <Property Id="ARPPRODUCTICON" Value="glasses.ico"/>
 
         <ui:WixUI Id="WixUI_FeatureTree"/>
-        <WixVariable Id="WixUIDialogBmp" Value="res/dialog.png"/>
-        <WixVariable Id="WixUIBannerBmp" Value="res/banner.png"/>
+        <WixVariable Id="WixUIDialogBmp" Value="../res/dialog.png"/>
+        <WixVariable Id="WixUIBannerBmp" Value="../res/banner.png"/>
 
         <Feature Id="MainFeature" AllowAbsent="no" ConfigurableDirectory="INSTALLFOLDER" Display="expand" Title="!(loc.Feature0Title)" Description="!(loc.Feature0Desc)">
             <Files Include="../publish/win-x64/**">
@@ -31,19 +31,19 @@
             </Component>
 
             <Component Id="readme.rtf">
-                <File KeyPath="yes" Id="readme.rtf" Name="readme.rtf" Source="res/readme.rtf"/>
+                <File KeyPath="yes" Id="readme.rtf" Name="readme.rtf" Source="../res/readme.rtf"/>
             </Component>
 
             <Component Id="glasses.ico">
-                <File KeyPath="yes" Id="glasses.ico" Name="glasses.ico" Source="res/glasses.ico"/>
+                <File KeyPath="yes" Id="glasses.ico" Name="glasses.ico" Source="../res/glasses.ico"/>
             </Component>
 
             <Component Id="sidb.ico">
-                <File KeyPath="yes" Id="sidb.ico" Name="sidb.ico" Source="res/sidb.ico"/>
+                <File KeyPath="yes" Id="sidb.ico" Name="sidb.ico" Source="../res/sidb.ico"/>
             </Component>
 
             <Component Id="sibk.ico">
-                <File KeyPath="yes" Id="sibk.ico" Name="sibk.ico" Source="res/sibk.ico"/>
+                <File KeyPath="yes" Id="sibk.ico" Name="sibk.ico" Source="../res/sibk.ico"/>
             </Component>
 
             <Component Id="ShortcutComponent">

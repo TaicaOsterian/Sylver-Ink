@@ -31,7 +31,7 @@ Upon running Sylver Ink for the first time, the default database will be automat
 
 The most prominent feature of the main window is the Recent Notes box. This list box displays a sequence of note entries sorted by, depending on user settings, the date of the note's creation or the date the note was last modified.
 
-New notes can be created by entering them in the New Notes textbox near the bottom of the screen.
+You can create a new note by pressing the New button in the upper toolbar, or by pressing the Ctrl+N hotkey. You can also re-open the note you most recently closed by pressing the Restore button in the same toolbar, or by pressing Ctrl+Shift+T. These hotkeys can be customized in the Settings menu.
 
 At the top of the window is the application's context bar, from which note databases can be opened, closed, deleted, or created. Options are also provided for viewing the properties of the current database, and for connecting to networked databases or opening the current database to connections.
 
