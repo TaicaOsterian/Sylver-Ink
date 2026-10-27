@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Text;
 using System.Windows.Markup;
 using System.Windows.Threading;
@@ -20,8 +20,7 @@ public partial class App : System.Windows.Application
     {
         try
         {
-            if (source is null)
-                source = $"{ex.TargetSite?.DeclaringType?.Assembly.FullName ?? "(unknown)"} : {ex.TargetSite?.DeclaringType?.FullName ?? "(unmanaged code)"}::{ex.TargetSite?.Name}";
+            source ??= $"{ex.TargetSite?.DeclaringType?.Assembly.FullName ?? "(unknown)"} : {ex.TargetSite?.DeclaringType?.FullName ?? "(unmanaged code)"}::{ex.TargetSite?.Name}";
 
             StringBuilder sb = new();
             sb.AppendLine(new string('-', 20));
@@ -33,7 +32,7 @@ public partial class App : System.Windows.Application
 
             sb.AppendLine(new string('-', 20));
 
-            Console.Error.WriteLine(sb.ToString());
+            Debug.WriteLine(sb.ToString());
         }
         catch
         {
