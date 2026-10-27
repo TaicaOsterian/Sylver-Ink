@@ -1,4 +1,4 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 using System.Windows.Controls.Primitives;
 using System.Windows.Interop;
 using static SylverInk.Notes.DatabaseUtils;
@@ -25,7 +25,7 @@ public static class HotKeyUtils
     private static WindowInteropHelper? hWndHelper;
     public const int NewNoteHotKeyID = 114455722;
     public const int PreviousNoteHotKeyID = 180604626;
-    private readonly static Dictionary<int, bool> RegistrationStatus = new([
+    private static readonly Dictionary<int, bool> RegistrationStatus = new([
         new(NewNoteHotKeyID, false),
         new(PreviousNoteHotKeyID, false),
     ]);
@@ -36,25 +36,26 @@ public static class HotKeyUtils
         if (sender is not ToggleButton button)
             return;
 
-        RoutedEventArgs uncheckedArgs = new()
-        {
-            RoutedEvent = ToggleButton.UncheckedEvent,
-            Source = button
-        };
-
-        button.RaiseEvent(uncheckedArgs);
+        button.IsChecked = false;
     }
 
     private static void Button_PreviewKeyDown(object sender, KeyEventArgs e)
     {
         e.Handled = true;
-        if (e.Key is Key.LeftCtrl or Key.RightCtrl or Key.LeftAlt or Key.RightAlt or Key.LeftShift or Key.RightShift)
+        var button = (ToggleButton)sender;
+        Key key = (e.Key == Key.System) ? e.SystemKey : e.Key;
+
+        if (key is Key.LeftCtrl or Key.RightCtrl or Key.LeftAlt or Key.RightAlt or Key.LeftShift or Key.RightShift)
             return;
 
-        var button = (ToggleButton)sender;
+        if (key is Key.Escape)
+        {
+            button.IsChecked = false;
+            return;
+        }
+
         var command = GetHotKeyCommand(button);
 
-        Key key = (e.Key == Key.System) ? e.SystemKey : e.Key;
         ModifierKeys modifiers = Keyboard.Modifiers;
 
         var result = new HotKey()
@@ -201,7 +202,7 @@ public static class HotKeyUtils
             return true;
 
         unregister = UnregisterHotKey(hWndHelper.Handle, hotKeyID);
-        RegistrationStatus[hotKeyID] = unregister;
-        return !unregister;
+        RegistrationStatus[hotKeyID] = !unregister;
+        return unregister;
     }
 }
