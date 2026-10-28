@@ -13,8 +13,8 @@ public static class Themes
         menuBg: BrushFromBytes("300C19"),
         menuFg: BrushFromBytes("E4DAFC"));
 
-    public static Theme Catpuccin { get; } = new(
-        name: Strings.Label_Catpuccin,
+    public static Theme Catppuccin { get; } = new(
+        name: Strings.Label_Catppuccin,
         accentBg: BrushFromBytes("1E1E2E"),
         accentFg: BrushFromBytes("89B4FA"),
         listBg: BrushFromBytes("11111B"),
@@ -50,7 +50,7 @@ public static class Themes
         menuFg: BrushFromBytes("262626"));
 
     public static Theme Default => Manila;
-    public static ICollection<Theme> ThemeCollection { get; } = [Berry, Catpuccin, HighContrast, Ice, Manila];
+    public static ICollection<Theme> ThemeCollection { get; } = [Berry, Catppuccin, HighContrast, Ice, Manila];
 
     public static Theme GetTheme(string name)
     {

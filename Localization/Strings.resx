@@ -319,8 +319,8 @@ Remember to press Import to finalize your changes!</value>
     <value>Berry</value>
     <comment>The noun, a fruit</comment>
   </data>
-  <data name="Label_Catpuccin" xml:space="preserve">
-    <value>Catpuccin</value>
+  <data name="Label_Catppuccin" xml:space="preserve">
+    <value>Catppuccin</value>
   </data>
   <data name="Label_CustomColor" xml:space="preserve">
     <value>Custom color</value>

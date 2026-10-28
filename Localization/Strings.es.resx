@@ -301,7 +301,7 @@ Recuerda presionar Importar para finalizar tus cambios!</value>
   <data name="Label_Berry" xml:space="preserve">
     <value>Baya</value>
   </data>
-  <data name="Label_Catpuccin" xml:space="preserve">
+  <data name="Label_Catppuccin" xml:space="preserve">
     <value>Catpuccín</value>
   </data>
   <data name="Label_CustomColor" xml:space="preserve">
