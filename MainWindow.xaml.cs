@@ -61,6 +61,13 @@ public partial class MainWindow : Window
                     return;
                 case MessageBoxResult.Yes:
                     Settings.GridEnabled = false;
+
+                    foreach (Database db in Databases)
+                    {
+                        if (!File.Exists(db.DBFile))
+                            db.Save();
+                    }
+
                     Application.Current.Shutdown();
                     return;
             }
@@ -131,7 +138,7 @@ public partial class MainWindow : Window
         base.OnSourceInitialized(e);
 
         //Mutex registration
-        if (MutexUtils.Init())
+        if (await MutexUtils.Init())
         {
             if (MutexUtils.ShellVerbs < 2)
                 MessageBox.Show(Strings.Error_InstanceRunning, Strings.Title_Error, MessageBoxButton.OK, MessageBoxImage.Error);
@@ -175,9 +182,9 @@ public partial class MainWindow : Window
                 if (!string.IsNullOrWhiteSpace(folder.Value))
                     Directory.CreateDirectory(folder.Value);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                App.LogException(e);
+                App.LogException(ex);
             }
         }
 

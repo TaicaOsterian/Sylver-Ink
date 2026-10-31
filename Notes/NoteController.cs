@@ -268,6 +268,9 @@ public partial class NoteController : IDisposable
 
         try
         {
+            if (index < 0 || index >= IndexedRecords.Count)
+                return null;
+
             return IndexedRecords[index];
         }
         catch (Exception e)
@@ -277,11 +280,11 @@ public partial class NoteController : IDisposable
         }
     }
 
-    public NoteRecord? GetRecord(Guid uuid) => Records[uuid] as NoteRecord;
+    public NoteRecord? GetRecord(Guid uuid) => HasRecord(uuid) ? Records[uuid] : null;
 
     public bool HasRecord(Guid uuid)
     {
-        return Records[uuid] != null;
+        return Records.ContainsKey(uuid) && Records[uuid] != null;
     }
 
     public void InitializeRecords(bool newDatabase = true)

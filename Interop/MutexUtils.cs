@@ -1,4 +1,5 @@
 ﻿using System.IO.Pipes;
+using System.Reflection;
 using System.Threading;
 using static SylverInk.Notes.DatabaseUtils;
 
@@ -80,27 +81,29 @@ public static class MutexUtils
                 } while (!activated && !Application.Current.MainWindow.IsFocused && (DateTime.UtcNow - now).Seconds < 1);
             });
 
-            Concurrent(HandleShellVerbs, args);
+            await Concurrent(HandleShellVerbs, args);
         }
     }
 
-    private static void HandleShellVerbs(string[]? args = null)
+    private static async Task HandleShellVerbs(string[]? args = null)
     {
-        if ((args ??= Environment.GetCommandLineArgs()).Length < 2)
+        args ??= Environment.GetCommandLineArgs();
+
+        if (args.Length < 2)
             return;
 
         switch (args[1])
         {
             case "open": // &Open
-                HandleVerbOpen(args.Length > 2 ? args[2] : string.Empty);
+                await HandleVerbOpen(args.Length > 2 ? args[2] : string.Empty);
                 break;
             default: // &Open
-                HandleVerbOpen(args[1]);
+                await HandleVerbOpen(args[1]);
                 break;
         }
     }
 
-    private static async void HandleVerbOpen(string filename)
+    private static async Task HandleVerbOpen(string filename)
     {
         if (string.IsNullOrWhiteSpace(filename))
             return;
@@ -124,8 +127,9 @@ public static class MutexUtils
         SwitchDatabase($"~F:{wideBreak}");
     }
 
-    public static bool Init()
+    public static async Task<bool> Init()
     {
+        await HandleShellVerbs();
         mutex = new Mutex(true, MutexName, out bool mutexCreated);
         return HandleMutex(mutexCreated);
     }

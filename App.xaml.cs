@@ -1,4 +1,4 @@
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using SylverInk.FileIO;
 using System.Globalization;
 using System.Text;
@@ -26,13 +26,20 @@ public partial class App : System.Windows.Application
 
             StringBuilder sb = new();
             sb.AppendLine(new string('-', 20));
-            sb.AppendLine(CultureInfo.InvariantCulture, $"Source:    {source}");
-            sb.AppendLine(CultureInfo.InvariantCulture, $"Message:   {ex.Message}");
+            sb.AppendLine(CultureInfo.InvariantCulture, $"Source:     {source}");
+            sb.AppendLine(CultureInfo.InvariantCulture, $"Message:    {ex.Message}");
 
             if (ex.InnerException != null)
                 sb.AppendLine(CultureInfo.InvariantCulture, $"Inner Message: {ex.InnerException.Message}");
 
             sb.AppendLine(new string('-', 20));
+
+#if DEBUG
+            sb.AppendLine(CultureInfo.InvariantCulture, $"Stack trace:");
+            sb.AppendLine(CultureInfo.InvariantCulture, $"{ex.StackTrace}");
+
+            sb.AppendLine(new string('-', 20));
+#endif
 
             Debug.WriteLine(sb.ToString());
         }

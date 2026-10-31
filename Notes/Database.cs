@@ -446,8 +446,8 @@ public class Database : IDisposable
             overwrite = true;
         }
 
-        if (File.Exists(newFile) && overwrite)
-            File.Delete(newFile);
+        if (overwrite)
+            FileUtils.Erase(newFile);
 
         File.Move(adjustedPath, newFile);
     }
@@ -492,6 +492,8 @@ public class Database : IDisposable
             return;
 
         Controller.SerializeRecords();
+
+        FileUtils.Erase(GetLockFile(targetFile));
 
         if (targetFile.Contains(Subfolders[Subfolder.Databases]))
             File.WriteAllText(Path.Join(targetDir, "uuid.dat"), UUID.ToString());
