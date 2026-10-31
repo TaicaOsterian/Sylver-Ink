@@ -103,6 +103,7 @@
 
         <Grid Grid.Row="1"
               HorizontalAlignment="Center"
+              IsEnabled="{Binding IsLive}"
               x:Name="NoteToolbar">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -515,6 +516,7 @@
         </Popup>
 
         <RichTextBox utils:RichTextBoxUtils.BoundCaret="{Binding CaretPosition, Mode=TwoWay}"
+                     DataObject.Pasting="RichTextBox_Pasting"
                      utils:RichTextBoxUtils.Document="{Binding Document, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                      Focusable="{Binding IsLive, Converter={StaticResource BoolToVis}}"
                      Grid.Row="2"

@@ -95,6 +95,8 @@ public partial class NoteTab : UserControl
 
     public void RequestUnlock(NoteRecord record) => ViewModel.RequestUnlock(record);
 
+    private void RichTextBox_Pasting(object? sender, DataObjectPastingEventArgs e) => RichTextBoxUtils.HandlePaste(sender, e);
+
     private void SelectColor(object? sender, RoutedEventArgs e)
     {
         TextColorPicker.ColorTag = "PT";

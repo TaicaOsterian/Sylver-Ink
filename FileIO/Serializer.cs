@@ -270,13 +270,15 @@ public class Serializer : IDisposable
     {
         _buffer = new byte[5];
         int read = ReadFully(_fileStream, _buffer, 0, 5);
-        if (read < 5) {
+        if (read < 5)
+        {
             DatabaseFormat = byte.MaxValue;
             return;
         }
 
         string header = Encoding.UTF8.GetString(_buffer);
-        if (!header.StartsWith("SYL ", StringComparison.Ordinal)) {
+        if (!header.StartsWith("SYL ", StringComparison.Ordinal))
+        {
             DatabaseFormat = byte.MaxValue;
             return;
         }

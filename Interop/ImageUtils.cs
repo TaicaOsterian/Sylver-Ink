@@ -11,23 +11,12 @@ public static class ImageUtils
     public static Image DecodeEmbed(string data)
     {
         using MemoryStream stream = new(Convert.FromBase64String(data));
-        Image img = new();
+        return FormatImage(stream);
+    }
 
-        PngBitmapDecoder decoder = new(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
-        BitmapSource source = decoder.Frames[0];
-
-        // Always Bgr24?
-        var stride = source.PixelWidth * 4;
-        byte[] pixels = new byte[stride * source.PixelHeight];
-        source.CopyPixels(pixels, stride, 0);
-
-        img.BeginInit();
-        img.Margin = new Thickness(5, 0, 5, 0);
-        img.Source = BitmapSource.Create(source.PixelWidth, source.PixelHeight, source.DpiX, source.DpiY, source.Format, source.Palette, pixels, stride);
-        img.Stretch = Stretch.Uniform;
-        img.EndInit();
-
-        return img;
+    public static Image DecodeEmbed(MemoryStream stream)
+    {
+        return FormatImage(stream);
     }
 
     public static void DetectImageDoubleClick(object sender, RoutedEventArgs e)
@@ -66,5 +55,25 @@ public static class ImageUtils
         ImageView view = new();
         view.Construct(source);
         view.Show();
+    }
+
+    private static Image FormatImage(MemoryStream stream)
+    {
+        PngBitmapDecoder decoder = new(stream, BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
+        BitmapSource source = decoder.Frames[0];
+        Image img = new();
+
+        // Always Bgra32?
+        var stride = source.PixelWidth * 4;
+        byte[] pixels = new byte[stride * source.PixelHeight];
+        source.CopyPixels(pixels, stride, 0);
+
+        img.BeginInit();
+        img.Margin = new Thickness(5, 0, 5, 0);
+        img.Source = BitmapSource.Create(source.PixelWidth, source.PixelHeight, source.DpiX, source.DpiY, source.Format, source.Palette, pixels, stride);
+        img.Stretch = Stretch.UniformToFill;
+        img.EndInit();
+
+        return img;
     }
 }

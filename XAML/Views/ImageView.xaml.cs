@@ -5,9 +5,12 @@
 /// </summary>
 public partial class ImageView : Popout
 {
-    private UIElement? element;
     private Point dragStartPoint;
     private Matrix dragMatrix;
+    private UIElement? element;
+    private Matrix home = Matrix.Identity;
+    private Image? image;
+    private Control? parentControl;
     public override ImageViewViewModel ViewModel => (ImageViewViewModel)ViewModelProperty;
 
     public ImageView()
@@ -24,6 +27,8 @@ public partial class ImageView : Popout
             return;
 
         element = canvas;
+        image = FindImage(canvas);
+
         DependencyObject d = element;
         while (d != null)
         {
@@ -31,11 +36,49 @@ public partial class ImageView : Popout
             if (d is not Control control)
                 continue;
 
-            control.Background ??= Brushes.Transparent;
-            control.MouseWheel += Control_MouseWheel;
-            control.MouseLeftButtonDown += Control_MouseLeftButtonDown;
+            parentControl = control;
+            parentControl.Background ??= Brushes.Transparent;
+            parentControl.MouseWheel += Control_MouseWheel;
+            parentControl.MouseLeftButtonDown += Control_MouseLeftButtonDown;
             break;
         }
+
+        UpdateHome();
+    }
+
+    private void Canvas_ZoomClick(object? sender, RoutedEventArgs e)
+    {
+        if (sender is not Button button)
+            return;
+
+        if (parentControl is null)
+            return;
+
+        double scaleDelta;
+        switch (button.Content)
+        {
+            case "+":
+                scaleDelta = 1.15;
+                break;
+            case "-":
+                scaleDelta = 0.85;
+                break;
+            default:
+                UpdateHome();
+                return;
+        }
+
+        MatrixTransform mt = GetMatrixTransform();
+        Matrix matrix = mt.Matrix;
+
+        double centerX = parentControl.ActualWidth * 0.5;
+        double centerY = parentControl.ActualHeight * 0.5;
+
+        matrix.ScaleAt(scaleDelta, scaleDelta, centerX, centerY);
+        mt.Matrix = matrix;
+        ViewModel.ZoomLevel *= scaleDelta;
+
+        e.Handled = true;
     }
 
     public void Construct(ImageSource source)
@@ -68,7 +111,7 @@ public partial class ImageView : Popout
 
         c.ReleaseMouseCapture();
         c.MouseMove -= Control_MouseMove;
-        c.MouseUp -= Control_MouseLeftButtonUp;
+        c.MouseLeftButtonUp -= Control_MouseLeftButtonUp;
 
         e.Handled = true;
     }
@@ -82,8 +125,8 @@ public partial class ImageView : Popout
         var matrix = dragMatrix;
 
         var p2 = e.GetPosition(c);
-        var x = (p2.X - dragStartPoint.X) * matrix.M11;
-        var y = (p2.Y - dragStartPoint.Y) * matrix.M11;
+        var x = p2.X - dragStartPoint.X;
+        var y = p2.Y - dragStartPoint.Y;
         matrix.Translate(x, y);
         mt.Matrix = matrix;
 
@@ -112,8 +155,24 @@ public partial class ImageView : Popout
 
         matrix.ScaleAt(scaleDelta, scaleDelta, centerX, centerY);
         mt.Matrix = matrix;
+        ViewModel.ZoomLevel *= scaleDelta;
 
         e.Handled = true;
+    }
+
+    private static Image? FindImage(DependencyObject root)
+    {
+        if (root is Image img)
+            return img;
+
+        int count = VisualTreeHelper.GetChildrenCount(root);
+        for (int i = 0; i < count; i++)
+        {
+            var found = FindImage(VisualTreeHelper.GetChild(root, i));
+            if (found is not null)
+                return found;
+        }
+        return null;
     }
 
     private MatrixTransform GetMatrixTransform()
@@ -134,5 +193,22 @@ public partial class ImageView : Popout
     {
         OpenImages.Remove(this);
         Close();
+    }
+
+    private void UpdateHome()
+    {
+        if (parentControl is null || image is null)
+            return;
+
+        double dx = (parentControl.ActualWidth - image.ActualWidth) * 0.5;
+        double dy = (parentControl.ActualHeight - image.ActualHeight) * 0.5;
+
+        home = Matrix.Identity;
+        home.Translate(dx, dy);
+
+        GetMatrixTransform().Matrix = home;
+        ViewModel.ZoomLevel = 1.0;
+
+        return;
     }
 }

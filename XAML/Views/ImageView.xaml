@@ -9,11 +9,10 @@
               mc:Ignorable="d"
               d:DataContext="{d:DesignInstance Type=vm:ImageViewViewModel}"
               Activated="WindowActivated"
-              AllowsTransparency="True"
               Background="{x:Null}"
               Closed="Result_Closed"
               Deactivated="WindowDeactivated"
-              Height="400"
+              Height="350"
               Loaded="WindowLoaded"
               MinHeight="125"
               MinWidth="175"
@@ -27,8 +26,7 @@
               Style="{StaticResource PopoutStyle}"
               Title="Sylver Ink: Image View"
               Topmost="{Binding AppSettings.StickyNotesOnTop}"
-              Width="400"
-              WindowStyle="None">
+              Width="350">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -39,24 +37,57 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-
+        
         <Border Background="{Binding AppSettings.MenuBackground}"
                 BorderBrush="{Binding AppSettings.AccentBackground}"
                 BorderThickness="1.5"
                 ClipToBounds="True"
                 Grid.ColumnSpan="2">
-            <ItemsControl ClipToBounds="True">
-                <Canvas Loaded="Canvas_Loaded">
-                    <Image Source="{Binding Source}"/>
-                </Canvas>
-            </ItemsControl>
-        </Border>
+            <Grid>
+                <ItemsControl Background="{Binding AppSettings.AccentBackground}"
+                              ClipToBounds="True">
+                    <Canvas Loaded="Canvas_Loaded">
+                        <Image Source="{Binding Source}"/>
+                    </Canvas>
+                </ItemsControl>
+                
+                <Canvas>
+                    <Button Click="Canvas_ZoomClick"
+                            Content="-"
+                            Height="20"
+                            Canvas.Left="5"
+                            MinHeight="0"
+                            MinWidth="0"
+                            Canvas.Top="5"
+                            Width="20"/>
 
+                    <Button Click="Canvas_ZoomClick"
+                            Content="+"
+                            Height="20"
+                            Canvas.Left="30"
+                            MinHeight="0"
+                            MinWidth="0"
+                            Canvas.Top="5"
+                            Width="20"/>
+
+                    <Button Click="Canvas_ZoomClick"
+                            Content="{Binding ZoomLevelRender}"
+                            Height="20"
+                            Canvas.Left="55"
+                            MinHeight="0"
+                            MinWidth="0"
+                            Padding="2"
+                            Canvas.Top="5"
+                            Width="40"/>
+                </Canvas>
+            </Grid>
+        </Border>
+        
         <Button Command="{Binding ExportCommand}"
                 Grid.Row="1"
                 Content="{x:Static properties:Strings.Word_Export}"
                 IsEnabled="{Binding IsFocused}"
-                Margin="0,2"
+                Margin="0,5"
                 MinWidth="50"
                 Padding="5"/>
 
@@ -65,7 +96,7 @@
                 Grid.Row="1"
                 Content="{x:Static properties:Strings.Word_Close}"
                 IsEnabled="{Binding IsFocused}"
-                Margin="0,2"
+                Margin="0,5"
                 MinWidth="50"
                 Padding="5"/>
     </Grid>

@@ -70,6 +70,8 @@ public partial class StickyNote : Popout
 
     public void RequestUnlock(NoteRecord record) => ViewModel.RequestUnlock(record);
 
+    private void RichTextBox_Pasting(object? sender, DataObjectPastingEventArgs e) => RichTextBoxUtils.HandlePaste(sender, e);
+
     protected override void WindowLoaded(object? sender, RoutedEventArgs e)
     {
         Construct();

@@ -7,6 +7,7 @@ namespace SylverInk.XAML.ViewModels;
 public class ImageViewViewModel : PopoutViewModel
 {
     private ImageSource? _source;
+    private double _zoomLevel = 1.0;
 
     public ImageSource? Source
     {
@@ -14,9 +15,21 @@ public class ImageViewViewModel : PopoutViewModel
         set
         {
             _source = value;
-            OnPropertyChanged();
+            OnPropertyChanged(null);
         }
     }
+
+    public double ZoomLevel
+    {
+        get => _zoomLevel;
+        set
+        {
+            _zoomLevel = value;
+            OnPropertyChanged(null);
+        }
+    }
+
+    public string ZoomLevelRender => $"{ZoomLevel:P0}";
 
     public ICommand ExportCommand { get; }
 

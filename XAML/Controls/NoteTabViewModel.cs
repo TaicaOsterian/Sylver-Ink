@@ -240,7 +240,7 @@ public class NoteTabViewModel : NoteEditorViewModel
             {
                 Margin = new Thickness(5, 0, 5, 0),
                 Source = bitmap,
-                Stretch = Stretch.Uniform,
+                Stretch = Stretch.UniformToFill,
             };
 
             BlockUIContainer container = new(img);

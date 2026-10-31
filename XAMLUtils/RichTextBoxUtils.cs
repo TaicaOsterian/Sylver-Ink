@@ -1,5 +1,7 @@
-﻿using SylverInk.Visuals;
+﻿using SylverInk.Interop;
+using SylverInk.Visuals;
 using System.Windows.Controls.Primitives;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
 namespace SylverInk.XAMLUtils;
@@ -210,6 +212,49 @@ public class RichTextBoxUtils
                 _ when cmd == EditingCommands.ToggleUnderline => decoration != DependencyProperty.UnsetValue && decoration == TextDecorations.Underline,
                 _ => false
             };
+        }
+    }
+
+    public static void HandlePaste(object? sender, DataObjectPastingEventArgs e)
+    {
+        if (sender is not RichTextBox rtb)
+            return;
+
+        if (!e.DataObject.GetDataPresent(DataFormats.Bitmap))
+            return;
+
+        e.CancelCommand();
+
+        try
+        {
+            var src = e.DataObject.GetData(DataFormats.Bitmap, true);
+
+            Image? img = src switch
+            {
+                _ when src is BitmapSource bitmap => new() { Source = bitmap },
+                _ when src is MemoryStream stream => ImageUtils.DecodeEmbed(stream),
+                _ => null,
+            };
+
+            if (img is null)
+                return;
+
+            BlockUIContainer blockContainer = new BlockUIContainer(img);
+
+            TextPointer caretPosition = rtb.CaretPosition;
+            Block currentBlock = caretPosition.Paragraph;
+
+            if (currentBlock is null)
+                rtb.Document.Blocks.Add(blockContainer);
+            else
+                rtb.Document.Blocks.InsertAfter(currentBlock, blockContainer);
+
+            rtb.CaretPosition = blockContainer.ElementEnd;
+            rtb.Focus();
+        }
+        catch (Exception ex)
+        {
+            App.LogException(ex);
         }
     }
 
