@@ -1,3 +1,5 @@
+using Microsoft.Win32;
+using SylverInk.FileIO;
 using System.Globalization;
 using System.Text;
 using System.Windows.Markup;
@@ -40,6 +42,36 @@ public partial class App : System.Windows.Application
         }
     }
 
+    private async void OnSessionEnding(object sender, SessionEndingEventArgs e)
+    {
+        // Sylver Ink cannot guarantee that a save operation will take less than the provided five seconds during a soft reboot.
+        // We accommodate as best as we can by briefly pausing the reboot and then re-initiating it when saving is done.
+
+        e.Cancel = true;
+
+        try
+        {
+            File.Create(FileUtils.SessionFile);
+            Settings.Save();
+            await DatabaseUtils.AutosaveDatabases();
+        }
+        catch (Exception ex)
+        {
+            LogException(ex);
+        }
+        finally
+        {
+            SystemEvents.SessionEnding -= OnSessionEnding;
+            Process.Start("shutdown", "/r /t 0");
+        }
+    }
+
+    protected override void OnExit(ExitEventArgs e)
+    {
+        SystemEvents.SessionEnding -= OnSessionEnding;
+        base.OnExit(e);
+    }
+
     protected override void OnStartup(StartupEventArgs e)
     {
         FrameworkElement.LanguageProperty.OverrideMetadata(
@@ -49,6 +81,7 @@ public partial class App : System.Windows.Application
 
         base.OnStartup(e);
 
+        SystemEvents.SessionEnding += OnSessionEnding;
         DispatcherUnhandledException += OnUnhandledException;
         AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
         TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;

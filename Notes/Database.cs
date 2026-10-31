@@ -1,4 +1,5 @@
-﻿using SylverInk.Interop;
+﻿using SylverInk.FileIO;
+using SylverInk.Interop;
 using System.Globalization;
 using System.Text;
 using static SylverInk.FileIO.FileUtils;
@@ -50,9 +51,10 @@ public class Database : IDisposable
             DBFile = GetDatabasePath(this);
 
         var lockFile = GetLockFile(DBFile);
+        var lockDir = Path.GetDirectoryName(lockFile);
 
-        if (!Directory.Exists(Path.GetDirectoryName(lockFile)))
-            Directory.CreateDirectory(Path.GetDirectoryName(lockFile) ?? lockFile);
+        if (!Directory.Exists(lockDir))
+            Directory.CreateDirectory(lockDir ?? lockFile);
 
         Controller.Autosave(lockFile);
     }
@@ -291,7 +293,15 @@ public class Database : IDisposable
         }
 
         var lockFile = GetLockFile(dbFile);
-        if (File.Exists(lockFile) && MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheMessageDatabaseAutosaved, Path.GetFileName(dbFile)), Strings.Title_Notification, MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes)
+        if (File.Exists(lockFile) && (
+            File.Exists(FileUtils.SessionFile)
+            || MessageBox.Show(string.Format(
+                    CultureInfo.CurrentCulture,
+                    CacheMessageDatabaseAutosaved,
+                    Path.GetFileName(dbFile)),
+                Strings.Title_Notification,
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Information) == MessageBoxResult.Yes)) // Ew.
         {
             Controller.RestoreAutosave(lockFile);
             Changed = true;
@@ -445,9 +455,6 @@ public class Database : IDisposable
 
         if (string.IsNullOrWhiteSpace(DBFile))
             DBFile = GetDatabasePath(this);
-
-        FileIO.FileUtils.Erase(GetLockFile(DBFile));
-        FileIO.FileUtils.Erase(GetLockFile(targetFile));
 
         if (string.IsNullOrWhiteSpace(targetFile))
             targetFile = DBFile;

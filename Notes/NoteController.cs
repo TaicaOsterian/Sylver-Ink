@@ -110,7 +110,7 @@ public partial class NoteController : IDisposable
                 record.EndAutosave(_serializer);
         }
 
-        ReloadSerializer();
+        _serializer?.Close();
     }
 
     public Guid CreateRecord(string entry, Guid? uuid = null)
@@ -479,7 +479,7 @@ public partial class NoteController : IDisposable
             return _serializer?.GetOutgoingStream();
 
         Changed = false;
-        ReloadSerializer();
+        _serializer?.Close();
         return null;
     }
 

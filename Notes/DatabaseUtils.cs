@@ -102,6 +102,12 @@ public static class DatabaseUtils
         return tab;
     }
 
+    public static async Task AutosaveDatabases()
+    {
+        foreach (Database db in Databases)
+            await Task.Run(db.Autosave);
+    }
+
     public static void CreateNewNote()
     {
         var firstRecord = CurrentDatabase.GetRecord(0);
