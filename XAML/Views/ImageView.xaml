@@ -43,10 +43,13 @@
         <Border Background="{Binding AppSettings.MenuBackground}"
                 BorderBrush="{Binding AppSettings.AccentBackground}"
                 BorderThickness="1.5"
+                ClipToBounds="True"
                 Grid.ColumnSpan="2">
-            <Viewbox>
-                <Image Source="{Binding Source}"/>
-            </Viewbox>
+            <ItemsControl ClipToBounds="True">
+                <Canvas Loaded="Canvas_Loaded">
+                    <Image Source="{Binding Source}"/>
+                </Canvas>
+            </ItemsControl>
         </Border>
 
         <Button Command="{Binding ExportCommand}"

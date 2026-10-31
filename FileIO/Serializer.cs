@@ -82,7 +82,7 @@ public class Serializer : IDisposable
         _fileStream?.Dispose();
         _fileStream = null;
 
-        if (!_writing || string.IsNullOrEmpty(_path) || !File.Exists(_pathTmp))
+        if (!_writing || string.IsNullOrWhiteSpace(_path) || !File.Exists(_pathTmp))
             return;
 
         try

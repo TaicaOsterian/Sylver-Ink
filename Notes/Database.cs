@@ -53,8 +53,15 @@ public class Database : IDisposable
         var lockFile = GetLockFile(DBFile);
         var lockDir = Path.GetDirectoryName(lockFile);
 
-        if (!Directory.Exists(lockDir))
-            Directory.CreateDirectory(lockDir ?? lockFile);
+        try
+        {
+            if (!string.IsNullOrWhiteSpace(lockDir))
+                Directory.CreateDirectory(lockDir);
+        }
+        catch (Exception e)
+        {
+            App.LogException(e);
+        }
 
         Controller.Autosave(lockFile);
     }
@@ -337,8 +344,15 @@ public class Database : IDisposable
         var BKPath = GetBackupPath(this);
         var BKFolder = Path.GetDirectoryName(BKPath);
 
-        if (!string.IsNullOrWhiteSpace(BKFolder) && !Directory.Exists(BKFolder))
-            Directory.CreateDirectory(BKFolder);
+        try
+        {
+            if (!string.IsNullOrWhiteSpace(BKFolder))
+                Directory.CreateDirectory(BKFolder);
+        }
+        catch (Exception e)
+        {
+            App.LogException(e);
+        }
 
         if (!auto)
         {
@@ -461,8 +475,15 @@ public class Database : IDisposable
 
         var targetDir = Path.GetDirectoryName(targetFile);
 
-        if (!Directory.Exists(targetDir))
-            Directory.CreateDirectory(targetDir ?? targetFile);
+        try
+        {
+            if (!string.IsNullOrWhiteSpace(targetDir))
+                Directory.CreateDirectory(targetDir);
+        }
+        catch (Exception e)
+        {
+            App.LogException(e);
+        }
 
         if (DBFile.Equals(targetFile, StringComparison.Ordinal))
             MakeBackup(true);

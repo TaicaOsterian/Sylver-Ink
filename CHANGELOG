@@ -1,5 +1,24 @@
-For the most part, this release is mostly cleaning up rough edges! You'll find improved responsiveness in a lot of menus and cleaner styling on buttons and selectors. Under the hood, this release also cleans up some errant code in saving and loading database files, which will leave them much healthier in the long term.
+## Editing
 
-For multilingual users, a niche bug has been fixed which would have caused filename conflicts when switching the OS display language.
+- The NoteTab toolbar now has a button for embedding images. Pasting via keyboard shortcut is no longer the only way to insert an image.
 
-I've also taken the opportunity to add an **Ice** theme to the predefined list. It's a bright light-mode selection that fills in a niche the existing set didn't have. Users who rely on bright aesthetics for vision or focus will have a much easier time now!
+- Users can now double-click on images in order to expand them in a view. This view also supports exporting the image to a file.
+
+
+## Files
+
+- Autosaving is now handled via *delta files*: Instead of autosaving the entire database on a background thread, we now save only changes that were made in the current session. This saves massively on file space, and takes far less work.
+
+- There are now menu options in the File menu for browsing the database and backup folders.
+
+- Backups are now stored in the user's AppData/Local folder, instead of alongside the main database files.
+
+
+## Language
+
+- For multilingual users, a niche bug has been fixed which would have caused filename conflicts when switching the OS display language.
+
+
+## Themes
+
+- Finally, I've taken the opportunity to add an **Ice** theme to the predefined list. It's a bright light-mode selection that fills in a niche the existing set didn't have. Users who rely on bright aesthetics for vision or focus will have a much easier time now!

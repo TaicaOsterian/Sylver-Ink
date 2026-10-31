@@ -170,8 +170,15 @@ public partial class MainWindow : Window
         // Documents subdirectory initialization
         foreach (var folder in Subfolders)
         {
-            if (!string.IsNullOrWhiteSpace(folder.Value) && !Directory.Exists(folder.Value))
-                Directory.CreateDirectory(folder.Value);
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(folder.Value))
+                    Directory.CreateDirectory(folder.Value);
+            }
+            catch (Exception e)
+            {
+                App.LogException(e);
+            }
         }
 
         // (If initialization was interrupted, prevent marking it as completed)
