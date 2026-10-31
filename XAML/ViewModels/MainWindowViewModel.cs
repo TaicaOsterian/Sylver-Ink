@@ -264,12 +264,8 @@ public class MainWindowViewModel : ViewModelBase
         if (MessageBox.Show(Strings.Message_ConfirmDeleteDatabase, Strings.Title_Warning, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
             return;
 
-        Erase(CurrentDatabase.DBFile);
-        var BKPath = Path.GetDirectoryName(GetBackupPath(CurrentDatabase));
-        if (Directory.Exists(BKPath))
-            Directory.Delete(BKPath, true);
-
         RemoveDatabase(CurrentDatabase);
+        Erase(CurrentDatabase.DBFile);
         RefreshRecentNotes();
     }
 

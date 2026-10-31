@@ -85,7 +85,7 @@ public class LZWState
         if (string.IsNullOrEmpty(W))
             ReadFirstCode();
 
-        if (LastCode == 257U)
+        if (LastCode is 256U or 257U)
             return [];
 
         while (ByteStream.Count == 0 || ByteStream.Count < byteCount)
@@ -127,9 +127,9 @@ public class LZWState
     /// Initializes the LZW state engine.
     /// </summary>
     /// <param name="writing"><see langword="true"/> if we are compressing data and outputting it to the stream; <see langword="false"/> if we are reading and consuming LZW-compressed data.</param>
-    public void Init(int format, Stream? fileStream = null, bool writing = false)
+    public void Init(int format, Stream fileStream, bool writing = false)
     {
-        FileStream = fileStream ?? FileStream;
+        FileStream = fileStream;
         Format = format;
         Open = true;
         Writing = writing;
@@ -183,7 +183,7 @@ public class LZWState
     private void ReadFirstCode()
     {
         LastCode = ReadCode();
-        if (LastCode == 257U)
+        if (LastCode is 256U or 257U)
             return;
 
         W = Packets[LastCode];

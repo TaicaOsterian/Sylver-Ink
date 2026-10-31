@@ -1,4 +1,4 @@
-using SylverInk.FileIO;
+﻿using SylverInk.FileIO;
 using SylverInk.Interop;
 using SylverInk.Visuals;
 using SylverInk.XAML.Controls;
@@ -170,7 +170,7 @@ public partial class MainWindow : Window
         // Documents subdirectory initialization
         foreach (var folder in Subfolders)
         {
-            if (!Directory.Exists(folder.Value))
+            if (!string.IsNullOrWhiteSpace(folder.Value) && !Directory.Exists(folder.Value))
                 Directory.CreateDirectory(folder.Value);
         }
 

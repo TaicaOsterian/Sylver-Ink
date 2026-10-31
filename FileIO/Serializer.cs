@@ -51,6 +51,8 @@ public class Serializer : IDisposable
         Close(true);
 
         _fileStream = null;
+        _path = string.Empty;
+        _pathTmp = string.Empty;
         _testBuffer = [];
     }
 
@@ -62,30 +64,54 @@ public class Serializer : IDisposable
         if (!_isOpen)
             return;
 
-        _lzw.Close();
-        _fileStream?.Flush();
+        try
+        {
+            _lzw.Close();
+            _fileStream?.Flush();
+        }
+        catch (Exception e)
+        {
+            App.LogException(e);
+        }
+
         _isOpen = false;
 
         if (testing)
             return;
 
         _fileStream?.Dispose();
+        _fileStream = null;
 
-        if (!_writing)
+        if (!_writing || string.IsNullOrEmpty(_path) || !File.Exists(_pathTmp))
             return;
 
-        File.Move(_pathTmp, _path, true);
+        try
+        {
+            File.Move(_pathTmp, _path, true);
 
-        if (!Hidden)
-            return;
-
-        var attributes = File.GetAttributes(_path);
-        File.SetAttributes(_path, attributes | FileAttributes.Hidden);
+            if (Hidden)
+            {
+                var attributes = File.GetAttributes(_path);
+                File.SetAttributes(_path, attributes | FileAttributes.Hidden);
+            }
+        }
+        catch (Exception e)
+        {
+            App.LogException(e);
+        }
     }
 
     public void Dispose()
     {
-        _fileStream?.Dispose();
+        try
+        {
+            Close();
+        }
+        catch (Exception e)
+        {
+            App.LogException(e);
+        }
+
         GC.SuppressFinalize(this);
     }
 
@@ -136,11 +162,15 @@ public class Serializer : IDisposable
     /// </summary>
     public bool OpenRead(string path)
     {
-        Close();
-
         try
         {
-            _fileStream = new FileStream(path, FileMode.Open);
+            Close();
+
+            _fileStream = new FileStream(path,
+                FileMode.Open,
+                FileAccess.Read,
+                FileShare.ReadWrite | FileShare.Delete);
+
             _isOpen = true;
             _path = path;
             _writing = false;
@@ -162,10 +192,10 @@ public class Serializer : IDisposable
     /// </summary>
     public bool OpenWrite(string? path = null)
     {
-        Close();
-
         try
         {
+            Close();
+
             _path = path ?? string.Empty;
             _pathTmp = $"{_path}.tmp";
 
@@ -194,25 +224,44 @@ public class Serializer : IDisposable
     public byte ReadByte()
     {
         if (UseLZW)
-            return _lzw.Decompress()[0];
+        {
+            var d = _lzw.Decompress();
+            return d.Length > 0 ? d[0] : (byte)0;
+        }
 
         _buffer = new byte[1];
-        _fileStream?.Read(_buffer, 0, 1);
+        int count = ReadFully(_fileStream, _buffer, 0, 1);
+        if (count < 1)
+            throw new EndOfStreamException();
         return _buffer[0];
     }
 
     /// <summary>
     /// Consume a certain number of uncompressed bytes from the stream, and decompress as needed.
     /// </summary>
-    /// <param name="byteCount"></param>
     private byte[] ReadBytes(int byteCount)
     {
         if (UseLZW)
             return _lzw.Decompress(byteCount);
 
         _buffer = new byte[byteCount];
-        _fileStream?.Read(_buffer, 0, byteCount);
+        int count = ReadFully(_fileStream, _buffer, 0, byteCount);
+        if (count < byteCount)
+            throw new EndOfStreamException();
         return _buffer;
+    }
+
+    private static int ReadFully(Stream s, byte[] buf, int off, int count)
+    {
+        int total = 0;
+        while (total < count)
+        {
+            int n = s.Read(buf, off + total, count - total);
+            if (n <= 0)
+                break;
+            total += n;
+        }
+        return total;
     }
 
     /// <summary>
@@ -221,9 +270,18 @@ public class Serializer : IDisposable
     private void ReadHeader()
     {
         _buffer = new byte[5];
-        _fileStream?.Read(_buffer, 0, 5);
+        int read = ReadFully(_fileStream, _buffer, 0, 5);
+        if (read < 5) {
+            DatabaseFormat = byte.MaxValue;
+            return;
+        }
 
         string header = Encoding.UTF8.GetString(_buffer);
+        if (!header.StartsWith("SYL ", StringComparison.Ordinal)) {
+            DatabaseFormat = byte.MaxValue;
+            return;
+        }
+
         DatabaseFormat = (byte)header[^1];
 
         if (DatabaseFormat > 14)
@@ -365,11 +423,12 @@ public class Serializer : IDisposable
     /// </summary>
     private void WriteHeader(byte? testFormat = null)
     {
+        var format = testFormat ?? DatabaseFormat;
         _fileStream?.Write(Encoding.UTF8.GetBytes(
-            $"SYL {(char)(testFormat ?? DatabaseFormat)}"
+            $"SYL {(char)(format)}"
         ));
 
-        if (DatabaseFormat > 14)
+        if (format > 14)
         {
             Flags = (byte)(
                     //0 << 7 |

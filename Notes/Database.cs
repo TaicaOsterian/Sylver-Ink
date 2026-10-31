@@ -325,6 +325,10 @@ public class Database : IDisposable
     {
         var DBPath = GetDatabasePath(this);
         var BKPath = GetBackupPath(this);
+        var BKFolder = Path.GetDirectoryName(BKPath);
+
+        if (!string.IsNullOrWhiteSpace(BKFolder) && !Directory.Exists(BKFolder))
+            Directory.CreateDirectory(BKFolder);
 
         if (!auto)
         {

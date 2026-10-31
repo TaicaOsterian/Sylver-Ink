@@ -528,15 +528,15 @@ public partial class NoteController : IDisposable
         catch (Exception e)
         {
             App.LogException(e);
-            _serializer?.ClearCompressionTest();
             _canCompress = -1;
-            ReloadSerializer();
             return false;
         }
+        finally
+        {
+            _serializer?.ClearCompressionTest();
+        }
 
-        _serializer?.ClearCompressionTest();
         _canCompress = 1;
-        ReloadSerializer();
         return true;
     }
 
