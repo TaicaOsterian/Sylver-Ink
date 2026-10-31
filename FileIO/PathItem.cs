@@ -11,7 +11,7 @@ public class PathItem : IEquatable<PathItem>
     {
         get
         {
-            string path = FullPath.Replace(FileUtils.Subfolders["Databases"], string.Empty);
+            string path = FullPath.Replace(FileUtils.Subfolders[FileUtils.Subfolder.Databases], string.Empty);
 
             char sep = Path.DirectorySeparatorChar;
             if (path.StartsWith(sep))

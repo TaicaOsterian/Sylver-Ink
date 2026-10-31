@@ -4,29 +4,14 @@ using static SylverInk.Notes.DatabaseUtils;
 
 namespace SylverInk.XAML.ViewModels;
 
-public class SearchResultViewModel : NoteEditorViewModel
+public class StickyNoteViewModel : NoteEditorViewModel
 {
-    private bool _isFocused;
-
-    public bool IsFocused
-    {
-        get => _isFocused;
-        set
-        {
-            _isFocused = value;
-            OnPropertyChanged();
-        }
-    }
-
-    public ICommand CloseCommand { get; }
     public ICommand ViewCommand { get; }
 
     public event EventHandler? ForceClose;
-    public event EventHandler? RequestClose;
 
-    public SearchResultViewModel() : base()
+    public StickyNoteViewModel() : base()
     {
-        CloseCommand = new RelayCommand(_ => RequestClose?.Invoke(this, EventArgs.Empty));
         ViewCommand = new RelayCommand(View);
     }
 

@@ -1,6 +1,8 @@
-﻿using SylverInk.Mvvm;
+﻿using Microsoft.Win32;
+using SylverInk.Mvvm;
 using SylverInk.Mvvm.Events;
 using System.Globalization;
+using System.Windows.Media.Imaging;
 using static SylverInk.Notes.DatabaseUtils;
 
 namespace SylverInk.XAML.Controls;
@@ -74,10 +76,13 @@ public class NoteTabViewModel : NoteEditorViewModel
         }
     }
 
+
+
     public ICommand CloseSearchPopupCommand { get; }
     public ICommand DeleteCommand { get; }
     public ICommand FindNextCommand { get; }
     public ICommand FindPreviousCommand { get; }
+    public ICommand InsertImageCommand { get; }
     public ICommand NavigateNextCommand { get; }
     public ICommand NavigatePreviousCommand { get; }
     public ICommand ReturnCommand { get; }
@@ -92,6 +97,7 @@ public class NoteTabViewModel : NoteEditorViewModel
         DeleteCommand = new RelayCommand(Delete);
         FindNextCommand = new RelayCommand(FindNext);
         FindPreviousCommand = new RelayCommand(FindPrevious);
+        InsertImageCommand = new RelayCommand(InsertImage);
         NavigateNextCommand = new RelayCommand(NavigateNext, CanNavigateNext);
         NavigatePreviousCommand = new RelayCommand(NavigatePrevious, CanNavigatePrevious);
         ReturnCommand = new RelayCommand(Return);
@@ -197,6 +203,55 @@ public class NoteTabViewModel : NoteEditorViewModel
     private void FindPrevious(object? param)
     {
         FlowDocumentUtils.ScrollToText(Document, SearchText, LogicalDirection.Backward);
+    }
+
+    private void InsertImage(object? param)
+    {
+        var box = (RichTextBox)Document.Parent;
+        if (box is null)
+            return;
+
+        var dialog = new OpenFileDialog()
+        {
+            CheckFileExists = true,
+            Filter = Strings.ImageFileFilter,
+            FilterIndex = 2,
+            Multiselect = true,
+            ValidateNames = true,
+        };
+
+        if (!dialog.ShowDialog() is true)
+            return;
+
+        Block lastBlock = box.CaretPosition.Paragraph;
+
+        foreach (var file in dialog.FileNames)
+        {
+            BitmapImage bitmap = new();
+
+            bitmap.BeginInit();
+            bitmap.UriSource = new Uri(file);
+            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+            bitmap.EndInit();
+
+            bitmap.Freeze();
+
+            Image img = new()
+            {
+                Margin = new Thickness(5, 0, 5, 0),
+                Source = bitmap,
+                Stretch = Stretch.Uniform,
+            };
+
+            BlockUIContainer container = new(img);
+
+            if (lastBlock is null)
+                Document.Blocks.Add(container);
+            else
+                Document.Blocks.InsertAfter(lastBlock, container);
+
+            lastBlock = container;
+        }
     }
 
     private void NavigateNext(object? param)

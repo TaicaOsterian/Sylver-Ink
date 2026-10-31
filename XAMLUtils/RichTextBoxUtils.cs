@@ -1,4 +1,6 @@
-﻿using System.Windows.Threading;
+﻿using SylverInk.Visuals;
+using System.Windows.Controls.Primitives;
+using System.Windows.Threading;
 
 namespace SylverInk.XAMLUtils;
 
@@ -135,9 +137,80 @@ public class RichTextBoxUtils
             return;
 
         if ((bool)e.NewValue)
+        {
             rtb.SelectionChanged += RichTextBox_SelectionChanged;
+            CommandManager.RequerySuggested += OnRequerySuggested;
+        }
         else
+        {
             rtb.SelectionChanged -= RichTextBox_SelectionChanged;
+            CommandManager.RequerySuggested -= OnRequerySuggested;
+        }
+    }
+
+    private static void OnRequerySuggested(object? sender, EventArgs e)
+    {
+        var focusedWindow = Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive);
+        if (focusedWindow is null)
+            return;
+
+        var rtb = VisualUtils.FindVisualChildren<RichTextBox>(focusedWindow).FirstOrDefault(GetObserveCaret);
+
+        if (rtb is null)
+            return;
+
+        RefreshToolbarStates(rtb);
+    }
+
+    /// <summary>
+    /// Update each of the editing toolbar buttons to be checked or unchecked depending on the state of the selected text.
+    /// </summary>
+    private static void RefreshToolbarStates(RichTextBox rtb)
+    {
+        var window = Window.GetWindow(rtb);
+        if (window is null)
+            return;
+
+        var selection = rtb.Selection;
+        object weight = selection.GetPropertyValue(TextElement.FontWeightProperty);
+        object style = selection.GetPropertyValue(TextElement.FontStyleProperty);
+        object decoration = selection.GetPropertyValue(Inline.TextDecorationsProperty);
+        object alignment = selection.GetPropertyValue(Paragraph.TextAlignmentProperty);
+        TextMarkerStyle markerStyle = TextMarkerStyle.None;
+
+        DependencyObject? pointer = selection.Start.Parent;
+        while (pointer != null && pointer != rtb)
+        {
+            if (pointer is List listElement)
+            {
+                markerStyle = listElement.MarkerStyle;
+                break;
+            }
+
+            pointer = LogicalTreeHelper.GetParent(pointer) ?? (pointer as FrameworkElement)?.Parent;
+        }
+
+        foreach (var button in VisualUtils.FindVisualChildren<ToggleButton>(window))
+        {
+            if (button.CommandTarget != rtb)
+                continue;
+
+            ICommand cmd = button.Command;
+
+            button.IsChecked = cmd switch
+            {
+                _ when cmd == EditingCommands.AlignCenter => alignment != DependencyProperty.UnsetValue && (TextAlignment)alignment == TextAlignment.Center,
+                _ when cmd == EditingCommands.AlignJustify => alignment != DependencyProperty.UnsetValue && (TextAlignment)alignment == TextAlignment.Justify,
+                _ when cmd == EditingCommands.AlignLeft => alignment != DependencyProperty.UnsetValue && (TextAlignment)alignment == TextAlignment.Left,
+                _ when cmd == EditingCommands.AlignRight => alignment != DependencyProperty.UnsetValue && (TextAlignment)alignment == TextAlignment.Right,
+                _ when cmd == EditingCommands.ToggleBold => weight != DependencyProperty.UnsetValue && (FontWeight)weight == FontWeights.Bold,
+                _ when cmd == EditingCommands.ToggleBullets => alignment != DependencyProperty.UnsetValue && markerStyle is TextMarkerStyle.Box or TextMarkerStyle.Circle or TextMarkerStyle.Disc or TextMarkerStyle.Square,
+                _ when cmd == EditingCommands.ToggleItalic => style != DependencyProperty.UnsetValue && (FontStyle)style == FontStyles.Italic,
+                _ when cmd == EditingCommands.ToggleNumbering => alignment != DependencyProperty.UnsetValue && markerStyle is TextMarkerStyle.Decimal or TextMarkerStyle.LowerLatin or TextMarkerStyle.LowerRoman or TextMarkerStyle.UpperLatin or TextMarkerStyle.UpperRoman,
+                _ when cmd == EditingCommands.ToggleUnderline => decoration != DependencyProperty.UnsetValue && decoration == TextDecorations.Underline,
+                _ => false
+            };
+        }
     }
 
     private static void RichTextBox_SelectionChanged(object sender, RoutedEventArgs e)
@@ -149,6 +222,8 @@ public class RichTextBoxUtils
             return;
 
         SetBoundCaret(rtb, rtb.CaretPosition);
+
+        RefreshToolbarStates(rtb);
     }
 
     public static void SetAtomicBlocks(DependencyObject element, IEnumerable<Block> value) => element.SetValue(AtomicBlocksProperty, value);

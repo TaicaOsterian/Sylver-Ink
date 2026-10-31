@@ -238,6 +238,9 @@ de las notas</value>
   <data name="FailedUpdateCheck" xml:space="preserve">
     <value>Se produjo un error al buscar actualizaciones.</value>
   </data>
+  <data name="FileFormatUnsupported" xml:space="preserve">
+    <value>El formato de archivo no es compatible.</value>
+  </data>
   <data name="HelpText_Rename" xml:space="preserve">
     <value>Escriba aquí el nuevo nombre para la base de datos.</value>
   </data>
@@ -246,6 +249,9 @@ de las notas</value>
   </data>
   <data name="HighContrastAssistance" xml:space="preserve">
     <value>Cuando está activada, la aplicación ajusta automáticamente el color de primer plano al seleccionar un fondo, y viceversa.</value>
+  </data>
+  <data name="ImageFileFilter" xml:space="preserve">
+    <value>Imágenes JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg|Imágenes PNG (*.png)|*.png|Todos los archivos de imagen (*.jpg;*.jpeg;*.png)|*.jpg;*.jpeg;*.png|Todos los archivos (*.*)|*.*</value>
   </data>
   <data name="ImportFailed" xml:space="preserve">
     <value>No se pudo importar el archivo seleccionado: {0}</value>
@@ -261,6 +267,9 @@ Recuerda presionar Importar para finalizar tus cambios!</value>
   </data>
   <data name="IndexNumber" xml:space="preserve">
     <value>Número índice</value>
+  </data>
+  <data name="InsertImage" xml:space="preserve">
+    <value>Insertar imagen</value>
   </data>
   <data name="Key_Alt" xml:space="preserve">
     <value>Alt</value>
@@ -301,8 +310,11 @@ Recuerda presionar Importar para finalizar tus cambios!</value>
   <data name="Label_Berry" xml:space="preserve">
     <value>Baya</value>
   </data>
+  <data name="Label_Browse" xml:space="preserve">
+    <value>Navegar...</value>
+  </data>
   <data name="Label_Catppuccin" xml:space="preserve">
-    <value>Catpuccín</value>
+    <value>Catppuccín</value>
   </data>
   <data name="Label_CustomColor" xml:space="preserve">
     <value>Color personalizado</value>
@@ -498,9 +510,6 @@ Recuerda presionar Importar para finalizar tus cambios!</value>
   <data name="SaveToDocuments" xml:space="preserve">
     <value>Guardar en Documentos</value>
   </data>
-  <data name="SearchResultsOnTop" xml:space="preserve">
-    <value>Las notas adhesivas siempre arriba</value>
-  </data>
   <data name="SearchText" xml:space="preserve">
     <value>Buscar texto</value>
   </data>
@@ -510,7 +519,7 @@ Recuerda presionar Importar para finalizar tus cambios!</value>
   <data name="ServerCodeLabelTooltip" xml:space="preserve">
     <value>Introduce este código en otra instalación de Sylver Ink para conectarte a la base de datos.</value>
   </data>
-  <data name="SnapSearchResults" xml:space="preserve">
+  <data name="SnapStickyNotes" xml:space="preserve">
     <value>Las notas adhesivas se pegan entre sí</value>
   </data>
   <data name="Status_Importing" xml:space="preserve">
@@ -521,6 +530,12 @@ Recuerda presionar Importar para finalizar tus cambios!</value>
   </data>
   <data name="Status_Processing" xml:space="preserve">
     <value>Procesando</value>
+  </data>
+  <data name="StickyNotesOnTop" xml:space="preserve">
+    <value>Las notas adhesivas siempre arriba</value>
+  </data>
+  <data name="Subfolder_Backups" xml:space="preserve">
+    <value>Respaldos</value>
   </data>
   <data name="Subfolder_Databases" xml:space="preserve">
     <value>Bases de datos</value>
@@ -642,6 +657,9 @@ Recuerda presionar Importar para finalizar tus cambios!</value>
   </data>
   <data name="Word_Exit" xml:space="preserve">
     <value>Salir</value>
+  </data>
+  <data name="Word_Export" xml:space="preserve">
+    <value>Exportar</value>
   </data>
   <data name="Word_File" xml:space="preserve">
     <value>Archivo</value>

@@ -1,4 +1,5 @@
-﻿using SylverInk.Mvvm.Events;
+﻿using SylverInk.Interop;
+using SylverInk.Mvvm.Events;
 
 namespace SylverInk.XAML.Controls;
 
@@ -28,6 +29,8 @@ public partial class NoteTab : UserControl
         e.CanExecute = NoteBox.CanUndo && ViewModel.IsLive;
         e.Handled = true;
     }
+
+    private void DetectImageDoubleClick(object sender, RoutedEventArgs e) => ImageUtils.DetectImageDoubleClick(sender, e);
 
     private void ISPText_KeyDown(object sender, KeyEventArgs e)
     {

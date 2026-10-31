@@ -68,10 +68,10 @@ public class ContextSettings : ViewModelBase
     private bool _promptForUpdate = true;
     private bool _queryAllDatabases;
     private IReadOnlyList<NoteRecord> _recentNotes = [];
-    private bool _searchResultsOnTop = true;
-    private bool _searchResultsInTaskbar;
+    private bool _StickyNotesOnTop = true;
+    private bool _StickyNotesInTaskbar;
     private Theme _selectedTheme = Themes.Default;
-    private bool _snapSearchResults = true;
+    private bool _snapStickyNotes = true;
 
     public Brush? AccentBackground
     {
@@ -315,7 +315,7 @@ public class ContextSettings : ViewModelBase
         {
             _noteTransparency = value;
 
-            foreach (SearchResult note in OpenQueries)
+            foreach (StickyNote note in OpenQueries)
             {
                 if (!note.IsActive)
                     note.Opacity = 1.0 - (value * 0.01);
@@ -367,22 +367,22 @@ public class ContextSettings : ViewModelBase
         }
     }
     public ObservableCollection<NoteRecord> SearchResults { get; } = [];
-    public bool SearchResultsOnTop
+    public bool StickyNotesOnTop
     {
-        get => _searchResultsOnTop;
+        get => _StickyNotesOnTop;
         set
         {
-            _searchResultsOnTop = value;
-            SearchResultsInTaskbar = !value;
+            _StickyNotesOnTop = value;
+            StickyNotesInTaskbar = !value;
             OnPropertyChanged();
         }
     }
-    public bool SearchResultsInTaskbar
+    public bool StickyNotesInTaskbar
     {
-        get => _searchResultsInTaskbar;
+        get => _StickyNotesInTaskbar;
         set
         {
-            _searchResultsInTaskbar = value;
+            _StickyNotesInTaskbar = value;
             OnPropertyChanged();
         }
     }
@@ -398,12 +398,12 @@ public class ContextSettings : ViewModelBase
         }
     }
     public double SmallFontSize => MainFontSize - 1.0;
-    public bool SnapSearchResults
+    public bool SnapStickyNotes
     {
-        get => _snapSearchResults;
+        get => _snapStickyNotes;
         set
         {
-            _snapSearchResults = value;
+            _snapStickyNotes = value;
             OnPropertyChanged();
         }
     }
@@ -707,20 +707,20 @@ public class ContextSettings : ViewModelBase
 
                     RibbonTabContent = (DisplayType)displayMode;
                     break;
-                case "SearchResultsOnTop":
-                    if (!bool.TryParse(keyValue[1], out var searchResultsOnTop))
-                        searchResultsOnTop = true;
+                case "StickyNotesOnTop":
+                    if (!bool.TryParse(keyValue[1], out var notesOnTop))
+                        StickyNotesOnTop = true;
 
-                    SearchResultsOnTop = searchResultsOnTop;
+                    StickyNotesOnTop = notesOnTop;
                     break;
                 case "SelectedTheme":
                     _selectedTheme = Themes.GetTheme(keyValue[1]);
                     break;
-                case "SnapSearchResults":
-                    if (!bool.TryParse(keyValue[1], out var snapSearchResults))
-                        snapSearchResults = true;
+                case "SnapStickyNotes":
+                    if (!bool.TryParse(keyValue[1], out var snapStickyNotes))
+                        snapStickyNotes = true;
 
-                    SnapSearchResults = snapSearchResults;
+                    SnapStickyNotes = snapStickyNotes;
                     break;
                 default:
                     break;
@@ -757,7 +757,7 @@ public class ContextSettings : ViewModelBase
             if (target.GetRecord(gNote) is not NoteRecord note)
                 continue;
 
-            if (OpenQuery(note) is not SearchResult result)
+            if (OpenQuery(note) is not StickyNote result)
                 continue;
 
             if (LastActiveNotesHeight.TryGetValue($"{target.Name}:{gNote}", out var openHeight))
@@ -809,8 +809,8 @@ public class ContextSettings : ViewModelBase
         $"RecentDatabases:{string.Join(';', RecentDatabases.Distinct()).Replace(DocumentsFolder, "?\\")}",
         $"RecentNotesSortMode:{((int)RecentEntriesSortMode).ToString(CultureInfo.InvariantCulture)}",
         $"RibbonDisplayMode:{((int)RibbonTabContent).ToString(CultureInfo.InvariantCulture)}",
-        $"SearchResultsOnTop:{SearchResultsOnTop}",
+        $"StickyNotesOnTop:{StickyNotesOnTop}",
         $"SelectedTheme:{SelectedTheme}",
-        $"SnapSearchResults:{SnapSearchResults}",
+        $"SnapStickyNotes:{SnapStickyNotes}",
     ]);
 }

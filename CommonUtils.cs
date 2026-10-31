@@ -65,7 +65,8 @@ public static partial class CommonUtils
         }
     }
     public static bool InitComplete { get; set; }
-    public static List<SearchResult> OpenQueries { get; } = [];
+    public static List<ImageView> OpenImages { get; } = [];
+    public static List<StickyNote> OpenQueries { get; } = [];
     public static NoteRecord? RecentSelection { get; set; }
     public static Search? SearchWindow
     {
@@ -185,7 +186,7 @@ public static partial class CommonUtils
         }
 
         if (Databases.Count == 0)
-            await Database.Create(Path.Join(Subfolders["Databases"], DefaultDatabase, $"{DefaultDatabase}.sidb"));
+            await Database.Create(Path.Join(Subfolders[Subfolder.Databases], DefaultDatabase, $"{DefaultDatabase}.sidb"));
 
         // Swap to the user's last active database, if one was set.
         if (string.IsNullOrEmpty(ShellDB))

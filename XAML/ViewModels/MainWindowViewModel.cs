@@ -81,6 +81,7 @@ public class MainWindowViewModel : ViewModelBase
 
     public ICommand AboutCommand { get; }
     public ICommand BackupDatabaseCommand { get; }
+    public ICommand BrowseFolderCommand { get; }
     public ICommand CancelConnectCommand { get; }
     public ICommand CancelRenameCommand { get; }
     public ICommand CheckForUpdatesCommand { get; }
@@ -114,6 +115,7 @@ public class MainWindowViewModel : ViewModelBase
     {
         AboutCommand = new RelayCommand(MenuShowAbout);
         BackupDatabaseCommand = new RelayCommand(MenuBackup);
+        BrowseFolderCommand = new RelayCommand(MenuBrowseFolder);
         CancelConnectCommand = new RelayCommand(_ => ConnectPopupVisible = false);
         CancelRenameCommand = new RelayCommand(_ => RenamePopupVisible = false);
         CheckForUpdatesCommand = new RelayCommand(CheckForUpdates);
@@ -173,7 +175,7 @@ public class MainWindowViewModel : ViewModelBase
 
     private static bool CanOpenRecent(object? param) => CommonUtils.Settings.RecentDatabases.Count > 0;
 
-    private static bool CanSaveLocal(object? param) => !CurrentDatabase.DBFile.Contains(Subfolders["Databases"]);
+    private static bool CanSaveLocal(object? param) => !CurrentDatabase.DBFile.Contains(Subfolders[Subfolder.Databases]);
 
     private static bool CanServe(object? param) => !CurrentDatabase.Client.Active && !CurrentDatabase.Server.Active;
 
@@ -201,6 +203,29 @@ public class MainWindowViewModel : ViewModelBase
     }
 
     private static void MenuBackup(object? param) => CurrentDatabase.MakeBackup();
+
+    private static void MenuBrowseFolder(object? param)
+    {
+        if (param is not string folder)
+            return;
+
+        var target = folder switch
+        {
+            _ when folder.Equals(Strings.Subfolder_Backups, StringComparison.Ordinal) => Subfolders[Subfolder.Backups],
+            _ when folder.Equals(Strings.Subfolder_Databases, StringComparison.Ordinal) => Subfolders[Subfolder.Databases],
+            _ => string.Empty
+        };
+
+        if (!Directory.Exists(target))
+            return;
+
+        Process.Start(new ProcessStartInfo
+        {
+            FileName = target,
+            UseShellExecute = true,
+            Verb = "open"
+        });
+    }
 
     private static void MenuClose(object? param)
     {
@@ -324,7 +349,7 @@ public class MainWindowViewModel : ViewModelBase
     private static void MenuSaveLocal(object? param)
     {
         CurrentDatabase.Changed = true;
-        CurrentDatabase.DBFile = Path.Join(Subfolders["Databases"], Path.GetFileNameWithoutExtension(CurrentDatabase.DBFile), Path.GetFileName(CurrentDatabase.DBFile));
+        CurrentDatabase.DBFile = Path.Join(Subfolders[Subfolder.Databases], Path.GetFileNameWithoutExtension(CurrentDatabase.DBFile), Path.GetFileName(CurrentDatabase.DBFile));
         CurrentDatabase.Format = HighestSIDBFormat;
         CurrentDatabase.Save();
     }

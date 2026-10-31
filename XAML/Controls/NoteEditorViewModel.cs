@@ -1,10 +1,8 @@
-﻿using SylverInk.Mvvm;
-using System.Reflection;
-using System.Threading;
+﻿using System.Threading;
 
 namespace SylverInk.XAML.Controls;
 
-public class NoteEditorViewModel : ViewModelBase
+public class NoteEditorViewModel : PopoutViewModel
 {
     private bool _autosaving;
     private TextPointer _caretPosition;
@@ -288,7 +286,7 @@ public class NoteEditorViewModel : ViewModelBase
         if (!FinishedLoading)
             return;
 
-        // This base class contains no save function, so it's up to an inheritor (e.g. NoteTab or SearchResult) to reset the Edited variable when needed.
+        // This base class contains no save function, so it's up to an inheritor (e.g. NoteTab or StickyNote) to reset the Edited variable when needed.
         Edited = Edited || CalculateIsEdited();
         Autosave();
         RefreshRecentNotes();

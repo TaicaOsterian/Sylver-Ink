@@ -380,7 +380,7 @@ public class Database : IDisposable
         if (!Directory.Exists(oldPath))
             return;
 
-        var directorySearch = Directory.GetDirectories(Subfolders["Databases"], "*", new EnumerationOptions() { IgnoreInaccessible = true, RecurseSubdirectories = true, MaxRecursionDepth = 3 });
+        var directorySearch = Directory.GetDirectories(Subfolders[Subfolder.Databases], "*", new EnumerationOptions() { IgnoreInaccessible = true, RecurseSubdirectories = true, MaxRecursionDepth = 3 });
         if (oldPath is not null && newPath is not null && directorySearch.Contains(oldPath))
         {
             if (Directory.Exists(newPath))
@@ -461,7 +461,7 @@ public class Database : IDisposable
 
         Controller.SerializeRecords();
 
-        if (targetFile.Contains(Subfolders["Databases"]))
+        if (targetFile.Contains(Subfolders[Subfolder.Databases]))
             File.WriteAllText(Path.Join(targetDir, "uuid.dat"), UUID.ToString());
     }
 

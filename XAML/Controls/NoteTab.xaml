@@ -14,19 +14,14 @@
              Loaded="NoteTab_Loaded">
     <UserControl.Resources>
         <ResourceDictionary>
-            <Style x:Key="ToolbarButton" TargetType="Button">
-                <Setter Property="Background" Value="{Binding AppSettings.ListBackground}"/>
+            <Style BasedOn="{StaticResource {x:Type Button}}" TargetType="Button" x:Key="ToolbarButton">
                 <Setter Property="CommandTarget" Value="{Binding ElementName=NoteBox}"/>
-                <Setter Property="Foreground" Value="{Binding AppSettings.ListForeground}"/>
-                <Setter Property="Height" Value="Auto"/>
-                <Setter Property="MinHeight" Value="20"/>
                 <Setter Property="MinWidth" Value="35"/>
-                <Setter Property="Width" Value="Auto"/>
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Border Background="{TemplateBinding Background}"
-                                    BorderBrush="{Binding AppSettings.MenuForeground}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
                                     BorderThickness="1"
                                     x:Name="Border">
                                 <ContentPresenter HorizontalAlignment="Center"
@@ -42,6 +37,44 @@
                                 <Trigger Property="IsMouseOver" Value="True">
                                     <Setter Property="Background" Value="{Binding AppSettings.AccentBackground}"/>
                                     <Setter Property="Foreground" Value="{Binding AppSettings.AccentForeground}"/>
+                                </Trigger>
+
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter Property="Background" Value="{Binding AppSettings.ActivatedBackground}"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style BasedOn="{StaticResource ToggleButtonStyle}" TargetType="{x:Type ToggleButton}" x:Key="ToolbarToggleButton">
+                <Setter Property="CommandTarget" Value="{Binding ElementName=NoteBox}"/>
+                <Setter Property="MinWidth" Value="35"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ToggleButton">
+                            <Border x:Name="Border"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{Binding AppSettings.MenuForeground}"
+                                    BorderThickness="1">
+                                <ContentPresenter HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center"/>
+                            </Border>
+
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Background" Value="{Binding AppSettings.DisabledBackground}"/>
+                                    <Setter Property="Foreground" Value="{Binding AppSettings.DisabledForeground}"/>
+                                </Trigger>
+
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="{Binding AppSettings.AccentBackground}"/>
+                                    <Setter Property="Foreground" Value="{Binding AppSettings.AccentForeground}"/>
+                                </Trigger>
+
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter Property="Background" Value="{Binding AppSettings.ActivatedBackground}"/>
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
@@ -92,8 +125,8 @@
                     ToolTip="{x:Static properties:Strings.Word_Undo}"
                     ToolTipService.ShowOnDisabled="True">
                 <Path Data="M 12.5 1 c -2.65 0 -5.05 0.99 -7 2.5 L 2 0 v 9 h 9 l -3.75 -3.75 c 1.5 -1.25 3.25 -2 5.25 -2 3.5 0 6.5 2.25 7.5 5.5 l 2.25 -0.75 C 19 1.5 15.5 1 12.5 1 z"
-                      Fill="{Binding AppSettings.ListBackground}"
-                      Stroke="{Binding AppSettings.ListForeground}"
+                      Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Background}"
+                      Stroke="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}"
                       StrokeThickness="1"/>
             </Button>
 
@@ -103,31 +136,31 @@
                     ToolTip="{x:Static properties:Strings.Word_Redo}"
                     ToolTipService.ShowOnDisabled="True">
                 <Path Data="M 11.5 1 c 2.65 0 5.05 0.99 7 2.5 L 22 0 v 9 h -9 l 3.75 -3.75 c -1.5 -1.25 -3.25 -2 -5.25 -2 -3.5 0 -6.5 2.25 -7.5 5.5 l -2.25 -0.75 C 5 1.5 8.5 1 11.5 1 z"
-                      Fill="{Binding AppSettings.ListBackground}"
-                      Stroke="{Binding AppSettings.ListForeground}"
+                      Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Background}"
+                      Stroke="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}"
                       StrokeThickness="1"/>
             </Button>
 
-            <Button Command="EditingCommands.ToggleBold"
-                    Grid.Column="2"
-                    Style="{StaticResource ToolbarButton}"
-                    ToolTip="{x:Static properties:Strings.Word_Bold}">
+            <ToggleButton Command="EditingCommands.ToggleBold"
+                          Grid.Column="2"
+                          Style="{StaticResource ToolbarToggleButton}"
+                          ToolTip="{x:Static properties:Strings.Word_Bold}">
                 <TextBlock FontWeight="Bold">B</TextBlock>
-            </Button>
+            </ToggleButton>
 
-            <Button Command="EditingCommands.ToggleItalic"
-                    Grid.Column="3"
-                    Style="{StaticResource ToolbarButton}"
-                    ToolTip="{x:Static properties:Strings.Word_Italic}">
+            <ToggleButton Command="EditingCommands.ToggleItalic"
+                          Grid.Column="3"
+                          Style="{StaticResource ToolbarToggleButton}"
+                          ToolTip="{x:Static properties:Strings.Word_Italic}">
                 <TextBlock FontStyle="Italic" FontWeight="Bold">I</TextBlock>
-            </Button>
+            </ToggleButton>
 
-            <Button Command="EditingCommands.ToggleUnderline"
-                    Grid.Column="4"
-                    Style="{StaticResource ToolbarButton}"
-                    ToolTip="{x:Static properties:Strings.Word_Underline}">
+            <ToggleButton Command="EditingCommands.ToggleUnderline"
+                          Grid.Column="4"
+                          Style="{StaticResource ToolbarToggleButton}"
+                          ToolTip="{x:Static properties:Strings.Word_Underline}">
                 <TextBlock TextDecorations="Underline" FontWeight="Bold">U</TextBlock>
-            </Button>
+            </ToggleButton>
 
             <Button Command="EditingCommands.IncreaseFontSize"
                     Grid.Column="5"
@@ -159,163 +192,163 @@
                        Foreground="{Binding AppSettings.AccentForeground}"
                        Height="2"/>
 
-            <Button Command="EditingCommands.AlignLeft"
-                    Grid.Column="1"
-                    Grid.Row="2"
-                    Style="{StaticResource ToolbarButton}"
-                    ToolTip="{x:Static properties:Strings.Word_Left}">
+            <ToggleButton Command="EditingCommands.AlignLeft"
+                          Grid.Column="1"
+                          Grid.Row="2"
+                          Style="{StaticResource ToolbarToggleButton}"
+                          ToolTip="{x:Static properties:Strings.Word_Left}">
                 <StackPanel>
-                    <Line Stroke="{Binding AppSettings.ListForeground}"
+                    <Line Stroke="{Binding RelativeSource={RelativeSource AncestorType=ToggleButton}, Path=Foreground}"
                           StrokeThickness="1"
                           X1="0"
                           X2="16"
                           Y1="3"
                           Y2="3"/>
 
-                    <Line Stroke="{Binding AppSettings.ListForeground}"
+                    <Line Stroke="{Binding RelativeSource={RelativeSource AncestorType=ToggleButton}, Path=Foreground}"
                           StrokeThickness="1"
                           X1="0"
                           X2="8"
                           Y1="3"
                           Y2="3"/>
 
-                    <Line Stroke="{Binding AppSettings.ListForeground}"
+                    <Line Stroke="{Binding RelativeSource={RelativeSource AncestorType=ToggleButton}, Path=Foreground}"
                           StrokeThickness="1"
                           X1="0"
                           X2="12"
                           Y1="3"
                           Y2="3"/>
 
-                    <Line Stroke="{Binding AppSettings.ListForeground}"
+                    <Line Stroke="{Binding RelativeSource={RelativeSource AncestorType=ToggleButton}, Path=Foreground}"
                           StrokeThickness="1"
                           X1="0"
                           X2="8"
                           Y1="3"
                           Y2="3"/>
                 </StackPanel>
-            </Button>
+            </ToggleButton>
 
-            <Button Command="EditingCommands.AlignCenter"
-                    Grid.Column="2"
-                    Grid.Row="2"
-                    Style="{StaticResource ToolbarButton}"
-                    ToolTip="{x:Static properties:Strings.Word_Center}">
+            <ToggleButton Command="EditingCommands.AlignCenter"
+                          Grid.Column="2"
+                          Grid.Row="2"
+                          Style="{StaticResource ToolbarToggleButton}"
+                          ToolTip="{x:Static properties:Strings.Word_Center}">
                 <StackPanel>
-                    <Line Stroke="{Binding AppSettings.ListForeground}"
+                    <Line Stroke="{Binding RelativeSource={RelativeSource AncestorType=ToggleButton}, Path=Foreground}"
                           StrokeThickness="1"
                           X1="0"
                           X2="16"
                           Y1="3"
                           Y2="3"/>
 
-                    <Line Stroke="{Binding AppSettings.ListForeground}"
+                    <Line Stroke="{Binding RelativeSource={RelativeSource AncestorType=ToggleButton}, Path=Foreground}"
                           StrokeThickness="1"
                           X1="4"
                           X2="12"
                           Y1="3"
                           Y2="3"/>
 
-                    <Line Stroke="{Binding AppSettings.ListForeground}"
+                    <Line Stroke="{Binding RelativeSource={RelativeSource AncestorType=ToggleButton}, Path=Foreground}"
                           StrokeThickness="1"
                           X1="2"
                           X2="14"
                           Y1="3"
                           Y2="3"/>
 
-                    <Line Stroke="{Binding AppSettings.ListForeground}"
+                    <Line Stroke="{Binding RelativeSource={RelativeSource AncestorType=ToggleButton}, Path=Foreground}"
                           StrokeThickness="1"
                           X1="4"
                           X2="12"
                           Y1="3"
                           Y2="3"/>
                 </StackPanel>
-            </Button>
+            </ToggleButton>
 
-            <Button Command="EditingCommands.AlignRight"
-                    Grid.Column="3"
-                    Grid.Row="2"
-                    Style="{StaticResource ToolbarButton}"
-                    ToolTip="{x:Static properties:Strings.Word_Right}">
+            <ToggleButton Command="EditingCommands.AlignRight"
+                          Grid.Column="3"
+                          Grid.Row="2"
+                          Style="{StaticResource ToolbarToggleButton}"
+                          ToolTip="{x:Static properties:Strings.Word_Right}">
                 <StackPanel>
-                    <Line Stroke="{Binding AppSettings.ListForeground}"
+                    <Line Stroke="{Binding RelativeSource={RelativeSource AncestorType=ToggleButton}, Path=Foreground}"
                           StrokeThickness="1"
                           X1="0"
                           X2="16"
                           Y1="3"
                           Y2="3"/>
 
-                    <Line Stroke="{Binding AppSettings.ListForeground}"
+                    <Line Stroke="{Binding RelativeSource={RelativeSource AncestorType=ToggleButton}, Path=Foreground}"
                           StrokeThickness="1"
                           X1="8"
                           X2="16"
                           Y1="3"
                           Y2="3"/>
 
-                    <Line Stroke="{Binding AppSettings.ListForeground}"
+                    <Line Stroke="{Binding RelativeSource={RelativeSource AncestorType=ToggleButton}, Path=Foreground}"
                           StrokeThickness="1"
                           X1="4"
                           X2="16"
                           Y1="3"
                           Y2="3"/>
 
-                    <Line Stroke="{Binding AppSettings.ListForeground}"
+                    <Line Stroke="{Binding RelativeSource={RelativeSource AncestorType=ToggleButton}, Path=Foreground}"
                           StrokeThickness="1"
                           X1="8"
                           X2="16"
                           Y1="3"
                           Y2="3"/>
                 </StackPanel>
-            </Button>
+            </ToggleButton>
 
-            <Button Command="EditingCommands.AlignJustify"
-                    Grid.Column="4"
-                    Grid.Row="2"
-                    Style="{StaticResource ToolbarButton}"
-                    ToolTip="{x:Static properties:Strings.Word_Justify}">
+            <ToggleButton Command="EditingCommands.AlignJustify"
+                          Grid.Column="4"
+                          Grid.Row="2"
+                          Style="{StaticResource ToolbarToggleButton}"
+                          ToolTip="{x:Static properties:Strings.Word_Justify}">
                 <StackPanel>
-                    <Line Stroke="{Binding AppSettings.ListForeground}"
+                    <Line Stroke="{Binding RelativeSource={RelativeSource AncestorType=ToggleButton}, Path=Foreground}"
                           StrokeThickness="1"
                           X1="0"
                           X2="16"
                           Y1="3"
                           Y2="3"/>
 
-                    <Line Stroke="{Binding AppSettings.ListForeground}"
+                    <Line Stroke="{Binding RelativeSource={RelativeSource AncestorType=ToggleButton}, Path=Foreground}"
                           StrokeThickness="1"
                           X1="0"
                           X2="16"
                           Y1="3"
                           Y2="3"/>
 
-                    <Line Stroke="{Binding AppSettings.ListForeground}"
+                    <Line Stroke="{Binding RelativeSource={RelativeSource AncestorType=ToggleButton}, Path=Foreground}"
                           StrokeThickness="1"
                           X1="0"
                           X2="16"
                           Y1="3"
                           Y2="3"/>
 
-                    <Line Stroke="{Binding AppSettings.ListForeground}"
+                    <Line Stroke="{Binding RelativeSource={RelativeSource AncestorType=ToggleButton}, Path=Foreground}"
                           StrokeThickness="1"
                           X1="0"
                           X2="16"
                           Y1="3"
                           Y2="3"/>
                 </StackPanel>
-            </Button>
+            </ToggleButton>
 
-            <Button Command="EditingCommands.ToggleBullets"
-                    Grid.Column="5"
-                    Grid.Row="2"
-                    Style="{StaticResource ToolbarButton}"
-                    ToolTip="{x:Static properties:Strings.BulletList}">
+            <ToggleButton Command="EditingCommands.ToggleBullets"
+                          Grid.Column="5"
+                          Grid.Row="2"
+                          Style="{StaticResource ToolbarToggleButton}"
+                          ToolTip="{x:Static properties:Strings.BulletList}">
                 <StackPanel>
                     <StackPanel Orientation="Horizontal">
-                        <Ellipse Fill="{Binding AppSettings.ListForeground}"
+                        <Ellipse Fill="{Binding RelativeSource={RelativeSource AncestorType=ToggleButton}, Path=Foreground}"
                                  Height="4"
                                  HorizontalAlignment="Left"
                                  Width="4"/>
 
-                        <Line Stroke="{Binding AppSettings.ListForeground}"
+                        <Line Stroke="{Binding RelativeSource={RelativeSource AncestorType=ToggleButton}, Path=Foreground}"
                               StrokeThickness="1"
                               X1="2"
                               X2="16"
@@ -324,12 +357,12 @@
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal">
-                        <Ellipse Fill="{Binding AppSettings.ListForeground}"
+                        <Ellipse Fill="{Binding RelativeSource={RelativeSource AncestorType=ToggleButton}, Path=Foreground}"
                                  Height="4"
                                  HorizontalAlignment="Left"
                                  Width="4"/>
 
-                        <Line Stroke="{Binding AppSettings.ListForeground}"
+                        <Line Stroke="{Binding RelativeSource={RelativeSource AncestorType=ToggleButton}, Path=Foreground}"
                               StrokeThickness="1"
                               X1="2"
                               X2="16"
@@ -338,12 +371,12 @@
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal">
-                        <Ellipse Fill="{Binding AppSettings.ListForeground}"
+                        <Ellipse Fill="{Binding RelativeSource={RelativeSource AncestorType=ToggleButton}, Path=Foreground}"
                                  Height="4"
                                  HorizontalAlignment="Left"
                                  Width="4"/>
 
-                        <Line Stroke="{Binding AppSettings.ListForeground}"
+                        <Line Stroke="{Binding RelativeSource={RelativeSource AncestorType=ToggleButton}, Path=Foreground}"
                               StrokeThickness="1"
                               X1="2"
                               X2="16"
@@ -351,20 +384,20 @@
                               Y2="1.5"/>
                     </StackPanel>
                 </StackPanel>
-            </Button>
-            
-            <Button Command="EditingCommands.ToggleNumbering"
-                    Grid.Row="2"
-                    Grid.Column="6"
-                    Style="{StaticResource ToolbarButton}"
-                    ToolTip="{x:Static properties:Strings.NumberedList}">
+            </ToggleButton>
+
+            <ToggleButton Command="EditingCommands.ToggleNumbering"
+                          Grid.Row="2"
+                          Grid.Column="6"
+                          Style="{StaticResource ToolbarToggleButton}"
+                          ToolTip="{x:Static properties:Strings.NumberedList}">
                 <StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock FontSize="4"
                                    FontWeight="Bold"
                                    Text="1"/>
 
-                        <Line Stroke="{Binding AppSettings.ListForeground}"
+                        <Line Stroke="{Binding RelativeSource={RelativeSource AncestorType=ToggleButton}, Path=Foreground}"
                               StrokeThickness="1"
                               X1="2"
                               X2="16"
@@ -377,7 +410,7 @@
                                    FontWeight="Bold"
                                    Text="2"/>
 
-                        <Line Stroke="{Binding AppSettings.ListForeground}"
+                        <Line Stroke="{Binding RelativeSource={RelativeSource AncestorType=ToggleButton}, Path=Foreground}"
                               StrokeThickness="1"
                               X1="2"
                               X2="16"
@@ -390,7 +423,7 @@
                                    FontWeight="Bold"
                                    Text="3"/>
 
-                        <Line Stroke="{Binding AppSettings.ListForeground}"
+                        <Line Stroke="{Binding RelativeSource={RelativeSource AncestorType=ToggleButton}, Path=Foreground}"
                               StrokeThickness="1"
                               X1="2"
                               X2="16"
@@ -398,6 +431,35 @@
                               Y2="2"/>
                     </StackPanel>
                 </StackPanel>
+            </ToggleButton>
+
+            <Button Command="{Binding InsertImageCommand}"
+                    Grid.Row="2"
+                    Grid.Column="7"
+                    Style="{StaticResource ToolbarButton}"
+                    ToolTip="{x:Static properties:Strings.InsertImage}">
+                <Viewbox Height="16" Stretch="Uniform" Width="Auto">
+                    <Canvas Height="18" Width="24">
+                        <Path Data="M1 2 L 1 16 L 23 16 L 23 2 Z"
+                              Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Background}"
+                              Stroke="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}"
+                              StrokeThickness="1.25"/>
+
+                        <Path Data="M 5.35 15.42 Q 5 16 5.5 16 L 13.5 16 Q 14 16 13.82 15.42 L 11.23 11.29 Q 11 11 10.5 11 L 8.5 11 Q 8 11 7.77 11.29 Z"
+                              Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}"
+                              StrokeThickness="0.5"/>
+
+                        <Path Data="M 12.85 15.42 Q 12.5 16 13 16 L 18 16 Q 18.5 16 18.32 15.42 L 16.71 7.29 Q 16.5 7 16 7 L 15 7 Q 14.5 7 14.29 7.29 Z"
+                              Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}"
+                              StrokeThickness="0.5"/>
+
+                        <Ellipse Canvas.Left="4"
+                                 Canvas.Top="5"
+                                 Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}"
+                                 Height="4"
+                                 Width="4"/>
+                    </Canvas>
+                </Viewbox>
             </Button>
         </Grid>
 
@@ -456,8 +518,10 @@
                      utils:RichTextBoxUtils.Document="{Binding Document, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                      Focusable="{Binding IsLive, Converter={StaticResource BoolToVis}}"
                      Grid.Row="2"
+                     IsDocumentEnabled="True"
                      IsInactiveSelectionHighlightEnabled="True"
                      utils:RichTextBoxUtils.ObserveCaret="True"
+                     PreviewMouseDoubleClick="DetectImageDoubleClick"
                      SelectionChanged="NoteBox_SelectionChanged"
                      TextChanged="NoteBox_TextChanged"
                      Visibility="{Binding IsLive, Converter={StaticResource BoolToVis}}"
@@ -476,7 +540,9 @@
         <RichTextBox utils:RichTextBoxUtils.Document="{Binding HistoricalDocument, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                      Focusable="False"
                      Grid.Row="2"
+                     IsDocumentEnabled="True"
                      IsReadOnly="True"
+                     PreviewMouseDoubleClick="DetectImageDoubleClick"
                      Visibility="{Binding IsLive, Converter={StaticResource InvBoolToVis}}"
                      x:Name="RevisionBox"/>
 

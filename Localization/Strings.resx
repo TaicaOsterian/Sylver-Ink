@@ -247,6 +247,9 @@ length</value>
   <data name="FailedUpdateCheck" xml:space="preserve">
     <value>An error occurred while checking for updates.</value>
   </data>
+  <data name="FileFormatUnsupported" xml:space="preserve">
+    <value>The file format is unsupported.</value>
+  </data>
   <data name="HelpText_Rename" xml:space="preserve">
     <value>Enter the new name of the database here.</value>
   </data>
@@ -255,6 +258,9 @@ length</value>
   </data>
   <data name="HighContrastAssistance" xml:space="preserve">
     <value>When enabled, the application will automatically adjust the foreground color when you select a background, and vice versa.</value>
+  </data>
+  <data name="ImageFileFilter" xml:space="preserve">
+    <value>JPEG images (*.jpg;*.jpeg)|*.jpg;*.jpeg|PNG images (*.png)|*.png|All image files (*.jpg;*.jpeg;*.png)|*.jpg;*.jpeg;*.png|All files (*.*)|*.*</value>
   </data>
   <data name="ImportFailed" xml:space="preserve">
     <value>Failed to import the selected file: {0}</value>
@@ -273,6 +279,9 @@ Remember to press Import to finalize your changes!</value>
   <data name="IndexNumber" xml:space="preserve">
     <value>Index number</value>
     <comment>"ID number of a note or other item"</comment>
+  </data>
+  <data name="InsertImage" xml:space="preserve">
+    <value>Insert image</value>
   </data>
   <data name="Key_Alt" xml:space="preserve">
     <value>Alt</value>
@@ -318,6 +327,9 @@ Remember to press Import to finalize your changes!</value>
   <data name="Label_Berry" xml:space="preserve">
     <value>Berry</value>
     <comment>The noun, a fruit</comment>
+  </data>
+  <data name="Label_Browse" xml:space="preserve">
+    <value>Browse...</value>
   </data>
   <data name="Label_Catppuccin" xml:space="preserve">
     <value>Catppuccin</value>
@@ -529,9 +541,6 @@ Do you want to overwrite it?</value>
   <data name="SaveToDocuments" xml:space="preserve">
     <value>Save to Documents</value>
   </data>
-  <data name="SearchResultsOnTop" xml:space="preserve">
-    <value>Sticky notes stay on top</value>
-  </data>
   <data name="SearchText" xml:space="preserve">
     <value>Search text</value>
   </data>
@@ -541,7 +550,7 @@ Do you want to overwrite it?</value>
   <data name="ServerCodeLabelTooltip" xml:space="preserve">
     <value>Enter this code in another Sylver Ink installation to connect to the database.</value>
   </data>
-  <data name="SnapSearchResults" xml:space="preserve">
+  <data name="SnapStickyNotes" xml:space="preserve">
     <value>Sticky notes snap to each other</value>
   </data>
   <data name="Status_Importing" xml:space="preserve">
@@ -552,6 +561,12 @@ Do you want to overwrite it?</value>
   </data>
   <data name="Status_Processing" xml:space="preserve">
     <value>Processing</value>
+  </data>
+  <data name="StickyNotesOnTop" xml:space="preserve">
+    <value>Sticky notes stay on top</value>
+  </data>
+  <data name="Subfolder_Backups" xml:space="preserve">
+    <value>Backups</value>
   </data>
   <data name="Subfolder_Databases" xml:space="preserve">
     <value>Databases</value>
@@ -686,6 +701,9 @@ Do you want to overwrite it?</value>
   </data>
   <data name="Word_Exit" xml:space="preserve">
     <value>Exit</value>
+  </data>
+  <data name="Word_Export" xml:space="preserve">
+    <value>Export</value>
   </data>
   <data name="Word_File" xml:space="preserve">
     <value>File</value>

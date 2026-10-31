@@ -77,7 +77,7 @@
                            HorizontalAlignment="Right"
                            Margin="10,0"
                            Grid.Row="2">
-                        <TextBlock Text="{x:Static properties:Strings.SearchResultsOnTop}"
+                        <TextBlock Text="{x:Static properties:Strings.StickyNotesOnTop}"
                                    TextAlignment="Right"
                                    TextWrapping="WrapWithOverflow"/>
                     </Label>
@@ -86,7 +86,7 @@
                            HorizontalAlignment="Right"
                            Margin="10,0"
                            Grid.Row="3">
-                        <TextBlock Text="{x:Static properties:Strings.SnapSearchResults}"
+                        <TextBlock Text="{x:Static properties:Strings.SnapStickyNotes}"
                                    TextAlignment="Right"
                                    TextWrapping="WrapWithOverflow"/>
                     </Label>
@@ -168,13 +168,13 @@
 
                     <CheckBox Grid.Column="1"
                               HorizontalAlignment="Left"
-                              IsChecked="{Binding AppSettings.SearchResultsOnTop}"
+                              IsChecked="{Binding AppSettings.StickyNotesOnTop}"
                               Margin="0,5"
                               Grid.Row="2"/>
 
                     <CheckBox Grid.Column="1"
                               HorizontalAlignment="Left"
-                              IsChecked="{Binding AppSettings.SnapSearchResults}"
+                              IsChecked="{Binding AppSettings.SnapStickyNotes}"
                               Margin="0,5"
                               Grid.Row="3"/>
 

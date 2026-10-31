@@ -116,6 +116,23 @@ public static class VisualUtils
         return null;
     }
 
+    public static IEnumerable<T> FindVisualChildren<T>(DependencyObject parent) where T : DependencyObject
+    {
+        if (parent is null)
+            yield break;
+
+        for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+        {
+            DependencyObject child = VisualTreeHelper.GetChild(parent, i);
+
+            if (child is T t)
+                yield return t;
+
+            foreach (T childOfChild in FindVisualChildren<T>(child))
+                yield return childOfChild;
+        }
+    }
+
     private static double GetChannelFromLuminance(double linear)
     {
         linear = Math.Clamp(linear, 0.0, 1.0);

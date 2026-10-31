@@ -1,4 +1,5 @@
-﻿using System.Windows.Media.Imaging;
+﻿using SylverInk.XAML;
+using System.Windows.Media.Imaging;
 
 namespace SylverInk.Interop;
 
@@ -23,10 +24,27 @@ public static class ImageUtils
         img.BeginInit();
         img.Margin = new Thickness(5, 0, 5, 0);
         img.Source = BitmapSource.Create(source.PixelWidth, source.PixelHeight, source.DpiX, source.DpiY, source.Format, source.Palette, pixels, stride);
-        img.Stretch = Stretch.None;
+        img.Stretch = Stretch.Uniform;
         img.EndInit();
 
         return img;
+    }
+
+    public static void DetectImageDoubleClick(object sender, RoutedEventArgs e)
+    {
+        DependencyObject? source = e.OriginalSource as DependencyObject;
+
+        while (source != null && source != sender)
+        {
+            if (source is Image img)
+            {
+                ExpandImage(img.Source);
+                e.Handled = true;
+                return;
+            }
+
+            source = VisualTreeHelper.GetParent(source);
+        }
     }
 
     public static byte[] EncodeEmbed(Image img)
@@ -41,5 +59,12 @@ public static class ImageUtils
         encoder.Frames.Add(BitmapFrame.Create(img.Source as BitmapSource));
         encoder.Save(stream);
         return stream.ToArray();
+    }
+
+    private static void ExpandImage(ImageSource source)
+    {
+        ImageView view = new();
+        view.Construct(source);
+        view.Show();
     }
 }

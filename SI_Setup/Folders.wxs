@@ -4,8 +4,8 @@
             <Directory Id="INSTALLFOLDER" Name="Sylver Ink"/>
         </StandardDirectory>
 
-        <StandardDirectory Id="StartMenuFolder">
-            <Directory Id="SylverInkStartMenuFolder" Name="Sylver Ink"/>
-        </StandardDirectory>
+		<StandardDirectory Id="StartMenuFolder">
+			<Directory Id="SylverInkStartMenuFolder" Name="Sylver Ink"/>
+		</StandardDirectory>
     </Fragment>
 </Wix>

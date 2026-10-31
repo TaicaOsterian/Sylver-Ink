@@ -112,8 +112,8 @@ public class SettingsViewModel : ViewModelBase
             };
             RecentEntriesSortMode = SortType.ByChange;
             RibbonTabContent = DisplayType.Content;
-            CommonUtils.Settings.SearchResultsOnTop = true;
-            CommonUtils.Settings.SnapSearchResults = true;
+            CommonUtils.Settings.StickyNotesOnTop = true;
+            CommonUtils.Settings.SnapStickyNotes = true;
         }
 
         RefreshRecentNotes();

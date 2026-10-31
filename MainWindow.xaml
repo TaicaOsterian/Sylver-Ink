@@ -217,10 +217,20 @@
                 
                 <MenuItem Command="{Binding SaveAsCommand}"
                           Header="{x:Static properties:Strings.Label_SaveAs}"/>
-                
+
                 <MenuItem Command="{Binding BackupDatabaseCommand}"
                           Header="{x:Static properties:Strings.Label_Backup}"/>
-                
+
+                <MenuItem Header="{x:Static properties:Strings.Label_Browse}">
+                    <MenuItem Command="{Binding BrowseFolderCommand}"
+                              CommandParameter="{x:Static properties:Strings.Subfolder_Databases}"
+                              Header="{x:Static properties:Strings.Subfolder_Databases}"/>
+
+                    <MenuItem Command="{Binding BrowseFolderCommand}"
+                              CommandParameter="{x:Static properties:Strings.Subfolder_Backups}"
+                              Header="{x:Static properties:Strings.Subfolder_Backups}"/>
+                </MenuItem>
+
                 <Separator/>
                 
                 <MenuItem Command="{Binding DeleteDatabaseCommand}"

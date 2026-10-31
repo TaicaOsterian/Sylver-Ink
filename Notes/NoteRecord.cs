@@ -229,17 +229,17 @@ public partial class NoteRecord
             }
 
             _revision.Created = serializer?.ReadLong() ?? DateTime.UtcNow.ToBinary();
-            
+
             if (serializer?.DatabaseFormat >= 16)
             {
                 byte flags = serializer?.ReadByte() ?? 0;
 
                 _revision.IsAutosave = (flags & 1) == 1;
             }
-            
+
             _revision.StartIndex = serializer?.ReadInt32() ?? 0;
             _revision.Substring = serializer?.ReadString();
-            
+
             Add(_revision);
         }
 
@@ -257,6 +257,11 @@ public partial class NoteRecord
 
         if (serializer?.DatabaseFormat >= 5)
             serializer?.WriteShortString(UUID.ToString());
+
+        serializer?.WriteLong(Created);
+        serializer?.WriteInt32(Index);
+        serializer?.WriteString(Initial);
+        serializer?.WriteLong(LastChange);
 
         int RevisionCount = 0;
 
@@ -523,6 +528,11 @@ public partial class NoteRecord
     {
         // The serializer has already read this record's UUID during the NoteController's workflow.
         // That is how the NoteController knew to call RestoreFromAutosave on this particular record.
+
+        Created = serializer?.ReadLong() ?? DateTime.UtcNow.ToBinary();
+        Index = serializer?.ReadInt32() ?? -1;
+        Initial = serializer?.ReadString() ?? string.Empty;
+        LastChange = serializer?.ReadLong() ?? DateTime.UtcNow.ToBinary();
 
         int RevisionsCount = serializer?.ReadInt32() ?? 0;
         for (int i = 0; i < RevisionsCount; i++)

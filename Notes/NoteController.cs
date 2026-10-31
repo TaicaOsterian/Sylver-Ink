@@ -1,6 +1,6 @@
 ﻿using SylverInk.FileIO;
-using System.Collections;
 using System.Globalization;
+using System.Runtime.InteropServices;
 using static SylverInk.FileIO.FileUtils;
 using static SylverInk.Notes.DatabaseUtils;
 
@@ -35,7 +35,7 @@ public partial class NoteController : IDisposable
         new(SortType.ByCreation, new Comparison<NoteRecord>((_rev1, _rev2) => _rev2.GetCreatedObject().CompareTo(_rev1.GetCreatedObject()))),
         new(SortType.ByIndex, new Comparison<NoteRecord>((_rev1, _rev2) => _rev1.Index.CompareTo(_rev2.Index)))
         ]);
-    public Hashtable Records { get; } = [];
+    public Dictionary<Guid, NoteRecord> Records { get; } = [];
     public Guid UUID { get; set; } = MakeUUID(UUIDType.Database);
     public Dictionary<string, double> WordPercentages { get; } = [];
 
@@ -286,8 +286,8 @@ public partial class NoteController : IDisposable
 
     public void InitializeRecords(bool newDatabase = true)
     {
-        for (int i = (OpenQueries ?? []).Count; i > 0; i--)
-            OpenQueries?[i - 1].RequestClose();
+        while (OpenQueries.Count > 0)
+            OpenQueries[^1].RequestClose();
 
         if (newDatabase)
             Records.Clear();
@@ -399,8 +399,11 @@ public partial class NoteController : IDisposable
             if (!Guid.TryParse(uuidString, out var uuid))
                 uuid = MakeUUID(UUIDType.Record);
 
-            if (Records[uuid] is NoteRecord record)
-                record.RestoreFromAutosave(_serializer);
+            ref var record = ref CollectionsMarshal.GetValueRefOrAddDefault(Records, uuid, out bool exists);
+            if (!exists)
+                record = new NoteRecord(DB);
+
+            record?.RestoreFromAutosave(_serializer);
         }
 
         _serializer?.Close();
@@ -415,8 +418,8 @@ public partial class NoteController : IDisposable
 
         foreach (NoteRecord record in recordSnapshot)
         {
-            for (int j = OpenQueries.Count - 1; j > -1; j--)
-                Concurrent(OpenQueries[j].RequestClose, record);
+            while (OpenQueries.Count > 0)
+                Concurrent(OpenQueries[^1].RequestClose, record);
 
             RemoveRecordTab(record);
 

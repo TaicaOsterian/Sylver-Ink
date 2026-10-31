@@ -135,9 +135,9 @@ public static class DatabaseUtils
         return (TabControl)((DatabaseControl)dbItem.Content).Content;
     });
 
-    public static SearchResult? OpenQuery(NoteRecord record, string? scrollTo = null)
+    public static StickyNote? OpenQuery(NoteRecord record, string? scrollTo = null)
     {
-        foreach (SearchResult result in OpenQueries)
+        foreach (StickyNote result in OpenQueries)
         {
             if (!result.RequestOpen(record))
                 continue;
@@ -148,12 +148,11 @@ public static class DatabaseUtils
 
         RemoveRecordTab(record);
 
-        SearchResult resultWindow = new();
+        StickyNote resultWindow = new();
         resultWindow.ViewModel.Record = record;
         resultWindow.ViewModel.ScrollTo(scrollTo);
 
         resultWindow.Show();
-        OpenQueries.Add(resultWindow);
         if (!record?.Locked is true)
             record?.DB?.Lock(record.UUID, true);
 
@@ -184,8 +183,9 @@ public static class DatabaseUtils
 
         for (int i = OpenQueries.Count - 1; i > -1; i--)
         {
-            if (OpenQueries[i].ViewModel.Record.DB?.Equals(db) is true)
-                OpenQueries[i].Close();
+            var note = OpenQueries[i];
+            if (note.ViewModel.Record.DB?.Equals(db) is true)
+                note.RequestClose();
         }
 
         for (int i = Databases.Count - 1; i > -1; i--)
