@@ -1,17 +1,24 @@
+There is *a lot* to cover in this release, and I'm not a little proud to share it with you! Much thanks to Keystone, a good friend, for working through a lot of backend behavior and objects with me. Without their testing, I'd be exhausted.
+
+
 ## Editing
 
 - The NoteTab toolbar now has a button for embedding images. Pasting via keyboard shortcut is no longer the only way to insert an image.
 
-- Users can now double-click on images in order to expand them in a view. This view also supports exporting the image to a file.
+- Users can now double-click on images in order to expand them in a view. This view supports zooming, panning, and exporting the image to a file. It snaps to sticky notes, as well.
 
 
 ## Files
 
-- Autosaving is now handled via *delta files*: Instead of autosaving the entire database on a background thread, we now save only changes that were made in the current session. This saves massively on file space, and takes far less work.
+- Autosaving is now handled via *delta files*: Instead of autosaving the entire database, we now save only changes that were made in the current session. This saves massively on file space, and takes far less work.
 
 - There are now menu options in the File menu for browsing the database and backup folders.
 
 - Backups are now stored in the user's AppData/Local folder, instead of alongside the main database files.
+
+- A longstanding bug preventing opening SIDB files by clicking on them has been finally fixed.
+
+- Better file safety and sharing should now prevent rare errors when saving a database to a file.
 
 
 ## Language
@@ -21,4 +28,5 @@
 
 ## Themes
 
-- Finally, I've taken the opportunity to add an **Ice** theme to the predefined list. It's a bright light-mode selection that fills in a niche the existing set didn't have. Users who rely on bright aesthetics for vision or focus will have a much easier time now!
+- An **Ice** theme has been added to the predefined list. It's a bright light-mode selection that fills in a niche the existing set didn't have. Users who rely on bright aesthetics for vision or focus will have a much easier time now!
+
