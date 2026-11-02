@@ -46,4 +46,4 @@ GlobalSuppressions.cs
 *.jpg
 *.Designer.cs
 *.tmp
-
+changeEndings.sh

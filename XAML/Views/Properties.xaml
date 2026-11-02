@@ -18,10 +18,10 @@
         Width="325">
     <Grid Background="{Binding AppSettings.MenuBackground}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <TextBlock FontFamily="{Binding AppSettings.MainFontFamily}"
@@ -33,7 +33,7 @@
                    TextAlignment="Center"
                    TextWrapping="WrapWithOverflow"
                    VerticalAlignment="Center"
-                   x:Name="DBNameLabel"/>
+                   x:Name="DBNameLabel" />
 
         <TabControl Background="{Binding AppSettings.MenuBackground}"
                     BorderThickness="0"
@@ -43,23 +43,23 @@
                     <TextBlock FontFamily="{Binding AppSettings.MainFontFamily}"
                                FontSize="{Binding AppSettings.MainFontSize}"
                                Margin="3"
-                               Text="{x:Static properties:Strings.Word_File}"/>
+                               Text="{x:Static properties:Strings.Word_File}" />
                 </TabItem.Header>
 
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
                     <Popup Height="25"
@@ -74,27 +74,27 @@
                                   HorizontalAlignment="Center"
                                   VerticalAlignment="Center">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
 
                                 <ComboBox ItemsSource="{Binding Hours}"
                                           MaxDropDownHeight="160"
                                           ScrollViewer.VerticalScrollBarVisibility="Auto"
-                                          SelectedItem="{Binding Hour, Mode=TwoWay}"/>
+                                          SelectedItem="{Binding Hour, Mode=TwoWay}" />
 
                                 <ComboBox Grid.Column="1"
                                           ItemsSource="{Binding Minutes}"
                                           MaxDropDownHeight="160"
                                           ScrollViewer.VerticalScrollBarVisibility="Auto"
-                                          SelectedItem="{Binding Minute, Mode=TwoWay}"/>
+                                          SelectedItem="{Binding Minute, Mode=TwoWay}" />
 
                                 <ComboBox Grid.Column="2"
                                           ItemsSource="{Binding Meridians}"
                                           MaxDropDownHeight="160"
                                           ScrollViewer.VerticalScrollBarVisibility="Auto"
-                                          SelectedItem="{Binding Meridian, Mode=TwoWay}"/>
+                                          SelectedItem="{Binding Meridian, Mode=TwoWay}" />
                             </Grid>
                         </Border>
                     </Popup>
@@ -102,30 +102,30 @@
                     <Label Content="{x:Static properties:Strings.Word_Created}"
                            FontWeight="Bold"
                            HorizontalAlignment="Right"
-                           Margin="5,0"/>
+                           Margin="5,0" />
 
                     <Label Content="{x:Static properties:Strings.Word_Format}"
                            FontWeight="Bold"
                            HorizontalAlignment="Right"
                            Grid.Row="1"
-                           Margin="5,0"/>
+                           Margin="5,0" />
 
                     <Label Content="{x:Static properties:Strings.Word_Path}"
                            FontWeight="Bold"
                            HorizontalAlignment="Right"
                            Grid.Row="2"
-                           Margin="5,0"/>
+                           Margin="5,0" />
 
                     <Label Content="{Binding DBCreated}"
                            Grid.Column="1"
                            HorizontalAlignment="Left"
-                           x:Name="DBCreatedLabel"/>
+                           x:Name="DBCreatedLabel" />
 
                     <Label Content="{Binding DBFormat}"
                            Grid.Column="1"
                            Grid.Row="1"
                            HorizontalAlignment="Left"
-                           x:Name="DBFormatLabel"/>
+                           x:Name="DBFormatLabel" />
 
                     <TextBlock FontFamily="{Binding AppSettings.MainFontFamily}"
                                FontSize="{Binding AppSettings.MainFontSize}"
@@ -137,11 +137,11 @@
                                TextAlignment="Center"
                                TextWrapping="Wrap"
                                VerticalAlignment="Center"
-                               x:Name="DBPathLabel"/>
+                               x:Name="DBPathLabel" />
 
                     <Separator Grid.ColumnSpan="2"
                                Grid.Row="3"
-                               Margin="0,3"/>
+                               Margin="0,3" />
 
                     <Label FontStyle="Italic"
                            Grid.Row="4"
@@ -151,7 +151,7 @@
                            VerticalAlignment="Center">
                         <TextBlock Text="{x:Static properties:Strings.Label_Restore}"
                                    TextAlignment="Right"
-                                   TextWrapping="Wrap"/>
+                                   TextWrapping="Wrap" />
                     </Label>
 
                     <DatePicker CalendarOpened="CalendarOpened"
@@ -159,7 +159,7 @@
                                 Grid.Row="4"
                                 Margin="0,5"
                                 MaxWidth="120"
-                                SelectedDate="{Binding RestoreDate, Mode=TwoWay}"/>
+                                SelectedDate="{Binding RestoreDate, Mode=TwoWay}" />
 
                     <Button Click="SelectTime"
                             Content="{Binding TimeString}"
@@ -167,13 +167,13 @@
                             Grid.Column="1"
                             Grid.Row="5"
                             Margin="0,5"
-                            x:Name="SelectedTime"/>
+                            x:Name="SelectedTime" />
 
                     <Button Command="{Binding RestoreCommand}"
                             Content="{x:Static properties:Strings.Word_Restore}"
                             Grid.Column="1"
                             Grid.Row="6"
-                            Margin="0,10,0,5"/>
+                            Margin="0,10,0,5" />
                 </Grid>
             </TabItem>
 
@@ -182,81 +182,81 @@
                     <TextBlock FontFamily="{Binding AppSettings.MainFontFamily}"
                                FontSize="{Binding AppSettings.MainFontSize}"
                                Margin="3"
-                               Text="{x:Static properties:Strings.Word_Content}"/>
+                               Text="{x:Static properties:Strings.Word_Content}" />
                 </TabItem.Header>
 
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
                     <Label Content="{x:Static properties:Strings.NoteCount}"
                            FontWeight="Bold"
                            HorizontalAlignment="Right"
-                           Margin="5,0"/>
+                           Margin="5,0" />
 
                     <Label FontWeight="Bold"
                            HorizontalAlignment="Right"
                            Margin="5,0"
                            Grid.Row="1">
                         <TextBlock Text="{x:Static properties:Strings.AverageLength}"
-                                   TextAlignment="Right"/>
+                                   TextAlignment="Right" />
                     </Label>
 
                     <Label Content="{x:Static properties:Strings.TotalLength}"
                            FontWeight="Bold"
                            HorizontalAlignment="Right"
                            Margin="5,0"
-                           Grid.Row="2"/>
+                           Grid.Row="2" />
 
                     <Label Content="{x:Static properties:Strings.LongestNote}"
                            FontWeight="Bold"
                            HorizontalAlignment="Right"
                            Margin="5,0"
-                           Grid.Row="3"/>
+                           Grid.Row="3" />
 
                     <Label Content="{Binding DBNotes}"
                            Grid.Column="1"
                            HorizontalAlignment="Left"
-                           x:Name="DBNotesLabel"/>
+                           x:Name="DBNotesLabel" />
 
                     <Label Content="{Binding DBAvg}"
                            Grid.Column="1"
                            Grid.Row="1"
                            HorizontalAlignment="Left"
-                           x:Name="DBAvgLabel"/>
+                           x:Name="DBAvgLabel" />
 
                     <Label Content="{Binding DBTotal}"
                            Grid.Column="1"
                            Grid.Row="2"
                            HorizontalAlignment="Left"
-                           x:Name="DBTotalLabel"/>
+                           x:Name="DBTotalLabel" />
 
                     <Label Content="{Binding DBLongest}"
                            Grid.Column="1"
                            Grid.Row="3"
                            HorizontalAlignment="Left"
-                           x:Name="DBLongestLabel"/>
+                           x:Name="DBLongestLabel" />
                 </Grid>
             </TabItem>
         </TabControl>
 
         <Separator Grid.ColumnSpan="2"
                    Grid.Row="2"
-                   Margin="0,3"/>
+                   Margin="0,3" />
 
         <Button Command="{Binding CloseCommand}"
                 Content="{x:Static properties:Strings.Word_Close}"
                 Grid.ColumnSpan="2"
                 Grid.Row="3"
-                Margin="0,20"/>
+                Margin="0,20" />
     </Grid>
 </Window>

@@ -19,52 +19,52 @@
         Width="400">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="50"/>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="50" />
         </Grid.RowDefinitions>
-        
+
         <TextBlock FontFamily="{Binding AppSettings.MainFontFamily}"
                    FontSize="{Binding AppSettings.MainFontSize}"
                    Margin="15"
                    TextWrapping="WrapWithOverflow">
-            <Run Text="{x:Static properties:Strings.AboutUs_Line1}"/>
+            <Run Text="{x:Static properties:Strings.AboutUs_Line1}" />
             
-            <LineBreak/>
-            <LineBreak/>
+            <LineBreak />
+            <LineBreak />
             
-            <Run Text="{x:Static properties:Strings.AboutUs_Line2}"/>
+            <Run Text="{x:Static properties:Strings.AboutUs_Line2}" />
             
-            <LineBreak/>
-            <LineBreak/>
+            <LineBreak />
+            <LineBreak />
             
-            <Run Text="{x:Static properties:Strings.AboutUs_Line3}"/>
+            <Run Text="{x:Static properties:Strings.AboutUs_Line3}" />
             
-            <LineBreak/>
-            <LineBreak/>
+            <LineBreak />
+            <LineBreak />
             
-            <Run Text="{x:Static properties:Strings.AboutUs_Line4}"/>
+            <Run Text="{x:Static properties:Strings.AboutUs_Line4}" />
             
-            <LineBreak/>
-            <LineBreak/>
+            <LineBreak />
+            <LineBreak />
             
-            <Run Text="{x:Static properties:Strings.AboutUs_Line5}"/>
+            <Run Text="{x:Static properties:Strings.AboutUs_Line5}" />
             
-            <LineBreak/>
-            <LineBreak/>
+            <LineBreak />
+            <LineBreak />
             
             <Hyperlink Command="{Binding NavigateCommand}"
                        CommandParameter="{Binding AboutUsUri}"
                        Foreground="{Binding AppSettings.AccentForeground}"
                        NavigateUri="{Binding AboutUsUri}">
-                <Run Text="{x:Static properties:Strings.About_Github}"/>
+                <Run Text="{x:Static properties:Strings.About_Github}" />
             </Hyperlink>
         </TextBlock>
-        
+
         <Button Command="{Binding CloseCommand}"
                 Content="{x:Static properties:Strings.Word_Close}"
-                Grid.Row="1"/>
+                Grid.Row="1" />
     </Grid>
 </Window>

@@ -3,6 +3,7 @@ using SylverInk.Interop;
 using SylverInk.Visuals;
 using SylverInk.XAML.Controls;
 using System.ComponentModel;
+using System.Windows.Markup;
 using static SylverInk.FileIO.FileUtils;
 using static SylverInk.Notes.DatabaseUtils;
 using static SylverInk.Visuals.VisualUtils;
@@ -19,7 +20,7 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         DataContext = new MainWindowViewModel();
-        ViewModel.RequestSelectDatabase += SelectDatabaseTab;
+        ViewModel.FileMenu.RequestSelectDatabase += SelectDatabaseTab;
         InitializeComponent();
     }
 
@@ -41,6 +42,8 @@ public partial class MainWindow : Window
 
     private async void MainWindow_Closing(object? sender, CancelEventArgs e)
     {
+        File.WriteAllText("Menu.xaml", XamlWriter.Save(DatabaseMenu.Template));
+
         if (IsShuttingDown()) // Prevent redundant event handling.
             return;
 
@@ -167,9 +170,6 @@ public partial class MainWindow : Window
             Settings.HighContrast = SystemParameters.HighContrast;
             SwitchTheme(Themes.HighContrast);
         }
-
-        // Style initialization
-        SetMenuColors();
 
         // Hotkey registration
         HotKeyUtils.Init();

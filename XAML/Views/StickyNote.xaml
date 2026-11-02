@@ -32,16 +32,16 @@
               WindowStyle="None">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        
+
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        
+
         <RichTextBox utils:RichTextBoxUtils.BoundCaret="{Binding CaretPosition, Mode=TwoWay}"
                      Grid.ColumnSpan="2"
                      DataObject.Pasting="RichTextBox_Pasting"
@@ -60,7 +60,7 @@
                Grid.ColumnSpan="2"
                FontStyle="Italic"
                HorizontalAlignment="Center"
-               Grid.Row="1"/>
+               Grid.Row="1" />
 
         <Button Command="{Binding ViewCommand}"
                 Content="{x:Static properties:Strings.Word_View}"
@@ -68,7 +68,7 @@
                 IsEnabled="{Binding IsFocused}"
                 Margin="0,2"
                 MinWidth="50"
-                Padding="5"/>
+                Padding="5" />
 
         <Button Command="{Binding CloseCommand}"
                 Grid.Column="1"
@@ -77,6 +77,6 @@
                 IsEnabled="{Binding IsFocused}"
                 Margin="0,2"
                 MinWidth="50"
-                Padding="5"/>
+                Padding="5" />
     </Grid>
 </local:Popout>

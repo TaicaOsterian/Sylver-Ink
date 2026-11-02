@@ -1,6 +1,4 @@
 ﻿using System.Globalization;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
 
 namespace SylverInk.Visuals;
 
@@ -233,60 +231,6 @@ public static class VisualUtils
             (byte)Math.Round(GetChannelFromLuminance(r2) * 255.0),
             (byte)Math.Round(GetChannelFromLuminance(g2) * 255.0),
             (byte)Math.Round(GetChannelFromLuminance(b2) * 255.0));
-    }
-
-    public static void SetMenuColors()
-    {
-        foreach (Window window in Application.Current.Windows)
-            SetMenuColors(window);
-    }
-
-    /// <summary>
-    /// Recursively iterate through a visual tree to change the style of a Menu object and its items.
-    /// </summary>
-    private static void SetMenuColors(DependencyObject parent)
-    {
-        for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
-            SetMenuColors(VisualTreeHelper.GetChild(parent, i));
-
-        if (parent.GetType() != typeof(MenuItem))
-            return;
-
-        if (VisualTreeHelper.GetChild(parent, 0) is not Border itemBorder)
-            return;
-
-        if (itemBorder.Child is not Grid itemGrid)
-            return;
-
-        foreach (var itemChild in itemGrid.Children)
-        {
-            if (itemChild is not Popup popup)
-                continue;
-
-            if (popup.Child is not Border popupBorder)
-                continue;
-
-            BindingOperations.SetBinding(popupBorder, Control.BackgroundProperty, new Binding("AppSettings.MenuBackground"));
-            BindingOperations.SetBinding(popupBorder, Control.BorderBrushProperty, new Binding("AppSettings.AccentBackground"));
-            BindingOperations.SetBinding(popupBorder, Control.ForegroundProperty, new Binding("AppSettings.MenuForeground"));
-            popupBorder.BorderThickness = new(1);
-
-            if (popupBorder.Child is not ScrollViewer viewer)
-                continue;
-
-            if (viewer.Content is not Grid viewerGrid)
-                continue;
-
-            foreach (var viewerChild in viewerGrid.Children)
-            {
-                if (viewerChild is not System.Windows.Shapes.Rectangle rect)
-                    continue;
-
-                BindingOperations.SetBinding(rect, System.Windows.Shapes.Shape.FillProperty, new Binding("AppSettings.MenuBackground"));
-            }
-
-            return;
-        }
     }
 
     public static void SwitchTheme(Theme theme)

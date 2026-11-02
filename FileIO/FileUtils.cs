@@ -130,6 +130,9 @@ public static class FileUtils
         {
             var keyValue = setting.Trim().Split(':', 2);
 
+            if (keyValue.Length < 2)
+                continue;
+
             if (string.IsNullOrWhiteSpace(keyValue[0]))
                 continue;
 

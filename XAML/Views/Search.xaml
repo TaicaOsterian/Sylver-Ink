@@ -20,50 +20,50 @@
         Width="350">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        
-            <Label Content="{x:Static properties:Strings.SearchText}"
-                   FontStyle="Italic"
-                   HorizontalAlignment="Right"
-                   Margin="0,20,40,0"/>
-            
-            <TextBox Grid.Row="1"
-                     Margin="20,0"
-                     Text="{Binding QueryString}"
-                     x:Name="SearchText"/>
-            
-            <StackPanel Grid.Row="2"
-                        HorizontalAlignment="Right"
-                        Margin="20,10"
-                        Orientation="Horizontal">
-                <Label FontStyle="Italic"
-                       Foreground="{Binding AppSettings.AccentForeground}"
-                       ToolTip="{x:Static properties:Strings.Tooltip_SearchAllDatabases}">
-                    <TextBlock Text="{x:Static properties:Strings.Label_SearchAllDatabases}"
-                               TextWrapping="WrapWithOverflow"/>
-                </Label>
-                
-                <CheckBox IsChecked="{Binding AppSettings.QueryAllDatabases}"/>
-            </StackPanel>
+
+        <Label Content="{x:Static properties:Strings.SearchText}"
+               FontStyle="Italic"
+               HorizontalAlignment="Right"
+               Margin="0,20,40,0" />
+
+        <TextBox Grid.Row="1"
+                 Margin="20,0"
+                 Text="{Binding QueryString}"
+                 x:Name="SearchText" />
+
+        <StackPanel Grid.Row="2"
+                    HorizontalAlignment="Right"
+                    Margin="20,10"
+                    Orientation="Horizontal">
+            <Label FontStyle="Italic"
+                   Foreground="{Binding AppSettings.AccentForeground}"
+                   ToolTip="{x:Static properties:Strings.Tooltip_SearchAllDatabases}">
+                <TextBlock Text="{x:Static properties:Strings.Label_SearchAllDatabases}"
+                           TextWrapping="WrapWithOverflow" />
+            </Label>
+
+            <CheckBox IsChecked="{Binding AppSettings.QueryAllDatabases}" />
+        </StackPanel>
 
         <Grid Grid.Row="3"
               Margin="10">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            
+
             <Button Command="{Binding QueryCommand}"
-                    Content="{x:Static properties:Strings.Word_Query}"/>
+                    Content="{x:Static properties:Strings.Word_Query}" />
 
             <Button Command="{Binding CloseCommand}"
                     Content="{x:Static properties:Strings.Word_Close}"
-                    Grid.Column="1"/>
+                    Grid.Column="1" />
         </Grid>
 
         <ListBox AlternationCount="2"
@@ -74,7 +74,7 @@
                  x:Name="Results">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding Preview}"/>
+                    <TextBlock Text="{Binding Preview}" />
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>

@@ -13,7 +13,7 @@
   <PropertyGroup>
     <SourceRevisionId>build$([System.DateTime]::UtcNow.ToString("yyyyMMdd"))</SourceRevisionId>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <Version>1.11.0</Version>
+    <Version>1.11.1</Version>
     <UseWindowsForms>False</UseWindowsForms>
     <Title>Sylver Ink</Title>
     <Authors></Authors>
@@ -65,6 +65,15 @@
   <ItemGroup>
     <None Remove="AuthorMSI.bat" />
     <None Remove="SylverInk.msi" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Page Remove="FileMenu.xaml" />
+    <Page Remove="Menu.xaml" />
+    <Page Remove="NonSubItem.xaml" />
+    <Page Remove="SubItem.xaml" />
+    <Page Remove="SubItemControl.xaml" />
+    <Page Remove="SubItemManual.xaml" />
   </ItemGroup>
   
   <ItemGroup>

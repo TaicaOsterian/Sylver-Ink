@@ -149,8 +149,6 @@ public class ContextSettings : ViewModelBase
         {
             _highContrast = value;
             OnPropertyChanged(null);
-
-            SetMenuColors();
         }
     }
     public bool HighContrastAssist

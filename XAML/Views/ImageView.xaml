@@ -29,15 +29,15 @@
               Width="350">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        
+
         <Border Background="{Binding AppSettings.MenuBackground}"
                 BorderBrush="{Binding AppSettings.AccentBackground}"
                 BorderThickness="1.5"
@@ -47,10 +47,10 @@
                 <ItemsControl Background="{Binding AppSettings.AccentBackground}"
                               ClipToBounds="True">
                     <Canvas Loaded="Canvas_Loaded">
-                        <Image Source="{Binding Source}"/>
+                        <Image Source="{Binding Source}" />
                     </Canvas>
                 </ItemsControl>
-                
+
                 <Canvas>
                     <Button Click="Canvas_ZoomClick"
                             Content="-"
@@ -59,7 +59,7 @@
                             MinHeight="0"
                             MinWidth="0"
                             Canvas.Top="5"
-                            Width="20"/>
+                            Width="20" />
 
                     <Button Click="Canvas_ZoomClick"
                             Content="+"
@@ -68,7 +68,7 @@
                             MinHeight="0"
                             MinWidth="0"
                             Canvas.Top="5"
-                            Width="20"/>
+                            Width="20" />
 
                     <Button Click="Canvas_ZoomClick"
                             Content="{Binding ZoomLevelRender}"
@@ -78,18 +78,18 @@
                             MinWidth="0"
                             Padding="2"
                             Canvas.Top="5"
-                            Width="40"/>
+                            Width="40" />
                 </Canvas>
             </Grid>
         </Border>
-        
+
         <Button Command="{Binding ExportCommand}"
                 Grid.Row="1"
                 Content="{x:Static properties:Strings.Word_Export}"
                 IsEnabled="{Binding IsFocused}"
                 Margin="0,5"
                 MinWidth="50"
-                Padding="5"/>
+                Padding="5" />
 
         <Button Command="{Binding CloseCommand}"
                 Grid.Column="1"
@@ -98,6 +98,6 @@
                 IsEnabled="{Binding IsFocused}"
                 Margin="0,5"
                 MinWidth="50"
-                Padding="5"/>
+                Padding="5" />
     </Grid>
 </local:Popout>
