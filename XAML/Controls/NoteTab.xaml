@@ -147,6 +147,7 @@
             </Grid.ColumnDefinitions>
 
             <Button Command="ApplicationCommands.Undo"
+                    Focusable="False"
                     Style="{StaticResource ToolbarButton}"
                     ToolTip="{x:Static properties:Strings.Word_Undo}"
                     ToolTipService.ShowOnDisabled="True">
@@ -157,6 +158,7 @@
             </Button>
 
             <Button Command="ApplicationCommands.Redo"
+                    Focusable="False"
                     Grid.Column="1"
                     Style="{StaticResource ToolbarButton}"
                     ToolTip="{x:Static properties:Strings.Word_Redo}"
@@ -168,6 +170,7 @@
             </Button>
 
             <ToggleButton Command="EditingCommands.ToggleBold"
+                          Focusable="False"
                           Grid.Column="2"
                           Style="{StaticResource ToolbarToggleButton}"
                           ToolTip="{x:Static properties:Strings.Word_Bold}">
@@ -175,6 +178,7 @@
             </ToggleButton>
 
             <ToggleButton Command="EditingCommands.ToggleItalic"
+                          Focusable="False"
                           Grid.Column="3"
                           Style="{StaticResource ToolbarToggleButton}"
                           ToolTip="{x:Static properties:Strings.Word_Italic}">
@@ -183,6 +187,7 @@
             </ToggleButton>
 
             <ToggleButton Command="EditingCommands.ToggleUnderline"
+                          Focusable="False"
                           Grid.Column="4"
                           Style="{StaticResource ToolbarToggleButton}"
                           ToolTip="{x:Static properties:Strings.Word_Underline}">
@@ -191,6 +196,7 @@
             </ToggleButton>
 
             <Button Command="EditingCommands.IncreaseFontSize"
+                    Focusable="False"
                     Grid.Column="5"
                     Style="{StaticResource ToolbarButton}"
                     ToolTip="{x:Static properties:Strings.IncreaseFontSize}">
@@ -198,6 +204,7 @@
             </Button>
 
             <Button Command="EditingCommands.DecreaseFontSize"
+                    Focusable="False"
                     Grid.Column="6"
                     Style="{StaticResource ToolbarButton}"
                     ToolTip="{x:Static properties:Strings.DecreaseFontSize}">
@@ -205,6 +212,7 @@
             </Button>
 
             <Button Click="SelectColor"
+                    Focusable="False"
                     Grid.Column="7"
                     Style="{StaticResource ToolbarButton}"
                     ToolTip="{x:Static properties:Strings.Label_TextColor}"
@@ -221,6 +229,7 @@
                        Height="2" />
 
             <ToggleButton Command="EditingCommands.AlignLeft"
+                          Focusable="False"
                           Grid.Column="1"
                           Grid.Row="2"
                           Style="{StaticResource ToolbarToggleButton}"
@@ -257,6 +266,7 @@
             </ToggleButton>
 
             <ToggleButton Command="EditingCommands.AlignCenter"
+                          Focusable="False"
                           Grid.Column="2"
                           Grid.Row="2"
                           Style="{StaticResource ToolbarToggleButton}"
@@ -293,6 +303,7 @@
             </ToggleButton>
 
             <ToggleButton Command="EditingCommands.AlignRight"
+                          Focusable="False"
                           Grid.Column="3"
                           Grid.Row="2"
                           Style="{StaticResource ToolbarToggleButton}"
@@ -329,6 +340,7 @@
             </ToggleButton>
 
             <ToggleButton Command="EditingCommands.AlignJustify"
+                          Focusable="False"
                           Grid.Column="4"
                           Grid.Row="2"
                           Style="{StaticResource ToolbarToggleButton}"
@@ -365,6 +377,7 @@
             </ToggleButton>
 
             <ToggleButton Command="EditingCommands.ToggleBullets"
+                          Focusable="False"
                           Grid.Column="5"
                           Grid.Row="2"
                           Style="{StaticResource ToolbarToggleButton}"
@@ -415,6 +428,7 @@
             </ToggleButton>
 
             <ToggleButton Command="EditingCommands.ToggleNumbering"
+                          Focusable="False"
                           Grid.Row="2"
                           Grid.Column="6"
                           Style="{StaticResource ToolbarToggleButton}"

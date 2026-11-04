@@ -11,6 +11,9 @@ namespace SylverInk.XAMLUtils;
 /// </summary>
 public class RichTextBoxUtils
 {
+    private static RichTextBox? _cachedRTB;
+    private static bool _refreshQueued;
+
     public static readonly DependencyProperty AtomicBlocksProperty =
         DependencyProperty.RegisterAttached(
             "AtomicBlocks",
@@ -56,6 +59,49 @@ public class RichTextBoxUtils
 
     public static bool GetObserveCaret(DependencyObject source) => (bool)source.GetValue(ObserveCaretProperty);
 
+    public static void HandlePaste(object? sender, DataObjectPastingEventArgs e)
+    {
+        if (sender is not RichTextBox rtb)
+            return;
+
+        if (!e.DataObject.GetDataPresent(DataFormats.Bitmap))
+            return;
+
+        e.CancelCommand();
+
+        try
+        {
+            var src = e.DataObject.GetData(DataFormats.Bitmap, true);
+
+            Image? img = src switch
+            {
+                _ when src is BitmapSource bitmap => new() { Source = bitmap },
+                _ when src is MemoryStream stream => ImageUtils.DecodeEmbed(stream),
+                _ => null,
+            };
+
+            if (img is null)
+                return;
+
+            BlockUIContainer blockContainer = new BlockUIContainer(img);
+
+            TextPointer caretPosition = rtb.CaretPosition;
+            Block currentBlock = caretPosition.Paragraph;
+
+            if (currentBlock is null)
+                rtb.Document.Blocks.Add(blockContainer);
+            else
+                rtb.Document.Blocks.InsertAfter(currentBlock, blockContainer);
+
+            rtb.CaretPosition = blockContainer.ElementEnd;
+            rtb.Focus();
+        }
+        catch (Exception ex)
+        {
+            App.LogException(ex);
+        }
+    }
+
     private static void OnAtomicBlocksChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         if (d is not RichTextBox rtb || e.NewValue is not IEnumerable<Block> blocks)
@@ -88,7 +134,6 @@ public class RichTextBoxUtils
             try
             {
                 rtb.CaretPosition = newCaret;
-                rtb.Focus();
             }
             catch (Exception e)
             {
@@ -105,6 +150,8 @@ public class RichTextBoxUtils
 
         if (document.Parent is not null)
             return;
+
+        _cachedRTB = rtb;
 
         rtb.Dispatcher.BeginInvoke(new Action(() =>
         {
@@ -125,11 +172,12 @@ public class RichTextBoxUtils
         if (source is not RichTextBox rtb || e.NewValue is not int position)
             return;
 
+        _cachedRTB = rtb;
+
         source.Dispatcher.BeginInvoke(new Action(() =>
         {
             FlowDocumentUtils.ScrollToPosition(rtb.Document, position);
             SetDocumentCaret(rtb.Document, 0);
-            rtb.Focus();
         }), DispatcherPriority.Background);
     }
 
@@ -137,6 +185,8 @@ public class RichTextBoxUtils
     {
         if (source is not RichTextBox rtb)
             return;
+
+        _cachedRTB = rtb;
 
         if ((bool)e.NewValue)
         {
@@ -152,16 +202,19 @@ public class RichTextBoxUtils
 
     private static void OnRequerySuggested(object? sender, EventArgs e)
     {
-        var focusedWindow = Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive);
-        if (focusedWindow is null)
+        if (_refreshQueued)
             return;
 
-        var rtb = VisualUtils.FindVisualChildren<RichTextBox>(focusedWindow).FirstOrDefault(GetObserveCaret);
-
-        if (rtb is null)
+        if (_cachedRTB is null)
             return;
 
-        RefreshToolbarStates(rtb);
+        _refreshQueued = true;
+
+        Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+        {
+            RefreshToolbarStates(_cachedRTB);
+            _refreshQueued = false;
+        }), DispatcherPriority.Background);
     }
 
     /// <summary>
@@ -215,59 +268,17 @@ public class RichTextBoxUtils
         }
     }
 
-    public static void HandlePaste(object? sender, DataObjectPastingEventArgs e)
-    {
-        if (sender is not RichTextBox rtb)
-            return;
-
-        if (!e.DataObject.GetDataPresent(DataFormats.Bitmap))
-            return;
-
-        e.CancelCommand();
-
-        try
-        {
-            var src = e.DataObject.GetData(DataFormats.Bitmap, true);
-
-            Image? img = src switch
-            {
-                _ when src is BitmapSource bitmap => new() { Source = bitmap },
-                _ when src is MemoryStream stream => ImageUtils.DecodeEmbed(stream),
-                _ => null,
-            };
-
-            if (img is null)
-                return;
-
-            BlockUIContainer blockContainer = new BlockUIContainer(img);
-
-            TextPointer caretPosition = rtb.CaretPosition;
-            Block currentBlock = caretPosition.Paragraph;
-
-            if (currentBlock is null)
-                rtb.Document.Blocks.Add(blockContainer);
-            else
-                rtb.Document.Blocks.InsertAfter(currentBlock, blockContainer);
-
-            rtb.CaretPosition = blockContainer.ElementEnd;
-            rtb.Focus();
-        }
-        catch (Exception ex)
-        {
-            App.LogException(ex);
-        }
-    }
-
     private static void RichTextBox_SelectionChanged(object sender, RoutedEventArgs e)
     {
         if (sender is not RichTextBox rtb)
             return;
 
+        _cachedRTB = rtb;
+
         if (GetBoundCaret(rtb) == rtb.CaretPosition)
             return;
 
         SetBoundCaret(rtb, rtb.CaretPosition);
-
         RefreshToolbarStates(rtb);
     }
 
