@@ -2,10 +2,12 @@
 
 namespace SylverInk.XAML.Controls;
 
-public class NoteEditorViewModel : PopoutViewModel
+public class NoteEditorViewModel : PopoutViewModel, IDisposable
 {
     private bool _autosaving;
     private TextPointer _caretPosition;
+    private CancellationTokenSource _cts;
+    private bool _disposed;
     private FlowDocument _document;
     private bool _edited;
     private bool _finishedLoading;
@@ -140,6 +142,7 @@ public class NoteEditorViewModel : PopoutViewModel
 
     public NoteEditorViewModel()
     {
+        _cts = new();
         _record = new();
         _document = _record.GetDocument();
         _caretPosition = _document.ContentStart;
@@ -158,9 +161,13 @@ public class NoteEditorViewModel : PopoutViewModel
 
         try
         {
-            using var cts = new CancellationTokenSource();
             Autosaving = true;
-            await Task.Delay(5000, cts.Token);
+
+            await Task.Delay(5000, _cts.Token);
+
+            if (_cts.IsCancellationRequested)
+                return;
+
             Record.BeginAutosave(Document);
         }
         catch (TaskCanceledException)
@@ -186,6 +193,31 @@ public class NoteEditorViewModel : PopoutViewModel
             return true;
 
         return !OriginalText.Equals(TextConverter.Save(Document, TextFormat.Xaml), StringComparison.Ordinal);
+    }
+
+    public async void CancelAutosave()
+    {
+        if (!FinishedLoading)
+            return;
+
+        if (Autosaving)
+            return;
+
+        if (!Edited)
+            return;
+
+        try
+        {
+            await _cts.CancelAsync();
+        }
+        catch (Exception ex)
+        {
+            App.LogException(ex);
+        }
+        finally
+        {
+            _cts.TryReset();
+        }
     }
 
     public bool ConfirmExit()
@@ -243,7 +275,26 @@ public class NoteEditorViewModel : PopoutViewModel
 
     public virtual void Deconstruct()
     {
+        CancelAutosave();
         RichTextBoxUtils.SetDocumentCaret(Document, CaretPosition.DocumentStart.GetOffsetToPosition(CaretPosition));
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (_disposed)
+            return;
+
+        if (!disposing)
+            return;
+
+        _cts.Dispose();
+        _disposed = true;
+    }
+
+    public void Dispose()
+    {
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
     }
 
     protected void EraseAutosave()
