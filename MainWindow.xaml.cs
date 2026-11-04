@@ -3,7 +3,6 @@ using SylverInk.Interop;
 using SylverInk.Visuals;
 using SylverInk.XAML.Controls;
 using System.ComponentModel;
-using System.Windows.Markup;
 using static SylverInk.FileIO.FileUtils;
 using static SylverInk.Notes.DatabaseUtils;
 using static SylverInk.Visuals.VisualUtils;
@@ -42,8 +41,6 @@ public partial class MainWindow : Window
 
     private async void MainWindow_Closing(object? sender, CancelEventArgs e)
     {
-        File.WriteAllText("Menu.xaml", XamlWriter.Save(DatabaseMenu.Template));
-
         if (IsShuttingDown()) // Prevent redundant event handling.
             return;
 

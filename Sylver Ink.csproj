@@ -68,15 +68,6 @@
   </ItemGroup>
   
   <ItemGroup>
-    <Page Remove="FileMenu.xaml" />
-    <Page Remove="Menu.xaml" />
-    <Page Remove="NonSubItem.xaml" />
-    <Page Remove="SubItem.xaml" />
-    <Page Remove="SubItemControl.xaml" />
-    <Page Remove="SubItemManual.xaml" />
-  </ItemGroup>
-  
-  <ItemGroup>
     <Content Include="res\glasses.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
