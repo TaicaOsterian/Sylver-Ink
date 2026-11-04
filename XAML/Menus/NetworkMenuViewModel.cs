@@ -1,4 +1,5 @@
 ﻿using SylverInk.Mvvm;
+using System.Windows.Controls.Primitives;
 using static SylverInk.Notes.DatabaseUtils;
 
 namespace SylverInk.XAML.Menus;
@@ -117,7 +118,20 @@ public class NetworkMenuViewModel : ViewModelBase
         CurrentDatabase.Changed = true;
     }
 
-    private static void MenuServe(object? param) => CurrentDatabase.Server.Serve(0);
+    private async void MenuServe(object? param)
+    {
+        if (await CurrentDatabase.Server.Serve(0) is false)
+            return;
+
+        if (Application.Current.MainWindow.FindName("CodePopup") is not Popup codePopup)
+            return;
+
+        if (codePopup.FindName("CodeBox") is not TextBox codeBox)
+            return;
+
+        codePopup.IsOpen = true;
+        codeBox.Text = AddressCode ?? NetworkUtils.LoopbackCode;
+    }
 
     private static void MenuUnserve(object? param) => CurrentDatabase.Server.Close();
 

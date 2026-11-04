@@ -4,7 +4,6 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
 using System.Threading;
-using System.Windows.Controls.Primitives;
 using static SylverInk.Net.NetworkUtils;
 
 namespace SylverInk.Net;
@@ -166,7 +165,7 @@ public class NetServer : IDisposable
         }
     }
 
-    public async void Serve(byte Flags)
+    public async Task<bool> Serve(byte Flags)
     {
         Active = true;
         Address = IPAddress.Loopback;
@@ -198,7 +197,7 @@ public class NetServer : IDisposable
             MessageBox.Show(Strings.FailedDNSConnection, Strings.Title_Error, MessageBoxButton.OK, MessageBoxImage.Error);
             Active = false;
             Serving = false;
-            return;
+            return false;
         }
 
         try
@@ -214,7 +213,7 @@ public class NetServer : IDisposable
             ShowTooltip(string.Format(CultureInfo.CurrentCulture, CacheFailedToOpenServer, TcpPort));
             Active = false;
             Serving = false;
-            return;
+            return false;
         }
 
         WatchTask.RunWorkerAsync();
@@ -223,13 +222,6 @@ public class NetServer : IDisposable
         Serving = true;
         UpdateIndicator(Indicator, IndicatorStatus.Serving);
 
-        if (Application.Current.MainWindow.FindName("CodePopup") is not Popup codePopup)
-            return;
-
-        if (codePopup.FindName("CodeBox") is not TextBox codeBox)
-            return;
-
-        codePopup.IsOpen = true;
-        codeBox.Text = AddressCode ?? LoopbackCode;
+        return true;
     }
 }
