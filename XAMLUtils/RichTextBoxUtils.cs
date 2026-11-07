@@ -73,10 +73,10 @@ public class RichTextBoxUtils
         {
             var src = e.DataObject.GetData(DataFormats.Bitmap, true);
 
-            Image? img = src switch
+            ImageContainer? img = src switch
             {
                 _ when src is BitmapSource bitmap => new() { Source = bitmap },
-                _ when src is MemoryStream stream => ImageUtils.DecodeEmbed(stream),
+                _ when src is MemoryStream stream => ImageContainer.FromStream(stream),
                 _ => null,
             };
 

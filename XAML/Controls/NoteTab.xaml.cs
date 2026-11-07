@@ -30,7 +30,7 @@ public partial class NoteTab : UserControl
         e.Handled = true;
     }
 
-    private void DetectImageDoubleClick(object sender, RoutedEventArgs e) => ImageUtils.DetectImageDoubleClick(sender, e);
+    private void DetectImageDoubleClick(object sender, RoutedEventArgs e) => ImageContainer.DetectImageDoubleClick(sender, e);
 
     private void ISPText_KeyDown(object sender, KeyEventArgs e)
     {

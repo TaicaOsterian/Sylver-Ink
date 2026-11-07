@@ -44,7 +44,7 @@ public class ImageViewViewModel : PopoutViewModel
         {
             AddToRecent = true,
             OverwritePrompt = true,
-            Filter = Strings.ImageFileFilter,
+            Filter = Strings.FileFilter_Image,
             ValidateNames = true,
         };
 
@@ -58,6 +58,9 @@ public class ImageViewViewModel : PopoutViewModel
 
         switch (Path.GetExtension(path))
         {
+            case ".gif":
+                encoder = new GifBitmapEncoder();
+                break;
             case ".jpg":
             case ".jpeg":
                 encoder = new JpegBitmapEncoder()
@@ -69,6 +72,12 @@ public class ImageViewViewModel : PopoutViewModel
                 encoder = new PngBitmapEncoder()
                 {
                     Interlace = PngInterlaceOption.On
+                };
+                break;
+            case ".tif":
+                encoder = new TiffBitmapEncoder()
+                {
+                    Compression = TiffCompressOption.Lzw,
                 };
                 break;
             default:

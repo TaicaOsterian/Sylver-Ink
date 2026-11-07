@@ -32,11 +32,11 @@ public static class FileUtils
         FileDialog dialog = outgoing ? new SaveFileDialog()
         {
             FileName = defaultName ?? DefaultDatabase,
-            Filter = Strings.DatabaseFileFilter,
+            Filter = Strings.FileFilter_Database,
         } : new OpenFileDialog()
         {
             CheckFileExists = true,
-            Filter = Strings.DatabaseAndTextFileFilter,
+            Filter = Strings.FileFilter_DatabaseAndText,
             InitialDirectory = Subfolders[Subfolder.Databases],
         };
 

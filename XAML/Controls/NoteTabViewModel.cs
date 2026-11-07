@@ -1,8 +1,8 @@
 ﻿using Microsoft.Win32;
+using SylverInk.Interop;
 using SylverInk.Mvvm;
 using SylverInk.Mvvm.Events;
 using System.Globalization;
-using System.Windows.Media.Imaging;
 using static SylverInk.Notes.DatabaseUtils;
 
 namespace SylverInk.XAML.Controls;
@@ -214,7 +214,7 @@ public class NoteTabViewModel : NoteEditorViewModel
         var dialog = new OpenFileDialog()
         {
             CheckFileExists = true,
-            Filter = Strings.ImageFileFilter,
+            Filter = Strings.FileFilter_Image,
             FilterIndex = 2,
             Multiselect = true,
             ValidateNames = true,
@@ -227,23 +227,7 @@ public class NoteTabViewModel : NoteEditorViewModel
 
         foreach (var file in dialog.FileNames)
         {
-            BitmapImage bitmap = new();
-
-            bitmap.BeginInit();
-            bitmap.UriSource = new Uri(file);
-            bitmap.CacheOption = BitmapCacheOption.OnLoad;
-            bitmap.EndInit();
-
-            bitmap.Freeze();
-
-            Image img = new()
-            {
-                Margin = new Thickness(5, 0, 5, 0),
-                Source = bitmap,
-                Stretch = Stretch.UniformToFill,
-            };
-
-            BlockUIContainer container = new(img);
+            BlockUIContainer container = new(ImageContainer.Load(file));
 
             if (lastBlock is null)
                 Document.Blocks.Add(container);

@@ -24,7 +24,7 @@ public partial class StickyNote : Popout
         OpenQueries.Add(this);
     }
 
-    private void DetectImageDoubleClick(object sender, RoutedEventArgs e) => ImageUtils.DetectImageDoubleClick(sender, e);
+    private void DetectImageDoubleClick(object sender, RoutedEventArgs e) => ImageContainer.DetectImageDoubleClick(sender, e);
 
     private void HandleClose(bool force = false)
     {

@@ -178,10 +178,10 @@ de las notas</value>
   <data name="CreatedDate" xml:space="preserve">
     <value>Fecha de creación</value>
   </data>
-  <data name="DatabaseAndTextFileFilter" xml:space="preserve">
+  <data name="FileFilter_DatabaseAndText" xml:space="preserve">
     <value>Archivos respaldados de Sylver Ink (*.sibk)|*.sibk|Archivos de base de datos de Sylver Ink (*.sidb)|*.sidb|Archivos de texto (*.txt)|*.txt|Todos los archivos (*.*)|*.*</value>
   </data>
-  <data name="DatabaseFileFilter" xml:space="preserve">
+  <data name="FileFilter_Database" xml:space="preserve">
     <value>Archivos respaldados de Sylver Ink (*.sibk)|*.sibk|Archivos de base de datos de Sylver Ink (*.sidb)|*.sidb|Todos los archivos (*.*)|*.*</value>
   </data>
   <data name="DatabaseTooLargeForCompression" xml:space="preserve">
@@ -250,8 +250,8 @@ de las notas</value>
   <data name="HighContrastAssistance" xml:space="preserve">
     <value>Cuando está activada, la aplicación ajusta automáticamente el color de primer plano al seleccionar un fondo, y viceversa.</value>
   </data>
-  <data name="ImageFileFilter" xml:space="preserve">
-    <value>Imágenes JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg|Imágenes PNG (*.png)|*.png|Todos los archivos de imagen (*.jpg;*.jpeg;*.png)|*.jpg;*.jpeg;*.png|Todos los archivos (*.*)|*.*</value>
+  <data name="FileFilter_Image" xml:space="preserve">
+    <value>Imágenes GIF (*.gif)|*.gif|Imágenes JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg|Imágenes PNG (*.png)|*.png|Imágenes TIFF (*.tif)|*.tif|Todos los archivos de imagen (*.jpg;*.jpeg;*.png;*.tif)|*.jpg;*.jpeg;*.png;*.tif|Todos los archivos (*.*)|*.*</value>
   </data>
   <data name="ImportFailed" xml:space="preserve">
     <value>No se pudo importar el archivo seleccionado: {0}</value>

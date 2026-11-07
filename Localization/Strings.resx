@@ -182,11 +182,11 @@ length</value>
     <value>Created date</value>
     <comment>"Date that a database was created"</comment>
   </data>
-  <data name="DatabaseAndTextFileFilter" xml:space="preserve">
+  <data name="FileFilter_DatabaseAndText" xml:space="preserve">
     <value>Sylver Ink backup files (*.sibk)|*.sibk|Sylver Ink database files (*.sidb)|*.sidb|Text files (*.txt)|*.txt|All files (*.*)|*.*</value>
     <comment>Only the text needs to be translated - "Sylver Ink backup files", etc. Just worry about the labels, not the extensions.</comment>
   </data>
-  <data name="DatabaseFileFilter" xml:space="preserve">
+  <data name="FileFilter_Database" xml:space="preserve">
     <value>Sylver Ink backup files (*.sibk)|*.sibk|Sylver Ink database files (*.sidb)|*.sidb|All files (*.*)|*.*</value>
     <comment>Only the text needs to be translated - "Sylver Ink backup files", etc. Just worry about the labels, not the extensions.</comment>
   </data>
@@ -259,8 +259,8 @@ length</value>
   <data name="HighContrastAssistance" xml:space="preserve">
     <value>When enabled, the application will automatically adjust the foreground color when you select a background, and vice versa.</value>
   </data>
-  <data name="ImageFileFilter" xml:space="preserve">
-    <value>JPEG images (*.jpg;*.jpeg)|*.jpg;*.jpeg|PNG images (*.png)|*.png|All image files (*.jpg;*.jpeg;*.png)|*.jpg;*.jpeg;*.png|All files (*.*)|*.*</value>
+  <data name="FileFilter_Image" xml:space="preserve">
+    <value>GIF images (*.gif)|*.gif|JPEG images (*.jpg;*.jpeg)|*.jpg;*.jpeg|PNG images (*.png)|*.png|TIFF images (*.tif)|*.tif|All image files (*.jpg;*.jpeg;*.png;*.tif)|*.jpg;*.jpeg;*.png;*.tif|All files (*.*)|*.*</value>
   </data>
   <data name="ImportFailed" xml:space="preserve">
     <value>Failed to import the selected file: {0}</value>

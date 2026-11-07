@@ -1,5 +1,6 @@
-﻿using System.Windows.Markup;
-using static SylverInk.Interop.ImageUtils;
+﻿using SylverInk.Interop;
+using System.Text;
+using System.Windows.Markup;
 
 namespace SylverInk.Text;
 
@@ -40,10 +41,10 @@ public partial class XamlConverter : ITextConverter
                 while (string.IsNullOrEmpty(pointer.GetTextInRun(LogicalDirection.Forward)))
                     pointer = pointer.GetNextContextPosition(LogicalDirection.Forward);
 
-                var img = DecodeEmbed(pointer.GetTextInRun(LogicalDirection.Forward));
+                ImageContainer imgContainer = ImageContainer.FromBase64(pointer.GetTextInRun(LogicalDirection.Forward));
 
-                BlockUIContainer container = new(img);
-                document.Blocks.InsertBefore(paragraph, container);
+                BlockUIContainer blockContainer = new(imgContainer);
+                document.Blocks.InsertBefore(paragraph, blockContainer);
                 document.Blocks.Remove(paragraph);
 
                 while (pointer.GetPointerContext(LogicalDirection.Forward) != TextPointerContext.ElementStart)
@@ -60,39 +61,26 @@ public partial class XamlConverter : ITextConverter
 
     public string Save(FlowDocument document)
     {
-        var content = XamlWriter.Save(document);
-        content = content.Replace("{}{", "{");
+        var sb = new StringBuilder();
 
-        var pointer = document.ContentStart;
-
-        while (pointer is not null)
+        for (var block = document.Blocks.FirstBlock; block is not null; block = block.NextBlock)
         {
-            if (pointer.GetPointerContext(LogicalDirection.Forward) == TextPointerContext.ElementStart
-                && pointer.GetAdjacentElement(LogicalDirection.Forward) is BlockUIContainer container
-                && container.Child is Image img)
+            if (block is BlockUIContainer bc && bc.Child is ImageContainer img)
             {
-                var embed = EncodeEmbed(img);
-                var match = ContainerRegex().Match(content);
-
-                content = $"{content[..match.Index]}<Paragraph Tag=\"base64\">{System.Convert.ToBase64String(embed)}</Paragraph>{content[(match.Index + match.Length)..]}";
+                sb.Append("<Paragraph Tag=\"base64\">")
+                    .Append(img.ToBase64())
+                    .Append("</Paragraph>");
             }
-
-            pointer = pointer.GetNextContextPosition(LogicalDirection.Forward);
+            else
+            {
+                sb.Append(XamlWriter.Save(block).Replace("{}{", "{"));
+            }
         }
 
-        return FlowDocumentOpeningRegex().Replace(FlowDocumentClosingRegex().Replace(content, string.Empty), string.Empty);
+        return sb.ToString();
     }
 
     private string ToXamlFromPlaintext(string text) => Save(TextConverter.Parse(text, TextFormat.Plaintext));
-
-    [GeneratedRegex(@"<BlockUIContainer.*?</BlockUIContainer>")]
-    private static partial Regex ContainerRegex();
-
-    [GeneratedRegex(@"</FlowDocument>")]
-    private static partial Regex FlowDocumentClosingRegex();
-
-    [GeneratedRegex(@"<FlowDocument.*?>")]
-    private static partial Regex FlowDocumentOpeningRegex();
 
     [GeneratedRegex(@"<Image.*?>.*?</Image>")]
     private static partial Regex ImageTagRegex();
