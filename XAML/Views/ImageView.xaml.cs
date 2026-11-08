@@ -1,4 +1,6 @@
-﻿namespace SylverInk.XAML;
+﻿using SylverInk.Interop;
+
+namespace SylverInk.XAML;
 
 /// <summary>
 /// Interaction logic for ImageView.xaml
@@ -9,7 +11,6 @@ public partial class ImageView : Popout
     private Matrix dragMatrix;
     private UIElement? element;
     private Matrix home = Matrix.Identity;
-    private Image? image;
     private Control? parentControl;
     public override ImageViewViewModel ViewModel => (ImageViewViewModel)ViewModelProperty;
 
@@ -26,8 +27,8 @@ public partial class ImageView : Popout
         if (sender is not Canvas canvas)
             return;
 
+        canvas.Children.Add(ViewModel.Source);
         element = canvas;
-        image = FindImage(canvas);
 
         DependencyObject d = element;
         while (d != null)
@@ -81,9 +82,9 @@ public partial class ImageView : Popout
         e.Handled = true;
     }
 
-    public void Construct(ImageSource source)
+    public void Construct(ImageContainer container)
     {
-        ViewModel.Source = source;
+        ViewModel.Source = container;
         OpenImages.Add(this);
     }
 
@@ -160,21 +161,6 @@ public partial class ImageView : Popout
         e.Handled = true;
     }
 
-    private static Image? FindImage(DependencyObject root)
-    {
-        if (root is Image img)
-            return img;
-
-        int count = VisualTreeHelper.GetChildrenCount(root);
-        for (int i = 0; i < count; i++)
-        {
-            var found = FindImage(VisualTreeHelper.GetChild(root, i));
-            if (found is not null)
-                return found;
-        }
-        return null;
-    }
-
     private MatrixTransform GetMatrixTransform()
     {
         if (element is null)
@@ -197,11 +183,11 @@ public partial class ImageView : Popout
 
     private void UpdateHome()
     {
-        if (parentControl is null || image is null)
+        if (parentControl is null || ViewModel.Source is null)
             return;
 
-        double dx = (parentControl.ActualWidth - image.ActualWidth) * 0.5;
-        double dy = (parentControl.ActualHeight - image.ActualHeight) * 0.5;
+        double dx = (parentControl.ActualWidth - ViewModel.Source.ActualWidth) * 0.5;
+        double dy = (parentControl.ActualHeight - ViewModel.Source.ActualHeight) * 0.5;
 
         home = Matrix.Identity;
         home.Translate(dx, dy);

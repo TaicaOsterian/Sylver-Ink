@@ -182,14 +182,6 @@ length</value>
     <value>Created date</value>
     <comment>"Date that a database was created"</comment>
   </data>
-  <data name="FileFilter_DatabaseAndText" xml:space="preserve">
-    <value>Sylver Ink backup files (*.sibk)|*.sibk|Sylver Ink database files (*.sidb)|*.sidb|Text files (*.txt)|*.txt|All files (*.*)|*.*</value>
-    <comment>Only the text needs to be translated - "Sylver Ink backup files", etc. Just worry about the labels, not the extensions.</comment>
-  </data>
-  <data name="FileFilter_Database" xml:space="preserve">
-    <value>Sylver Ink backup files (*.sibk)|*.sibk|Sylver Ink database files (*.sidb)|*.sidb|All files (*.*)|*.*</value>
-    <comment>Only the text needs to be translated - "Sylver Ink backup files", etc. Just worry about the labels, not the extensions.</comment>
-  </data>
   <data name="DatabaseTooLargeForCompression" xml:space="preserve">
     <value>Serialized database has exceeded the maximum capacity for restricted LZW compression.</value>
   </data>
@@ -247,6 +239,17 @@ length</value>
   <data name="FailedUpdateCheck" xml:space="preserve">
     <value>An error occurred while checking for updates.</value>
   </data>
+  <data name="FileFilter_Database" xml:space="preserve">
+    <value>Sylver Ink backup files (*.sibk)|*.sibk|Sylver Ink database files (*.sidb)|*.sidb|All files (*.*)|*.*</value>
+    <comment>Only the text needs to be translated - "Sylver Ink backup files", etc. Just worry about the labels, not the extensions.</comment>
+  </data>
+  <data name="FileFilter_DatabaseAndText" xml:space="preserve">
+    <value>Sylver Ink backup files (*.sibk)|*.sibk|Sylver Ink database files (*.sidb)|*.sidb|Text files (*.txt)|*.txt|All files (*.*)|*.*</value>
+    <comment>Only the text needs to be translated - "Sylver Ink backup files", etc. Just worry about the labels, not the extensions.</comment>
+  </data>
+  <data name="FileFilter_Image" xml:space="preserve">
+    <value>GIF images (*.gif)|*.gif|JPEG images (*.jpg;*.jpeg)|*.jpg;*.jpeg|PNG images (*.png)|*.png|TIFF images (*.tif)|*.tif|All image files (*.gif;*.jpg;*.jpeg;*.png;*.tif)|*.gif;*.jpg;*.jpeg;*.png;*.tif|All files (*.*)|*.*</value>
+  </data>
   <data name="FileFormatUnsupported" xml:space="preserve">
     <value>The file format is unsupported.</value>
   </data>
@@ -258,9 +261,6 @@ length</value>
   </data>
   <data name="HighContrastAssistance" xml:space="preserve">
     <value>When enabled, the application will automatically adjust the foreground color when you select a background, and vice versa.</value>
-  </data>
-  <data name="FileFilter_Image" xml:space="preserve">
-    <value>GIF images (*.gif)|*.gif|JPEG images (*.jpg;*.jpeg)|*.jpg;*.jpeg|PNG images (*.png)|*.png|TIFF images (*.tif)|*.tif|All image files (*.gif;*.jpg;*.jpeg;*.png;*.tif)|*.gif;*.jpg;*.jpeg;*.png;*.tif|All files (*.*)|*.*</value>
   </data>
   <data name="ImportFailed" xml:space="preserve">
     <value>Failed to import the selected file: {0}</value>
@@ -418,6 +418,9 @@ Remember to press Import to finalize your changes!</value>
   </data>
   <data name="LongestNote" xml:space="preserve">
     <value>Longest note</value>
+  </data>
+  <data name="Message_ConfirmAnimatedImageExportLoss" xml:space="preserve">
+    <value>The image format you have selected does not support animation frames. Data will be lost if you export to this format. Do you wish to proceed?</value>
   </data>
   <data name="Message_ConfirmDeleteDatabase" xml:space="preserve">
     <value>Are you sure you want to permanently delete this database?</value>

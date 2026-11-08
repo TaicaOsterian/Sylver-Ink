@@ -178,12 +178,6 @@ de las notas</value>
   <data name="CreatedDate" xml:space="preserve">
     <value>Fecha de creación</value>
   </data>
-  <data name="FileFilter_DatabaseAndText" xml:space="preserve">
-    <value>Archivos respaldados de Sylver Ink (*.sibk)|*.sibk|Archivos de base de datos de Sylver Ink (*.sidb)|*.sidb|Archivos de texto (*.txt)|*.txt|Todos los archivos (*.*)|*.*</value>
-  </data>
-  <data name="FileFilter_Database" xml:space="preserve">
-    <value>Archivos respaldados de Sylver Ink (*.sibk)|*.sibk|Archivos de base de datos de Sylver Ink (*.sidb)|*.sidb|Todos los archivos (*.*)|*.*</value>
-  </data>
   <data name="DatabaseTooLargeForCompression" xml:space="preserve">
     <value>La cantidad de datos excedió la capacidad máxima para la compresión LZW.</value>
   </data>
@@ -238,6 +232,15 @@ de las notas</value>
   <data name="FailedUpdateCheck" xml:space="preserve">
     <value>Se produjo un error al buscar actualizaciones.</value>
   </data>
+  <data name="FileFilter_Database" xml:space="preserve">
+    <value>Archivos respaldados de Sylver Ink (*.sibk)|*.sibk|Archivos de base de datos de Sylver Ink (*.sidb)|*.sidb|Todos los archivos (*.*)|*.*</value>
+  </data>
+  <data name="FileFilter_DatabaseAndText" xml:space="preserve">
+    <value>Archivos respaldados de Sylver Ink (*.sibk)|*.sibk|Archivos de base de datos de Sylver Ink (*.sidb)|*.sidb|Archivos de texto (*.txt)|*.txt|Todos los archivos (*.*)|*.*</value>
+  </data>
+  <data name="FileFilter_Image" xml:space="preserve">
+    <value>Imágenes GIF (*.gif)|*.gif|Imágenes JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg|Imágenes PNG (*.png)|*.png|Imágenes TIFF (*.tif)|*.tif|Todos los archivos de imagen (*.gif;*.jpg;*.jpeg;*.png;*.tif)|*.gif;*.jpg;*.jpeg;*.png;*.tif|Todos los archivos (*.*)|*.*</value>
+  </data>
   <data name="FileFormatUnsupported" xml:space="preserve">
     <value>El formato de archivo no es compatible.</value>
   </data>
@@ -249,9 +252,6 @@ de las notas</value>
   </data>
   <data name="HighContrastAssistance" xml:space="preserve">
     <value>Cuando está activada, la aplicación ajusta automáticamente el color de primer plano al seleccionar un fondo, y viceversa.</value>
-  </data>
-  <data name="FileFilter_Image" xml:space="preserve">
-    <value>Imágenes GIF (*.gif)|*.gif|Imágenes JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg|Imágenes PNG (*.png)|*.png|Imágenes TIFF (*.tif)|*.tif|Todos los archivos de imagen (*.gif;*.jpg;*.jpeg;*.png;*.tif)|*.gif;*.jpg;*.jpeg;*.png;*.tif|Todos los archivos (*.*)|*.*</value>
   </data>
   <data name="ImportFailed" xml:space="preserve">
     <value>No se pudo importar el archivo seleccionado: {0}</value>
@@ -396,6 +396,9 @@ Recuerda presionar Importar para finalizar tus cambios!</value>
   </data>
   <data name="LongestNote" xml:space="preserve">
     <value>Nota más larga</value>
+  </data>
+  <data name="Message_ConfirmAnimatedImageExportLoss" xml:space="preserve">
+    <value>El formato de imagen seleccionado no admite fotogramas de animación. Se perderán datos si exporta a este formato. ¿Desea continuar?</value>
   </data>
   <data name="Message_ConfirmDeleteDatabase" xml:space="preserve">
     <value>¿Estás seguro de que quieres eliminar esta base de datos permanentemente?</value>

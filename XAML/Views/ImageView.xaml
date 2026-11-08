@@ -46,9 +46,7 @@
             <Grid>
                 <ItemsControl Background="{Binding AppSettings.AccentBackground}"
                               ClipToBounds="True">
-                    <Canvas Loaded="Canvas_Loaded">
-                        <Image Source="{Binding Source}" />
-                    </Canvas>
+                    <Canvas Loaded="Canvas_Loaded" />
                 </ItemsControl>
 
                 <Canvas>

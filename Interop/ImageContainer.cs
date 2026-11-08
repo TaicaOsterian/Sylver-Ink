@@ -1,4 +1,5 @@
 ﻿using SylverInk.XAML;
+using System.Globalization;
 using System.Text;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
@@ -99,6 +100,96 @@ public class ImageContainer : Image, IDisposable
         };
     }
 
+    private ImageContainer Clone()
+    {
+        using MemoryStream stream = new(ToByteArray());
+        return Decode(stream);
+    }
+
+    private static void CompositeFrames(ImageContainer container, GifBitmapDecoder decoder)
+    {
+        if (decoder.Frames.Count == 0)
+            return;
+
+        BitmapMetadata firstMeta = (BitmapMetadata)decoder.Frames[0].Metadata;
+        int screenWidth = GetQuery(firstMeta, "/logscrdesc/Width", (ushort)decoder.Frames[0].PixelWidth);
+        int screenHeight = GetQuery(firstMeta, "/logscrdesc/Height", (ushort)decoder.Frames[0].PixelHeight);
+
+        // The running canvas. Always Pbgra32.
+        WriteableBitmap canvas = new(screenWidth, screenHeight, 96, 96, PixelFormats.Pbgra32, null);
+        BitmapSource? savedState = null;
+
+        for (int i = 0; i < decoder.Frames.Count; i++)
+        {
+            BitmapFrame frame = decoder.Frames[i];
+            BitmapMetadata? metadata = frame.Metadata as BitmapMetadata;
+
+            int left = GetQuery<ushort>(metadata, "/imgdesc/Left", 0);
+            int top = GetQuery<ushort>(metadata, "/imgdesc/Top", 0);
+            byte disposal = GetQuery<byte>(metadata, "/grctlext/Disposal", 0);
+            bool hasTransparency = GetQuery(metadata, "/grctlext/TransparencyFlag", false);
+            byte transparentIndex = GetQuery<byte>(metadata, "/grctlext/TransparentColorIndex", 0);
+
+            // Disposal 3: capture the canvas *before* drawing so it can be restored later.
+            if (disposal == 3)
+                savedState = Snapshot(canvas);
+
+            int fw = frame.PixelWidth;
+            int fh = frame.PixelHeight;
+            int stride = fw * 4;
+
+            // This frame's raw palette indices (works because PreservePixelFormat gives us Indexed8).
+            byte[] indices = new byte[fw * fh];
+            frame.CopyPixels(indices, fw, 0);
+
+            byte[] blended = new byte[stride * fh];
+            canvas.CopyPixels(new Int32Rect(left, top, fw, fh), blended, stride, 0);
+
+            BitmapPalette? palette = frame.Palette;
+            IList<Color> colors = palette is not null ? palette.Colors : Array.Empty<Color>();
+
+            // Merge the frame's opaque pixels over the canvas region.
+            for (int y = 0; y < fh; y++)
+            {
+                for (int x = 0; x < fw; x++)
+                {
+                    byte index = indices[y * fw + x];
+                    if (hasTransparency && index == transparentIndex)
+                        continue; // Keep the underlying canvas pixel.
+
+                    Color c = index < colors.Count ? colors[index] : Colors.Black;
+                    int d = y * stride + x * 4;
+                    blended[d] = c.B;
+                    blended[d + 1] = c.G;
+                    blended[d + 2] = c.R;
+                    blended[d + 3] = 255;
+                }
+            }
+
+            canvas.WritePixels(new Int32Rect(left, top, fw, fh), blended, stride, 0);
+            container.CompositedFrames.Add(BitmapFrame.Create(Snapshot(canvas)));
+
+            switch (disposal)
+            {
+                case 2: // Restore frame's region to background (transparent).
+                    byte[] clear = new byte[fw * 4 * fh];
+                    canvas.WritePixels(new Int32Rect(left, top, fw, fh), clear, fw * 4, 0);
+                    break;
+
+                case 3: // Restore entire canvas to pre-frame state.
+                    if (savedState is not null)
+                    {
+                        int screenStride = screenWidth * 4;
+                        byte[] buffer = new byte[screenStride * screenHeight];
+                        savedState.CopyPixels(buffer, screenStride, 0);
+                        canvas.WritePixels(new Int32Rect(0, 0, screenWidth, screenHeight), buffer, screenStride, 0);
+                        savedState = null;
+                    }
+                    break;
+            }
+        }
+    }
+
     private static ImageContainer Decode(Stream stream)
     {
         ImageContainer container = new();
@@ -144,7 +235,9 @@ public class ImageContainer : Image, IDisposable
                 try
                 {
                     ushort rawDelay = (ushort)metadata.GetQuery("/grctlext/Delay");
-                    container.FrameTiming.Add(rawDelay * 100000); // GIF delay provided in centiseconds, multipled by ten for milliseconds, multipled by 10^4 for 100-nanosecond intervals (i.e. ticks).
+                    if (rawDelay == 0)
+                        rawDelay = 10; // If a GIF frame doesn't provide a delay, most software defaults it to 10 centiseconds.
+                    container.FrameTiming.Add(rawDelay * 10 * 10000); // GIF delay provided in centiseconds, multipled by ten for milliseconds, multipled by 10^4 for 100-nanosecond intervals (i.e. ticks).
                 }
                 catch (Exception ex)
                 {
@@ -155,48 +248,20 @@ public class ImageContainer : Image, IDisposable
             container.RawFrames.Add(rawFrame);
         }
 
-        if (decoder.CodecInfo.SupportsAnimation)
+        if (decoder is GifBitmapDecoder gif)
         {
             try
             {
-                WriteableBitmap bitmap = new(decoder.Frames[0]);
-                bitmap.Lock();
-                for (int i = 1; i < decoder.Frames.Count; i++)
-                {
-                    if (decoder.Frames[i].Metadata is not BitmapMetadata metadata)
-                        continue;
-
-                    var frame = new FormatConvertedBitmap(decoder.Frames[i], PixelFormats.Pbgra32, null, 0);
-
-                    object? mTransparency = metadata.GetQuery("/grctlext/TransparencyFlag");
-                    object? mTransparentColorIndex = metadata.GetQuery("/grctlext/TransparentColorIndex");
-                    object? mLeft = metadata.GetQuery("/imgdesc/Left");
-                    object? mTop = metadata.GetQuery("/imgdesc/Top");
-                    object? mWidth = metadata.GetQuery("/logscrdesc/Width");
-                    object? mHeight = metadata.GetQuery("/logscrdesc/Height");
-                    object? mDisposal = metadata.GetQuery("/grctlext/Disposal");
-
-                    bool transparency = (bool)(mTransparency ?? false);
-                    byte transparentColorIndex = (byte)(mTransparentColorIndex ?? 0);
-                    ushort left = (ushort)(mLeft ?? 0);
-                    ushort top = (ushort)(mTop ?? 0);
-                    int width = (int)(mWidth ?? frame.PixelWidth);
-                    int height = (int)(mHeight ?? frame.PixelHeight);
-                    byte disposal = (byte)(mDisposal ?? 0);
-
-                    int[] pixels = new int[width * 4 * height];
-                    frame.CopyPixels(new(left, top, width, height), pixels, width * 4, 0);
-                    bitmap.WritePixels(new(left, top, width, height), pixels, width * 4, 0);
-                }
-                bitmap.Unlock();
-
-                container.CompositedFrames.Add(BitmapFrame.Create(bitmap));
+                CompositeFrames(container, gif);
             }
             catch (Exception ex)
             {
                 App.LogException(ex);
             }
         }
+
+        if (container.CompositedFrames.Count == 0 && container.RawFrames.Count > 0)
+            container.CompositedFrames.Add(container.RawFrames[0]); // Fallback for non-animated images.
 
         container.BeginInit();
         container.Format = decoder.CodecInfo.MimeTypes.Split(',')[0];
@@ -221,9 +286,9 @@ public class ImageContainer : Image, IDisposable
 
         while (source != null && source != sender)
         {
-            if (source is Image img)
+            if (source is ImageContainer container)
             {
-                ExpandImage(img.Source);
+                container.ExpandImage();
                 e.Handled = true;
                 return;
             }
@@ -259,6 +324,9 @@ public class ImageContainer : Image, IDisposable
 
     public void EvaluateVisibility()
     {
+        if (DateTime.UtcNow.Ticks - TicksElapsed < 1e6) // Save on geometry math by only evaluating every tenth of a second.
+            return;
+
         if (!IsVisible || _parentWindow == null || ActualWidth == 0 || ActualHeight == 0)
         {
             _delayTimer.Stop();
@@ -282,10 +350,10 @@ public class ImageContainer : Image, IDisposable
         }
     }
 
-    private static void ExpandImage(ImageSource source)
+    private void ExpandImage()
     {
         ImageView view = new();
-        view.Construct(source);
+        view.Construct(this.Clone());
         view.Show();
     }
 
@@ -309,6 +377,23 @@ public class ImageContainer : Image, IDisposable
         {
             App.LogException(ex);
             return new();
+        }
+    }
+
+    private static T GetQuery<T>(BitmapMetadata? metadata, string path, T defaultValue) where T : struct
+    {
+        if (metadata is null)
+            return defaultValue;
+
+        try
+        {
+            object? value = metadata.GetQuery(path);
+            return value is null ? defaultValue : (T)Convert.ChangeType(value, typeof(T), CultureInfo.CurrentCulture);
+        }
+        catch (Exception ex)
+        {
+            App.LogException(ex);
+            return defaultValue;
         }
     }
 
@@ -385,6 +470,16 @@ public class ImageContainer : Image, IDisposable
 
             i += 6;
         }
+    }
+
+    private static BitmapSource Snapshot(BitmapSource source)
+    {
+        int stride = source.PixelWidth * 4;
+        byte[] buffer = new byte[stride * source.PixelHeight];
+        source.CopyPixels(buffer, stride, 0);
+        BitmapSource snapshot = BitmapSource.Create(source.PixelWidth, source.PixelHeight, source.DpiX, source.DpiY, PixelFormats.Pbgra32, null, buffer, stride);
+        snapshot.Freeze();
+        return snapshot;
     }
 
     public string ToBase64()

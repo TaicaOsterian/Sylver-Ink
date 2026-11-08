@@ -1,15 +1,15 @@
 ﻿using Microsoft.Win32;
+using SylverInk.Interop;
 using SylverInk.Mvvm;
-using System.Windows.Media.Imaging;
 
 namespace SylverInk.XAML.ViewModels;
 
 public class ImageViewViewModel : PopoutViewModel
 {
-    private ImageSource? _source;
+    private ImageContainer? _source;
     private double _zoomLevel = 1.0;
 
-    public ImageSource? Source
+    public ImageContainer? Source
     {
         get => _source;
         set
@@ -53,39 +53,21 @@ public class ImageViewViewModel : PopoutViewModel
 
         var path = dialog.FileName;
 
-        using FileStream stream = new(path, FileMode.Create);
-        BitmapEncoder encoder;
+        if (Source?.CompositedFrames.Count > 1 && !Path.GetExtension(path).Equals(".gif", StringComparison.OrdinalIgnoreCase)
+            && MessageBox.Show(Strings.Message_ConfirmAnimatedImageExportLoss, Strings.Title_Warning, MessageBoxButton.YesNo) == MessageBoxResult.No)
+            return;
 
-        switch (Path.GetExtension(path))
+        try
         {
-            case ".gif":
-                encoder = new GifBitmapEncoder();
-                break;
-            case ".jpg":
-            case ".jpeg":
-                encoder = new JpegBitmapEncoder()
-                {
-                    QualityLevel = 100,
-                };
-                break;
-            case ".png":
-                encoder = new PngBitmapEncoder()
-                {
-                    Interlace = PngInterlaceOption.On
-                };
-                break;
-            case ".tif":
-                encoder = new TiffBitmapEncoder()
-                {
-                    Compression = TiffCompressOption.Lzw,
-                };
-                break;
-            default:
-                ShowTooltip(Strings.FileFormatUnsupported);
-                return;
+            using FileStream stream = new(path, FileMode.Create, FileAccess.Write, FileShare.None);
+            using StreamWriter writer = new(stream);
+            writer.Write(Source?.ToByteArray());
+            writer.Flush();
+            writer.Close();
         }
-
-        encoder.Frames.Add(BitmapFrame.Create(Source as BitmapSource));
-        encoder.Save(stream);
+        catch (Exception ex)
+        {
+            App.LogException(ex);
+        }
     }
 }

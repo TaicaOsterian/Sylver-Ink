@@ -83,7 +83,7 @@ public class RichTextBoxUtils
             if (img is null)
                 return;
 
-            BlockUIContainer blockContainer = new BlockUIContainer(img);
+            BlockUIContainer blockContainer = new(img);
 
             TextPointer caretPosition = rtb.CaretPosition;
             Block currentBlock = caretPosition.Paragraph;
