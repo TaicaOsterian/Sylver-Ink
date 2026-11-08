@@ -1,6 +1,7 @@
 ﻿using SylverInk.FileIO;
 using SylverInk.Interop;
 using System.Globalization;
+using System.Threading;
 using static SylverInk.Notes.DatabaseUtils;
 using static SylverInk.Text.FlowDocumentUtils;
 using static SylverInk.XAMLUtils.MainWindowUtils;
@@ -136,10 +137,10 @@ public partial class NoteRecord
 
     // This function doesn't consume autosaved revisions to preserve continuity.
     // The onus is on the object initiating the call chain to track which revisions to discard if the user chooses not to save their changes.
-    public void BeginAutosave(FlowDocument document)
+    public void BeginAutosave(FlowDocument document, CancellationTokenSource cts)
     {
         CreateRevision(TextConverter.Save(document, TextFormat.Xaml), Autosave: true);
-        DB?.Autosave();
+        DB?.Autosave(cts);
         RefreshRecentNotes();
     }
 

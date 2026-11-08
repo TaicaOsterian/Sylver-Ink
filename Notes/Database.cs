@@ -2,6 +2,7 @@
 using SylverInk.Interop;
 using System.Globalization;
 using System.Text;
+using System.Threading;
 using static SylverInk.FileIO.FileUtils;
 using static SylverInk.Notes.DatabaseUtils;
 
@@ -42,7 +43,7 @@ public class Database : IDisposable
         Server = new(this);
     }
 
-    public void Autosave()
+    public void Autosave(CancellationTokenSource cts)
     {
         if (!Changed)
             return;
@@ -63,7 +64,7 @@ public class Database : IDisposable
             App.LogException(e);
         }
 
-        Controller.Autosave(lockFile);
+        Controller.Autosave(lockFile, cts);
     }
 
     public static async Task Create(string dbFile)

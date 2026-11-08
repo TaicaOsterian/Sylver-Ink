@@ -168,7 +168,7 @@ public class NoteEditorViewModel : PopoutViewModel, IDisposable
             if (_cts.IsCancellationRequested)
                 return;
 
-            Record.BeginAutosave(Document);
+            Record.BeginAutosave(Document, _cts);
         }
         catch (TaskCanceledException)
         {

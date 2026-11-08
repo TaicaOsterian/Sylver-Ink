@@ -59,7 +59,7 @@ public class Serializer : IDisposable
     /// <summary>
     /// Flush the open filestream buffer and dispose it.
     /// </summary>
-    public void Close(bool testing = false)
+    public void Close(bool testing = false, bool cancel = false)
     {
         if (!_isOpen)
             return;
@@ -87,6 +87,12 @@ public class Serializer : IDisposable
 
         try
         {
+            if (cancel)
+            {
+                Erase(_pathTmp);
+                return;
+            }
+
             File.Move(_pathTmp, _path, true);
 
             if (Hidden)
@@ -148,6 +154,9 @@ public class Serializer : IDisposable
     /// </summary>
     private void HandleFormat()
     {
+        if (_fileStream is null)
+            return;
+
         Headless = DatabaseFormat < 3;
         UseLZW = DatabaseFormat > 14 ? (Flags & 1) == 1 : DatabaseFormat % 2 == 0;
 

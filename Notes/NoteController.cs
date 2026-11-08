@@ -1,6 +1,7 @@
 ﻿using SylverInk.FileIO;
 using System.Globalization;
 using System.Runtime.InteropServices;
+using System.Threading;
 using static SylverInk.FileIO.FileUtils;
 using static SylverInk.Notes.DatabaseUtils;
 
@@ -79,7 +80,7 @@ public partial class NoteController : IDisposable
         return record.UUID;
     }
 
-    public void Autosave(string filename)
+    public void Autosave(string filename, CancellationTokenSource cts)
     {
         PropagateIndices();
         ReloadSerializer();
@@ -106,6 +107,12 @@ public partial class NoteController : IDisposable
         _serializer?.WriteInt32(RecordCount);
         foreach (NoteRecord record in Records.Values)
         {
+            if (cts.IsCancellationRequested)
+            {
+                _serializer?.Close(cancel: true);
+                return;
+            }
+
             if (record.GetRevision().IsAutosave)
                 record.EndAutosave(_serializer);
         }
