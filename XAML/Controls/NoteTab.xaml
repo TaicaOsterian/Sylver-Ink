@@ -562,7 +562,7 @@
         <RichTextBox utils:RichTextBoxUtils.BoundCaret="{Binding CaretPosition, Mode=TwoWay}"
                      DataObject.Pasting="RichTextBox_Pasting"
                      utils:RichTextBoxUtils.Document="{Binding Document, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                     Focusable="{Binding IsLive, Converter={StaticResource BoolToVis}}"
+                     Focusable="{Binding IsLive}"
                      Grid.Row="2"
                      IsDocumentEnabled="True"
                      IsInactiveSelectionHighlightEnabled="True"

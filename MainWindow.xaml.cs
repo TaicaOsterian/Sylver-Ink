@@ -203,6 +203,7 @@ public partial class MainWindow : Window
         PushViewportMetrics();
 
         // Check for updates. This is a blocking call, so it has to be the very last thing that we do on startup.
+        Erase(FileUtils.SessionFile);
         Erase(UpdateHandler.UpdateLockUri);
         Erase(UpdateHandler.TempUri);
         await UpdateHandler.CheckForUpdates();

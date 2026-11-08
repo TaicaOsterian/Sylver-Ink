@@ -70,8 +70,8 @@ public class FileMenuViewModel : ViewModelBase
         if (MessageBox.Show(Strings.Message_ConfirmDeleteDatabase, Strings.Title_Warning, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
             return;
 
-        RemoveDatabase(CurrentDatabase);
         Erase(CurrentDatabase.DBFile);
+        RemoveDatabase(CurrentDatabase);
         RefreshRecentNotes();
     }
 

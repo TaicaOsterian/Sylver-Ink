@@ -404,7 +404,12 @@ public partial class NoteController : IDisposable
 
             ref var record = ref CollectionsMarshal.GetValueRefOrAddDefault(Records, uuid, out bool exists);
             if (!exists)
-                record = new NoteRecord(DB);
+            {
+                record = new NoteRecord(DB)
+                {
+                    UUID = uuid,
+                };
+            }
 
             record?.RestoreFromAutosave(_serializer);
         }

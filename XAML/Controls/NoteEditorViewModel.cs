@@ -200,7 +200,7 @@ public class NoteEditorViewModel : PopoutViewModel, IDisposable
         if (!FinishedLoading)
             return;
 
-        if (Autosaving)
+        if (!Autosaving)
             return;
 
         if (!Edited)
