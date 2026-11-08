@@ -24,7 +24,7 @@ public static class FileUtils
         ]);
     public static string LocalAppDataFolder { get; private set; } = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Sylver Ink");
     public static string LocalizationFile { get; } = Path.Join(DocumentsFolder, "loc.sis"); // A single source of truth for other file and folder targets.
-    public static string SessionFile { get; } = Path.Join(LocalAppDataFolder, "session.lock"); // On a soft reboot (subscribed in App.xaml.cs), we touch this file. This indicates to the next session that it should silently reload a set of autosaves without prompting the user.
+    public static string SessionFile { get; } = Path.Join(LocalAppDataFolder, "session.lock"); // On a soft reboot (subscribed in App.xaml.cs), we touch this file. This indicates to the next session that it should silently reload an autosave delta without prompting the user.
     public static string SettingsFile { get; private set; } = Path.Join(DocumentsFolder, $"{Strings.Word_Settings.ToLower(CultureInfo.CurrentCulture)}.sis");
 
     public static string DialogFileSelect(bool outgoing = false, int filterIndex = 3, string? defaultName = null)

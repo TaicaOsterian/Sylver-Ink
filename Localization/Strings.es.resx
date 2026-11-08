@@ -251,7 +251,7 @@ de las notas</value>
     <value>Cuando está activada, la aplicación ajusta automáticamente el color de primer plano al seleccionar un fondo, y viceversa.</value>
   </data>
   <data name="FileFilter_Image" xml:space="preserve">
-    <value>Imágenes GIF (*.gif)|*.gif|Imágenes JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg|Imágenes PNG (*.png)|*.png|Imágenes TIFF (*.tif)|*.tif|Todos los archivos de imagen (*.jpg;*.jpeg;*.png;*.tif)|*.jpg;*.jpeg;*.png;*.tif|Todos los archivos (*.*)|*.*</value>
+    <value>Imágenes GIF (*.gif)|*.gif|Imágenes JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg|Imágenes PNG (*.png)|*.png|Imágenes TIFF (*.tif)|*.tif|Todos los archivos de imagen (*.gif;*.jpg;*.jpeg;*.png;*.tif)|*.gif;*.jpg;*.jpeg;*.png;*.tif|Todos los archivos (*.*)|*.*</value>
   </data>
   <data name="ImportFailed" xml:space="preserve">
     <value>No se pudo importar el archivo seleccionado: {0}</value>

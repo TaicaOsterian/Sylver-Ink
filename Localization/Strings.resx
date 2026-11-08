@@ -260,7 +260,7 @@ length</value>
     <value>When enabled, the application will automatically adjust the foreground color when you select a background, and vice versa.</value>
   </data>
   <data name="FileFilter_Image" xml:space="preserve">
-    <value>GIF images (*.gif)|*.gif|JPEG images (*.jpg;*.jpeg)|*.jpg;*.jpeg|PNG images (*.png)|*.png|TIFF images (*.tif)|*.tif|All image files (*.jpg;*.jpeg;*.png;*.tif)|*.jpg;*.jpeg;*.png;*.tif|All files (*.*)|*.*</value>
+    <value>GIF images (*.gif)|*.gif|JPEG images (*.jpg;*.jpeg)|*.jpg;*.jpeg|PNG images (*.png)|*.png|TIFF images (*.tif)|*.tif|All image files (*.gif;*.jpg;*.jpeg;*.png;*.tif)|*.gif;*.jpg;*.jpeg;*.png;*.tif|All files (*.*)|*.*</value>
   </data>
   <data name="ImportFailed" xml:space="preserve">
     <value>Failed to import the selected file: {0}</value>

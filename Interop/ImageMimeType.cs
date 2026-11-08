@@ -36,7 +36,7 @@ public static class ImageMimeType
         {
             ".bmp" => Bmp,
             ".gif" => Gif,
-            ".jpg" or ".jpeg" => Jpeg,
+            ".jpg" or ".jpeg" or ".jpe" => Jpeg,
             ".png" => Png,
             ".tif" or ".tiff" => Tiff,
             _ => Fallback

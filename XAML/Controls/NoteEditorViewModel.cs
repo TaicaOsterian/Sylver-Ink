@@ -6,7 +6,7 @@ public class NoteEditorViewModel : PopoutViewModel, IDisposable
 {
     private bool _autosaving;
     private TextPointer _caretPosition;
-    private CancellationTokenSource _cts;
+    private readonly CancellationTokenSource _cts;
     private bool _disposed;
     private FlowDocument _document;
     private bool _edited;
