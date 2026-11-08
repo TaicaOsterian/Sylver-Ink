@@ -804,7 +804,7 @@ public class ContextSettings : ViewModelBase
         $"PreviousNoteHotKey:{PreviousNoteHotKey.ToString(false)}",
         $"PromptForUpdate:{PromptForUpdate}",
         $"QueryAllDatabases:{QueryAllDatabases}",
-        $"RecentDatabases:{string.Join(';', RecentDatabases.Distinct()).Replace(DocumentsFolder, "?\\")}",
+        $"RecentDatabases:{string.Join(';', RecentDatabases.Select(item => item.FullPath).Distinct()).Replace(DocumentsFolder, "?\\")}",
         $"RecentNotesSortMode:{((int)RecentEntriesSortMode).ToString(CultureInfo.InvariantCulture)}",
         $"RibbonDisplayMode:{((int)RibbonTabContent).ToString(CultureInfo.InvariantCulture)}",
         $"StickyNotesOnTop:{StickyNotesOnTop}",
