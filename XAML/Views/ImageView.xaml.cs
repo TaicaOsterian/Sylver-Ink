@@ -27,8 +27,8 @@ public partial class ImageView : Popout
         if (sender is not Canvas canvas)
             return;
 
-        canvas.Children.Add(ViewModel.Source);
         element = canvas;
+        CheckSource();
 
         DependencyObject d = element;
         while (d != null)
@@ -43,8 +43,6 @@ public partial class ImageView : Popout
             parentControl.MouseLeftButtonDown += Control_MouseLeftButtonDown;
             break;
         }
-
-        UpdateHome();
     }
 
     private void Canvas_ZoomClick(object? sender, RoutedEventArgs e)
@@ -82,9 +80,25 @@ public partial class ImageView : Popout
         e.Handled = true;
     }
 
+    private void CheckSource()
+    {
+        if (element is not Canvas canvas)
+            return;
+
+        if (ViewModel.Source is null)
+            return;
+
+        if (canvas.Children.Contains(ViewModel.Source))
+            return;
+
+        canvas.Children.Add(ViewModel.Source);
+        Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Render, UpdateHome);
+    }
+
     public void Construct(ImageContainer container)
     {
         ViewModel.Source = container;
+        CheckSource();
         OpenImages.Add(this);
     }
 

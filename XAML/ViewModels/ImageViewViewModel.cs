@@ -45,6 +45,7 @@ public class ImageViewViewModel : PopoutViewModel
             AddToRecent = true,
             OverwritePrompt = true,
             Filter = Strings.FileFilter_Image,
+            FilterIndex = Source?.CompositedFrames.Count > 1 ? 1 : 2,
             ValidateNames = true,
         };
 
@@ -60,10 +61,8 @@ public class ImageViewViewModel : PopoutViewModel
         try
         {
             using FileStream stream = new(path, FileMode.Create, FileAccess.Write, FileShare.None);
-            using StreamWriter writer = new(stream);
-            writer.Write(Source?.ToByteArray());
-            writer.Flush();
-            writer.Close();
+            stream.Write(Source?.ToByteArray());
+            stream.Flush();
         }
         catch (Exception ex)
         {

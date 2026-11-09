@@ -215,7 +215,7 @@ public class NoteTabViewModel : NoteEditorViewModel
         {
             CheckFileExists = true,
             Filter = Strings.FileFilter_Image,
-            FilterIndex = 2,
+            FilterIndex = 5,
             Multiselect = true,
             ValidateNames = true,
         };

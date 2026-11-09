@@ -516,7 +516,7 @@ public class ImageContainer : Image, IDisposable
 
         encoder.Save(stream);
         byte[] result = stream.ToArray();
-        if (Format.Equals("image/gif", StringComparison.OrdinalIgnoreCase))
+        if (encoder is GifBitmapEncoder)
             PatchGifDelays(result, FrameTiming);
         return result;
     }
