@@ -75,7 +75,7 @@ public class RichTextBoxUtils
 
             ImageContainer? img = src switch
             {
-                _ when src is BitmapSource bitmap => new() { Source = bitmap },
+                _ when src is BitmapSource bitmap => ImageContainer.FromSource(bitmap),
                 _ when src is MemoryStream stream => ImageContainer.FromStream(stream),
                 _ => null,
             };
@@ -112,8 +112,10 @@ public class RichTextBoxUtils
         }
         else
         {
-            var currentInline = caretPosition.GetInsertionPosition(LogicalDirection.Forward).Parent as Inline;
-            paragraph.Inlines.InsertAfter(currentInline, container);
+            if (caretPosition.GetInsertionPosition(LogicalDirection.Forward).Parent is Inline currentInline)
+                paragraph.Inlines.InsertAfter(currentInline, container);
+            else
+                paragraph.Inlines.Add(container);
         }
 
         rtb.CaretPosition = container.ElementEnd;

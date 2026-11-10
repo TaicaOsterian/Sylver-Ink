@@ -363,12 +363,7 @@ public class ImageContainer : Image, IDisposable
         if (container.CompositedFrames.Count == 0 && container.RawFrames.Count > 0)
             container.CompositedFrames.Add(container.RawFrames[0]); // Fallback for non-animated images.
 
-        container.BeginInit();
-        container.Format = decoder.CodecInfo.MimeTypes.Split(',')[0];
-        container.Margin = new Thickness(5, 0, 5, 0);
-        container.Source = container.CompositedFrames[0];
-        container.Stretch = Stretch.UniformToFill;
-        container.EndInit();
+        container.Init(decoder.CodecInfo.MimeTypes.Split(',')[0]);
 
         if (container.Format.Equals("image/gif", StringComparison.OrdinalIgnoreCase))
         {
@@ -459,6 +454,25 @@ public class ImageContainer : Image, IDisposable
         view.Show();
     }
 
+    public static ImageContainer FromSource(BitmapSource source)
+    {
+        ImageContainer container = new();
+
+        try
+        {
+            var frame = BitmapFrame.Create(BitmapUtils.Snapshot(source));
+            container.RawFrames.Add(frame);
+            container.CompositedFrames.Add(frame);
+            container.Init();
+            return container;
+        }
+        catch (Exception ex)
+        {
+            App.LogException(ex);
+            return container;
+        }
+    }
+
     public static ImageContainer FromStream(Stream stream)
     {
         try
@@ -495,6 +509,16 @@ public class ImageContainer : Image, IDisposable
             App.LogException(ex);
             return new();
         }
+    }
+
+    private void Init(string? format = null)
+    {
+        BeginInit();
+        Format = format ?? "image/png";
+        Margin = new Thickness(5, 0, 5, 0);
+        Source = CompositedFrames[0];
+        Stretch = Stretch.UniformToFill;
+        EndInit();
     }
 
     public static ImageContainer Load(string filename)
