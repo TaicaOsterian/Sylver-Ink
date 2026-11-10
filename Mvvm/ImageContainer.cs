@@ -557,11 +557,12 @@ public class ImageContainer : Image, IDisposable
         return sb.ToString();
     }
 
-    public byte[] ToByteArray()
+    public byte[] ToByteArray(string? exportFormat = null)
     {
         using MemoryStream stream = new();
+        exportFormat ??= Format;
 
-        BitmapEncoder encoder = Format switch
+        BitmapEncoder encoder = exportFormat switch
         {
             "image/bmp" => new BmpBitmapEncoder(),
             "image/gif" => new GifBitmapEncoder(),

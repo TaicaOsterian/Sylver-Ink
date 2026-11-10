@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using SylverInk.Interop;
 using SylverInk.Mvvm;
 using System.Globalization;
 
@@ -61,7 +62,7 @@ public class ImageViewViewModel : PopoutViewModel
         try
         {
             using FileStream stream = new(path, FileMode.Create, FileAccess.Write, FileShare.None);
-            stream.Write(Source?.ToByteArray());
+            stream.Write(Source?.ToByteArray(ImageMimeType.GetImageMimeType(path)));
             stream.Flush();
             ShowTooltip(string.Format(CultureInfo.CurrentCulture, CacheImageSuccessfullyExported.Format, path));
         }
