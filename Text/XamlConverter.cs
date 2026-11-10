@@ -1,4 +1,4 @@
-﻿using SylverInk.Interop;
+﻿using SylverInk.Mvvm;
 using System.Text;
 using System.Windows.Markup;
 
@@ -91,8 +91,7 @@ public partial class XamlConverter : ITextConverter
                 sb.Append("<Paragraph>");
                 for (var inline = paragraph.Inlines.FirstInline; inline is not null; inline = inline.NextInline)
                 {
-                    if (inline is not InlineUIContainer ic
-                        || ic.Child is not ImageContainer inlineImg)
+                    if (inline is not InlineUIContainer ic || ic.Child is not ImageContainer inlineImg)
                     {
                         sb.Append(XamlWriter.Save(inline).Replace("{}{", "{"));
                         continue;

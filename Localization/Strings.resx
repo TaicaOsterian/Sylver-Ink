@@ -628,6 +628,12 @@ Do you want to overwrite it?</value>
   <data name="Tooltip_FailedCopy" xml:space="preserve">
     <value>Failed to copy the address code to the clipboard</value>
   </data>
+  <data name="Tooltip_ImageFailedToExport" xml:space="preserve">
+    <value>Image could not be exported to file.</value>
+  </data>
+  <data name="Tooltip_ImageSuccessfullyExported" xml:space="preserve">
+    <value>Image successfully saved to {0}</value>
+  </data>
   <data name="Tooltip_KeyInUse" xml:space="preserve">
     <value>The key combination {0} is already in use.</value>
     <comment>{0} = A short string of keys, like "Ctrl+N" or "Ctrl+Shift+T".</comment>

@@ -594,6 +594,12 @@ Recuerda presionar Importar para finalizar tus cambios!</value>
   <data name="Tooltip_FailedCopy" xml:space="preserve">
     <value>No se ha podido copiar la dirección del código al portapapeles</value>
   </data>
+  <data name="Tooltip_ImageFailedToExport" xml:space="preserve">
+    <value>No se pudo exportar la imagen al archivo.</value>
+  </data>
+  <data name="Tooltip_ImageSuccessfullyExported" xml:space="preserve">
+    <value>Imagen se exportó correctamente en {0}</value>
+  </data>
   <data name="Tooltip_KeyInUse" xml:space="preserve">
     <value>La combinación de teclas {0} ya está en uso.</value>
   </data>

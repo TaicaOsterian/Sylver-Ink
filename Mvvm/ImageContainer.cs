@@ -1,4 +1,5 @@
 ﻿using SylverInk.FileIO;
+using SylverInk.Interop;
 using SylverInk.XAML;
 using System.ComponentModel;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Windows.Markup;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
-namespace SylverInk.Interop;
+namespace SylverInk.Mvvm;
 
 [ValueSerializer(typeof(ImageContainerValueSerializer))]
 public class ImageContainer : Image, IDisposable

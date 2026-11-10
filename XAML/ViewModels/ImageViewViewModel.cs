@@ -1,6 +1,6 @@
 ﻿using Microsoft.Win32;
-using SylverInk.Interop;
 using SylverInk.Mvvm;
+using System.Globalization;
 
 namespace SylverInk.XAML.ViewModels;
 
@@ -63,9 +63,11 @@ public class ImageViewViewModel : PopoutViewModel
             using FileStream stream = new(path, FileMode.Create, FileAccess.Write, FileShare.None);
             stream.Write(Source?.ToByteArray());
             stream.Flush();
+            ShowTooltip(string.Format(CultureInfo.CurrentCulture, CacheImageSuccessfullyExported.Format, path));
         }
         catch (Exception ex)
         {
+            ShowTooltip(Strings.Tooltip_ImageFailedToExport);
             App.LogException(ex);
         }
     }
