@@ -1,5 +1,4 @@
-﻿using SylverInk.FileIO;
-using SylverInk.Interop;
+﻿using SylverInk.Interop;
 using SylverInk.Visuals;
 using SylverInk.XAML.Controls;
 using System.ComponentModel;
@@ -46,7 +45,7 @@ public partial class MainWindow : Window
 
         if (AbortRun)
         {
-            Application.Current.Shutdown();
+            Concurrent(Application.Current.Shutdown);
             return;
         }
 
@@ -68,7 +67,7 @@ public partial class MainWindow : Window
                             db.Save();
                     }
 
-                    Application.Current.Shutdown();
+                    Concurrent(Application.Current.Shutdown);
                     return;
             }
         }
@@ -89,13 +88,13 @@ public partial class MainWindow : Window
 
                 DatabaseChanged = false;
                 Settings.Save();
-                Application.Current.Shutdown();
+                Concurrent(Application.Current.Shutdown);
                 return;
             case MessageBoxResult.No:
                 foreach (Database db in Databases)
                     Erase(GetLockFile(db.DBFile));
 
-                Application.Current.Shutdown();
+                Concurrent(Application.Current.Shutdown);
                 return;
         }
     }
@@ -127,9 +126,10 @@ public partial class MainWindow : Window
 
     protected override void OnClosed(EventArgs e)
     {
-        FileUtils.SavePaths();
+        SavePaths();
         HotKeyUtils.Release();
         MutexUtils.Release();
+        Microsoft.Win32.SystemEvents.UserPreferenceChanged -= SystemPreferenceChanged;
         base.OnClosed(e);
     }
 
@@ -150,7 +150,7 @@ public partial class MainWindow : Window
         }
 
         // Path initialization
-        FileUtils.LoadPaths();
+        LoadPaths();
 
         // Database initialization
         HandleCheckInit();
@@ -160,7 +160,7 @@ public partial class MainWindow : Window
         SettingsLoaded = true;
 
         // High-contrast theme detection
-        Microsoft.Win32.SystemEvents.UserPreferenceChanged += CommonUtils.SystemPreferenceChanged;
+        Microsoft.Win32.SystemEvents.UserPreferenceChanged += SystemPreferenceChanged;
         if (SystemParameters.HighContrast && !Settings.HighContrast)
         {
             // If the user didn't previously have high contrast enabled, but the system reports that they now do, override existing theme settings and switch to high contrast.
@@ -203,7 +203,7 @@ public partial class MainWindow : Window
         PushViewportMetrics();
 
         // Check for updates. This is a blocking call, so it has to be the very last thing that we do on startup.
-        Erase(FileUtils.SessionFile);
+        Erase(SessionFile);
         Erase(UpdateHandler.UpdateLockUri);
         Erase(UpdateHandler.TempUri);
         await UpdateHandler.CheckForUpdates();

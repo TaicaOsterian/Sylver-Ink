@@ -83,23 +83,40 @@ public class RichTextBoxUtils
             if (img is null)
                 return;
 
-            BlockUIContainer blockContainer = new(img);
-
-            TextPointer caretPosition = rtb.CaretPosition;
-            Block currentBlock = caretPosition.Paragraph;
-
-            if (currentBlock is null)
-                rtb.Document.Blocks.Add(blockContainer);
-            else
-                rtb.Document.Blocks.InsertAfter(currentBlock, blockContainer);
-
-            rtb.CaretPosition = blockContainer.ElementEnd;
+            InsertImage(rtb, img);
             rtb.Focus();
         }
         catch (Exception ex)
         {
             App.LogException(ex);
         }
+    }
+
+    public static void InsertImage(RichTextBox rtb, ImageContainer img)
+    {
+        TextPointer caretPosition = rtb.CaretPosition;
+        Block currentBlock = caretPosition.Paragraph;
+        InlineUIContainer container = new(img);
+
+        if (currentBlock is null)
+        {
+            Paragraph newPara = new();
+            rtb.Document.Blocks.Add(newPara);
+            newPara.Inlines.Add(container);
+        }
+        else if (currentBlock is not Paragraph paragraph)
+        {
+            Paragraph newPara = new();
+            rtb.Document.Blocks.InsertAfter(currentBlock, newPara);
+            newPara.Inlines.Add(container);
+        }
+        else
+        {
+            var currentInline = caretPosition.GetInsertionPosition(LogicalDirection.Forward).Parent as Inline;
+            paragraph.Inlines.InsertAfter(currentInline, container);
+        }
+
+        rtb.CaretPosition = container.ElementEnd;
     }
 
     private static void OnAtomicBlocksChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -230,7 +247,7 @@ public class RichTextBoxUtils
         object weight = selection.GetPropertyValue(TextElement.FontWeightProperty);
         object style = selection.GetPropertyValue(TextElement.FontStyleProperty);
         object decoration = selection.GetPropertyValue(Inline.TextDecorationsProperty);
-        object alignment = selection.GetPropertyValue(Paragraph.TextAlignmentProperty);
+        object alignment = selection.GetPropertyValue(Block.TextAlignmentProperty);
         TextMarkerStyle markerStyle = TextMarkerStyle.None;
 
         DependencyObject? pointer = selection.Start.Parent;

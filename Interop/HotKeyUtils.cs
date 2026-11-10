@@ -132,8 +132,8 @@ public static class HotKeyUtils
 
     private static void RegisterHotKeys()
     {
-        RegisterHotKey(NewNoteHotKeyID, CommonUtils.Settings.NewNoteHotKey);
-        RegisterHotKey(PreviousNoteHotKeyID, CommonUtils.Settings.PreviousNoteHotKey);
+        RegisterHotKey(NewNoteHotKeyID, Settings.NewNoteHotKey);
+        RegisterHotKey(PreviousNoteHotKeyID, Settings.PreviousNoteHotKey);
     }
 
     public static bool RegisterHotKey(int hotKeyID, HotKey gesture)
@@ -154,9 +154,16 @@ public static class HotKeyUtils
 
     public static void Release()
     {
-        WindowSource?.RemoveHook(HwndHook);
-        WindowSource = null;
-        UnregisterHotKeys();
+        try
+        {
+            WindowSource?.RemoveHook(HwndHook);
+            WindowSource = null;
+            UnregisterHotKeys();
+        }
+        catch (Exception ex)
+        {
+            App.LogException(ex);
+        }
     }
 
     public static bool ReRegisterHotKey(int hotKeyID, HotKey gesture)

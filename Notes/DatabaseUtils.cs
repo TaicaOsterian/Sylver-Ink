@@ -2,7 +2,6 @@
 using SylverInk.XAML;
 using SylverInk.XAML.Controls;
 using System.Globalization;
-using System.Threading;
 using static SylverInk.FileIO.FileUtils;
 
 namespace SylverInk.Notes;
@@ -12,7 +11,6 @@ namespace SylverInk.Notes;
 /// </summary>
 public static class DatabaseUtils
 {
-    private static readonly CancellationTokenSource _cts = new();
     private static Database? _currentDatabase;
 
     public static Database CurrentDatabase { get => _currentDatabase ??= new(); set => _currentDatabase = value; }
@@ -107,7 +105,7 @@ public static class DatabaseUtils
     public static async Task AutosaveDatabases()
     {
         foreach (Database db in Databases)
-            await Task.Run(() => db.Autosave(_cts), _cts.Token);
+            await db.Autosave();
     }
 
     public static void CreateNewNote()

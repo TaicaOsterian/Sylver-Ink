@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using SylverInk.FileIO;
+using SylverInk.Interop;
 using System.Globalization;
 using System.Text;
 using System.Windows.Markup;
@@ -7,7 +8,7 @@ using System.Windows.Threading;
 
 namespace SylverInk;
 
-public partial class App : System.Windows.Application
+public partial class App : Application
 {
     private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
     {
@@ -15,7 +16,7 @@ public partial class App : System.Windows.Application
             LogException(ex);
 
         MessageBox.Show(Strings.Message_CriticalError, Strings.Title_Error, MessageBoxButton.OK, MessageBoxImage.Error);
-        Application.Current.Shutdown();
+        Current.Shutdown();
     }
 
     public static void LogException(Exception ex, string? source = null)
@@ -49,6 +50,14 @@ public partial class App : System.Windows.Application
         }
     }
 
+    protected override void OnExit(ExitEventArgs e)
+    {
+        HotKeyUtils.Release();
+        MutexUtils.Release();
+        SystemEvents.SessionEnding -= OnSessionEnding;
+        base.OnExit(e);
+    }
+
     private async void OnSessionEnding(object sender, SessionEndingEventArgs e)
     {
         // Sylver Ink cannot guarantee that a save operation will take less than the provided five seconds during a soft reboot.
@@ -71,12 +80,6 @@ public partial class App : System.Windows.Application
             SystemEvents.SessionEnding -= OnSessionEnding;
             Process.Start("shutdown", "/r /t 0");
         }
-    }
-
-    protected override void OnExit(ExitEventArgs e)
-    {
-        SystemEvents.SessionEnding -= OnSessionEnding;
-        base.OnExit(e);
     }
 
     protected override void OnStartup(StartupEventArgs e)

@@ -80,7 +80,7 @@ public partial class NoteController : IDisposable
         return record.UUID;
     }
 
-    public void Autosave(string filename, CancellationTokenSource cts)
+    public void Autosave(string filename, CancellationTokenSource? cts = null)
     {
         PropagateIndices();
         ReloadSerializer();
@@ -107,7 +107,7 @@ public partial class NoteController : IDisposable
         _serializer?.WriteInt32(RecordCount);
         foreach (NoteRecord record in Records.Values)
         {
-            if (cts.IsCancellationRequested)
+            if (cts?.IsCancellationRequested is true)
             {
                 _serializer?.Close(cancel: true);
                 return;

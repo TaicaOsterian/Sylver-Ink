@@ -136,7 +136,7 @@ public static class FlowDocumentUtils
 
                 switch (element)
                 {
-                    case BlockUIContainer:
+                    case InlineUIContainer:
                         content.Append(CultureInfo.CurrentCulture, $"({Strings.Word_Image.ToLower(CultureInfo.CurrentCulture)})");
                         break;
                     case LineBreak:

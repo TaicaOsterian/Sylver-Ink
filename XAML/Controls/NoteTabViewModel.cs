@@ -223,19 +223,10 @@ public class NoteTabViewModel : NoteEditorViewModel
         if (!dialog.ShowDialog() is true)
             return;
 
-        Block lastBlock = box.CaretPosition.Paragraph;
-
         foreach (var file in dialog.FileNames)
-        {
-            BlockUIContainer container = new(ImageContainer.Load(file));
+            RichTextBoxUtils.InsertImage(box, ImageContainer.Load(file));
 
-            if (lastBlock is null)
-                Document.Blocks.Add(container);
-            else
-                Document.Blocks.InsertAfter(lastBlock, container);
-
-            lastBlock = container;
-        }
+        box.Focus();
     }
 
     private void NavigateNext(object? param)

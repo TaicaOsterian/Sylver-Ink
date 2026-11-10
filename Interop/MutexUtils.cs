@@ -20,7 +20,10 @@ public static class MutexUtils
     {
         if (mutexCreated)
         {
-            Thread mutexPipeThread = new(() => HandleMutexPipe(mutexTokenSource.Token));
+            Thread mutexPipeThread = new(() => HandleMutexPipe(mutexTokenSource.Token))
+            {
+                IsBackground = true
+            };
             mutexPipeThread.Start();
             return false;
         }
@@ -136,6 +139,7 @@ public static class MutexUtils
     public static void Release()
     {
         mutexTokenSource.Cancel();
+        mutex?.Dispose();
         mutex = null;
     }
 }

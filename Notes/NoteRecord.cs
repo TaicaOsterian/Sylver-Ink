@@ -137,8 +137,11 @@ public partial class NoteRecord
 
     // This function doesn't consume autosaved revisions to preserve continuity.
     // The onus is on the object initiating the call chain to track which revisions to discard if the user chooses not to save their changes.
-    public void BeginAutosave(FlowDocument document, CancellationTokenSource cts)
+    public async Task BeginAutosave(FlowDocument document, CancellationTokenSource cts)
     {
+        if (cts.IsCancellationRequested)
+            return;
+
         CreateRevision(TextConverter.Save(document, TextFormat.Xaml), Autosave: true);
         DB?.Autosave(cts);
         RefreshRecentNotes();

@@ -43,7 +43,7 @@ public class Database : IDisposable
         Server = new(this);
     }
 
-    public void Autosave(CancellationTokenSource cts)
+    public async Task Autosave(CancellationTokenSource? cts = null)
     {
         if (!Changed)
             return;
@@ -302,7 +302,7 @@ public class Database : IDisposable
 
         var lockFile = GetLockFile(dbFile);
         if (File.Exists(lockFile) && (
-            File.Exists(FileUtils.SessionFile)
+            File.Exists(SessionFile)
             || MessageBox.Show(string.Format(
                     CultureInfo.CurrentCulture,
                     CacheMessageDatabaseAutosaved,

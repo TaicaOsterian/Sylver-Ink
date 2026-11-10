@@ -217,7 +217,7 @@ public class Serializer : IDisposable
         catch (Exception e)
         {
             App.LogException(e);
-            FileUtils.Erase(_pathTmp);
+            Erase(_pathTmp);
 
             _fileStream?.Dispose();
             return false;

@@ -1,11 +1,14 @@
-﻿using SylverInk.XAML;
-using System.Globalization;
+﻿using SylverInk.FileIO;
+using SylverInk.XAML;
+using System.ComponentModel;
 using System.Text;
+using System.Windows.Markup;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
 namespace SylverInk.Interop;
 
+[ValueSerializer(typeof(ImageContainerValueSerializer))]
 public class ImageContainer : Image, IDisposable
 {
     private readonly List<BitmapFrame> _compositedFrames = [];
@@ -15,27 +18,35 @@ public class ImageContainer : Image, IDisposable
     private string _format = "image/png";
     private int _frameIndex;
     private readonly List<long> _frameTiming = [];
+    private long _lastVisibilityCheck;
     private Window? _parentWindow;
     private readonly List<BitmapFrame> _rawFrames = [];
     private long _ticksElapsed;
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public List<BitmapFrame> CompositedFrames
     {
         get => _compositedFrames;
     }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public long CurrentDelay
     {
         get => _currentDelay;
         private set
         {
             _currentDelay = value;
+            _delayTimer.Interval = TimeSpan.FromTicks(Math.Max(1, value / 4));
         }
     }
+
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public DispatcherTimer DelayTimer
     {
         get => _delayTimer;
     }
+
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public string Format
     {
         get => _format;
@@ -48,6 +59,7 @@ public class ImageContainer : Image, IDisposable
     /// <summary>
     /// The setter for this property explicitly computes the given value modulo the number of frames.
     /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public int FrameIndex
     {
         get => _frameIndex;
@@ -60,11 +72,13 @@ public class ImageContainer : Image, IDisposable
         }
     }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public List<long> FrameTiming
     {
         get => _frameTiming;
     }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Window? ParentWindow
     {
         get => _parentWindow;
@@ -74,11 +88,13 @@ public class ImageContainer : Image, IDisposable
         }
     }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public List<BitmapFrame> RawFrames
     {
         get => _rawFrames;
     }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public long TicksElapsed
     {
         get => _ticksElapsed;
@@ -87,6 +103,8 @@ public class ImageContainer : Image, IDisposable
             _ticksElapsed = value;
         }
     }
+
+    private EventHandler? _layoutHandler;
 
     public ImageContainer() : base()
     {
@@ -106,83 +124,179 @@ public class ImageContainer : Image, IDisposable
         return Decode(stream);
     }
 
-    private static void CompositeFrames(ImageContainer container, GifBitmapDecoder decoder)
+    private void CompositeFrames(GifBitmapDecoder decoder)
     {
         if (decoder.Frames.Count == 0)
             return;
 
         BitmapMetadata firstMeta = (BitmapMetadata)decoder.Frames[0].Metadata;
-        int screenWidth = GetQuery(firstMeta, "/logscrdesc/Width", (ushort)decoder.Frames[0].PixelWidth);
-        int screenHeight = GetQuery(firstMeta, "/logscrdesc/Height", (ushort)decoder.Frames[0].PixelHeight);
+        int screenWidth = BitmapUtils.GetQuery(firstMeta, "/logscrdesc/Width", (ushort)decoder.Frames[0].PixelWidth);
+        int screenHeight = BitmapUtils.GetQuery(firstMeta, "/logscrdesc/Height", (ushort)decoder.Frames[0].PixelHeight);
 
-        // The running canvas. Always Pbgra32.
+        if (screenWidth <= 0) screenWidth = decoder.Frames[0].PixelWidth;
+        if (screenHeight <= 0) screenHeight = decoder.Frames[0].PixelHeight;
+
+        // Make sure the canvas covers every frame, even on non-compliant GIFs or when /logscrdesc metadata is unavailable.
+        for (int i = 0; i < decoder.Frames.Count; i++)
+        {
+            BitmapMetadata? m = decoder.Frames[i].Metadata as BitmapMetadata;
+            int l = BitmapUtils.GetQuery<ushort>(m, "/imgdesc/Left", 0);
+            int t = BitmapUtils.GetQuery<ushort>(m, "/imgdesc/Top", 0);
+            screenWidth = Math.Max(screenWidth, l + decoder.Frames[i].PixelWidth);
+            screenHeight = Math.Max(screenHeight, t + decoder.Frames[i].PixelHeight);
+        }
+
+        byte bgIndex = BitmapUtils.GetQuery<byte>(firstMeta, "/logscrdesc/BackgroundColorIndex", 0);
+
         WriteableBitmap canvas = new(screenWidth, screenHeight, 96, 96, PixelFormats.Pbgra32, null);
-        BitmapSource? savedState = null;
+        int screenStride = screenWidth * 4;
+        byte[]? savedState = null;
 
         for (int i = 0; i < decoder.Frames.Count; i++)
         {
             BitmapFrame frame = decoder.Frames[i];
             BitmapMetadata? metadata = frame.Metadata as BitmapMetadata;
 
-            int left = GetQuery<ushort>(metadata, "/imgdesc/Left", 0);
-            int top = GetQuery<ushort>(metadata, "/imgdesc/Top", 0);
-            byte disposal = GetQuery<byte>(metadata, "/grctlext/Disposal", 0);
-            bool hasTransparency = GetQuery(metadata, "/grctlext/TransparencyFlag", false);
-            byte transparentIndex = GetQuery<byte>(metadata, "/grctlext/TransparentColorIndex", 0);
+            int left = BitmapUtils.GetQuery<ushort>(metadata, "/imgdesc/Left", 0);
+            int top = BitmapUtils.GetQuery<ushort>(metadata, "/imgdesc/Top", 0);
+            byte disposal = BitmapUtils.GetQuery<byte>(metadata, "/grctlext/Disposal", 0);
+            if (disposal == 0) disposal = 1;
+            bool hasTransparency = BitmapUtils.GetQuery(metadata, "/grctlext/TransparencyFlag", false);
+            byte transparentIndex = BitmapUtils.GetQuery<byte>(metadata, "/grctlext/TransparentColorIndex", 0);
 
-            // Disposal 3: capture the canvas *before* drawing so it can be restored later.
-            if (disposal == 3)
-                savedState = Snapshot(canvas);
+            BitmapPalette? palette = frame.Palette;
+            Color bgColor = hasTransparency && palette != null && bgIndex < palette.Colors.Count
+                ? palette.Colors[bgIndex]
+                : Colors.Transparent;
 
             int fw = frame.PixelWidth;
             int fh = frame.PixelHeight;
-            int stride = fw * 4;
 
-            // This frame's raw palette indices (works because PreservePixelFormat gives us Indexed8).
-            byte[] indices = new byte[fw * fh];
-            frame.CopyPixels(indices, fw, 0);
+            // Clip the frame's draw rect to the canvas.
+            int drawLeft = Math.Max(0, left);
+            int drawTop = Math.Max(0, top);
+            int drawRight = Math.Min(screenWidth, left + fw);
+            int drawBottom = Math.Min(screenHeight, top + fh);
+            int drawWidth = drawRight - drawLeft;
+            int drawHeight = drawBottom - drawTop;
 
-            byte[] blended = new byte[stride * fh];
-            canvas.CopyPixels(new Int32Rect(left, top, fw, fh), blended, stride, 0);
-
-            BitmapPalette? palette = frame.Palette;
-            IList<Color> colors = palette is not null ? palette.Colors : Array.Empty<Color>();
-
-            // Merge the frame's opaque pixels over the canvas region.
-            for (int y = 0; y < fh; y++)
+            if (drawWidth <= 0 || drawHeight <= 0)
             {
-                for (int x = 0; x < fw; x++)
+                // Entirely off-canvas; still emit a composited frame.
+                CompositedFrames.Add(BitmapFrame.Create(BitmapUtils.Snapshot(canvas)));
+                if (disposal == 3)
                 {
-                    byte index = indices[y * fw + x];
-                    if (hasTransparency && index == transparentIndex)
-                        continue; // Keep the underlying canvas pixel.
+                    savedState ??= new byte[screenStride * screenHeight];
+                    canvas.CopyPixels(savedState, screenStride, 0);
+                }
+                continue;
+            }
 
-                    Color c = index < colors.Count ? colors[index] : Colors.Black;
-                    int d = y * stride + x * 4;
-                    blended[d] = c.B;
-                    blended[d + 1] = c.G;
-                    blended[d + 2] = c.R;
-                    blended[d + 3] = 255;
+            // Offset of the visible region within the frame's own pixel buffer.
+            int srcX = drawLeft - left;
+            int srcY = drawTop - top;
+            var rect = new Int32Rect(drawLeft, drawTop, drawWidth, drawHeight);
+
+            int regionStride = drawWidth * 4;
+            byte[] blended = new byte[regionStride * drawHeight];
+            int needed = regionStride * drawHeight;
+
+            if (blended.Length < needed)
+                blended = new byte[needed];
+            else if (needed < blended.Length)
+                Array.Clear(blended, 0, needed);
+
+            canvas.CopyPixels(rect, blended, regionStride, 0);
+
+            if (frame.Format == PixelFormats.Indexed8 && frame.Palette is { } pal)
+            {
+                byte[] indices = new byte[fw * fh];
+                frame.CopyPixels(indices, fw, 0);
+                IList<Color> colors = pal.Colors;
+
+                for (int y = 0; y < drawHeight; y++)
+                {
+                    for (int x = 0; x < drawWidth; x++)
+                    {
+                        byte idx = indices[(y + srcY) * fw + (x + srcX)];
+                        if (hasTransparency && idx == transparentIndex)
+                            continue;
+                        Color c = idx < colors.Count ? colors[idx] : Colors.Black;
+                        int d = y * regionStride + x * 4;
+                        blended[d] = c.B;
+                        blended[d + 1] = c.G;
+                        blended[d + 2] = c.R;
+                        blended[d + 3] = 255;
+                    }
+                }
+            }
+            else
+            {
+                // Frame is not Indexed8. GIFs always should be, so this is defensive.
+                int bytesPerPixel = (frame.Format.BitsPerPixel + 7) / 8;
+                int frameStride = fw * bytesPerPixel;
+                byte[] src = new byte[frameStride * fh];
+                frame.CopyPixels(src, frameStride, 0);
+
+                for (int y = 0; y < drawHeight; y++)
+                {
+                    for (int x = 0; x < drawWidth; x++)
+                    {
+                        int s = (y + srcY) * frameStride + (x + srcX) * bytesPerPixel;
+                        if (bytesPerPixel == 4 && src[s + 3] == 0 && hasTransparency)
+                            continue;
+                        int d = y * regionStride + x * 4;
+                        blended[d] = src[s];
+                        blended[d + 1] = bytesPerPixel >= 3 ? src[s + 1] : src[s];
+                        blended[d + 2] = bytesPerPixel >= 3 ? src[s + 2] : src[s];
+                        blended[d + 3] = bytesPerPixel == 4 ? src[s + 3] : (byte)255;
+                    }
                 }
             }
 
-            canvas.WritePixels(new Int32Rect(left, top, fw, fh), blended, stride, 0);
-            container.CompositedFrames.Add(BitmapFrame.Create(Snapshot(canvas)));
+            // Capture the pre-draw state before we write the frame.
+            if (disposal == 3)
+            {
+                savedState ??= new byte[screenStride * screenHeight];
+                canvas.CopyPixels(savedState, screenStride, 0);
+            }
+
+            canvas.WritePixels(rect, blended, regionStride, 0);
+
+            CompositedFrames.Add(BitmapFrame.Create(BitmapUtils.Snapshot(canvas)));
 
             switch (disposal)
             {
-                case 2: // Restore frame's region to background (transparent).
-                    byte[] clear = new byte[fw * 4 * fh];
-                    canvas.WritePixels(new Int32Rect(left, top, fw, fh), clear, fw * 4, 0);
+                case 2:
+                    // Restore only the visible slice of the frame region.
+                    if (!hasTransparency)
+                    {
+                        byte[] fill = new byte[regionStride * drawHeight];
+                        for (int p = 0; p < fill.Length; p += 4)
+                        {
+                            fill[p] = bgColor.B;
+                            fill[p + 1] = bgColor.G;
+                            fill[p + 2] = bgColor.R;
+                            fill[p + 3] = 255;
+                        }
+                        canvas.WritePixels(new Int32Rect(drawLeft, drawTop, drawWidth, drawHeight),
+                                           fill, regionStride, 0);
+                    }
+                    else
+                    {
+                        byte[] clear = new byte[regionStride * drawHeight];
+                        canvas.WritePixels(new Int32Rect(drawLeft, drawTop, drawWidth, drawHeight),
+                                           clear, regionStride, 0);
+                    }
                     break;
 
-                case 3: // Restore entire canvas to pre-frame state.
+                case 3:
+                    // Restore the entire canvas to the saved state.
                     if (savedState is not null)
                     {
-                        int screenStride = screenWidth * 4;
-                        byte[] buffer = new byte[screenStride * screenHeight];
-                        savedState.CopyPixels(buffer, screenStride, 0);
-                        canvas.WritePixels(new Int32Rect(0, 0, screenWidth, screenHeight), buffer, screenStride, 0);
+                        canvas.WritePixels(
+                            new Int32Rect(0, 0, screenWidth, screenHeight),
+                            savedState, screenStride, 0);
                         savedState = null;
                     }
                     break;
@@ -190,61 +304,34 @@ public class ImageContainer : Image, IDisposable
         }
     }
 
-    private static ImageContainer Decode(Stream stream)
+    private static ImageContainer Decode(Stream stream, string? format = null)
     {
         ImageContainer container = new();
-        BitmapDecoder decoder;
-        byte[] buffer = new byte[10];
-
-        stream.Seek(0, SeekOrigin.Begin);
-        stream.ReadExactly(buffer, 0, 10);
-        stream.Seek(0, SeekOrigin.Begin);
-
-        var dataID = Encoding.UTF8.GetString(buffer);
-        if (dataID.EndsWith(';'))
-            dataID = dataID[..^1];
-
-        if (!dataID.StartsWith("image/", StringComparison.OrdinalIgnoreCase) || dataID.StartsWith("application/", StringComparison.OrdinalIgnoreCase))
+        BitmapDecoder decoder = format switch
         {
-            decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
-        }
-        else
-        {
-            char delim = '\0';
-            while (delim != ',')
-                delim = (char)stream.ReadByte();
-
-            decoder = dataID switch
-            {
-                "image/bmp" => new BmpBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad),
-                "image/gif" => new GifBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad),
-                "image/jpeg" => new JpegBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad),
-                "image/png" => new PngBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad),
-                "image/tiff" => new TiffBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad),
-                _ => BitmapDecoder.Create(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad)
-            };
-        }
+            "image/bmp" => new BmpBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad),
+            "image/gif" => new GifBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad),
+            "image/jpeg" => new JpegBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad),
+            "image/png" => new PngBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad),
+            "image/tiff" => new TiffBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad),
+            _ => BitmapDecoder.Create(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad)
+        };
 
         for (int i = 0; i < decoder.Frames.Count; i++)
         {
             var frame = decoder.Frames[i];
             var rawFrame = BitmapFrame.Create(frame);
 
+            ushort rawDelay = 10; // GIF delay values are measured in centiseconds. Most software applies a default 10-centisecond delay.
+
             if (decoder.CodecInfo.SupportsAnimation && rawFrame.Metadata is BitmapMetadata metadata)
             {
-                try
-                {
-                    ushort rawDelay = (ushort)metadata.GetQuery("/grctlext/Delay");
-                    if (rawDelay == 0)
-                        rawDelay = 10; // If a GIF frame doesn't provide a delay, most software defaults it to 10 centiseconds.
-                    container.FrameTiming.Add(rawDelay * 10 * 10000); // GIF delay provided in centiseconds, multipled by ten for milliseconds, multipled by 10^4 for 100-nanosecond intervals (i.e. ticks).
-                }
-                catch (Exception ex)
-                {
-                    App.LogException(ex);
-                }
+                object? delayObj = metadata.GetQuery("/grctlext/Delay");
+                if (delayObj is ushort us && us > 0)
+                    rawDelay = us;
             }
 
+            container.FrameTiming.Add(rawDelay * 100_000L); // Convert centiseconds to 100-nanosecond intervals (i.e. ticks).
             container.RawFrames.Add(rawFrame);
         }
 
@@ -252,7 +339,7 @@ public class ImageContainer : Image, IDisposable
         {
             try
             {
-                CompositeFrames(container, gif);
+                container.CompositeFrames(gif);
             }
             catch (Exception ex)
             {
@@ -324,8 +411,10 @@ public class ImageContainer : Image, IDisposable
 
     public void EvaluateVisibility()
     {
-        if (DateTime.UtcNow.Ticks - TicksElapsed < 1e6) // Save on geometry math by only evaluating every tenth of a second.
+        long now = DateTime.UtcNow.Ticks;
+        if (now - _lastVisibilityCheck < 1e6) // At most, refresh ten times per second.
             return;
+        _lastVisibilityCheck = now;
 
         if (!IsVisible || _parentWindow == null || ActualWidth == 0 || ActualHeight == 0)
         {
@@ -359,18 +448,8 @@ public class ImageContainer : Image, IDisposable
 
     public static ImageContainer FromStream(Stream stream)
     {
-        using StreamReader reader = new(stream);
-        return FromBase64(reader.ReadToEnd());
-    }
-
-    public static ImageContainer FromBase64(string data)
-    {
         try
         {
-            var formattedData = data;
-            if (formattedData.StartsWith("image/", StringComparison.OrdinalIgnoreCase) || formattedData.StartsWith("application/", StringComparison.OrdinalIgnoreCase))
-                formattedData = formattedData.Split(',')[1];
-            using MemoryStream stream = new(Convert.FromBase64String(formattedData));
             return Decode(stream);
         }
         catch (Exception ex)
@@ -380,20 +459,28 @@ public class ImageContainer : Image, IDisposable
         }
     }
 
-    private static T GetQuery<T>(BitmapMetadata? metadata, string path, T defaultValue) where T : struct
+    public static ImageContainer FromBase64(string data)
     {
-        if (metadata is null)
-            return defaultValue;
-
         try
         {
-            object? value = metadata.GetQuery(path);
-            return value is null ? defaultValue : (T)Convert.ChangeType(value, typeof(T), CultureInfo.CurrentCulture);
+            var dataID = string.Empty;
+            if (data.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
+            {
+                dataID = data[..10];
+                if (dataID.EndsWith(';'))
+                    dataID = dataID[..^1];
+                data = data[dataID.Length..];
+                if (data.StartsWith(";base64,", StringComparison.OrdinalIgnoreCase))
+                    data = data[8..];
+            }
+
+            using MemoryStream stream = new(Convert.FromBase64String(data));
+            return Decode(stream, dataID);
         }
         catch (Exception ex)
         {
             App.LogException(ex);
-            return defaultValue;
+            return new();
         }
     }
 
@@ -425,7 +512,10 @@ public class ImageContainer : Image, IDisposable
 
         container.ParentWindow = Window.GetWindow(container);
         if (container.ParentWindow != null)
-            container.ParentWindow.LayoutUpdated += ParentWindow_LayoutUpdated;
+        {
+            container._layoutHandler = (_, _) => container.EvaluateVisibility();
+            container.ParentWindow.LayoutUpdated += container._layoutHandler;
+        }
 
         container.EvaluateVisibility();
     }
@@ -440,7 +530,10 @@ public class ImageContainer : Image, IDisposable
         if (container.ParentWindow is null)
             return;
 
-        container.ParentWindow.LayoutUpdated -= ParentWindow_LayoutUpdated;
+        if (container._layoutHandler is not null)
+            container.ParentWindow.LayoutUpdated -= container._layoutHandler;
+
+        container._layoutHandler = null;
         container.ParentWindow = null;
     }
 
@@ -450,36 +543,6 @@ public class ImageContainer : Image, IDisposable
             return;
 
         container.EvaluateVisibility();
-    }
-
-    private static void PatchGifDelays(byte[] gifData, List<long> frameTimings)
-    {
-        int frameIndex = 0;
-        for (int i = 0; i < gifData.Length - 7; i++)
-        {
-            if (gifData[i] != 0x21 || gifData[i + 1] != 0xF9 || gifData[i + 2] != 0x04)
-                continue;
-
-            if (frameIndex < frameTimings.Count)
-            {
-                ushort delay = (ushort)(frameTimings[frameIndex] / 100000);
-                gifData[i + 4] = (byte)(delay & 0xFF);
-                gifData[i + 5] = (byte)(delay >> 8);
-                frameIndex++;
-            }
-
-            i += 6;
-        }
-    }
-
-    private static BitmapSource Snapshot(BitmapSource source)
-    {
-        int stride = source.PixelWidth * 4;
-        byte[] buffer = new byte[stride * source.PixelHeight];
-        source.CopyPixels(buffer, stride, 0);
-        BitmapSource snapshot = BitmapSource.Create(source.PixelWidth, source.PixelHeight, source.DpiX, source.DpiY, PixelFormats.Pbgra32, null, buffer, stride);
-        snapshot.Freeze();
-        return snapshot;
     }
 
     public string ToBase64()
@@ -508,16 +571,26 @@ public class ImageContainer : Image, IDisposable
         };
 
         foreach (BitmapFrame frame in _rawFrames)
-            encoder.Frames.Add(BitmapFrame.Create(
-                source: frame,
-                thumbnail: frame.Thumbnail,
-                metadata: (BitmapMetadata)frame.Metadata.Clone(),
-                colorContexts: frame.ColorContexts));
+            encoder.Frames.Add(frame);
 
-        encoder.Save(stream);
-        byte[] result = stream.ToArray();
+        using var buffer = new MemoryStream();
+        encoder.Save(buffer);
+        byte[] result = buffer.ToArray();
+
         if (encoder is GifBitmapEncoder)
-            PatchGifDelays(result, FrameTiming);
+        {
+            List<BitmapMetadata?> rawMetadata = [];
+            for (int i = 0; i < _rawFrames.Count; i++)
+            {
+                var frame = _rawFrames[i];
+                if (frame.Metadata is BitmapMetadata metadata)
+                    rawMetadata.Add(metadata.Clone());
+                else
+                    rawMetadata.Add(null);
+            }
+            result = BitmapUtils.RewriteGif(result, FrameTiming, rawMetadata);
+        }
+
         return result;
     }
 }

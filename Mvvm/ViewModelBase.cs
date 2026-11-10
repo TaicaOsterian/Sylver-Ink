@@ -5,7 +5,7 @@ namespace SylverInk.Mvvm;
 
 public abstract class ViewModelBase : INotifyPropertyChanged
 {
-    public static ContextSettings AppSettings => CommonUtils.Settings;
+    public static ContextSettings AppSettings => Settings;
 
     public event PropertyChangedEventHandler? PropertyChanged;
 

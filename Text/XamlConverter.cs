@@ -34,18 +34,39 @@ public partial class XamlConverter : ITextConverter
 
         while (pointer is not null)
         {
-            if (pointer.GetPointerContext(LogicalDirection.Forward) == TextPointerContext.ElementStart
-                && pointer.GetAdjacentElement(LogicalDirection.Forward) is Paragraph paragraph
+            if (pointer.GetPointerContext(LogicalDirection.Forward) != TextPointerContext.ElementStart)
+            {
+                pointer = pointer.GetNextContextPosition(LogicalDirection.Forward);
+                continue;
+            }
+
+            if (pointer.GetAdjacentElement(LogicalDirection.Forward) is Paragraph paragraph
                 && paragraph.Tag is "base64")
             {
+                // Block image, preserved for legacy compatibility.
                 while (string.IsNullOrEmpty(pointer.GetTextInRun(LogicalDirection.Forward)))
                     pointer = pointer.GetNextContextPosition(LogicalDirection.Forward);
 
-                ImageContainer imgContainer = ImageContainer.FromBase64(pointer.GetTextInRun(LogicalDirection.Forward));
+                InlineUIContainer imageContainer = new(ImageContainer.FromBase64(pointer.GetTextInRun(LogicalDirection.Forward)));
+                paragraph.Inlines.Clear();
+                paragraph.Inlines.Add(imageContainer);
+                paragraph.Tag = string.Empty;
 
-                BlockUIContainer blockContainer = new(imgContainer);
-                document.Blocks.InsertBefore(paragraph, blockContainer);
-                document.Blocks.Remove(paragraph);
+                while (pointer.GetPointerContext(LogicalDirection.Forward) != TextPointerContext.ElementStart)
+                    pointer = pointer.GetNextContextPosition(LogicalDirection.Backward);
+
+                pointer = pointer.GetNextContextPosition(LogicalDirection.Backward) ?? document.ContentStart;
+            }
+            else if (pointer.GetAdjacentElement(LogicalDirection.Forward) is Run run
+                && run.Tag is "base64")
+            {
+                // Inline image.
+                while (string.IsNullOrEmpty(pointer.GetTextInRun(LogicalDirection.Forward)))
+                    pointer = pointer.GetNextContextPosition(LogicalDirection.Forward);
+
+                InlineUIContainer imageContainer = new(ImageContainer.FromBase64(pointer.GetTextInRun(LogicalDirection.Forward)));
+                pointer.Paragraph.Inlines.Add(imageContainer);
+                pointer.Paragraph.Inlines.Remove(run);
 
                 while (pointer.GetPointerContext(LogicalDirection.Forward) != TextPointerContext.ElementStart)
                     pointer = pointer.GetNextContextPosition(LogicalDirection.Backward);
@@ -65,11 +86,23 @@ public partial class XamlConverter : ITextConverter
 
         for (var block = document.Blocks.FirstBlock; block is not null; block = block.NextBlock)
         {
-            if (block is BlockUIContainer bc && bc.Child is ImageContainer img)
+            if (block is Paragraph paragraph)
             {
-                sb.Append("<Paragraph Tag=\"base64\">")
-                    .Append(img.ToBase64())
-                    .Append("</Paragraph>");
+                sb.Append("<Paragraph>");
+                for (var inline = paragraph.Inlines.FirstInline; inline is not null; inline = inline.NextInline)
+                {
+                    if (inline is not InlineUIContainer ic
+                        || ic.Child is not ImageContainer inlineImg)
+                    {
+                        sb.Append(XamlWriter.Save(inline).Replace("{}{", "{"));
+                        continue;
+                    }
+
+                    sb.Append("<Run Tag=\"base64\">")
+                        .Append(inlineImg.ToBase64())
+                        .Append("</Run>");
+                }
+                sb.Append("</Paragraph>");
             }
             else
             {

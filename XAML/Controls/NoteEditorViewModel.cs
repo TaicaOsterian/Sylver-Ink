@@ -6,7 +6,7 @@ public class NoteEditorViewModel : PopoutViewModel, IDisposable
 {
     private bool _autosaving;
     private TextPointer _caretPosition;
-    private readonly CancellationTokenSource _cts;
+    private CancellationTokenSource _cts;
     private bool _disposed;
     private FlowDocument _document;
     private bool _edited;
@@ -168,7 +168,7 @@ public class NoteEditorViewModel : PopoutViewModel, IDisposable
             if (_cts.IsCancellationRequested)
                 return;
 
-            Record.BeginAutosave(Document, _cts);
+            await Record.BeginAutosave(Document, _cts);
         }
         catch (TaskCanceledException)
         {
@@ -195,7 +195,7 @@ public class NoteEditorViewModel : PopoutViewModel, IDisposable
         return !OriginalText.Equals(TextConverter.Save(Document, TextFormat.Xaml), StringComparison.Ordinal);
     }
 
-    public async void CancelAutosave()
+    public void CancelAutosave()
     {
         if (!FinishedLoading)
             return;
@@ -203,12 +203,9 @@ public class NoteEditorViewModel : PopoutViewModel, IDisposable
         if (!Autosaving)
             return;
 
-        if (!Edited)
-            return;
-
         try
         {
-            await _cts.CancelAsync();
+            _cts.Cancel();
         }
         catch (Exception ex)
         {
@@ -216,7 +213,8 @@ public class NoteEditorViewModel : PopoutViewModel, IDisposable
         }
         finally
         {
-            _cts.TryReset();
+            _cts.Dispose();
+            _cts = new CancellationTokenSource();
         }
     }
 
