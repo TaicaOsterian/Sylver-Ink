@@ -15,12 +15,14 @@ public static class UpdateHandler
     public static bool GracefulExit { get; private set; }
     public static string TempUri { get; } = Path.Join(DocumentsFolder, "SylverInk.msi");
     public static string UpdateLockUri { get; } = Path.Join(DocumentsFolder, "~si_update.lock");
-    private static CancellationTokenSource UpdateTokenSource { get; } = new();
+    public static CancellationTokenSource UpdateTokenSource { get; private set; } = new();
     public static Update UpdateWindow { get; } = new();
 
     public static void CancelUpdate()
     {
         UpdateTokenSource.Cancel();
+        UpdateTokenSource.Dispose();
+        UpdateTokenSource = new();
         GracefulExit = false;
     }
 
