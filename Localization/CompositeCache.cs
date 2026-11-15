@@ -7,8 +7,10 @@ namespace SylverInk.Localization;
 /// </summary>
 internal static class CompositeCache
 {
+    internal static readonly CompositeFormat CacheBackupSuccess = CompositeFormat.Parse(Strings.Backup_Success!);
     internal static readonly CompositeFormat CacheCouldNotLoadDatabase = CompositeFormat.Parse(Strings.CouldNotLoadDatabase!);
     internal static readonly CompositeFormat CacheDaysPassed = CompositeFormat.Parse(Strings.DaysPassed!);
+    internal static readonly CompositeFormat CacheFailedBackup = CompositeFormat.Parse(Strings.FailedBackup!);
     internal static readonly CompositeFormat CacheFailedToOpenServer = CompositeFormat.Parse(Strings.FailedToOpenServer!);
     internal static readonly CompositeFormat CacheFailedToProcessFile = CompositeFormat.Parse(Strings.FailedToProcessFile!);
     internal static readonly CompositeFormat CacheKeyInUse = CompositeFormat.Parse(Strings.Tooltip_KeyInUse!);

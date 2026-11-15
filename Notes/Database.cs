@@ -173,7 +173,7 @@ internal sealed class Database : IDisposable
     {
         if (obj is Database otherDB)
         {
-            if (!otherDB.Name?.Equals(Name, StringComparison.Ordinal) is true)
+            if (!otherDB.Name?.Equals(Name, StringComparison.OrdinalIgnoreCase) is true)
                 return false;
 
             if (!otherDB.UUID.Equals(UUID))
@@ -184,7 +184,7 @@ internal sealed class Database : IDisposable
 
         if (obj is NoteController otherController)
         {
-            if (!otherController.Name?.Equals(Name, StringComparison.Ordinal) is true)
+            if (!otherController.Name?.Equals(Name, StringComparison.OrdinalIgnoreCase) is true)
                 return false;
 
             if (!otherController.UUID.Equals(UUID))
@@ -344,7 +344,7 @@ internal sealed class Database : IDisposable
         if (string.IsNullOrWhiteSpace(Name))
             Name = Path.GetFileNameWithoutExtension(DBFile);
 
-        if (DBFile.EndsWith("sibk", StringComparison.Ordinal))
+        if (Path.GetExtension(DBFile).Equals(".sibk", SystemStringComparison))
             Name = $"{Strings.Word_Backup}: {Name}";
 
         RefreshRecentNotes();
@@ -433,7 +433,7 @@ internal sealed class Database : IDisposable
             });
 
         var oldPath = Path.GetDirectoryName(oldFile) ?? Subfolders[Subfolder.Databases];
-        var isStandardDirectory = directorySearch.Contains(oldPath) && !Subfolders[Subfolder.Databases].Equals(oldPath, StringComparison.OrdinalIgnoreCase);
+        var isStandardDirectory = directorySearch.Contains(oldPath) && !Subfolders[Subfolder.Databases].Equals(oldPath, SystemStringComparison);
 
         var newFile = isStandardDirectory
             ? Path.Join(Subfolders[Subfolder.Databases], Name, $"{Name}.sidb")
@@ -490,7 +490,7 @@ internal sealed class Database : IDisposable
             App.LogException(e);
         }
 
-        if (DBFile.Equals(targetFile, StringComparison.Ordinal))
+        if (DBFile.Equals(targetFile, SystemStringComparison))
             MakeBackup(true);
 
         if (!Controller.Open($"{targetFile}", true))

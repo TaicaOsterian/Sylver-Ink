@@ -114,7 +114,7 @@ internal static class MutexUtils
 
         foreach (string dbFile in InitComplete ? Databases.Select(db => db.DBFile) : Settings.LastDatabases)
         {
-            if (Path.GetFullPath(dbFile).Equals(Path.GetFullPath(filename), StringComparison.Ordinal))
+            if (Path.GetFullPath(dbFile).Equals(Path.GetFullPath(filename), SystemStringComparison))
                 wideBreak = Path.GetFullPath(dbFile);
         }
 

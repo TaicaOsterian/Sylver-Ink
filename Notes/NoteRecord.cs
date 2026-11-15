@@ -436,7 +436,7 @@ public sealed partial class NoteRecord
     internal int MatchTags(string text)
     {
         var format = text.Trim();
-        if (!TagsDirty && format.Equals(LastQuery, StringComparison.Ordinal))
+        if (!TagsDirty && format.Equals(LastQuery, StringComparison.OrdinalIgnoreCase))
             return LastMatchCount;
 
         var matches = Lowercase().Matches(format.ToLowerInvariant());

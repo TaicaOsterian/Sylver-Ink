@@ -212,7 +212,7 @@ internal sealed partial class NoteController : IDisposable
     {
         if (obj is Database otherDB)
         {
-            if (!otherDB.Name?.Equals(Name, StringComparison.Ordinal) is true)
+            if (!otherDB.Name?.Equals(Name, StringComparison.OrdinalIgnoreCase) is true)
                 return false;
 
             if (!otherDB.UUID.Equals(UUID))
@@ -223,7 +223,7 @@ internal sealed partial class NoteController : IDisposable
 
         if (obj is NoteController otherController)
         {
-            if (!otherController.Name?.Equals(Name, StringComparison.Ordinal) is true)
+            if (!otherController.Name?.Equals(Name, StringComparison.OrdinalIgnoreCase) is true)
                 return false;
 
             if (!otherController.UUID.Equals(UUID))
@@ -306,13 +306,18 @@ internal sealed partial class NoteController : IDisposable
     {
         ReloadSerializer();
 
-        string file = DialogFileSelect(true, 1, Name);
+        string file = DialogFileSelect(outgoing: true, filterIndex: 1, defaultName: Name);
 
-        if (!_serializer?.OpenWrite($"{file}") is true)
+        if (!_serializer?.OpenWrite(file) is true)
+        {
+            ShowTooltip(string.Format(CultureInfo.CurrentCulture, CacheFailedBackup.Format, file));
             return;
+        }
 
         SerializeRecords();
         ReloadSerializer();
+
+        ShowTooltip(string.Format(CultureInfo.CurrentCulture, CacheBackupSuccess.Format, file));
     }
 
     internal bool Open(string path, bool writing = false, bool hidden = false)

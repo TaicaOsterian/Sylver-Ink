@@ -147,7 +147,7 @@ internal static class DatabaseUtils
 
             foreach (var otherDB in Databases)
             {
-                if (formattedName.Equals(otherDB.Name, StringComparison.OrdinalIgnoreCase))
+                if (!otherDB.UUID.Equals(db.UUID) && formattedName.Equals(otherDB.Name, StringComparison.OrdinalIgnoreCase))
                     nameExists = true;
             }
 
@@ -163,7 +163,7 @@ internal static class DatabaseUtils
 
             if (File.Exists(uuidFile)
                 && Guid.TryParse(File.ReadAllText(uuidFile), out var uuid)
-                && (newDB || uuid.Equals(db.UUID)))
+                && (newDB || !uuid.Equals(db.UUID)))
             {
                 index++;
                 continue;
@@ -259,7 +259,7 @@ internal static class DatabaseUtils
 
         for (int i = Databases.Count - 1; i > -1; i--)
         {
-            if ((Databases[i].Name ?? string.Empty).Equals(db.Name, StringComparison.Ordinal))
+            if ((Databases[i].Name ?? string.Empty).Equals(db.Name, StringComparison.OrdinalIgnoreCase))
                 Databases.RemoveAt(i);
         }
 
@@ -346,7 +346,7 @@ internal static class DatabaseUtils
                 _ => string.Empty
             };
 
-            if (div[1].Equals(tag, StringComparison.Ordinal))
+            if (div[1].Equals(tag, StringComparison.OrdinalIgnoreCase))
                 SwitchDatabase(db);
         }
     }

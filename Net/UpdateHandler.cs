@@ -83,9 +83,9 @@ internal static class UpdateHandler
                     continue;
 
                 // Starting in v1.8.0: Download a .MSI package only if a .EXE package doesn't exist.
-                if (nString.EndsWith(".exe", StringComparison.Ordinal))
+                if (nString.EndsWith(".exe", SystemStringComparison))
                     uriNode = nString;
-                else if (nString.EndsWith(".msi", StringComparison.Ordinal))
+                else if (nString.EndsWith(".msi", SystemStringComparison))
                     uriNode ??= nString;
             }
 

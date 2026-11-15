@@ -43,8 +43,8 @@ internal sealed class FileMenuViewModel : ViewModelBase
 
         var target = folder switch
         {
-            _ when folder.Equals(Strings.Subfolder_Backups, StringComparison.Ordinal) => Subfolders[Subfolder.Backups],
-            _ when folder.Equals(Strings.Subfolder_Databases, StringComparison.Ordinal) => Subfolders[Subfolder.Databases],
+            _ when folder.Equals(Strings.Subfolder_Backups, SystemStringComparison) => Subfolders[Subfolder.Backups],
+            _ when folder.Equals(Strings.Subfolder_Databases, SystemStringComparison) => Subfolders[Subfolder.Databases],
             _ => string.Empty
         };
 

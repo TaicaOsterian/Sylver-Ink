@@ -411,7 +411,7 @@ public sealed class ContextSettings : ViewModelBase
         var attr = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>();
 
         string? value = attr?.InformationalVersion;
-        int index = value?.IndexOf(prefix, StringComparison.Ordinal) ?? 0;
+        int index = value?.IndexOf(prefix, StringComparison.OrdinalIgnoreCase) ?? 0;
         if (index > 0 && DateTime.TryParseExact(value?[(index + prefix.Length)..], "yyyyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var result))
             return result.Year;
 
@@ -739,7 +739,7 @@ public sealed class ContextSettings : ViewModelBase
             Database? target = null;
             foreach (Database db in Databases)
             {
-                if (oSplit[0].Equals(db.Name, StringComparison.Ordinal))
+                if (oSplit[0].Equals(db.Name, StringComparison.OrdinalIgnoreCase))
                     target = db;
             }
 

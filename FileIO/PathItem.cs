@@ -18,7 +18,7 @@ public sealed class PathItem : IEquatable<PathItem>
                 path = path[1..];
 
             List<string> components = [.. path.Split(sep)];
-            if (components.Count > 1 && components[^1].Contains(components[0], StringComparison.Ordinal))
+            if (components.Count > 1 && components[^1].Contains(components[0], SystemStringComparison))
             {
                 components.RemoveAt(0);
                 path = string.Join(sep, components);
@@ -63,11 +63,7 @@ public sealed class PathItem : IEquatable<PathItem>
         var fullPath1 = Path.GetFullPath(FullPath).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
         var fullPath2 = Path.GetFullPath(other.FullPath).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 
-        StringComparison comparison = OperatingSystem.IsWindows()
-            ? StringComparison.OrdinalIgnoreCase
-            : StringComparison.Ordinal;
-
-        return string.Equals(fullPath1, fullPath2, comparison);
+        return string.Equals(fullPath1, fullPath2, SystemStringComparison);
     }
 
     public override bool Equals(object? obj) => ((IEquatable<PathItem>)this).Equals(obj as PathItem);

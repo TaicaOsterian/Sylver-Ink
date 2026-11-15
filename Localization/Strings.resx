@@ -145,6 +145,9 @@
     <value>Average note
 length</value>
   </data>
+  <data name="Backup_Success" xml:space="preserve">
+    <value>Successfully created backup file: {0}</value>
+  </data>
   <data name="BadHotKey" xml:space="preserve">
     <value>Failed to register hotkey. Check that it is not in use by another program.</value>
   </data>
@@ -212,6 +215,9 @@ length</value>
   </data>
   <data name="FailedAutodetect" xml:space="preserve">
     <value>Failed to automatically detect the note format.</value>
+  </data>
+  <data name="FailedBackup" xml:space="preserve">
+    <value>Backup file could not be created: {0}</value>
   </data>
   <data name="FailedConnection" xml:space="preserve">
     <value>Failed to connect to the database.</value>

@@ -55,7 +55,7 @@ internal sealed class ImageViewViewModel : PopoutViewModel
 
         var path = dialog.FileName;
 
-        if (Source?.CompositedFrames.Count > 1 && !Path.GetExtension(path).Equals(".gif", StringComparison.OrdinalIgnoreCase)
+        if (Source?.CompositedFrames.Count > 1 && !Path.GetExtension(path).Equals(".gif", SystemStringComparison)
             && MessageBox.Show(Strings.Message_ConfirmAnimatedImageExportLoss, Strings.Title_Warning, MessageBoxButton.YesNo) == MessageBoxResult.No)
             return;
 

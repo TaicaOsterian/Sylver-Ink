@@ -23,10 +23,10 @@ internal sealed partial class XamlConverter : ITextConverter
 
         var escaped = ImageTagRegex().Replace(text.Replace("{}{", "{"), string.Empty);
 
-        if (!escaped.StartsWith("<FlowDocument", StringComparison.Ordinal))
+        if (!escaped.StartsWith("<FlowDocument", StringComparison.OrdinalIgnoreCase))
             escaped = $"{FlowDocumentOpening}{escaped}";
 
-        if (!escaped.EndsWith(FlowDocumentClosing, StringComparison.Ordinal))
+        if (!escaped.EndsWith(FlowDocumentClosing, StringComparison.OrdinalIgnoreCase))
             escaped = $"{escaped}{FlowDocumentClosing}";
 
         var document = (FlowDocument)XamlReader.Parse(escaped);

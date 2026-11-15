@@ -90,6 +90,9 @@ internal static partial class CommonUtils
             _settings?.Show();
         }
     }
+    internal static StringComparison SystemStringComparison = OperatingSystem.IsWindows()
+            ? StringComparison.OrdinalIgnoreCase
+            : StringComparison.Ordinal;
     internal static bool UpdatesChecked { get; set; }
     internal static double WindowHeight { get; set; }
     internal static double WindowWidth { get; set; }
@@ -181,7 +184,7 @@ internal static partial class CommonUtils
         // Open the user's databases, or create a new one if none were set.
         foreach (var file in Settings.LastDatabases)
         {
-            if (!Databases.Any(db => Path.GetFullPath(db.DBFile).Equals(Path.GetFullPath(file), StringComparison.Ordinal)))
+            if (!Databases.Any(db => Path.GetFullPath(db.DBFile).Equals(Path.GetFullPath(file), SystemStringComparison)))
                 await Database.Create(file);
         }
 

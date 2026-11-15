@@ -573,8 +573,8 @@ internal sealed class ImportViewModel : ViewModelBase
 
         try
         {
-            if (ImportTarget.EndsWith(".sidb", StringComparison.Ordinal) ||
-                ImportTarget.EndsWith(".sibk", StringComparison.Ordinal))
+            if (Path.GetExtension(ImportTarget).Equals(".sidb", SystemStringComparison) ||
+                Path.GetExtension(ImportTarget).Equals(".sibk", SystemStringComparison))
             {
                 var result = MessageBox.Show(
                     Strings.Message_MergeDatabases,

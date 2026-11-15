@@ -145,6 +145,9 @@
     <value>Longitud media
 de las notas</value>
   </data>
+  <data name="Backup_Success" xml:space="preserve">
+    <value>Archivo de copia de seguridad creado correctamente: {0}</value>
+  </data>
   <data name="BadHotKey" xml:space="preserve">
     <value>No se pudo registrar la combinación de teclas. Compruebe que no esté siendo utilizada por otro programa.</value>
   </data>
@@ -207,6 +210,9 @@ de las notas</value>
   </data>
   <data name="FailedAutodetect" xml:space="preserve">
     <value>Falló la detección automática del formato de notas.</value>
+  </data>
+  <data name="FailedBackup" xml:space="preserve">
+    <value>No se pudo crear el archivo de copia de seguridad: {0}</value>
   </data>
   <data name="FailedConnection" xml:space="preserve">
     <value>Falló la conexión a la base de datos.</value>

@@ -237,7 +237,7 @@ internal static class VisualUtils
     {
         using ContextFreeze _ = new(Settings);
 
-        Settings.HighContrast = theme.Name.Equals(Strings.Label_HighContrast, StringComparison.Ordinal);
+        Settings.HighContrast = theme.Name.Equals(Strings.Label_HighContrast, StringComparison.OrdinalIgnoreCase);
 
         Settings.AccentBackground = theme.AccentBackground;
         Settings.AccentForeground = theme.AccentForeground;

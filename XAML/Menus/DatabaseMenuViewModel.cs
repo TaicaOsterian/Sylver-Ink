@@ -86,12 +86,12 @@ internal sealed class DatabaseMenuViewModel : ViewModelBase
         if (string.IsNullOrWhiteSpace(RenameDatabaseName))
             return;
 
-        if (RenameDatabaseName.Equals(CurrentDatabase.Name, StringComparison.Ordinal))
+        if (RenameDatabaseName.Equals(CurrentDatabase.Name, StringComparison.OrdinalIgnoreCase))
             return;
 
         foreach (Database db in Databases)
         {
-            if (!RenameDatabaseName.Equals(db.Name, StringComparison.Ordinal))
+            if (!RenameDatabaseName.Equals(db.Name, StringComparison.OrdinalIgnoreCase))
                 continue;
 
             ShowTooltip(Strings.Message_DatabaseExists!);
