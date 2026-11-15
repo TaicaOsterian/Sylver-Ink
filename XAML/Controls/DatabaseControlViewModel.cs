@@ -6,6 +6,9 @@ namespace SylverInk.XAML.Controls;
 
 internal sealed class DatabaseControlViewModel : ViewModelBase
 {
+    private Search? _search;
+    private Settings? _settings;
+
     public static string NewNoteButtonTooltip => string.Format(CultureInfo.CurrentCulture, CacheNewNoteButtonTooltip.Format, AppSettings.NewNoteHotKey);
     public static string RecentNotesTooltip => string.Format(CultureInfo.CurrentCulture, CacheRecentNotesTooltip.Format, AppSettings.PreviousNoteHotKey);
     public static string ReopenNoteButtonTooltip => string.Format(CultureInfo.CurrentCulture, CacheRecentNotesButtonTooltip.Format, AppSettings.PreviousNoteHotKey);
@@ -27,13 +30,29 @@ internal sealed class DatabaseControlViewModel : ViewModelBase
 
     private static bool CanPopPreviousNote(object? param) => CurrentDatabase.GetPreviousNoteCount() > 0;
 
+    internal void ChangeView()
+    {
+        _search?.Close();
+        _settings?.Close();
+    }
+
     private void Exit(object? param) => Application.Current.MainWindow.Close();
 
     private void NewNote(object? param) => CreateNewNote();
 
     private void ReopenNote(object? param) => CurrentDatabase.PopPreviousNote();
 
-    private void Search(object? param) => SearchWindow = new();
+    private void Search(object? param)
+    {
+        _search?.Close();
+        _search = new();
+        _search.Show();
+    }
 
-    private void Settings(object? param) => SettingsWindow = new();
+    private void Settings(object? param)
+    {
+        _settings?.Close();
+        _settings = new();
+        _settings.Show();
+    }
 }

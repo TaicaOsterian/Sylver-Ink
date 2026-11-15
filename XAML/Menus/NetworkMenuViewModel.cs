@@ -101,7 +101,7 @@ internal sealed class NetworkMenuViewModel : ViewModelBase
         }
     }
 
-    private static void MenuCopyCode(object? param) => CopyCode();
+    private void MenuCopyCode(object? param) => ShowCodePopup();
 
     private void MenuConnect(object? param)
     {
@@ -120,15 +120,7 @@ internal sealed class NetworkMenuViewModel : ViewModelBase
         if (await CurrentDatabase.Server.Serve(0) is false)
             return;
 
-        if (Application.Current.MainWindow.FindName("CodePopup") is not Popup codePopup)
-            return;
-
-        if (codePopup.FindName("CodeBox") is not TextBox codeBox)
-            return;
-
-        codePopup.IsOpen = true;
-        this.AddressCode = CurrentDatabase.Server.AddressCode ?? string.Empty;
-        codeBox.Text = AddressCode ?? NetworkUtils.LoopbackCode;
+        ShowCodePopup();
     }
 
     private static void MenuUnserve(object? param) => CurrentDatabase.Server.Close();
@@ -155,5 +147,18 @@ internal sealed class NetworkMenuViewModel : ViewModelBase
         Database newDB = new();
         AddDatabase(newDB);
         await newDB.Client.Connect(AddressCode);
+    }
+
+    private void ShowCodePopup()
+    {
+        if (Application.Current.MainWindow.FindName("CodePopup") is not Popup codePopup)
+            return;
+
+        if (codePopup.FindName("CodeBox") is not TextBox codeBox)
+            return;
+
+        codePopup.IsOpen = true;
+        this.AddressCode = CurrentDatabase.Server.AddressCode ?? string.Empty;
+        codeBox.Text = AddressCode ?? NetworkUtils.LoopbackCode;
     }
 }

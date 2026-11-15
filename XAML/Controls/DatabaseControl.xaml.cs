@@ -15,8 +15,8 @@ public sealed partial class DatabaseControl : UserControl
             new PropertyMetadata(null, OnDatabaseChanged));
 
     internal double NoteListActualHeight => RecentNotesBox.ActualHeight;
-
     internal double NoteListActualWidth => RecentNotesBox.ActualWidth;
+    internal DatabaseControlViewModel ViewModel => (DatabaseControlViewModel)DataContext;
 
     internal DatabaseControl()
     {
@@ -24,6 +24,8 @@ public sealed partial class DatabaseControl : UserControl
         InitializeComponent();
         CreateContextMenu();
     }
+
+    internal void ChangeView() => ViewModel.ChangeView();
 
     private void ContextDelete(object? sender, RoutedEventArgs e)
     {

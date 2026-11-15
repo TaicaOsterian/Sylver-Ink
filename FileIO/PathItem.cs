@@ -3,7 +3,7 @@
 /// <summary>
 /// Encapsulates a file path and provides properties for ease of display purposes.
 /// </summary>
-public sealed class PathItem : IEquatable<PathItem>
+public sealed class PathItem() : IEquatable<PathItem>
 {
     private const int MaxLength = 40;
 
@@ -46,11 +46,7 @@ public sealed class PathItem : IEquatable<PathItem>
         }
     }
 
-    internal string FullPath { get; set; } = string.Empty;
-
-    internal PathItem()
-    {
-    }
+    public string FullPath { get; set; } = string.Empty;
 
     bool IEquatable<PathItem>.Equals(PathItem? other)
     {

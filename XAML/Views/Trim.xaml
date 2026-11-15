@@ -9,7 +9,6 @@
         d:DataContext="{d:DesignInstance Type=vm:TrimViewModel}"
         Background="{Binding AppSettings.AccentBackground}"
         Height="300"
-        Loaded="Trim_Loaded"
         MinHeight="225"
         MinWidth="225"
         MouseLeftButtonDown="Drag"

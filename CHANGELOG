@@ -1,21 +1,18 @@
-Good morning! Today's release is, like v1.11.1, mostly a bug-fixer. A lot has changed behind the scenes, and it mostly has to do with...
+Good morning! For a major release, there's only a little to talk about. Like much of our recent work, Sylver Ink continues to have its pipes cleaned and gears trimmed, rather than any fancy stickers put on the front. Speaking of trimming, we have a brand-new feature for you!
 
-## Editing
+## Menus
 
-- **Image embedding has received a massive backend overhaul.** It should run more smoothly and take up fewer system resources from now on.
+- **Trim**: Under the Database menu, a new "Trim..." option has been added. This selection window allows the user to remove all notes from the database that are currently empty, as well as remove prior old revisions that may no longer be needed. For a large database, this option can reduce resource usage, free up disk space, and allow Sylver Ink to run much quicker and more smoothly.
 
-- **GIF images are now fully supported.** Animation and all. Keep in mind that they can be quite resource-heavy, as they are in most software.
+## Files
 
-- Images are now stored as *inlines* rather than *blocks*. They no longer automatically exist on their own lines, and are now flush with text.
+- **Error logging**: A new "error.log" file will be created in the user's "Documents/Sylver Ink" folder if the program encounters unexpected errors during normal runtime. If you need help with these errors, this file will be very useful for helping us diagnose the problem!
 
-- Deleting images from notes was broken for a time, but they can now be backspaced as normal once more.
+- The routines for moving and renaming databases have been completely rewritten from scratch. Without getting into too much detail, they were a little over-engineered before, and finicky as a result. That has now been resolved.
 
-- A known bug causing notes to autosave their contents if they were edited and then quickly closed without saving has now been fixed.
+## Databases
 
+- When creating a new database, the program will now more robustly choose a default name in line with the operating system's file scheme.
 
-## Performance
-
-- Display issues with existing images has been largely resolved.
-
-- A known bug causing Sylver Ink to not completely close when exited has now been fixed.
+- Backup files are handled a little more cleanly, and should be more cooperative when saved to a user-seleceted location (as opposed to automatically).
 

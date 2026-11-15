@@ -16,7 +16,8 @@ internal sealed class NetServer : IDisposable
     private static readonly string[] DNSAddresses = [
         "http://checkip.dyndns.org",
         "https://ifconfig.me/ip",
-        "https://icanhazip.com"
+        "https://icanhazip.com",
+        "https://api.ipify.org"
     ];
     private bool _disposed;
     private byte? Flags;
@@ -191,7 +192,7 @@ internal sealed class NetServer : IDisposable
         {
             try
             {
-                if (IPAddress.TryParse(await new HttpClient().GetStringAsync(DNSAddresses[i]), out var address))
+                if (IPAddress.TryParse((await new HttpClient().GetStringAsync(DNSAddresses[i])).Trim(), out var address))
                 {
                     AddressCode = CodeFromAddress(address, this.Flags);
                     Address = CodeToAddress(AddressCode, out this.Flags);

@@ -15,9 +15,4 @@ public sealed partial class Trim : Window
     }
 
     private void Drag(object? sender, MouseButtonEventArgs e) => DragMove();
-
-    private void Trim_Loaded(object? sender, RoutedEventArgs e)
-    {
-
-    }
 }

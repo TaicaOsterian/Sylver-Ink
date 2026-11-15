@@ -7,6 +7,8 @@ namespace SylverInk.XAML.Menus;
 
 internal sealed class FileMenuViewModel : ViewModelBase
 {
+    private Import? _import;
+
     public ICommand BrowseFolderCommand { get; }
     public ICommand DeleteDatabaseCommand { get; }
     public ICommand ImportCommand { get; }
@@ -75,7 +77,12 @@ internal sealed class FileMenuViewModel : ViewModelBase
         RefreshRecentNotes();
     }
 
-    private static void MenuImport(object? param) => ImportWindow = new();
+    private void MenuImport(object? param)
+    {
+        _import?.Close();
+        _import = new();
+        _import.Show();
+    }
 
     private async void MenuOpen(object? param)
     {

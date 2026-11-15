@@ -86,27 +86,25 @@ internal sealed class SearchViewModel : ViewModelBase, IDisposable
         ListCollectionView view = (ListCollectionView)CollectionViewSource.GetDefaultView(CommonUtils.Settings.SearchResults);
         view.CustomSort ??= Comparer<NoteRecord>.Create(new((r1, r2) => r2.MatchTags(QueryString).CompareTo(r1.MatchTags(QueryString))));
 
-        await Task.Run(async () =>
+        for (int i = 0; i < db.RecordCount; i++)
         {
-            for (int i = 0; i < db.RecordCount; i++)
+            if (db.GetRecord(i) is not NoteRecord rec)
+                continue;
+
+            if (token.IsCancellationRequested)
+                return;
+
+            if (!await SearchRecord(rec))
+                continue;
+
+            Concurrent(() =>
             {
-                token.ThrowIfCancellationRequested();
-
-                if (db.GetRecord(i) is not NoteRecord rec)
-                    continue;
-
-                if (!await SearchRecord(rec))
-                    continue;
-
                 rec.MatchTags(QueryString);
 
-                Concurrent(() =>
-                {
-                    if (!token.IsCancellationRequested)
-                        CommonUtils.Settings.SearchResults.Add(rec);
-                });
-            }
-        }, token);
+                if (!token.IsCancellationRequested)
+                    CommonUtils.Settings.SearchResults.Add(rec);
+            });
+        }
     }
 
     private Task<bool> SearchRecord(NoteRecord record) => Task.Run(() =>

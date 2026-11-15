@@ -229,22 +229,13 @@ internal static class DatabaseUtils
 
     internal static void RemoveDatabase(Database db)
     {
-        if (Application.Current.MainWindow.FindName("DatabasesPanel") is not TabControl control)
-            return;
-
-        if (control.SelectedItem is not TabItem item)
-            return;
-
-        if (item.Content is not DatabaseControl dbControl)
-            return;
-
-        if (DatabaseControl.GetDatabase(dbControl) is not Database tabDB)
+        if (GetDatabasesPanel() is not TabControl control)
             return;
 
         if (control.Items.Count < 2)
             AddDatabase();
 
-        if (tabDB.Equals(db))
+        if (CurrentDatabase.Equals(db))
         {
             control.Items.RemoveAt(control.SelectedIndex);
             control.SelectedIndex = Math.Max(0, Math.Min(control.Items.Count - 1, control.SelectedIndex));
@@ -259,7 +250,7 @@ internal static class DatabaseUtils
 
         for (int i = Databases.Count - 1; i > -1; i--)
         {
-            if ((Databases[i].Name ?? string.Empty).Equals(db.Name, StringComparison.OrdinalIgnoreCase))
+            if (Databases[i].Equals(db))
                 Databases.RemoveAt(i);
         }
 
@@ -314,7 +305,7 @@ internal static class DatabaseUtils
 
     internal static void SwitchDatabase(Database db)
     {
-        if (Application.Current.MainWindow.FindName("DatabasesPanel") is not TabControl control)
+        if (GetDatabasesPanel() is not TabControl control)
             return;
 
         foreach (TabItem item in control.Items)
@@ -327,6 +318,8 @@ internal static class DatabaseUtils
 
             if (!tabDB.Equals(db))
                 continue;
+
+            dbControl.ChangeView();
 
             control.SelectedItem = item;
             CurrentDatabase = tabDB;

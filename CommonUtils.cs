@@ -48,48 +48,14 @@ internal static partial class CommonUtils
         Revision
     }
 
-    private static Import? _import;
-    private static Search? _search;
-    private static Settings? _settings;
-
     internal static bool AbortRun { get; set; }
     internal static string DateFormat { get; } = "yyyy-MM-dd HH:mm:ss";
-    internal static Import? ImportWindow
-    {
-        get => _import;
-        set
-        {
-            _import?.Close();
-            _import = value;
-            _import?.Show();
-        }
-    }
     internal static bool InitComplete { get; set; }
     internal static List<ImageView> OpenImages { get; } = [];
     internal static List<StickyNote> OpenQueries { get; } = [];
     internal static NoteRecord? RecentSelection { get; set; }
-    internal static Search? SearchWindow
-    {
-        get => _search;
-        set
-        {
-            _search?.Close();
-            _search = value;
-            _search?.Show();
-        }
-    }
     internal static ContextSettings Settings { get; } = new();
     internal static bool SettingsLoaded { get; set; }
-    internal static Settings? SettingsWindow
-    {
-        get => _settings;
-        set
-        {
-            _settings?.Close();
-            _settings = value;
-            _settings?.Show();
-        }
-    }
     internal static StringComparison SystemStringComparison = OperatingSystem.IsWindows()
             ? StringComparison.OrdinalIgnoreCase
             : StringComparison.Ordinal;
@@ -160,7 +126,7 @@ internal static partial class CommonUtils
                         && SettingsLoaded
                         && UpdatesChecked;
 
-                    if (Concurrent(() => Application.Current.MainWindow.FindName("DatabasesPanel")) is null)
+                    if (Concurrent(GetDatabasesPanel) is null)
                         InitComplete = false;
                 } while (!InitComplete && !token.IsCancellationRequested);
             }

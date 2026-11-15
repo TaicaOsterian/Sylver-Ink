@@ -7,8 +7,10 @@ namespace SylverInk.XAML.Menus;
 
 internal sealed class DatabaseMenuViewModel : ViewModelBase
 {
+    private Properties? _properties;
     private string _renameDatabaseName = string.Empty;
     private bool _renamePopupVisible;
+    private Trim? _trim;
 
     public string RenameDatabaseName
     {
@@ -72,7 +74,12 @@ internal sealed class DatabaseMenuViewModel : ViewModelBase
         RefreshRecentNotes();
     }
 
-    private static void MenuProperties(object? param) => new Properties().Show();
+    private void MenuProperties(object? param)
+    {
+        _properties?.Close();
+        _properties = new();
+        _properties.Show();
+    }
 
     private void MenuRename(object? param)
     {
@@ -80,7 +87,12 @@ internal sealed class DatabaseMenuViewModel : ViewModelBase
         RenamePopupVisible = true;
     }
 
-    private static void MenuTrim(object? param) => new Trim().Show();
+    private void MenuTrim(object? param)
+    {
+        _trim?.Close();
+        _trim = new();
+        _trim.Show();
+    }
 
     private void PopupRenameClosed(object? param)
     {

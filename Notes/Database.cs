@@ -244,6 +244,11 @@ internal sealed class Database : IDisposable
 
                 HeaderPanel.ToolTip = Name;
                 label.Content = headerContent;
+
+                while (HeaderPanel.Children.Count >= 2)
+                    HeaderPanel.Children.RemoveAt(1);
+
+                HeaderPanel.Children.Add(Client.Active ? Client.Indicator : (Server.Active ? Server.Indicator : new System.Windows.Shapes.Ellipse()));
             });
 
             return HeaderPanel;
@@ -279,7 +284,6 @@ internal sealed class Database : IDisposable
         };
 
         HeaderPanel.Children.Add(label);
-        HeaderPanel.Children.Add((Client.Active ? Client.Indicator : Server.Indicator) ?? new System.Windows.Shapes.Ellipse());
 
         return HeaderPanel;
     }

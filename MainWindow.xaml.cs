@@ -26,16 +26,10 @@ public sealed partial class MainWindow : Window
 
     private static bool IsShuttingDown()
     {
-        try
-        {
-            Application.Current.ShutdownMode = Application.Current.ShutdownMode;
-            return false;
-        }
-        catch (Exception e)
-        {
-            App.LogException(e);
-            return true;
-        }
+        var app = Application.Current;
+        return app == null
+            || app.Dispatcher.HasShutdownStarted
+            || app.Dispatcher.HasShutdownFinished;
     }
 
     private async void MainWindow_Closing(object? sender, CancelEventArgs e)

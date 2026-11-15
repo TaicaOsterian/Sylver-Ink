@@ -38,9 +38,6 @@ internal sealed class StickyNoteViewModel : NoteEditorViewModel
 
     private void View(object? param)
     {
-        // To avoid cluttering the user's view
-        SearchWindow?.Close();
-
         ForceClose?.Invoke(this, EventArgs.Empty);
 
         if (Record is null)

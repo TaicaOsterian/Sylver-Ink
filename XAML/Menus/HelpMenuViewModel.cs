@@ -4,6 +4,8 @@ namespace SylverInk.XAML.Menus;
 
 internal sealed class HelpMenuViewModel : ViewModelBase
 {
+    private About? _about;
+
     public ICommand AboutCommand { get; }
     public ICommand CheckForUpdatesCommand { get; }
 
@@ -21,5 +23,10 @@ internal sealed class HelpMenuViewModel : ViewModelBase
         ShowTooltip(UpdateHandler.GracefulExit ? Strings.NoUpdateAvailable! : Strings.FailedUpdateCheck!);
     }
 
-    private static void MenuShowAbout(object? param) => new About().Show();
+    private void MenuShowAbout(object? param)
+    {
+        _about?.Close();
+        _about = new();
+        _about?.Show();
+    }
 }

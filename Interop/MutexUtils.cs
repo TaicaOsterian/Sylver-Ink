@@ -58,7 +58,7 @@ internal static class MutexUtils
 
             try
             {
-                await server.WaitForConnectionAsync(token);
+                await server.WaitForConnectionAsync(token).ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
             }
             catch (Exception e)
             {
