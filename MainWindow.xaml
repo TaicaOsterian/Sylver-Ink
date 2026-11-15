@@ -243,6 +243,9 @@
                 <MenuItem Command="{Binding DatabaseMenu.RenameDatabaseCommand}"
                           Header="{x:Static properties:Strings.Word_Rename}" />
 
+                <MenuItem Command="{Binding DatabaseMenu.TrimDatabaseCommand}"
+                          Header="{x:Static properties:Strings.Label_Trim}" />
+
                 <Separator />
 
                 <MenuItem Command="{Binding DatabaseMenu.BackupDatabaseCommand}"

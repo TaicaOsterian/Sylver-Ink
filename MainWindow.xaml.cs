@@ -137,6 +137,9 @@ public sealed partial class MainWindow : Window
     {
         base.OnSourceInitialized(e);
 
+        // Clear error logs from previous session.
+        Erase(ErrorFile);
+
         //Mutex registration
         if (await MutexUtils.Init())
         {

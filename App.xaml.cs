@@ -24,9 +24,11 @@ public sealed partial class App : Application
         try
         {
             source ??= $"{ex.TargetSite?.DeclaringType?.Assembly.FullName ?? "(unknown)"} : {ex.TargetSite?.DeclaringType?.FullName ?? "(unmanaged code)"}::{ex.TargetSite?.Name}";
+            var dtNow = DateTime.UtcNow;
 
             StringBuilder sb = new();
             sb.AppendLine(new string('-', 20));
+            sb.AppendLine(CultureInfo.InvariantCulture, $"Timestamp:  {dtNow.ToString(DateFormat, CultureInfo.InvariantCulture)} UTC");
             sb.AppendLine(CultureInfo.InvariantCulture, $"Source:     {source}");
             sb.AppendLine(CultureInfo.InvariantCulture, $"Message:    {ex.Message}");
 
@@ -42,7 +44,9 @@ public sealed partial class App : Application
             sb.AppendLine(new string('-', 20));
 #endif
 
-            Debug.WriteLine(sb.ToString());
+            var sbOut = sb.ToString();
+            Debug.WriteLine(sbOut);
+            File.AppendAllText(FileUtils.ErrorFile, sbOut);
         }
         catch
         {

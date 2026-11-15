@@ -373,6 +373,12 @@ Recuerda presionar Importar para finalizar tus cambios!</value>
   <data name="Label_PreviousNoteHotkey" xml:space="preserve">
     <value>Atajo de teclado para nota anterior</value>
   </data>
+  <data name="Label_RemoveEmptyNotes" xml:space="preserve">
+    <value>Eliminar las notas que actualmente están vacías</value>
+  </data>
+  <data name="Label_RemoveOldRevisions" xml:space="preserve">
+    <value>Eliminar las revisiones de notas anteriores</value>
+  </data>
   <data name="Label_Restore" xml:space="preserve">
     <value>Restaurar la base de datos a un estado anterior</value>
   </data>
@@ -394,6 +400,9 @@ Recuerda presionar Importar para finalizar tus cambios!</value>
   <data name="Label_Theme" xml:space="preserve">
     <value>Estilo visual</value>
   </data>
+  <data name="Label_Trim" xml:space="preserve">
+    <value>Recortar...</value>
+  </data>
   <data name="LastChangedDate" xml:space="preserve">
     <value>Fecha del último cambio</value>
   </data>
@@ -411,6 +420,9 @@ Recuerda presionar Importar para finalizar tus cambios!</value>
   </data>
   <data name="Message_ConfirmReversion" xml:space="preserve">
     <value>¿Estás seguro de que quieres revertir la base de datos a la fecha seleccionada?</value>
+  </data>
+  <data name="Message_ConfirmTrim" xml:space="preserve">
+    <value>¿Está seguro de que desea recortar esta base de datos?</value>
   </data>
   <data name="Message_CriticalError" xml:space="preserve">
     <value>Se ha producido un error crítico. Sylver Ink debe cerrarse.</value>
@@ -591,6 +603,9 @@ Recuerda presionar Importar para finalizar tus cambios!</value>
   <data name="Title_StickyNote" xml:space="preserve">
     <value>Sylver Ink: Notas adhesivas</value>
   </data>
+  <data name="Title_Trim" xml:space="preserve">
+    <value>Sylver Ink: Recortar</value>
+  </data>
   <data name="Title_Update" xml:space="preserve">
     <value>Sylver Ink: Actualizar</value>
   </data>
@@ -614,6 +629,9 @@ Recuerda presionar Importar para finalizar tus cambios!</value>
   </data>
   <data name="Tooltip_SearchButton" xml:space="preserve">
     <value>Consulta todas las notas de la base de datos y busca texto dentro de ellas.</value>
+  </data>
+  <data name="Tooltip_TrimComplete" xml:space="preserve">
+    <value>Operación de recorte finalizada.</value>
   </data>
   <data name="TotalLength" xml:space="preserve">
     <value>Longitud total</value>
@@ -762,6 +780,9 @@ Recuerda presionar Importar para finalizar tus cambios!</value>
   </data>
   <data name="Word_Settings" xml:space="preserve">
     <value>Opciones</value>
+  </data>
+  <data name="Word_Trim" xml:space="preserve">
+    <value>Recortar</value>
   </data>
   <data name="Word_Underline" xml:space="preserve">
     <value>Subrayado</value>

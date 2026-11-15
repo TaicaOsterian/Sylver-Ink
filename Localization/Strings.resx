@@ -394,6 +394,12 @@ Remember to press Import to finalize your changes!</value>
   <data name="Label_PreviousNoteHotkey" xml:space="preserve">
     <value>Previous note hotkey</value>
   </data>
+  <data name="Label_RemoveEmptyNotes" xml:space="preserve">
+    <value>Remove notes that are currently empty</value>
+  </data>
+  <data name="Label_RemoveOldRevisions" xml:space="preserve">
+    <value>Remove previous note revisions</value>
+  </data>
   <data name="Label_Restore" xml:space="preserve">
     <value>Restore the database to a previous state</value>
   </data>
@@ -415,6 +421,9 @@ Remember to press Import to finalize your changes!</value>
   <data name="Label_Theme" xml:space="preserve">
     <value>Theme</value>
   </data>
+  <data name="Label_Trim" xml:space="preserve">
+    <value>Trim...</value>
+  </data>
   <data name="LastChangedDate" xml:space="preserve">
     <value>Last changed date</value>
     <comment>"Date that an item was most recently changed"</comment>
@@ -433,6 +442,9 @@ Remember to press Import to finalize your changes!</value>
   </data>
   <data name="Message_ConfirmReversion" xml:space="preserve">
     <value>Are you sure you want to revert the database to the selected date and time?</value>
+  </data>
+  <data name="Message_ConfirmTrim" xml:space="preserve">
+    <value>Are you sure you wish to trim this database?</value>
   </data>
   <data name="Message_CriticalError" xml:space="preserve">
     <value>A critical error has occurred. Sylver Ink must close.</value>
@@ -625,6 +637,9 @@ Do you want to overwrite it?</value>
   <data name="Title_StickyNote" xml:space="preserve">
     <value>Sylver Ink: Sticky Note</value>
   </data>
+  <data name="Title_Trim" xml:space="preserve">
+    <value>Sylver Ink: Trim</value>
+  </data>
   <data name="Title_Update" xml:space="preserve">
     <value>Sylver Ink: Update</value>
   </data>
@@ -649,6 +664,9 @@ Do you want to overwrite it?</value>
   </data>
   <data name="Tooltip_SearchButton" xml:space="preserve">
     <value>View all notes in the database, and search for text within them.</value>
+  </data>
+  <data name="Tooltip_TrimComplete" xml:space="preserve">
+    <value>Trim operation completed.</value>
   </data>
   <data name="TotalLength" xml:space="preserve">
     <value>Total length</value>
@@ -814,6 +832,9 @@ Do you want to overwrite it?</value>
   </data>
   <data name="Word_Settings" xml:space="preserve">
     <value>Settings</value>
+  </data>
+  <data name="Word_Trim" xml:space="preserve">
+    <value>Trim</value>
   </data>
   <data name="Word_Underline" xml:space="preserve">
     <value>Underline</value>

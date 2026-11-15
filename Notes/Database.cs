@@ -155,13 +155,7 @@ internal sealed class Database : IDisposable
             Transmit(NetworkUtils.MessageType.RecordRemove, uuid.ToString());
     }
 
-    internal void DeleteRecord(NoteRecord record, bool local = true)
-    {
-        Controller.DeleteRecord(record.UUID);
-
-        if (local)
-            Transmit(NetworkUtils.MessageType.RecordRemove, record.UUID.ToString());
-    }
+    internal void DeleteRecord(NoteRecord record, bool local = true) => DeleteRecord(record.UUID, local);
 
     public void Dispose()
     {

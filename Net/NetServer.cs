@@ -25,16 +25,13 @@ internal sealed class NetServer : IDisposable
 
     internal bool Active { get; private set; }
     internal string? AddressCode { get; private set; }
-    internal System.Windows.Shapes.Ellipse? Indicator { get; }
+    internal Database? DB { get; private set; }
+    internal System.Windows.Shapes.Ellipse? Indicator { get; private set; }
     internal bool Serving { get; private set; }
 
     internal NetServer(Database DB)
     {
-        Indicator = new()
-        {
-            StrokeThickness = 1.0,
-            Tag = DB
-        };
+        this.DB = DB;
 
         ServerTask.DoWork += async (sender, _) =>
         {
@@ -177,6 +174,12 @@ internal sealed class NetServer : IDisposable
 
     internal async Task<bool> Serve(byte Flags)
     {
+        Indicator ??= new()
+        {
+            StrokeThickness = 1.0,
+            Tag = this.DB
+        };
+
         Active = true;
         Address = IPAddress.Loopback;
         Serving = false;

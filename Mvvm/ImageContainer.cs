@@ -10,7 +10,7 @@ using System.Windows.Threading;
 namespace SylverInk.Mvvm;
 
 [ValueSerializer(typeof(ImageContainerValueSerializer))]
-internal sealed class ImageContainer : Image, IDisposable
+public sealed class ImageContainer : Image, IDisposable
 {
     private readonly List<BitmapSource> _compositedFrames = [];
     private long _currentDelay;

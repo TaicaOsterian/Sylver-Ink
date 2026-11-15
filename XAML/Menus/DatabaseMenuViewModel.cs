@@ -38,6 +38,7 @@ internal sealed class DatabaseMenuViewModel : ViewModelBase
     public ICommand RenamePopupEnterCommand { get; }
     public ICommand RenamePopupEscapeCommand { get; }
     public ICommand SaveRenameCommand { get; }
+    public ICommand TrimDatabaseCommand { get; }
 
     internal DatabaseMenuViewModel()
     {
@@ -49,6 +50,7 @@ internal sealed class DatabaseMenuViewModel : ViewModelBase
         RenamePopupEnterCommand = new RelayCommand(PopupRenameClosed);
         RenamePopupEscapeCommand = new RelayCommand(_ => RenamePopupVisible = false);
         SaveRenameCommand = new RelayCommand(PopupRenameClosed);
+        TrimDatabaseCommand = new RelayCommand(MenuTrim);
     }
 
     private static bool CanCloseDatabase(object? param) => Databases.Count > 1;
@@ -77,6 +79,8 @@ internal sealed class DatabaseMenuViewModel : ViewModelBase
         RenameDatabaseName = CurrentDatabase.Name ?? string.Empty;
         RenamePopupVisible = true;
     }
+
+    private static void MenuTrim(object? param) => new Trim().Show();
 
     private void PopupRenameClosed(object? param)
     {

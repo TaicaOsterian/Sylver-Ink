@@ -18,17 +18,11 @@ internal sealed class NetClient : IDisposable
 
     internal bool Active { get; private set; }
     internal bool Connected { get; private set; }
-    internal System.Windows.Shapes.Ellipse? Indicator { get; }
+    internal System.Windows.Shapes.Ellipse? Indicator { get; private set; }
 
     internal NetClient(Database DB)
     {
         this.DB = DB;
-
-        Indicator = new()
-        {
-            StrokeThickness = 1.0,
-            Tag = this.DB
-        };
 
         ClientTask.DoWork += async (sender, _) =>
         {
@@ -56,6 +50,12 @@ internal sealed class NetClient : IDisposable
     {
         if (code.Length != 6)
             return;
+
+        Indicator ??= new()
+        {
+            StrokeThickness = 1.0,
+            Tag = this.DB
+        };
 
         Active = true;
         Address = CodeToAddress(code, out Flags);

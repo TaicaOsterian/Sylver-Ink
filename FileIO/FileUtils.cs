@@ -16,6 +16,7 @@ internal static class FileUtils
     }
 
     internal static string DocumentsFolder { get; private set; } = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Sylver Ink");
+    internal static string ErrorFile { get; } = Path.Join(DocumentsFolder, "error.log");
     internal static int HighestSIDBFormat { get; } = 16;
     internal static char[] InvalidPathChars { get; } = ['/', '\\', ':', '*', '"', '?', '<', '>', '|'];
     internal static Dictionary<Subfolder, string> Subfolders { get; } = new([

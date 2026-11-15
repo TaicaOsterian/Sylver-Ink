@@ -458,6 +458,21 @@ public sealed partial class NoteRecord
     }
 
     /// <summary>
+    /// Erase this record's revision history, while taking its current state as the new initial state.
+    /// </summary>
+    internal void PurgeRevisions()
+    {
+        var text = Reconstruct();
+
+        Revisions.Clear();
+        Created = LastChange;
+        Initial = text;
+        Latest = text;
+        LatestDirty = false;
+        TagsDirty = true;
+    }
+
+    /// <summary>
     /// <para>Reverts this record to a previous state by applying each of its stored revisions while leaving a requested count undone, specified by <paramref name="backsteps"/>.</para>
     /// </summary>
     /// <param name="backsteps">The number of revisions to undo, or 0 for the current state of the record.</param>
