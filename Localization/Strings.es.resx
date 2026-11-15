@@ -112,13 +112,13 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, internalKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, internalKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AboutUs_Line1" xml:space="preserve">
-    <value>Sylver Ink se internala bajo la licencia de software MIT. Puedes modificar y distribuir Sylver Ink como mejor te parezca, siempre que no se reclamen derechos de patente.</value>
+    <value>Sylver Ink se publica bajo la licencia de software MIT. Puedes modificar y distribuir Sylver Ink como mejor te parezca, siempre que no se reclamen derechos de patente.</value>
   </data>
   <data name="AboutUs_Line2" xml:space="preserve">
     <value>Agradecimientos especiales a Miles Farber por sus palabras de aliento y la ayuda que dio con sus ideas.</value>
