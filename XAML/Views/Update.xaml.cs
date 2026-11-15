@@ -3,7 +3,7 @@
 /// <summary>
 /// Interaction logic for Update.xaml
 /// </summary>
-public partial class Update : Window
+public sealed partial class Update : Window
 {
     internal UpdateViewModel ViewModel => (UpdateViewModel)DataContext;
 

@@ -5,7 +5,7 @@ namespace SylverInk.XAML;
 /// <summary>
 /// Interaction logic for ImageView.xaml
 /// </summary>
-public partial class ImageView : Popout
+public sealed partial class ImageView : Popout
 {
     private Point dragStartPoint;
     private Matrix dragMatrix;

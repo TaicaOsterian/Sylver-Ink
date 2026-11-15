@@ -1,6 +1,6 @@
 ﻿namespace SylverInk.XAML;
 
-public partial class Import : Window
+public sealed partial class Import : Window
 {
     internal ImportViewModel ViewModel => (ImportViewModel)DataContext;
 

@@ -5,7 +5,7 @@ namespace SylverInk.XAML;
 /// <summary>
 /// Interaction logic for StickyNote.xaml
 /// </summary>
-public partial class StickyNote : Popout
+public sealed partial class StickyNote : Popout
 {
     internal override StickyNoteViewModel ViewModel => (StickyNoteViewModel)ViewModelProperty;
 

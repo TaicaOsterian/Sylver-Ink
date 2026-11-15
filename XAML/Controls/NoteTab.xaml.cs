@@ -6,7 +6,7 @@ namespace SylverInk.XAML.Controls;
 /// <summary>
 /// Interaction logic for NoteTab.xaml
 /// </summary>
-public partial class NoteTab : UserControl
+public sealed partial class NoteTab : UserControl
 {
     internal NoteTabViewModel ViewModel => (NoteTabViewModel)DataContext;
 

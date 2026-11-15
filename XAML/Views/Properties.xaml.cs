@@ -6,7 +6,7 @@ namespace SylverInk.XAML;
 /// <summary>
 /// Interaction logic for Properties.xaml
 /// </summary>
-public partial class Properties : Window
+public sealed partial class Properties : Window
 {
     internal PropertiesViewModel ViewModel => (PropertiesViewModel)DataContext;
 

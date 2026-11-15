@@ -3,7 +3,7 @@ using System.Windows.Data;
 
 namespace SylverInk.Mvvm.Converters;
 
-public class BooleanToVisibilityConverter : IValueConverter
+public sealed class BooleanToVisibilityConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {

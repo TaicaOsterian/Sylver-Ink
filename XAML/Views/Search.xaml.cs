@@ -5,7 +5,7 @@ namespace SylverInk.XAML;
 /// <summary>
 /// Interaction logic for Search.xaml
 /// </summary>
-public partial class Search : Window
+public sealed partial class Search : Window
 {
     internal SearchViewModel ViewModel => (SearchViewModel)DataContext;
 

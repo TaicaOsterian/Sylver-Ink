@@ -3,7 +3,7 @@
 /// <summary>
 /// Interaction logic for Help.xaml
 /// </summary>
-public partial class About : Window
+public sealed partial class About : Window
 {
     internal AboutViewModel ViewModel => (AboutViewModel)DataContext;
 

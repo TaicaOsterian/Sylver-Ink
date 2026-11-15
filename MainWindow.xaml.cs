@@ -11,7 +11,7 @@ namespace SylverInk;
 /// <summary>
 /// Interaction logic for MainWindow.xaml
 /// </summary>
-public partial class MainWindow : Window
+public sealed partial class MainWindow : Window
 {
     internal MainWindowViewModel ViewModel => (MainWindowViewModel)DataContext;
 

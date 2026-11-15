@@ -5,7 +5,7 @@ namespace SylverInk.XAML.Controls;
 /// <summary>
 /// Interaction logic for DatabaseControl.xaml
 /// </summary>
-public partial class DatabaseControl : UserControl
+public sealed partial class DatabaseControl : UserControl
 {
     internal static readonly DependencyProperty DatabaseProperty =
         DependencyProperty.RegisterAttached(

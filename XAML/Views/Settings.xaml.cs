@@ -6,7 +6,7 @@ namespace SylverInk.XAML;
 /// <summary>
 /// Interaction logic for Settings.xaml
 /// </summary>
-public partial class Settings : Window
+public sealed partial class Settings : Window
 {
     internal SettingsViewModel ViewModel => (SettingsViewModel)DataContext;
 

@@ -6,7 +6,7 @@ namespace SylverInk.XAML.Controls;
 /// <summary>
 /// Interaction logic for ColorPicker.xaml
 /// </summary>
-public partial class ColorPicker : UserControl
+public sealed partial class ColorPicker : UserControl
 {
     internal List<SolidColorBrush> AvailableBrushes { get; } = [];
     internal string? ColorTag { get; set; }
