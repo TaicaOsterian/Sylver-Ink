@@ -40,8 +40,7 @@ internal sealed class SearchViewModel : ViewModelBase, IDisposable
 
     public void Dispose()
     {
-        _cts?.Cancel();
-        _cts?.Dispose();
+        CancelSearch();
         GC.SuppressFinalize(this);
     }
 

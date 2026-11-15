@@ -10,7 +10,7 @@ using System.Windows.Threading;
 namespace SylverInk.Mvvm;
 
 [ValueSerializer(typeof(ImageContainerValueSerializer))]
-internal class ImageContainer : Image, IDisposable
+internal sealed class ImageContainer : Image, IDisposable
 {
     private readonly List<BitmapSource> _compositedFrames = [];
     private long _currentDelay;
@@ -400,20 +400,25 @@ internal class ImageContainer : Image, IDisposable
         }
     }
 
-    protected virtual void Dispose(bool disposing)
+    private void Dispose(bool disposing)
     {
         if (_disposed)
             return;
 
-        _compositedFrames.Clear();
-        _delayTimer.Stop();
-        _rawFrames.Clear();
+        if (disposing)
+        {
+            _delayTimer.Stop();
+            _compositedFrames.Clear();
+            _frameTiming.Clear();
+            _rawFrames.Clear();
+        }
+
         _disposed = true;
     }
 
     public void Dispose()
     {
-        Dispose(disposing: true);
+        Dispose(true);
         GC.SuppressFinalize(this);
     }
 

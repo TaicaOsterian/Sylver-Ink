@@ -8,7 +8,7 @@ using static SylverInk.Net.NetworkUtils;
 
 namespace SylverInk.Net;
 
-internal class NetServer : IDisposable
+internal sealed class NetServer : IDisposable
 {
     private IPAddress? Address;
     private readonly List<TcpClient> Clients = [];
@@ -18,6 +18,7 @@ internal class NetServer : IDisposable
         "https://ifconfig.me/ip",
         "https://icanhazip.com"
     ];
+    private bool _disposed;
     private byte? Flags;
     private readonly BackgroundWorker ServerTask = new() { WorkerSupportsCancellation = true };
     private readonly BackgroundWorker WatchTask = new() { WorkerSupportsCancellation = true };
@@ -130,11 +131,20 @@ internal class NetServer : IDisposable
         UpdateIndicator(Indicator, IndicatorStatus.Inactive);
     }
 
-    protected virtual void Dispose(bool disposing)
+    private void Dispose(bool disposing)
     {
-        DBServer.Dispose();
-        ServerTask.Dispose();
-        WatchTask.Dispose();
+        if (_disposed)
+            return;
+
+        if (disposing)
+        {
+            DBServer.Dispose();
+            ServerTask.Dispose();
+            WatchTask.Dispose();
+            Clients.Clear();
+        }
+
+        _disposed = true;
     }
 
     public void Dispose()

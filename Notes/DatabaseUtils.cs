@@ -161,11 +161,12 @@ internal static class DatabaseUtils
             var dbFile = Path.Join(path, $"{formattedName}.sidb");
             var uuidFile = Path.Join(path, "uuid.dat");
 
-            if (File.Exists(uuidFile))
+            if (File.Exists(uuidFile)
+                && Guid.TryParse(File.ReadAllText(uuidFile), out var uuid)
+                && (newDB || uuid.Equals(db.UUID)))
             {
-                string uuidContent = File.ReadAllText(uuidFile);
-                if (Guid.TryParse(uuidContent, out var uuid) && uuid.Equals(db.UUID))
-                    return index;
+                index++;
+                continue;
             }
 
             if (File.Exists(dbFile))

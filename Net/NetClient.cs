@@ -7,12 +7,13 @@ using static SylverInk.Notes.DatabaseUtils;
 
 namespace SylverInk.Net;
 
-internal class NetClient : IDisposable
+internal sealed class NetClient : IDisposable
 {
     private IPAddress? Address;
     private readonly BackgroundWorker ClientTask = new() { WorkerSupportsCancellation = true };
     private readonly Database? DB;
     private TcpClient DBClient = new();
+    private bool _disposed;
     private byte? Flags;
 
     internal bool Active { get; private set; }
@@ -97,10 +98,18 @@ internal class NetClient : IDisposable
         UpdateIndicator(Indicator, IndicatorStatus.Inactive);
     }
 
-    protected virtual void Dispose(bool disposing)
+    private void Dispose(bool disposing)
     {
-        ClientTask.Dispose();
-        DBClient.Dispose();
+        if (_disposed)
+            return;
+
+        if (disposing)
+        {
+            ClientTask.Dispose();
+            DBClient.Dispose();
+        }
+
+        _disposed = true;
     }
 
     public void Dispose()

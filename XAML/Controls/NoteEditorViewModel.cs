@@ -282,16 +282,17 @@ internal class NoteEditorViewModel : PopoutViewModel, IDisposable
         if (_disposed)
             return;
 
-        if (!disposing)
-            return;
+        if (disposing)
+        {
+            _cts.Dispose();
+        }
 
-        _cts.Dispose();
         _disposed = true;
     }
 
     public void Dispose()
     {
-        Dispose(disposing: true);
+        Dispose(true);
         GC.SuppressFinalize(this);
     }
 
