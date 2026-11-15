@@ -5,9 +5,9 @@
 /// </summary>
 public partial class About : Window
 {
-    public AboutViewModel ViewModel => (AboutViewModel)DataContext;
+    internal AboutViewModel ViewModel => (AboutViewModel)DataContext;
 
-    public About()
+    internal About()
     {
         DataContext = new AboutViewModel();
         ViewModel.RequestClose += (_, _) => Close();

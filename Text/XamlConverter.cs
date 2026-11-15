@@ -4,7 +4,7 @@ using System.Windows.Markup;
 
 namespace SylverInk.Text;
 
-public partial class XamlConverter : ITextConverter
+internal sealed partial class XamlConverter : ITextConverter
 {
     private const string FlowDocumentClosing = "</FlowDocument>";
     private const string FlowDocumentOpening = @"<FlowDocument xmlns=""http://schemas.microsoft.com/winfx/2006/xaml/presentation"">";

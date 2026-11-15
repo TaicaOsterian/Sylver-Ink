@@ -9,69 +9,45 @@ namespace SylverInk.Notes;
 /// <summary>
 /// Static functions assisting in general-purpose access to the roster of databases.
 /// </summary>
-public static class DatabaseUtils
+internal static class DatabaseUtils
 {
     private static Database? _currentDatabase;
 
-    public static Database CurrentDatabase { get => _currentDatabase ??= new(); set => _currentDatabase = value; }
-    public static bool DatabaseChanged { get; set; }
-    public static List<string> DatabaseFiles { get => [.. Databases.Select(db => db.DBFile)]; }
-    public static List<Database> Databases { get; } = [];
-    public static string DefaultDatabase { get; } = $"{Strings.Word_New}";
-    public static List<TabItem> OpenTabs { get; } = [];
-    public static string ShellDB { get; set; } = string.Empty;
+    internal static Database CurrentDatabase { get => _currentDatabase ??= new(); set => _currentDatabase = value; }
+    internal static bool DatabaseChanged { get; set; }
+    internal static List<string> DatabaseFiles { get => [.. Databases.Select(db => db.DBFile)]; }
+    internal static List<Database> Databases { get; } = [];
+    internal static string DefaultDatabase { get; } = $"{Strings.Word_New}";
+    internal static List<TabItem> OpenTabs { get; } = [];
+    internal static string ShellDB { get; set; } = string.Empty;
 
-    public static void AddDatabase(Database db)
+    internal static void AddDatabase() => AddDatabase(new(), true);
+
+    internal static void AddDatabase(Database db, bool newDB = false)
     {
-        static object PanelLabel(TabItem item) => ((Label)((StackPanel)item.Header).Children[0]).Content;
-
-        if (Application.Current.MainWindow.FindName("DatabasesPanel") is not TabControl control)
-            return;
-
-        if (string.IsNullOrWhiteSpace(db.Name))
-            db.Name = DefaultDatabase;
-
-        var tabs = control.Items.Cast<TabItem>();
-
-        if (tabs.Any(item => PanelLabel(item).Equals(db.Name)))
-        {
-            var index = 1;
-            Match match = IndexDigits().Match(db.Name);
-            if (match.Success)
-                index = int.Parse(match.Groups[1].Value, NumberFormatInfo.InvariantInfo);
-            while (tabs.Any(item => PanelLabel(item).Equals($"{db.Name} ({index})")))
-                index++;
-            db.Name = $"{db.Name} ({index})";
-        }
+        var panel = GetDatabasesPanel()!;
+        db.FormatName(newDB);
 
         if (string.IsNullOrWhiteSpace(db.DBFile))
             db.DBFile = GetDatabasePath(db);
 
         var content = new DatabaseControl();
-        var header = db.GetHeader();
-
-        // As a courtesy to the user, if the active database's header is clicked, bring them to the Plus tab for that database.
-        header.MouseDown += (_, _) =>
-        {
-            if (CurrentDatabase.Equals(db))
-                content.Controller.SelectedItem = content.PlusTab;
-        };
+        DatabaseControl.SetDatabase(content, db);
 
         TabItem item = new()
         {
             Content = content,
-            Header = header,
+            Header = db.GetHeader(),
             Margin = new(0, 2, 0, 0),
-            Tag = db,
         };
 
-        item.MouseRightButtonDown += (_, _) => control.SelectedItem = item;
+        item.MouseRightButtonDown += (_, _) => panel.SelectedItem = item;
 
         Databases.Add(db);
         db.Sort();
 
-        control.Items.Add(item);
-        control.SelectedItem = item;
+        panel.Items.Add(item);
+        panel.SelectedItem = item;
 
         RefreshRecentNotes();
 
@@ -83,7 +59,7 @@ public static class DatabaseUtils
         CommonUtils.Settings.RecentDatabases.Remove(recentItem);
     }
 
-    public static NoteTab AddRecordTab(NoteRecord record)
+    internal static NoteTab AddRecordTab(NoteRecord record)
     {
         NoteTab tab = new();
         tab.ViewModel.Record = record;
@@ -95,20 +71,20 @@ public static class DatabaseUtils
             Margin = new(0, 2, 0, 0)
         };
 
-        var ChildPanel = GetChildPanel("DatabasesPanel");
+        var ChildPanel = Concurrent(GetCurrentTabControl)!;
         ChildPanel.SelectedIndex = ChildPanel.Items.Add(item);
         OpenTabs.Add(item);
 
         return tab;
     }
 
-    public static async Task AutosaveDatabases()
+    internal static async Task AutosaveDatabases()
     {
         foreach (Database db in Databases)
             await db.Autosave();
     }
 
-    public static void CreateNewNote()
+    internal static void CreateNewNote()
     {
         var firstRecord = CurrentDatabase.GetRecord(0);
         var lastRecord = CurrentDatabase.GetRecord(CurrentDatabase.RecordCount - 1);
@@ -134,14 +110,97 @@ public static class DatabaseUtils
         OpenQuery(newRecord);
     }
 
-    public static TabControl GetChildPanel(string basePanel) => Concurrent(() =>
-    {
-        var db = (TabControl)Application.Current.MainWindow.FindName(basePanel);
-        var dbItem = (TabItem)db.SelectedItem;
-        return (TabControl)((DatabaseControl)dbItem.Content).Content;
-    });
+    /// <summary>
+    /// Obtains a reference to the content of a <seealso cref="DatabaseControl"/>; that is, a <seealso cref="TabControl"/> containing the PlusTab and the open <seealso cref="NoteTab"/>s in an open database.
+    /// </summary>
+    internal static TabControl? GetCurrentTabControl() => (TabControl?)GetCurrentDatabaseControl()?.Content;
 
-    public static StickyNote? OpenQuery(NoteRecord record, string? scrollTo = null)
+    internal static DatabaseControl? GetCurrentDatabaseControl()
+    {
+        if (GetDatabasesPanel() is not TabControl control)
+            return null;
+
+        var dbItem = (TabItem)control.SelectedItem;
+        return (DatabaseControl)dbItem.Content;
+    }
+
+    internal static TabControl? GetDatabasesPanel() => (TabControl)Application.Current.MainWindow.FindName("DatabasesPanel");
+
+    internal static int GetFirstAvailableIndex(Database db, bool newDB = false)
+    {
+        var name = db.Name ?? DefaultDatabase;
+        var index = 0;
+        Match match = IndexDigits().Match(name);
+        if (match.Success)
+        {
+            index = int.Parse(match.Groups[1].Value, NumberFormatInfo.InvariantInfo);
+            name = IndexDigits().Replace(name, string.Empty).TrimEnd();
+            db.Name = name;
+        }
+
+        var success = false;
+
+        do
+        {
+            var formattedName = index == 0 ? name : $"{name} ({index})";
+            bool nameExists = false;
+
+            foreach (var otherDB in Databases)
+            {
+                if (formattedName.Equals(otherDB.Name, StringComparison.OrdinalIgnoreCase))
+                    nameExists = true;
+            }
+
+            if (nameExists)
+            {
+                index++;
+                continue;
+            }
+
+            var path = Path.Join(Subfolders[Subfolder.Databases], formattedName);
+            var dbFile = Path.Join(path, $"{formattedName}.sidb");
+            var uuidFile = Path.Join(path, "uuid.dat");
+
+            if (File.Exists(uuidFile))
+            {
+                string uuidContent = File.ReadAllText(uuidFile);
+                if (Guid.TryParse(uuidContent, out var uuid) && uuid.Equals(db.UUID))
+                    return index;
+            }
+
+            if (File.Exists(dbFile))
+            {
+                if (newDB)
+                {
+                    index++;
+                    continue;
+                }
+
+                using Database tmpDB = new();
+                try
+                {
+                    tmpDB.Load(dbFile);
+                    if (!tmpDB.Equals(db))
+                    {
+                        index++;
+                        continue;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    App.LogException(ex);
+                    index++;
+                    continue;
+                }
+            }
+
+            success = true;
+        } while (!success);
+
+        return index;
+    }
+
+    internal static StickyNote? OpenQuery(NoteRecord record, string? scrollTo = null)
     {
         foreach (StickyNote result in OpenQueries)
         {
@@ -167,7 +226,7 @@ public static class DatabaseUtils
         return resultWindow;
     }
 
-    public static void RemoveDatabase(Database db)
+    internal static void RemoveDatabase(Database db)
     {
         if (Application.Current.MainWindow.FindName("DatabasesPanel") is not TabControl control)
             return;
@@ -175,11 +234,14 @@ public static class DatabaseUtils
         if (control.SelectedItem is not TabItem item)
             return;
 
-        if (item.Tag is not Database tabDB)
+        if (item.Content is not DatabaseControl dbControl)
+            return;
+
+        if (DatabaseControl.GetDatabase(dbControl) is not Database tabDB)
             return;
 
         if (control.Items.Count < 2)
-            AddDatabase(new());
+            AddDatabase();
 
         if (tabDB.Equals(db))
         {
@@ -211,7 +273,7 @@ public static class DatabaseUtils
             CommonUtils.Settings.RecentDatabases.Insert(0, recentItem);
     }
 
-    public static void RemoveRecordTab(NoteRecord? record)
+    internal static void RemoveRecordTab(NoteRecord? record)
     {
         for (int i = OpenTabs.Count - 1; i > -1; i--)
         {
@@ -227,7 +289,7 @@ public static class DatabaseUtils
             tab.ViewModel.Deconstruct();
         }
 
-        var panel = GetChildPanel("DatabasesPanel");
+        var panel = Concurrent(GetCurrentTabControl)!;
         foreach (TabItem item in panel.Items)
         {
             if (item.Content is not NoteTab tab)
@@ -243,20 +305,23 @@ public static class DatabaseUtils
         RefreshRecentNotes();
     }
 
-    public static async Task SaveDatabases()
+    internal static async Task SaveDatabases()
     {
         foreach (Database db in Databases)
             await Task.Run(db.Save);
     }
 
-    public static void SwitchDatabase(Database db)
+    internal static void SwitchDatabase(Database db)
     {
         if (Application.Current.MainWindow.FindName("DatabasesPanel") is not TabControl control)
             return;
 
         foreach (TabItem item in control.Items)
         {
-            if (item.Tag is not Database tabDB)
+            if (item.Content is not DatabaseControl dbControl)
+                continue;
+
+            if (DatabaseControl.GetDatabase(dbControl) is not Database tabDB)
                 continue;
 
             if (!tabDB.Equals(db))
@@ -267,7 +332,7 @@ public static class DatabaseUtils
         }
     }
 
-    public static void SwitchDatabase(string dbID)
+    internal static void SwitchDatabase(string dbID)
     {
         var div = dbID.Split(':', 2);
 
@@ -285,7 +350,7 @@ public static class DatabaseUtils
         }
     }
 
-    public static void UpdateRibbonTabs()
+    internal static void UpdateRibbonTabs()
     {
         foreach (var item in OpenTabs)
         {

@@ -3,7 +3,7 @@
 /// <summary>
 /// The LZW state engine handles compressing and decompressing data into and out of Lempel-Ziv-Welch (LZW) formatted block text.
 /// </summary>
-public class LZWState
+internal sealed class LZWState
 {
     private readonly List<bool> BitStream = [];
     private readonly List<byte> ByteStream = [];
@@ -20,14 +20,14 @@ public class LZWState
     private string W = string.Empty;
     private bool Writing;
 
-    public int Format { get; private set; }
+    internal int Format { get; private set; }
 
     private static byte BitToByte(bool b) => b ? (byte)1 : (byte)0;
 
     /// <summary>
     /// Resets the LZW state engine.
     /// </summary>
-    public void Close()
+    internal void Close()
     {
         if (Open && Writing)
         {
@@ -49,7 +49,7 @@ public class LZWState
     /// <summary>
     /// Compresses a range of data.
     /// </summary>
-    public void Compress(byte[] data)
+    internal void Compress(byte[] data)
     {
         for (int i = 0; i < data.Length; i++)
         {
@@ -80,7 +80,7 @@ public class LZWState
     /// Consumes LZW-compressed data according to a requested number of uncompressed output bytes.
     /// </summary>
     /// <param name="byteCount">The desired number of uncompressed bytes to return.</param>
-    public byte[] Decompress(int byteCount = 1)
+    internal byte[] Decompress(int byteCount = 1)
     {
         if (string.IsNullOrEmpty(W))
             ReadFirstCode();
@@ -127,7 +127,7 @@ public class LZWState
     /// Initializes the LZW state engine.
     /// </summary>
     /// <param name="writing"><see langword="true"/> if we are compressing data and outputting it to the stream; <see langword="false"/> if we are reading and consuming LZW-compressed data.</param>
-    public void Init(int format, Stream fileStream, bool writing = false)
+    internal void Init(int format, Stream fileStream, bool writing = false)
     {
         FileStream = fileStream;
         Format = format;

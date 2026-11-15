@@ -5,7 +5,7 @@ using static SylverInk.Notes.DatabaseUtils;
 
 namespace SylverInk.XAML.ViewModels;
 
-public class SearchViewModel : ViewModelBase, IDisposable
+internal sealed class SearchViewModel : ViewModelBase, IDisposable
 {
     private CancellationTokenSource? _cts;
     private static string _queryString = string.Empty;
@@ -23,15 +23,15 @@ public class SearchViewModel : ViewModelBase, IDisposable
     public ICommand CloseCommand { get; }
     public ICommand QueryCommand { get; }
 
-    public event EventHandler? RequestClose;
+    internal event EventHandler? RequestClose;
 
-    public SearchViewModel()
+    internal SearchViewModel()
     {
         CloseCommand = new RelayCommand(_ => RequestClose?.Invoke(this, EventArgs.Empty));
         QueryCommand = new RelayCommand(Query);
     }
 
-    public void CancelSearch()
+    internal void CancelSearch()
     {
         _cts?.Cancel();
         _cts?.Dispose();
@@ -78,10 +78,7 @@ public class SearchViewModel : ViewModelBase, IDisposable
         }
     }
 
-    public async Task SearchCurrentDatabase(CancellationToken token)
-    {
-        await SearchDatabase(CurrentDatabase, token);
-    }
+    internal async Task SearchCurrentDatabase(CancellationToken token) => await SearchDatabase(CurrentDatabase, token);
 
     private async Task SearchDatabase(Database db, CancellationToken token)
     {

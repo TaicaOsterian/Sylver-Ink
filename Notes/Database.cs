@@ -1,5 +1,6 @@
 ﻿using SylverInk.FileIO;
 using SylverInk.Interop;
+using SylverInk.XAML.Controls;
 using System.Globalization;
 using System.Text;
 using System.Threading;
@@ -8,25 +9,25 @@ using static SylverInk.Notes.DatabaseUtils;
 
 namespace SylverInk.Notes;
 
-public class Database : IDisposable
+internal sealed class Database : IDisposable
 {
     private NoteController Controller;
     private StackPanel? HeaderPanel;
 
-    public bool Changed { get => Controller.Changed; set => Controller.Changed = value; }
-    public NetClient Client { get; }
-    public long? Created { get; private set; }
-    public string DBFile { get; set; } = string.Empty;
-    public int Format { get => Controller.Format; set => Controller.Format = value; }
-    public bool Loaded { get; private set; }
-    public string? Name { get => Controller.Name; set => Controller.Name = value; }
+    internal bool Changed { get => Controller.Changed; set => Controller.Changed = value; }
+    internal NetClient Client { get; }
+    internal long? Created { get; private set; }
+    internal string DBFile { get; set; } = string.Empty;
+    internal int Format { get => Controller.Format; set => Controller.Format = value; }
+    internal bool Loaded { get; private set; }
+    internal string? Name { get => Controller.Name; set => Controller.Name = value; }
     private LinkedStack<NoteRecord> PreviousOpenNotes { get; set; } = [];
-    public int RecordCount => Controller.RecordCount;
-    public NetServer Server { get; }
-    public Guid UUID { get => Controller.UUID; set => Controller.UUID = value; }
-    public Dictionary<string, double> WordPercentages => Controller.WordPercentages;
+    internal int RecordCount => Controller.RecordCount;
+    internal NetServer Server { get; }
+    internal Guid UUID { get => Controller.UUID; set => Controller.UUID = value; }
+    internal Dictionary<string, double> WordPercentages => Controller.WordPercentages;
 
-    public Database()
+    internal Database()
     {
         Client = new(this);
         Controller = new(this);
@@ -34,7 +35,7 @@ public class Database : IDisposable
         Server = new(this);
     }
 
-    public Database(string DBFile)
+    internal Database(string DBFile)
     {
         Client = new(this);
         Controller = new(this);
@@ -43,7 +44,7 @@ public class Database : IDisposable
         Server = new(this);
     }
 
-    public async Task Autosave(CancellationTokenSource? cts = null)
+    internal async Task Autosave(CancellationTokenSource? cts = null)
     {
         if (!Changed)
             return;
@@ -67,7 +68,7 @@ public class Database : IDisposable
         Controller.Autosave(lockFile, cts);
     }
 
-    public static async Task Create(string dbFile)
+    internal static async Task Create(string dbFile)
     {
         Database? db = null;
         try
@@ -86,7 +87,7 @@ public class Database : IDisposable
         }
     }
 
-    public Guid CreateRecord(string entry, bool local = true)
+    internal Guid CreateRecord(string entry, bool local = true)
     {
         Guid uuid = Controller.CreateRecord(entry);
 
@@ -106,7 +107,7 @@ public class Database : IDisposable
         return uuid;
     }
 
-    public void CreateRecord(string entry, Guid uuid, bool local = true)
+    internal void CreateRecord(string entry, Guid uuid, bool local = true)
     {
         Controller.CreateRecord(entry, uuid);
 
@@ -124,7 +125,7 @@ public class Database : IDisposable
         RefreshRecentNotes();
     }
 
-    public void CreateRevision(Guid uuid, string newVersion, bool local = true)
+    internal void CreateRevision(Guid uuid, string newVersion, bool local = true)
     {
         Controller.CreateRevision(uuid, newVersion);
 
@@ -144,9 +145,9 @@ public class Database : IDisposable
         Transmit(NetworkUtils.MessageType.TextInsert, [.. outBuffer]);
     }
 
-    public void CreateRevision(NoteRecord record, string newVersion, bool local = true) => CreateRevision(record.UUID, newVersion, local);
+    internal void CreateRevision(NoteRecord record, string newVersion, bool local = true) => CreateRevision(record.UUID, newVersion, local);
 
-    public void DeleteRecord(Guid uuid, bool local = true)
+    internal void DeleteRecord(Guid uuid, bool local = true)
     {
         Controller.DeleteRecord(uuid);
 
@@ -154,7 +155,7 @@ public class Database : IDisposable
             Transmit(NetworkUtils.MessageType.RecordRemove, uuid.ToString());
     }
 
-    public void DeleteRecord(NoteRecord record, bool local = true)
+    internal void DeleteRecord(NoteRecord record, bool local = true)
     {
         Controller.DeleteRecord(record.UUID);
 
@@ -195,7 +196,7 @@ public class Database : IDisposable
         return false;
     }
 
-    public void Erase()
+    internal void Erase()
     {
         if (Client.Connected || Server.Serving)
             return;
@@ -203,7 +204,17 @@ public class Database : IDisposable
         Controller.EraseDatabase();
     }
 
-    public string GetCreated()
+    internal void FormatName(bool newDB = false)
+    {
+        if (string.IsNullOrWhiteSpace(Name))
+            Name = DefaultDatabase;
+
+        var index = GetFirstAvailableIndex(this, newDB);
+        if (index != 0)
+            Name = $"{Name} ({index})";
+    }
+
+    internal string GetCreated()
     {
         if (Created is not null)
             return DateTime.FromBinary((long)Created).ToLocalTime().ToString(DateFormat, CultureInfo.InvariantCulture);
@@ -223,7 +234,7 @@ public class Database : IDisposable
 
     public override int GetHashCode() => Controller.GetHashCode();
 
-    public StackPanel GetHeader()
+    internal StackPanel GetHeader()
     {
         string? headerContent;
         Label label;
@@ -261,26 +272,39 @@ public class Database : IDisposable
             ToolTip = Name,
         };
 
+        // As a courtesy to the user, if the active database's header is clicked, bring them to the Plus tab for that database.
+        HeaderPanel.MouseDown += (_, _) =>
+        {
+            if (!CurrentDatabase.Equals(this))
+                return;
+
+            if (GetCurrentDatabaseControl() is not DatabaseControl control)
+                return;
+
+            control.Controller.SelectedItem = control.PlusTab;
+        };
+
         HeaderPanel.Children.Add(label);
         HeaderPanel.Children.Add((Client.Active ? Client.Indicator : Server.Indicator) ?? new System.Windows.Shapes.Ellipse());
 
         return HeaderPanel;
     }
-    public int GetPreviousNoteCount() => PreviousOpenNotes.Count();
 
-    public NoteRecord? GetRecord(int index) => Controller.GetRecord(index);
+    internal int GetPreviousNoteCount() => PreviousOpenNotes.Count();
 
-    public NoteRecord? GetRecord(Guid uuid) => Controller.GetRecord(uuid);
+    internal NoteRecord? GetRecord(int index) => Controller.GetRecord(index);
 
-    public bool HasRecord(Guid uuid) => Controller.HasRecord(uuid);
+    internal NoteRecord? GetRecord(Guid uuid) => Controller.GetRecord(uuid);
 
-    public void Initialize(bool newDatabase = true)
+    internal bool HasRecord(Guid uuid) => Controller.HasRecord(uuid);
+
+    internal void Initialize(bool newDatabase = true)
     {
         Controller.InitializeRecords(newDatabase);
         RefreshRecentNotes();
     }
 
-    public bool Load()
+    internal bool Load()
     {
         if (string.IsNullOrWhiteSpace(DBFile))
             return false;
@@ -290,7 +314,7 @@ public class Database : IDisposable
         return true;
     }
 
-    public void Load(string dbFile)
+    internal void Load(string dbFile)
     {
         Controller = new(DBFile = dbFile, this);
 
@@ -326,7 +350,7 @@ public class Database : IDisposable
         RefreshRecentNotes();
     }
 
-    public void Lock(Guid uuid, bool local = false)
+    internal void Lock(Guid uuid, bool local = false)
     {
         var record = Controller.GetRecord(uuid);
 
@@ -339,7 +363,7 @@ public class Database : IDisposable
         record?.Lock();
     }
 
-    public void MakeBackup(bool auto = false)
+    internal void MakeBackup(bool auto = false)
     {
         var DBPath = GetDatabasePath(this);
         var BKPath = GetBackupPath(this);
@@ -371,9 +395,9 @@ public class Database : IDisposable
             File.Copy($"{DBPath}", $"{BKPath}_1.sibk", true);
     }
 
-    public bool Open(string path, bool writing = false) => Controller.Open(path, writing);
+    internal bool Open(string path, bool writing = false) => Controller.Open(path, writing);
 
-    public void PopPreviousNote()
+    internal void PopPreviousNote()
     {
         if (!PreviousOpenNotes.Any())
             return;
@@ -381,89 +405,69 @@ public class Database : IDisposable
         OpenQuery(PreviousOpenNotes.Pop());
     }
 
-    public void PushPreviousNote(NoteRecord record) => PreviousOpenNotes.Push(record);
+    internal void PushPreviousNote(NoteRecord record) => PreviousOpenNotes.Push(record);
 
-    public void RemovePreviousNote(int index) => PreviousOpenNotes.RemoveAt(index);
+    internal void RemovePreviousNote(int index) => PreviousOpenNotes.RemoveAt(index);
 
-    public void RemovePreviousNote(NoteRecord record) => PreviousOpenNotes.Remove(record);
+    internal void RemovePreviousNote(NoteRecord record) => PreviousOpenNotes.Remove(record);
 
-    public void Rename(string newName)
+    internal void Rename(string newName)
     {
-        var overwrite = false;
         var oldFile = DBFile;
         var oldName = Name;
-        var oldPath = Path.GetDirectoryName(oldFile);
 
-        Changed = true;
         Name = newName;
-
-        DBFile = GetDatabasePath(this);
-        var newFile = DBFile;
-        var newPath = Path.GetDirectoryName(newFile);
-
         GetHeader();
 
         if (!File.Exists(oldFile))
             return;
 
-        if (!Directory.Exists(oldPath))
-            return;
+        var directorySearch = Directory.GetDirectories(
+            Subfolders[Subfolder.Databases],
+            "*",
+            new EnumerationOptions()
+            {
+                IgnoreInaccessible = true,
+                RecurseSubdirectories = true,
+                MaxRecursionDepth = 3
+            });
 
-        var directorySearch = Directory.GetDirectories(Subfolders[Subfolder.Databases], "*", new EnumerationOptions() { IgnoreInaccessible = true, RecurseSubdirectories = true, MaxRecursionDepth = 3 });
-        if (oldPath is not null && newPath is not null && directorySearch.Contains(oldPath))
+        var oldPath = Path.GetDirectoryName(oldFile) ?? Subfolders[Subfolder.Databases];
+        var isStandardDirectory = directorySearch.Contains(oldPath) && !Subfolders[Subfolder.Databases].Equals(oldPath, StringComparison.OrdinalIgnoreCase);
+
+        var newFile = isStandardDirectory
+            ? Path.Join(Subfolders[Subfolder.Databases], Name, $"{Name}.sidb")
+            : Path.Combine(oldPath, $"{Name}.sidb");
+        var newPath = Path.GetDirectoryName(newFile);
+
+        if (File.Exists(newFile) && MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheRenameDatabaseAlreadyExists, newPath), Strings.Title_Warning, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
         {
-            if (Directory.Exists(newPath))
-            {
-                if (MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheRenameDatabaseAlreadyExists, newPath), Strings.Title_Warning, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
-                {
-                    DBFile = oldFile;
-                    Name = oldName;
-                    GetHeader();
-                    return;
-                }
-                Directory.Delete(newPath, true);
-                overwrite = true;
-            }
-            else
-            {
-                Directory.Move(oldPath, newPath);
-            }
+            Name = oldName;
+            GetHeader();
+            return;
         }
 
-        var adjustedPath = Path.Join(Path.GetDirectoryName(newFile), Path.GetFileName(oldFile));
+        DBFile = newFile;
 
-        if (!File.Exists(adjustedPath))
-            return;
+        if (isStandardDirectory)
+            Directory.Delete(oldPath, true);
+        else
+            FileUtils.Erase(oldFile);
 
-        if (File.Exists(newFile) && !overwrite)
-        {
-            if (MessageBox.Show(string.Format(CultureInfo.CurrentCulture, CacheRenameDatabaseAlreadyExists, newFile), Strings.Title_Warning, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
-            {
-                DBFile = oldFile;
-                Name = oldName;
-                GetHeader();
-                return;
-            }
-            overwrite = true;
-        }
-
-        if (overwrite)
-            FileUtils.Erase(newFile);
-
-        File.Move(adjustedPath, newFile);
+        Save();
     }
 
-    public void Revert(DateTime targetDate) => Controller.Revert(targetDate);
+    internal void Revert(DateTime targetDate) => Controller.Revert(targetDate);
 
     /// <summary>
     /// Write the database object to a file using its systemic filename.
     /// </summary>
-    public void Save() => Save(DBFile);
+    internal void Save() => Save(DBFile);
 
     /// <summary>
     /// Write the database object to a file using a provided filename.
     /// </summary>
-    public void Save(string? targetFile = null)
+    internal void Save(string? targetFile = null)
     {
         if (!Changed)
             return;
@@ -500,9 +504,9 @@ public class Database : IDisposable
             File.WriteAllText(Path.Join(targetDir, "uuid.dat"), UUID.ToString());
     }
 
-    public byte[]? SerializeRecords(bool inMemory = false) => Controller.SerializeRecords(inMemory);
+    internal byte[]? SerializeRecords(bool inMemory = false) => Controller.SerializeRecords(inMemory);
 
-    public List<NoteRecord> Sort(SortType type = SortType.ByIndex)
+    internal List<NoteRecord> Sort(SortType type = SortType.ByIndex)
     {
         if (type == SortType.ByIndex)
             Controller.PropagateIndices();
@@ -510,7 +514,7 @@ public class Database : IDisposable
         return Controller.Sort(type);
     }
 
-    public void Transmit(NetworkUtils.MessageType type, byte[]? data)
+    internal void Transmit(NetworkUtils.MessageType type, byte[]? data)
     {
         if (data is null)
             return;
@@ -522,7 +526,7 @@ public class Database : IDisposable
             Server.Broadcast(type, data);
     }
 
-    public void Transmit(NetworkUtils.MessageType type, string data)
+    internal void Transmit(NetworkUtils.MessageType type, string data)
     {
         var buffer = Encoding.UTF8.GetBytes(data);
 
@@ -533,7 +537,7 @@ public class Database : IDisposable
             Server.Broadcast(type, [.. buffer.Length.ToByteArray(), .. buffer]);
     }
 
-    public void Unlock(Guid uuid, bool local = false)
+    internal void Unlock(Guid uuid, bool local = false)
     {
         if (local)
         {
@@ -544,5 +548,5 @@ public class Database : IDisposable
         Controller.GetRecord(uuid)?.Unlock();
     }
 
-    public void UpdateWordPercentages() => Controller.UpdateWordPercentages();
+    internal void UpdateWordPercentages() => Controller.UpdateWordPercentages();
 }

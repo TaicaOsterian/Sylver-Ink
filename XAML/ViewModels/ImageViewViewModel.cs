@@ -5,7 +5,7 @@ using System.Globalization;
 
 namespace SylverInk.XAML.ViewModels;
 
-public class ImageViewViewModel : PopoutViewModel
+internal sealed class ImageViewViewModel : PopoutViewModel
 {
     private ImageContainer? _source;
     private double _zoomLevel = 1.0;
@@ -34,7 +34,7 @@ public class ImageViewViewModel : PopoutViewModel
 
     public ICommand ExportCommand { get; }
 
-    public ImageViewViewModel()
+    internal ImageViewViewModel()
     {
         ExportCommand = new RelayCommand(Export);
     }
@@ -64,12 +64,14 @@ public class ImageViewViewModel : PopoutViewModel
             using FileStream stream = new(path, FileMode.Create, FileAccess.Write, FileShare.None);
             stream.Write(Source?.ToByteArray(ImageMimeType.GetImageMimeType(path)));
             stream.Flush();
-            ShowTooltip(string.Format(CultureInfo.CurrentCulture, CacheImageSuccessfullyExported.Format, path));
         }
         catch (Exception ex)
         {
-            ShowTooltip(Strings.Tooltip_ImageFailedToExport);
+            ShowTooltip(Strings.Tooltip_ImageFailedToExport!);
             App.LogException(ex);
+            return;
         }
+
+        ShowTooltip(string.Format(CultureInfo.CurrentCulture, CacheImageSuccessfullyExported.Format, path));
     }
 }

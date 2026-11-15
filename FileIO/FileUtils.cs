@@ -7,27 +7,27 @@ namespace SylverInk.FileIO;
 /// <summary>
 /// Static functions serving specific needs in regards to file access.
 /// </summary>
-public static class FileUtils
+internal static class FileUtils
 {
-    public enum Subfolder
+    internal enum Subfolder
     {
         Backups,
         Databases,
     }
 
-    public static string DocumentsFolder { get; private set; } = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Sylver Ink");
-    public static int HighestSIDBFormat { get; } = 16;
-    public static char[] InvalidPathChars { get; } = ['/', '\\', ':', '*', '"', '?', '<', '>', '|'];
-    public static Dictionary<Subfolder, string> Subfolders { get; } = new([
-        new(Subfolder.Backups, Path.Join(LocalAppDataFolder, Strings.Subfolder_Backups)),
-        new(Subfolder.Databases, Path.Join(DocumentsFolder, Strings.Subfolder_Databases)),
+    internal static string DocumentsFolder { get; private set; } = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Sylver Ink");
+    internal static int HighestSIDBFormat { get; } = 16;
+    internal static char[] InvalidPathChars { get; } = ['/', '\\', ':', '*', '"', '?', '<', '>', '|'];
+    internal static Dictionary<Subfolder, string> Subfolders { get; } = new([
+        new(Subfolder.Backups, Path.Join(LocalAppDataFolder, Strings.Subfolder_Backups!)),
+        new(Subfolder.Databases, Path.Join(DocumentsFolder, Strings.Subfolder_Databases!)),
         ]);
-    public static string LocalAppDataFolder { get; private set; } = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Sylver Ink");
-    public static string LocalizationFile { get; } = Path.Join(DocumentsFolder, "loc.sis"); // A single source of truth for other file and folder targets.
-    public static string SessionFile { get; } = Path.Join(LocalAppDataFolder, "session.lock"); // On a soft reboot (subscribed in App.xaml.cs), we touch this file. This indicates to the next session that it should silently reload an autosave delta without prompting the user.
-    public static string SettingsFile { get; private set; } = Path.Join(DocumentsFolder, $"{Strings.Word_Settings.ToLower(CultureInfo.CurrentCulture)}.sis");
+    internal static string LocalAppDataFolder { get; private set; } = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Sylver Ink");
+    internal static string LocalizationFile { get; } = Path.Join(DocumentsFolder, "loc.sis"); // A single source of truth for other file and folder targets.
+    internal static string SessionFile { get; } = Path.Join(LocalAppDataFolder, "session.lock"); // On a soft reboot (subscribed in App.xaml.cs), we touch this file. This indicates to the next session that it should silently reload an autosave delta without prompting the user.
+    internal static string SettingsFile { get; private set; } = Path.Join(DocumentsFolder, $"{Strings.Word_Settings!.ToLower(CultureInfo.CurrentCulture)}.sis");
 
-    public static string DialogFileSelect(bool outgoing = false, int filterIndex = 3, string? defaultName = null)
+    internal static string DialogFileSelect(bool outgoing = false, int filterIndex = 3, string? defaultName = null)
     {
         FileDialog dialog = outgoing ? new SaveFileDialog()
         {
@@ -50,7 +50,7 @@ public static class FileUtils
     /// Deletes a file if it exists.
     /// </summary>
     /// <returns><see langword="true"/> if the file existed and was deleted; else, <see langword="false"/>.</returns>
-    public static bool Erase(string filename)
+    internal static bool Erase(string filename)
     {
         try
         {
@@ -63,63 +63,25 @@ public static class FileUtils
         catch (Exception e)
         {
             App.LogException(e);
-            ShowTooltip(Strings.FailedDelete);
+            ShowTooltip(Strings.FailedDelete!);
             return false;
         }
     }
 
-    public static string GetBackupPath(Database db) => Path.Join(Subfolders[Subfolder.Backups], db.Name, db.Name);
+    internal static string GetBackupPath(Database db) => Path.Join(Subfolders[Subfolder.Backups], db.Name, db.Name);
 
     /// <summary>
     /// Get the default file path for a Sylver Ink database, based on its name and the working directory.
     /// </summary>
-    public static string GetDatabasePath(Database db)
+    internal static string GetDatabasePath(Database db)
     {
-        var index = 0;
-        Match match;
-        if ((match = IndexDigits().Match(db.Name ?? string.Empty)).Success)
-            index = int.Parse(match.Groups[1].Value, NumberFormatInfo.InvariantInfo);
-
-        var path = Path.Join(Subfolders[Subfolder.Databases], db.Name);
-        var dbFile = Path.Join(path, $"{db.Name}.sidb");
-        var uuidFile = Path.Join(path, "uuid.dat");
-
-        while (File.Exists(dbFile))
-        {
-            if (File.Exists(uuidFile))
-            {
-                string uuidData = File.ReadAllText(uuidFile);
-                if (Guid.TryParse(uuidData, out var uuid) && uuid.Equals(db.UUID))
-                    return dbFile;
-            }
-
-            using Database tmpDB = new();
-            try
-            {
-                tmpDB.Load(dbFile);
-                if (tmpDB.UUID.Equals(db.UUID))
-                    return dbFile;
-                if (tmpDB.Format < 7) // Database object UUID was added in SIDB v7
-                    return dbFile;
-            }
-            catch (Exception e)
-            {
-                App.LogException(e);
-                return string.Empty;
-            }
-
-            index++;
-            db.Name = $"{db.Name} ({index})";
-            dbFile = Path.Join(path, $"{db.Name}.sidb");
-            uuidFile = Path.Join(path, "uuid.dat");
-        }
-
-        return dbFile;
+        db.FormatName();
+        return Path.Join(Subfolders[Subfolder.Databases], db.Name, $"{db.Name}.sidb");
     }
 
-    public static string GetLockFile(string? dbFile = null) => Path.Join(Path.GetDirectoryName(dbFile ?? CurrentDatabase.DBFile) ?? ".", "_lock.sid_");
+    internal static string GetLockFile(string? dbFile = null) => Path.Join(Path.GetDirectoryName(dbFile ?? CurrentDatabase.DBFile) ?? ".", "_lock.sid_");
 
-    public static void LoadPaths(string? source = null)
+    internal static void LoadPaths(string? source = null)
     {
         source ??= LocalizationFile;
 
@@ -159,7 +121,7 @@ public static class FileUtils
         return;
     }
 
-    public static void SavePaths(string? target = null)
+    internal static void SavePaths(string? target = null)
     {
         target ??= LocalizationFile;
 

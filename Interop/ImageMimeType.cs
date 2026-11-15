@@ -1,15 +1,15 @@
 ﻿namespace SylverInk.Interop;
 
-public static class ImageMimeType
+internal static class ImageMimeType
 {
-    public const string Bmp = "image/bmp";
-    public const string Gif = "image/gif";
-    public const string Jpeg = "image/jpeg";
-    public const string Png = "image/png";
-    public const string Tiff = "image/tiff";
-    public const string Fallback = "application/octet-stream";
+    internal const string Bmp = "image/bmp";
+    internal const string Fallback = "application/octet-stream";
+    internal const string Gif = "image/gif";
+    internal const string Jpeg = "image/jpeg";
+    internal const string Png = "image/png";
+    internal const string Tiff = "image/tiff";
 
-    public static string GetImageExtension(string mimeType)
+    internal static string GetImageExtension(string mimeType)
     {
         if (string.IsNullOrWhiteSpace(mimeType))
             return "dat";
@@ -25,7 +25,7 @@ public static class ImageMimeType
         };
     }
 
-    public static string GetImageMimeType(string filePathOrName)
+    internal static string GetImageMimeType(string filePathOrName)
     {
         if (string.IsNullOrWhiteSpace(filePathOrName))
             return Fallback;

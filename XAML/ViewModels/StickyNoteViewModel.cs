@@ -4,25 +4,25 @@ using static SylverInk.Notes.DatabaseUtils;
 
 namespace SylverInk.XAML.ViewModels;
 
-public class StickyNoteViewModel : NoteEditorViewModel
+internal sealed class StickyNoteViewModel : NoteEditorViewModel
 {
     public ICommand ViewCommand { get; }
 
-    public event EventHandler? ForceClose;
+    internal event EventHandler? ForceClose;
 
-    public StickyNoteViewModel() : base()
+    internal StickyNoteViewModel() : base()
     {
         ViewCommand = new RelayCommand(View);
     }
 
-    public override void Construct()
+    internal override void Construct()
     {
         base.Construct();
 
         RemoveRecordTab(Record);
     }
 
-    public override void Deconstruct()
+    internal override void Deconstruct()
     {
         base.Deconstruct();
 

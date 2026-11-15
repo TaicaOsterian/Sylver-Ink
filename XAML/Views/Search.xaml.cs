@@ -7,9 +7,9 @@ namespace SylverInk.XAML;
 /// </summary>
 public partial class Search : Window
 {
-    public SearchViewModel ViewModel => (SearchViewModel)DataContext;
+    internal SearchViewModel ViewModel => (SearchViewModel)DataContext;
 
-    public Search()
+    internal Search()
     {
         DataContext = new SearchViewModel();
         ViewModel.RequestClose += (_, _) => Close();

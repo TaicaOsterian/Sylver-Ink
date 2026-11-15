@@ -4,13 +4,13 @@ using static SylverInk.Notes.DatabaseUtils;
 
 namespace SylverInk.Interop;
 
-public static class MutexUtils
+internal static class MutexUtils
 {
     private static Mutex? mutex;
     private static readonly CancellationTokenSource mutexTokenSource = new();
     private static readonly string MutexName = $"Sylver Ink/{typeof(MainWindow).GUID}";
 
-    public static int ShellVerbs { get; private set; }
+    internal static int ShellVerbs { get; private set; }
 
     /// <summary>
     /// Mutex management in Sylver Ink allows passing shell verbs through a named pipe to an existing open instance.
@@ -129,14 +129,14 @@ public static class MutexUtils
         SwitchDatabase($"~F:{wideBreak}");
     }
 
-    public static async Task<bool> Init()
+    internal static async Task<bool> Init()
     {
         await HandleShellVerbs();
         mutex = new Mutex(true, MutexName, out bool mutexCreated);
         return HandleMutex(mutexCreated);
     }
 
-    public static void Release()
+    internal static void Release()
     {
         mutexTokenSource.Cancel();
         mutex?.Dispose();

@@ -6,13 +6,13 @@ using static SylverInk.Notes.DatabaseUtils;
 
 namespace SylverInk.XAML.Controls;
 
-public class NoteTabViewModel : NoteEditorViewModel
+internal sealed class NoteTabViewModel : NoteEditorViewModel
 {
     private bool _canSave;
     private FlowDocument _historicalDocument;
     private bool _isLive = true;
     private int _revisionIndex;
-    private string _saveLabel = Strings.Word_Save;
+    private string _saveLabel = Strings.Word_Save!;
     private string _searchText = string.Empty;
 
     private int BackstepIndex => Record.GetNumRevisions() - RevisionIndex;
@@ -75,8 +75,6 @@ public class NoteTabViewModel : NoteEditorViewModel
         }
     }
 
-
-
     public ICommand CloseSearchPopupCommand { get; }
     public ICommand DeleteCommand { get; }
     public ICommand FindNextCommand { get; }
@@ -87,10 +85,10 @@ public class NoteTabViewModel : NoteEditorViewModel
     public ICommand ReturnCommand { get; }
     public ICommand SaveCommand { get; }
 
-    public event EventHandler<DocumentRefreshEventArgs>? RequestRefresh;
-    public event EventHandler? RequestCloseSearchPopup;
+    internal event EventHandler<DocumentRefreshEventArgs>? RequestRefresh;
+    internal event EventHandler? RequestCloseSearchPopup;
 
-    public NoteTabViewModel() : base()
+    internal NoteTabViewModel() : base()
     {
         CloseSearchPopupCommand = new RelayCommand(_ => RequestCloseSearchPopup?.Invoke(this, EventArgs.Empty));
         DeleteCommand = new RelayCommand(Delete);
@@ -128,7 +126,7 @@ public class NoteTabViewModel : NoteEditorViewModel
 
     private bool CanNavigatePrevious(object? param) => RevisionIndex < Record.GetNumRevisions();
 
-    public override void Construct()
+    internal override void Construct()
     {
         if (FinishedLoading)
             return;
@@ -148,7 +146,7 @@ public class NoteTabViewModel : NoteEditorViewModel
         RefreshRecentNotes();
     }
 
-    public override void Deconstruct()
+    internal override void Deconstruct()
     {
         base.Deconstruct();
 
@@ -171,7 +169,7 @@ public class NoteTabViewModel : NoteEditorViewModel
         RefreshRecentNotes();
     }
 
-    public void EndSave()
+    internal void EndSave()
     {
         if (!Saving)
             return;
@@ -188,21 +186,15 @@ public class NoteTabViewModel : NoteEditorViewModel
         OriginalRevisionCount = Record.GetNumRevisions();
         OriginalText = newText;
         RevisionIndex = 0;
-        SaveLabel = Strings.Word_Save;
+        SaveLabel = Strings.Word_Save!;
         Saving = false;
 
         RefreshRecentNotes();
     }
 
-    private void FindNext(object? param)
-    {
-        FlowDocumentUtils.ScrollToText(Document, SearchText);
-    }
+    private void FindNext(object? param) => FlowDocumentUtils.ScrollToText(Document, SearchText);
 
-    private void FindPrevious(object? param)
-    {
-        FlowDocumentUtils.ScrollToText(Document, SearchText, LogicalDirection.Backward);
-    }
+    private void FindPrevious(object? param) => FlowDocumentUtils.ScrollToText(Document, SearchText, LogicalDirection.Backward);
 
     private void InsertImage(object? param)
     {
@@ -245,7 +237,7 @@ public class NoteTabViewModel : NoteEditorViewModel
         LastChange = RevisionIndex != 0
             ? string.Format(CultureInfo.CurrentCulture, CacheNoteRevisionID, BackstepIndex, revisionTime)
             : string.Format(CultureInfo.CurrentCulture, CacheNoteEntryModified, revisionTime);
-        SaveLabel = RevisionIndex != 0 ? Strings.Word_Restore : Strings.Word_Save;
+        SaveLabel = RevisionIndex != 0 ? Strings.Word_Restore! : Strings.Word_Save!;
     }
 
     private void NavigatePrevious(object? param)
@@ -263,7 +255,7 @@ public class NoteTabViewModel : NoteEditorViewModel
         LastChange = BackstepIndex == 0
             ? string.Format(CultureInfo.CurrentCulture, CacheNoteEntryCreated, revisionTime)
             : string.Format(CultureInfo.CurrentCulture, CacheNoteRevisionID, BackstepIndex, revisionTime);
-        SaveLabel = Strings.Word_Restore;
+        SaveLabel = Strings.Word_Restore!;
     }
 
     private void Return(object? param)
@@ -277,7 +269,7 @@ public class NoteTabViewModel : NoteEditorViewModel
         Deconstruct();
     }
 
-    public override void TextChanged()
+    internal override void TextChanged()
     {
         if (!IsLive && !Saving)
             return;

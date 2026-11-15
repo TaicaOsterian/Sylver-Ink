@@ -19,7 +19,7 @@ public partial class App : Application
         Current.Shutdown();
     }
 
-    public static void LogException(Exception ex, string? source = null)
+    internal static void LogException(Exception ex, string? source = null)
     {
         try
         {

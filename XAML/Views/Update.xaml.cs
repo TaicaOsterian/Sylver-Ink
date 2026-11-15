@@ -5,9 +5,9 @@
 /// </summary>
 public partial class Update : Window
 {
-    public UpdateViewModel ViewModel => (UpdateViewModel)DataContext;
+    internal UpdateViewModel ViewModel => (UpdateViewModel)DataContext;
 
-    public Update()
+    internal Update()
     {
         DataContext = new UpdateViewModel();
         InitializeComponent();

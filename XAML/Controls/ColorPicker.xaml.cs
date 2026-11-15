@@ -8,11 +8,11 @@ namespace SylverInk.XAML.Controls;
 /// </summary>
 public partial class ColorPicker : UserControl
 {
-    public List<SolidColorBrush> AvailableBrushes { get; } = [];
-    public string? ColorTag { get; set; }
-    public Brush? LastColorSelection { get; set; }
-    public RichTextBox? TextTarget { get; set; }
-    public ColorPickerViewModel ViewModel => (ColorPickerViewModel)DataContext;
+    internal List<SolidColorBrush> AvailableBrushes { get; } = [];
+    internal string? ColorTag { get; set; }
+    internal Brush? LastColorSelection { get; set; }
+    internal RichTextBox? TextTarget { get; set; }
+    internal ColorPickerViewModel ViewModel => (ColorPickerViewModel)DataContext;
 
     public ColorPicker()
     {
@@ -45,7 +45,7 @@ public partial class ColorPicker : UserControl
         ViewModel.CustomColorCode = BytesFromBrush(ViewModel.CustomColor)[2..8];
     }
 
-    public void Init(RichTextBox? TextTarget = null)
+    internal void Init(RichTextBox? TextTarget = null)
     {
         this.TextTarget = TextTarget;
         InitBrushes();

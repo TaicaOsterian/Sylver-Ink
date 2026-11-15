@@ -8,9 +8,9 @@ namespace SylverInk.XAML;
 /// </summary>
 public partial class Properties : Window
 {
-    public PropertiesViewModel ViewModel => (PropertiesViewModel)DataContext;
+    internal PropertiesViewModel ViewModel => (PropertiesViewModel)DataContext;
 
-    public Properties()
+    internal Properties()
     {
         DataContext = new PropertiesViewModel();
         ViewModel.RequestClose += (_, _) => Close();
@@ -40,8 +40,5 @@ public partial class Properties : Window
         ViewModel.InitializeCommand.Execute(null);
     }
 
-    private void SelectTime(object? sender, RoutedEventArgs e)
-    {
-        TimeSelector.IsOpen = true;
-    }
+    private void SelectTime(object? sender, RoutedEventArgs e) => TimeSelector.IsOpen = true;
 }

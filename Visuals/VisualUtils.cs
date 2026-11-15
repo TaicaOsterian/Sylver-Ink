@@ -5,18 +5,18 @@ namespace SylverInk.Visuals;
 /// <summary>
 /// Helper functions serving visual tree and Drawing type-conversion needs.
 /// </summary>
-public static class VisualUtils
+internal static class VisualUtils
 {
-    public const float RsRGB = 0.2126f;
-    public const float GsRGB = 0.7152f;
-    public const float BsRGB = 0.0722f;
-    public const float AsRGB = 1.0f;
+    internal const float RsRGB = 0.2126f;
+    internal const float GsRGB = 0.7152f;
+    internal const float BsRGB = 0.0722f;
+    internal const float AsRGB = 1.0f;
 
     /// <summary>
     /// Parses an RGB or ARGB hex code into a SolidColorBrush object. This function is well-behaved for user interaction purposes, i.e. it will return a default value if the hex code is formatted incorrectly as opposed to throwing an exception.
     /// </summary>
     /// <returns>A SolidColorBrush encoding the provided hex code (or Brushes.Transparent if the data was invalid).</returns>
-    public static SolidColorBrush BrushFromBytes(string data)
+    internal static SolidColorBrush BrushFromBytes(string data)
     {
         if (data.StartsWith('#'))
             data = data[1..];
@@ -48,7 +48,7 @@ public static class VisualUtils
     /// Formats a Brush object as a string of characters representing an RGB or ARGB hex code.
     /// </summary>
     /// <returns>A string-encoded RGB hex code, or (iff the brush had an alpha value not equal to 1.0) a string-encoded ARGB hex code.</returns>
-    public static string BytesFromBrush(Brush? brush)
+    internal static string BytesFromBrush(Brush? brush)
     {
         if (brush is not SolidColorBrush scb)
             return string.Empty;
@@ -59,7 +59,7 @@ public static class VisualUtils
         return $"{scb?.Color.A:X2}{scb?.Color.R:X2}{scb?.Color.G:X2}{scb?.Color.B:X2}";
     }
 
-    public static Brush? Deluminate(Brush? brush)
+    internal static Brush? Deluminate(Brush? brush)
     {
         if (brush is not SolidColorBrush scb)
             return null;
@@ -78,7 +78,7 @@ public static class VisualUtils
         return HSVToRGB(hsv);
     }
 
-    public static Brush? Desaturate(Brush? brush)
+    internal static Brush? Desaturate(Brush? brush)
     {
         if (brush is not SolidColorBrush scb)
             return null;
@@ -98,7 +98,7 @@ public static class VisualUtils
         return HSVToRGB(hsv);
     }
 
-    public static T? FindVisualChildByName<T>(DependencyObject? parent, string name) where T : DependencyObject
+    internal static T? FindVisualChildByName<T>(DependencyObject? parent, string name) where T : DependencyObject
     {
         for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
         {
@@ -114,7 +114,7 @@ public static class VisualUtils
         return null;
     }
 
-    public static IEnumerable<T> FindVisualChildren<T>(DependencyObject parent) where T : DependencyObject
+    internal static IEnumerable<T> FindVisualChildren<T>(DependencyObject parent) where T : DependencyObject
     {
         if (parent is null)
             yield break;
@@ -141,7 +141,7 @@ public static class VisualUtils
 
     private static double GetChannelLuminance(double channel) => channel <= 0.04045 ? channel / 12.92 : Math.Pow((channel + 0.055) / 1.055, 2.4);
 
-    public static double GetRelativeLuminance(Color color)
+    internal static double GetRelativeLuminance(Color color)
     {
         const double i = 1.0 / 255.0;
         return RsRGB * GetChannelLuminance(color.R * i)
@@ -149,7 +149,7 @@ public static class VisualUtils
              + BsRGB * GetChannelLuminance(color.B * i);
     }
 
-    public static uint HSVFromRGB(SolidColorBrush brush)
+    internal static uint HSVFromRGB(SolidColorBrush brush)
     {
         const double fInv = 1.0 / 255.0;
         var (r_, g_, b_) = (brush.Color.R * fInv, brush.Color.G * fInv, brush.Color.B * fInv);
@@ -175,7 +175,7 @@ public static class VisualUtils
         return (H << 16) + (S << 8) + V;
     }
 
-    public static SolidColorBrush HSVToRGB(uint hsv)
+    internal static SolidColorBrush HSVToRGB(uint hsv)
     {
         var H = (double)((hsv >> 16) & 0xFF);
         var S = (double)(hsv >> 8 & 0xFF) / 255.0;
@@ -203,7 +203,7 @@ public static class VisualUtils
         });
     }
 
-    public static Color SetLuminance(Color color, double target, bool lighten)
+    internal static Color SetLuminance(Color color, double target, bool lighten)
     {
         double r = GetChannelLuminance(color.R / 255.0);
         double g = GetChannelLuminance(color.G / 255.0);
@@ -233,7 +233,7 @@ public static class VisualUtils
             (byte)Math.Round(GetChannelFromLuminance(b2) * 255.0));
     }
 
-    public static void SwitchTheme(Theme theme)
+    internal static void SwitchTheme(Theme theme)
     {
         using ContextFreeze _ = new(Settings);
 

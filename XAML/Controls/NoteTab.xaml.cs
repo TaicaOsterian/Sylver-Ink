@@ -8,9 +8,9 @@ namespace SylverInk.XAML.Controls;
 /// </summary>
 public partial class NoteTab : UserControl
 {
-    public NoteTabViewModel ViewModel => (NoteTabViewModel)DataContext;
+    internal NoteTabViewModel ViewModel => (NoteTabViewModel)DataContext;
 
-    public NoteTab()
+    internal NoteTab()
     {
         DataContext = new NoteTabViewModel();
         ViewModel.RequestRefresh += RefreshRequested;
@@ -37,8 +37,8 @@ public partial class NoteTab : UserControl
         switch (e.Key)
         {
             case Key.Enter:
-                if ((Keyboard.Modifiers & ModifierKeys.Control) != 0 ||
-                    (Keyboard.Modifiers & ModifierKeys.Shift) != 0)
+                if ((Keyboard.Modifiers & ModifierKeys.Control) != 0
+                    || (Keyboard.Modifiers & ModifierKeys.Shift) != 0) // Reverse search direction on either Ctrl+Enter or Shift+Enter
                 {
                     ViewModel.FindPreviousCommand.Execute(null);
                     ISPText.Focus();
@@ -93,7 +93,7 @@ public partial class NoteTab : UserControl
 
     private void RefreshRequested(object? sender, DocumentRefreshEventArgs e) => RichTextBoxUtils.SetAtomicBlocks(NoteBox, e.NewBlocks);
 
-    public void RequestUnlock(NoteRecord record) => ViewModel.RequestUnlock(record);
+    internal void RequestUnlock(NoteRecord record) => ViewModel.RequestUnlock(record);
 
     private void RichTextBox_Pasting(object? sender, DataObjectPastingEventArgs e) => RichTextBoxUtils.HandlePaste(sender, e);
 

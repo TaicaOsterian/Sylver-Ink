@@ -6,7 +6,7 @@ using static SylverInk.XAMLUtils.MainWindowUtils;
 
 namespace SylverInk.XAML.ViewModels;
 
-public class SettingsViewModel : ViewModelBase
+internal sealed class SettingsViewModel : ViewModelBase
 {
     private int? _defaultFontIndex;
     private bool _smartAssistChecked = true;
@@ -37,9 +37,9 @@ public class SettingsViewModel : ViewModelBase
     public ICommand ResetCommand { get; }
     public ICommand SmartAssistCommand { get; }
 
-    public event EventHandler? RequestClose;
+    internal event EventHandler? RequestClose;
 
-    public SettingsViewModel()
+    internal SettingsViewModel()
     {
         ChooseHotKeyCommand = new RelayCommand(ChooseHotKey);
         CloseCommand = new RelayCommand(_ => RequestClose?.Invoke(this, EventArgs.Empty));
@@ -119,8 +119,5 @@ public class SettingsViewModel : ViewModelBase
         RefreshRecentNotes();
     }
 
-    private void SmartAssistChanged(object? param = null)
-    {
-        CommonUtils.Settings.HighContrastAssist = SmartAssistChecked;
-    }
+    private void SmartAssistChanged(object? param = null) => CommonUtils.Settings.HighContrastAssist = SmartAssistChecked;
 }

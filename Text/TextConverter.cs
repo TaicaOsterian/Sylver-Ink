@@ -2,7 +2,7 @@
 
 namespace SylverInk.Text;
 
-public static class TextConverter
+internal static class TextConverter
 {
     private static readonly Dictionary<TextFormat, ITextConverter> _converters = new()
     {
@@ -10,7 +10,7 @@ public static class TextConverter
         { TextFormat.Xaml, new XamlConverter() },
     };
 
-    public static string Convert(string text, TextFormat from, TextFormat to)
+    internal static string Convert(string text, TextFormat from, TextFormat to)
     {
         if (_converters.TryGetValue(to, out var converter))
             return converter.Convert(text, from);
@@ -18,7 +18,7 @@ public static class TextConverter
         throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, CacheTextNoConverterRegistered, to));
     }
 
-    public static FlowDocument Parse(string text, TextFormat from)
+    internal static FlowDocument Parse(string text, TextFormat from)
     {
         if (_converters.TryGetValue(from, out var converter))
             return converter.Parse(text);
@@ -26,7 +26,7 @@ public static class TextConverter
         throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, CacheTextNoParserRegistered, from));
     }
 
-    public static string Save(FlowDocument document, TextFormat to)
+    internal static string Save(FlowDocument document, TextFormat to)
     {
         if (_converters.TryGetValue(to, out var converter))
             return converter.Save(document);

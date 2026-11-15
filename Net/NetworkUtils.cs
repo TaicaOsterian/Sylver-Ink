@@ -9,9 +9,9 @@ namespace SylverInk.Net;
 /// <summary>
 /// Static helper functions serving common networking routines shared between NetClient and NetServer.
 /// </summary>
-public static class NetworkUtils
+internal static class NetworkUtils
 {
-    public enum IndicatorStatus
+    internal enum IndicatorStatus
     {
         Connected,
         Connecting,
@@ -19,7 +19,7 @@ public static class NetworkUtils
         Serving,
     }
 
-    public enum MessageType
+    internal enum MessageType
     {
         DatabaseInit,
         RecordAdd,
@@ -29,17 +29,17 @@ public static class NetworkUtils
         TextInsert
     }
 
-    public static List<char> CodeValues { get; } = [..
+    internal static List<char> CodeValues { get; } = [..
         Enumerable.Range(48, 10) // [0-9]
         .Concat(Enumerable.Range(65, 26)) // [A-Z]
         .Concat(Enumerable.Range(97, 26)) // [a-z]
         .Concat([33, 35, 36, 37]) // ! # $ %
         .Select(c => (char)c)];
-    public static string LoopbackCode { get; } = "Vm000G"; // 127.0.0.1
-    public static int TcpPort { get; } = 5192;
-    public static Dictionary<int, int> ValueCodes { get; } = new(CodeValues.Select(static (c, i) => new KeyValuePair<int, int>(c, i)));
+    internal static string LoopbackCode { get; } = "Vm000G"; // 127.0.0.1
+    internal static int TcpPort { get; } = 5192;
+    internal static Dictionary<int, int> ValueCodes { get; } = new(CodeValues.Select(static (c, i) => new KeyValuePair<int, int>(c, i)));
 
-    public static string CodeFromAddress(IPAddress? Address, byte? Flags)
+    internal static string CodeFromAddress(IPAddress? Address, byte? Flags)
     {
         if (Address?.GetAddressBytes() is not byte[] workingList)
             return LoopbackCode;
@@ -54,7 +54,7 @@ public static class NetworkUtils
         ]);
     }
 
-    public static IPAddress CodeToAddress(string? Code, out byte? Flags)
+    internal static IPAddress CodeToAddress(string? Code, out byte? Flags)
     {
         if (Code?.Select(c => ValueCodes[c]).ToList() is not List<int> workingList)
         {
@@ -74,7 +74,7 @@ public static class NetworkUtils
         return new([.. convertedList]);
     }
 
-    public static async Task<byte[]> ReadFromStream(TcpClient client, Database DB)
+    internal static async Task<byte[]> ReadFromStream(TcpClient client, Database DB)
     {
         int oldData;
 
@@ -153,7 +153,7 @@ public static class NetworkUtils
         return [.. outBuffer];
     }
 
-    public static void UpdateIndicator(Ellipse? Indicator, IndicatorStatus Status) => Indicator?.Dispatcher.Invoke(() =>
+    internal static void UpdateIndicator(Ellipse? Indicator, IndicatorStatus Status) => Indicator?.Dispatcher.Invoke(() =>
     {
         if (Indicator.Tag is not Database DB)
             return;

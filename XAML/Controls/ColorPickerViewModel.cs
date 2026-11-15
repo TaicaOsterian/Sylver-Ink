@@ -3,7 +3,7 @@ using static SylverInk.Visuals.VisualUtils;
 
 namespace SylverInk.XAML.Controls;
 
-public class ColorPickerViewModel : ViewModelBase
+internal sealed class ColorPickerViewModel() : ViewModelBase
 {
     private Brush _customColor = Brushes.Transparent;
     private string _customColorCode = "00000000";
@@ -49,9 +49,5 @@ public class ColorPickerViewModel : ViewModelBase
             _isCustomSelectionOpen = value;
             OnPropertyChanged();
         }
-    }
-
-    public ColorPickerViewModel()
-    {
     }
 }

@@ -7,7 +7,7 @@ using static SylverInk.XAMLUtils.MainWindowUtils;
 
 namespace SylverInk.XAML.ViewModels;
 
-public class ImportViewModel : ViewModelBase
+internal sealed class ImportViewModel : ViewModelBase
 {
     private bool _adaptiveImport;
     private string _adaptivePredicate = string.Empty;
@@ -147,9 +147,9 @@ public class ImportViewModel : ViewModelBase
     public ICommand OpenCommand { get; }
     public ICommand ToggleAdaptiveCommand { get; }
 
-    public event EventHandler? RequestClose;
+    internal event EventHandler? RequestClose;
 
-    public ImportViewModel()
+    internal ImportViewModel()
     {
         CloseCommand = new RelayCommand(_ => RequestClose?.Invoke(this, EventArgs.Empty));
         ImportCommand = new RelayCommand(async _ => await ImportAsync(), _ => CanImport && !IsBusy);
@@ -158,7 +158,7 @@ public class ImportViewModel : ViewModelBase
         ToggleAdaptiveCommand = new RelayCommand(async _ => await ToggleAdaptiveAsync());
 
         LineTolerance = CommonUtils.Settings.LineTolerance;
-        StatusText = Strings.SelectFile;
+        StatusText = Strings.SelectFile!;
     }
 
     private async Task ChangeLineToleranceAsync(object? param = null)
@@ -206,7 +206,7 @@ public class ImportViewModel : ViewModelBase
 
         if (!ReadFromStream(ImportTarget))
         {
-            StatusText = Strings.FailedToReadFile;
+            StatusText = Strings.FailedToReadFile!;
             return;
         }
 
@@ -433,7 +433,7 @@ public class ImportViewModel : ViewModelBase
             return;
         }
 
-        Concurrent(ShowTooltip, Strings.FailedAutodetect);
+        Concurrent(ShowTooltip, Strings.FailedAutodetect!);
         AdaptivePredicate = string.Empty;
         RunningAverage = 0.0;
         RunningCount = 0;

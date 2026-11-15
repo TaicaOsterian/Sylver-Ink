@@ -2,7 +2,7 @@
 
 namespace SylverInk.XAML.ViewModels;
 
-public class UpdateViewModel : ViewModelBase
+internal sealed class UpdateViewModel : ViewModelBase
 {
     private double _progress;
 
@@ -18,13 +18,10 @@ public class UpdateViewModel : ViewModelBase
 
     public ICommand CancelCommand { get; }
 
-    public UpdateViewModel()
+    internal UpdateViewModel()
     {
         CancelCommand = new RelayCommand(Cancel);
     }
 
-    private static void Cancel(object? param = null)
-    {
-        UpdateHandler.CancelUpdate();
-    }
+    private static void Cancel(object? param = null) => UpdateHandler.CancelUpdate();
 }

@@ -8,16 +8,16 @@ using static SylverInk.XAMLUtils.MainWindowUtils;
 
 namespace SylverInk.Notes;
 
-public struct NoteRevision(long created = -1, bool isAutosave = false, int startIndex = -1, string? substring = null, Guid? uuid = null)
+internal struct NoteRevision(long created = -1, bool isAutosave = false, int startIndex = -1, string? substring = null, Guid? uuid = null)
 {
-    public long Created { get; set; } = created;
-    public bool IsAutosave { get; set; } = isAutosave;
-    public int StartIndex { get; set; } = startIndex;
-    public string? Substring { get; set; } = substring;
-    public Guid Uuid { get; set; } = uuid ?? MakeUUID(UUIDType.Revision);
+    internal long Created { get; set; } = created;
+    internal bool IsAutosave { get; set; } = isAutosave;
+    internal int StartIndex { get; set; } = startIndex;
+    internal string? Substring { get; set; } = substring;
+    internal Guid Uuid { get; set; } = uuid ?? MakeUUID(UUIDType.Revision);
 }
 
-public partial class NoteRecord
+public sealed partial class NoteRecord
 {
     private long Created = -1;
     private int _index = -1;
@@ -31,12 +31,12 @@ public partial class NoteRecord
     private bool TagsDirty = true;
     private Guid _uuid;
 
-    public Database? DB { get; set; }
-    public int Index { get => _index; set => _index = value; }
-    public int LastMatchCount { get; set; }
-    public string Latest { get; private set; }
-    public bool Locked { get; set; }
-    public Guid UUID { get => _uuid; set => _uuid = value; }
+    internal Database? DB { get; set; }
+    internal int Index { get => _index; set => _index = value; }
+    internal int LastMatchCount { get; set; }
+    internal string Latest { get; private set; }
+    internal bool Locked { get; set; }
+    internal Guid UUID { get => _uuid; set => _uuid = value; }
 
     public string FullDateChange
     {
@@ -68,7 +68,7 @@ public partial class NoteRecord
             while (_preview.Contains("  "))
                 _preview = _preview.Replace("  ", " ");
 
-            return string.IsNullOrEmpty(_preview) ? Strings.EmptyNote : _preview;
+            return string.IsNullOrEmpty(_preview) ? Strings.EmptyNote! : _preview;
         }
     }
 
@@ -90,13 +90,13 @@ public partial class NoteRecord
                 return dtObject.ToLocalTime().ToShortTimeString();
 
             if (diff.TotalHours < 168.0)
-                return diff.Days == 1 ? Strings.DayPassed : string.Format(CultureInfo.CurrentCulture, CacheDaysPassed, diff.Days);
+                return diff.Days == 1 ? Strings.DayPassed! : string.Format(CultureInfo.CurrentCulture, CacheDaysPassed, diff.Days);
 
             return dtObject.ToLocalTime().ToShortDateString();
         }
     }
 
-    public NoteRecord(Database? DB = null)
+    internal NoteRecord(Database? DB = null)
     {
         Created = DateTime.UnixEpoch.ToBinary();
         this.DB = DB;
@@ -107,7 +107,7 @@ public partial class NoteRecord
         _uuid = MakeUUID(UUIDType.Record);
     }
 
-    public NoteRecord(int Index, string Initial, Database? DB = null, long Created = -1, Guid? UUID = null)
+    internal NoteRecord(int Index, string Initial, Database? DB = null, long Created = -1, Guid? UUID = null)
     {
         this.Created = Created == -1 ? DateTime.UtcNow.ToBinary() : Created;
         this.DB = DB;
@@ -135,9 +135,10 @@ public partial class NoteRecord
         TagsDirty = true;
     }
 
-    // This function doesn't consume autosaved revisions to preserve continuity.
+    // This function doesn't consume autosaved revisions, in order to preserve continuity.
     // The onus is on the object initiating the call chain to track which revisions to discard if the user chooses not to save their changes.
-    public async Task BeginAutosave(FlowDocument document, CancellationTokenSource cts)
+    // Properties on the record and revisions (including NoteRevision.IsAutosave) will assist with this.
+    internal async Task BeginAutosave(FlowDocument document, CancellationTokenSource cts)
     {
         if (cts.IsCancellationRequested)
             return;
@@ -147,7 +148,7 @@ public partial class NoteRecord
         RefreshRecentNotes();
     }
 
-    public void CreateRevision(string NewVersion, bool Autosave = false)
+    internal void CreateRevision(string NewVersion, bool Autosave = false)
     {
         string Current = ToXaml();
         int StartIndex = 0;
@@ -177,7 +178,7 @@ public partial class NoteRecord
         DB.Changed = true;
     }
 
-    public void Delete()
+    internal void Delete()
     {
         Index = -1;
         Initial = string.Empty;
@@ -189,7 +190,7 @@ public partial class NoteRecord
         RefreshRecentNotes();
     }
 
-    public void DeleteRevision()
+    internal void DeleteRevision()
     {
         Revisions.Pop();
 
@@ -200,7 +201,7 @@ public partial class NoteRecord
         RefreshRecentNotes();
     }
 
-    public NoteRecord Deserialize(Serializer? serializer)
+    internal NoteRecord Deserialize(Serializer? serializer)
     {
         if (serializer?.DatabaseFormat >= 5)
         {
@@ -254,7 +255,7 @@ public partial class NoteRecord
         return this;
     }
 
-    public void EndAutosave(Serializer? serializer)
+    internal void EndAutosave(Serializer? serializer)
     {
         if (serializer?.DatabaseFormat < 9)
             TargetPlaintext();
@@ -360,13 +361,13 @@ public partial class NoteRecord
         return Tags.Count;
     }
 
-    public string GetCreated() => GetCreatedObject().ToLocalTime().ToString(DateFormat, CultureInfo.CurrentCulture);
+    internal string GetCreated() => GetCreatedObject().ToLocalTime().ToString(DateFormat, CultureInfo.CurrentCulture);
 
-    public DateTime GetCreatedObject() => DateTime.FromBinary(Created);
+    internal DateTime GetCreatedObject() => DateTime.FromBinary(Created);
 
-    public FlowDocument GetDocument() => TextConverter.Parse(Reconstruct(), TextFormat.Xaml);
+    internal FlowDocument GetDocument() => TextConverter.Parse(Reconstruct(), TextFormat.Xaml);
 
-    public FlowDocument GetDocument(int backsteps = 0) => TextConverter.Parse(Reconstruct(backsteps), TextFormat.Xaml);
+    internal FlowDocument GetDocument(int backsteps = 0) => TextConverter.Parse(Reconstruct(backsteps), TextFormat.Xaml);
 
     public override int GetHashCode()
     {
@@ -380,25 +381,25 @@ public partial class NoteRecord
         return parse;
     }
 
-    public string GetLastChange() => GetLastChangeObject().ToLocalTime().ToString(DateFormat, CultureInfo.CurrentCulture);
+    internal string GetLastChange() => GetLastChangeObject().ToLocalTime().ToString(DateFormat, CultureInfo.CurrentCulture);
 
-    public DateTime GetLastChangeObject() => DateTime.FromBinary(LastChange);
+    internal DateTime GetLastChangeObject() => DateTime.FromBinary(LastChange);
 
-    public int GetNumRevisions() => Revisions.Count();
+    internal int GetNumRevisions() => Revisions.Count();
 
     private string GetPlaintext() => TextConverter.Convert(Reconstruct(), TextFormat.Xaml, TextFormat.Plaintext);
 
-    public NoteRevision GetRevision() => Revisions.Peek();
+    internal NoteRevision GetRevision() => Revisions.Peek();
 
-    public NoteRevision GetRevision(int index) => Revisions.Peek(index);
+    internal NoteRevision GetRevision(int index) => Revisions.Peek(index);
 
-    public string GetRevisionTime() => DateTime.FromBinary(GetRevision().Created).ToLocalTime().ToString(DateFormat, CultureInfo.CurrentCulture);
+    internal string GetRevisionTime() => DateTime.FromBinary(GetRevision().Created).ToLocalTime().ToString(DateFormat, CultureInfo.CurrentCulture);
 
-    public string GetRevisionTime(int index) => index < Revisions.Count()
+    internal string GetRevisionTime(int index) => index < Revisions.Count()
         ? DateTime.FromBinary(GetRevision(index).Created).ToLocalTime().ToString(DateFormat, CultureInfo.CurrentCulture)
         : GetCreated();
 
-    public Label GetRibbonHeader()
+    internal Label GetRibbonHeader()
     {
         var tooltip = GetRibbonTooltip();
         var content = tooltip;
@@ -426,16 +427,13 @@ public partial class NoteRecord
         _ => Preview
     };
 
-    public bool IsAutosaveRevision() => Revisions.Peek().IsAutosave;
+    internal bool IsAutosaveRevision() => Revisions.Peek().IsAutosave;
 
-    public bool IsAutosaveRevision(int index) => Revisions.Peek(index).IsAutosave;
+    internal bool IsAutosaveRevision(int index) => Revisions.Peek(index).IsAutosave;
 
-    public void Lock()
-    {
-        Locked = true;
-    }
+    internal void Lock() => Locked = true;
 
-    public int MatchTags(string text)
+    internal int MatchTags(string text)
     {
         var format = text.Trim();
         if (!TagsDirty && format.Equals(LastQuery, StringComparison.Ordinal))
@@ -464,7 +462,7 @@ public partial class NoteRecord
     /// </summary>
     /// <param name="backsteps">The number of revisions to undo, or 0 for the current state of the record.</param>
     /// <returns>The text of this record after undoing the requested number of revisions.</returns>
-    public string Reconstruct(int backsteps = 0)
+    internal string Reconstruct(int backsteps = 0)
     {
         if (backsteps == 0 && !LatestDirty)
             return Latest;
@@ -528,7 +526,7 @@ public partial class NoteRecord
         }
     }
 
-    public NoteRecord RestoreFromAutosave(Serializer? serializer)
+    internal NoteRecord RestoreFromAutosave(Serializer? serializer)
     {
         // The serializer has already read this record's UUID during the NoteController's workflow.
         // That is how the NoteController knew to call RestoreFromAutosave on this particular record.
@@ -573,7 +571,7 @@ public partial class NoteRecord
         return this;
     }
 
-    public void Serialize(Serializer? serializer)
+    internal void Serialize(Serializer? serializer)
     {
         if (serializer?.DatabaseFormat < 9)
             TargetPlaintext();
@@ -663,12 +661,9 @@ public partial class NoteRecord
 
     public override string ToString() => GetPlaintext();
 
-    public string ToXaml() => Reconstruct();
+    internal string ToXaml() => Reconstruct();
 
-    public void Unlock()
-    {
-        Locked = false;
-    }
+    internal void Unlock() => Locked = false;
 
     [GeneratedRegex(@"(\p{Ll}+)")]
     private static partial Regex Lowercase();

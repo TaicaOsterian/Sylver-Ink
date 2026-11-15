@@ -3,19 +3,19 @@
 /// <summary>
 /// Encodes the MVVM design flow of requests made from the View to the ViewModel.
 /// </summary>
-public class RelayCommand : ICommand
+internal sealed class RelayCommand : ICommand
 {
     private readonly Func<object?, Task>? _asyncExecute;
     private readonly Action<object?>? _syncExecute;
     private readonly Predicate<object?>? _canExecute;
 
-    public RelayCommand(Action<object?> execute, Predicate<object?>? canExecute = null)
+    internal RelayCommand(Action<object?> execute, Predicate<object?>? canExecute = null)
     {
         _syncExecute = execute ?? throw new ArgumentNullException(nameof(execute));
         _canExecute = canExecute;
     }
 
-    public RelayCommand(Func<object?, Task> asyncExecute, Predicate<object?>? canExecute = null)
+    internal RelayCommand(Func<object?, Task> asyncExecute, Predicate<object?>? canExecute = null)
     {
         _asyncExecute = asyncExecute ?? throw new ArgumentNullException(nameof(asyncExecute));
         _canExecute = canExecute;

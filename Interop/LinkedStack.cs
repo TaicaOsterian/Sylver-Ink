@@ -5,28 +5,22 @@ namespace SylverInk.Interop;
 /// <summary>
 /// A simple collection class with a <seealso cref="List"/> as its backing, which supports stack-like functions such as push-pop behavior.
 /// </summary>
-public class LinkedStack<T> : IEnumerable<T>
+internal sealed class LinkedStack<T> : IEnumerable<T>
 {
     private readonly List<T> _collection;
 
-    public LinkedStack()
+    internal LinkedStack()
     {
         _collection = [];
     }
 
-    public void Clear() => _collection.Clear();
+    internal void Clear() => _collection.Clear();
 
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return ((IEnumerable)_collection).GetEnumerator();
-    }
+    IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)_collection).GetEnumerator();
 
-    public IEnumerator<T> GetEnumerator()
-    {
-        return ((IEnumerable<T>)_collection).GetEnumerator();
-    }
+    public IEnumerator<T> GetEnumerator() => ((IEnumerable<T>)_collection).GetEnumerator();
 
-    public T? Peek(int depth = 0)
+    internal T? Peek(int depth = 0)
     {
         int index = _collection.Count - 1 - depth;
         if (index < 0)
@@ -36,7 +30,7 @@ public class LinkedStack<T> : IEnumerable<T>
         return item;
     }
 
-    public T Pop()
+    internal T Pop()
     {
         if (_collection.Count == 0)
             throw new InvalidOperationException(Strings.AttemptedPopEmptyStack);
@@ -47,13 +41,13 @@ public class LinkedStack<T> : IEnumerable<T>
         return item;
     }
 
-    public void Push(T item) => _collection.Add(item);
+    internal void Push(T item) => _collection.Add(item);
 
-    public void Remove(T item) => _collection.Remove(item);
+    internal void Remove(T item) => _collection.Remove(item);
 
-    public void RemoveAt(int index) => _collection.RemoveAt(index);
+    internal void RemoveAt(int index) => _collection.RemoveAt(index);
 
-    public T? Seek(int depth = 0)
+    internal T? Seek(int depth = 0)
     {
         T item = _collection[depth];
         return item;

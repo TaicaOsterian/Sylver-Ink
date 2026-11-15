@@ -2,10 +2,10 @@
 
 namespace SylverInk.Visuals;
 
-public static class Themes
+internal static class Themes
 {
-    public static Theme Berry { get; } = new(
-        name: Strings.Label_Berry,
+    internal static Theme Berry { get; } = new(
+        name: Strings.Label_Berry!,
         accentBg: BrushFromBytes("B01366"),
         accentFg: BrushFromBytes("18DE61"),
         listBg: BrushFromBytes("150318"),
@@ -13,8 +13,8 @@ public static class Themes
         menuBg: BrushFromBytes("300C19"),
         menuFg: BrushFromBytes("E4DAFC"));
 
-    public static Theme Catppuccin { get; } = new(
-        name: Strings.Label_Catppuccin,
+    internal static Theme Catppuccin { get; } = new(
+        name: Strings.Label_Catppuccin!,
         accentBg: BrushFromBytes("1E1E2E"),
         accentFg: BrushFromBytes("89B4FA"),
         listBg: BrushFromBytes("11111B"),
@@ -22,8 +22,8 @@ public static class Themes
         menuBg: BrushFromBytes("313244"),
         menuFg: BrushFromBytes("A6ADC8"));
 
-    public static Theme HighContrast { get; } = new(
-        name: Strings.Label_HighContrast,
+    internal static Theme HighContrast { get; } = new(
+        name: Strings.Label_HighContrast!,
         accentBg: BrushFromBytes("000000"),
         accentFg: BrushFromBytes("00FFFF"),
         listBg: BrushFromBytes("1E1E1E"),
@@ -31,8 +31,8 @@ public static class Themes
         menuBg: BrushFromBytes("121212"),
         menuFg: BrushFromBytes("FFFFFF"));
 
-    public static Theme Ice { get; } = new(
-        name: Strings.Label_Ice,
+    internal static Theme Ice { get; } = new(
+        name: Strings.Label_Ice!,
         accentBg: BrushFromBytes("E0FFFF"),
         accentFg: BrushFromBytes("0000DD"),
         listBg: BrushFromBytes("F4FFFA"),
@@ -40,8 +40,8 @@ public static class Themes
         menuBg: BrushFromBytes("FDFFFF"),
         menuFg: BrushFromBytes("000011"));
 
-    public static Theme Manila { get; } = new(
-        name: Strings.Label_Manila,
+    internal static Theme Manila { get; } = new(
+        name: Strings.Label_Manila!,
         accentBg: BrushFromBytes("EEE8AA"),
         accentFg: BrushFromBytes("0000FF"),
         listBg: BrushFromBytes("FFFFFF"),
@@ -49,10 +49,10 @@ public static class Themes
         menuBg: BrushFromBytes("F5F5DC"),
         menuFg: BrushFromBytes("262626"));
 
-    public static Theme Default => Manila;
-    public static ICollection<Theme> ThemeCollection { get; } = [Berry, Catppuccin, HighContrast, Ice, Manila];
+    internal static Theme Default => Manila;
+    internal static ICollection<Theme> ThemeCollection { get; } = [Berry, Catppuccin, HighContrast, Ice, Manila];
 
-    public static Theme GetTheme(string name)
+    internal static Theme GetTheme(string name)
     {
         foreach (Theme theme in ThemeCollection)
         {

@@ -3,7 +3,7 @@ using System.Windows.Markup;
 
 namespace SylverInk.Interop;
 
-public class ImageContainerValueSerializer : ValueSerializer
+public sealed class ImageContainerValueSerializer : ValueSerializer
 {
     public override bool CanConvertToString(object value, IValueSerializerContext context) => value is ImageContainer;
 

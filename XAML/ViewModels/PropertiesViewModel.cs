@@ -4,7 +4,7 @@ using static SylverInk.Notes.DatabaseUtils;
 
 namespace SylverInk.XAML.ViewModels;
 
-public partial class PropertiesViewModel : ViewModelBase
+internal sealed partial class PropertiesViewModel : ViewModelBase
 {
     private string? _dbName;
     private string? _dbCreated;
@@ -151,9 +151,9 @@ public partial class PropertiesViewModel : ViewModelBase
     public ICommand InitializeCommand { get; }
     public ICommand RestoreCommand { get; }
 
-    public event EventHandler? RequestClose;
+    internal event EventHandler? RequestClose;
 
-    public PropertiesViewModel()
+    internal PropertiesViewModel()
     {
         CloseCommand = new RelayCommand(_ => RequestClose?.Invoke(this, EventArgs.Empty));
         InitializeCommand = new RelayCommand(async _ => await Task.Run(InitializeProperties));

@@ -12,9 +12,9 @@ public partial class ImageView : Popout
     private UIElement? element;
     private Matrix home = Matrix.Identity;
     private Control? parentControl;
-    public override ImageViewViewModel ViewModel => (ImageViewViewModel)ViewModelProperty;
+    internal override ImageViewViewModel ViewModel => (ImageViewViewModel)ViewModelProperty;
 
-    public ImageView()
+    internal ImageView()
     {
         DataContext = new ImageViewViewModel();
         base.Construct((ImageViewViewModel)DataContext);
@@ -95,7 +95,7 @@ public partial class ImageView : Popout
         Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Render, UpdateHome);
     }
 
-    public void Construct(ImageContainer container)
+    internal void Construct(ImageContainer container)
     {
         ViewModel.Source = container;
         CheckSource();

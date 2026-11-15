@@ -3,10 +3,10 @@
 /// <summary>
 /// Static properties aiding in the display of specific data to the main application window.
 /// </summary>
-public static class MainWindowUtils
+internal static class MainWindowUtils
 {
-    public static bool CanResize { get; set; }
-    public static bool DelayVisualUpdates { get; set; }
-    public static SortType RecentEntriesSortMode { get; set; } = SortType.ByChange;
-    public static DisplayType RibbonTabContent { get; set; } = DisplayType.Content;
+    internal static bool CanResize { get; set; }
+    internal static bool DelayVisualUpdates { get; set; }
+    internal static SortType RecentEntriesSortMode { get; set; } = SortType.ByChange;
+    internal static DisplayType RibbonTabContent { get; set; } = DisplayType.Content;
 }

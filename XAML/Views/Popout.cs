@@ -15,10 +15,10 @@ public partial class Popout : Window, IDisposable
     [DllImport("user32.dll")]
     static extern int SetWindowLong(nint hwnd, int index, int newStyle);
 
-    public struct SimplePoint(int x, int y)
+    internal struct SimplePoint(int x, int y)
     {
-        public int X { get; set; } = x;
-        public int Y { get; set; } = y;
+        internal int X { get; set; } = x;
+        internal int Y { get; set; } = y;
     }
 
     protected const int GWL_EXSTYLE = -20;
@@ -27,28 +27,25 @@ public partial class Popout : Window, IDisposable
 
     public bool Dragging { get; protected set; }
     public Point DragMouseCoords { get; protected set; } = new(0, 0);
-    public DispatcherTimer? EnterMonitor { get; set; }
-    public long EnterTime { get; set; }
-    public nint HWnd { get; set; }
-    public DispatcherTimer? LeaveMonitor { get; set; }
-    public long LeaveTime { get; set; }
+    internal DispatcherTimer? EnterMonitor { get; set; }
+    internal long EnterTime { get; set; }
+    internal nint HWnd { get; set; }
+    internal DispatcherTimer? LeaveMonitor { get; set; }
+    internal long LeaveTime { get; set; }
     protected bool MouseInside { get; set; }
-    public DispatcherTimer? MouseMonitor { get; set; }
-    public double SnapTolerance { get; } = 20.0;
-    public double StartOpacity { get; set; }
+    internal DispatcherTimer? MouseMonitor { get; set; }
+    internal double SnapTolerance { get; } = 20.0;
+    internal double StartOpacity { get; set; }
 
     protected PopoutViewModel ViewModelProperty { get; set; }
-    public virtual PopoutViewModel ViewModel => ViewModelProperty;
+    internal virtual PopoutViewModel ViewModel => ViewModelProperty;
 
-    public Popout()
+    internal Popout()
     {
         ViewModelProperty = new();
     }
 
-    protected virtual void Construct(PopoutViewModel viewModel)
-    {
-        ViewModelProperty = viewModel;
-    }
+    protected virtual void Construct(PopoutViewModel viewModel) => ViewModelProperty = viewModel;
 
     public void Dispose()
     {
@@ -56,7 +53,7 @@ public partial class Popout : Window, IDisposable
         GC.SuppressFinalize(this);
     }
 
-    public void Drag(object? sender, MouseEventArgs e)
+    internal void Drag(object? sender, MouseEventArgs e)
     {
         if (!Dragging)
             return;
@@ -146,7 +143,7 @@ public partial class Popout : Window, IDisposable
         MouseMonitor.Tick += WindowMouseMonitor;
     }
 
-    public void InitMonitors()
+    internal void InitMonitors()
     {
         InitEnterMonitor();
         InitLeaveMonitor();
@@ -159,7 +156,7 @@ public partial class Popout : Window, IDisposable
         RefreshRecentNotes();
     }
 
-    public bool SetWindowExTransparent()
+    internal bool SetWindowExTransparent()
     {
         var extendedStyle = GetWindowLong(HWnd, GWL_EXSTYLE);
         return SetWindowLong(HWnd, GWL_EXSTYLE, extendedStyle | WS_EX_LAYERED | WS_EX_TRANSPARENT) != 0;
@@ -269,14 +266,14 @@ public partial class Popout : Window, IDisposable
         return Coords;
     }
 
-    public void StopMonitors()
+    internal void StopMonitors()
     {
         EnterMonitor?.Stop();
         LeaveMonitor?.Stop();
         MouseMonitor?.Stop();
     }
 
-    public bool UnsetWindowExTransparent()
+    internal bool UnsetWindowExTransparent()
     {
         int extendedStyle = GetWindowLong(HWnd, GWL_EXSTYLE);
         return SetWindowLong(HWnd, GWL_EXSTYLE, extendedStyle & ~WS_EX_LAYERED & ~WS_EX_TRANSPARENT) != 0;
@@ -346,7 +343,7 @@ public partial class Popout : Window, IDisposable
         LeaveMonitor?.Start();
     }
 
-    public void WindowMouseMonitor(object? sender, EventArgs e)
+    internal void WindowMouseMonitor(object? sender, EventArgs e)
     {
         if (!GetCursorPos(out SimplePoint screenPosition))
             return;

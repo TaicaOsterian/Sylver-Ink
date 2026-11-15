@@ -17,12 +17,12 @@ namespace SylverInk;
 /// <summary>
 /// For values which must be cleanly overwritten on a major properties sweep, ContextFreeze prevents cascading behavior.
 /// </summary>
-public readonly ref struct ContextFreeze
+internal readonly ref struct ContextFreeze
 {
     private readonly ContextSettings _context;
     private readonly bool _highContrastAssist;
 
-    public ContextFreeze(ContextSettings context)
+    internal ContextFreeze(ContextSettings context)
     {
         _context = context;
 
@@ -30,13 +30,10 @@ public readonly ref struct ContextFreeze
         _context.HighContrastAssist = false;
     }
 
-    public void Dispose()
-    {
-        _context.HighContrastAssist = _highContrastAssist;
-    }
+    internal void Dispose() => _context.HighContrastAssist = _highContrastAssist;
 }
 
-public class ContextSettings : ViewModelBase
+public sealed class ContextSettings : ViewModelBase
 {
     private Brush? _accentBackground = Themes.Default.AccentBackground;
     private Brush? _accentForeground = Themes.Default.AccentForeground;
@@ -280,7 +277,7 @@ public class ContextSettings : ViewModelBase
         {
             if (!HotKeyUtils.ReRegisterHotKey(HotKeyUtils.NewNoteHotKeyID, value))
             {
-                ShowTooltip(Strings.BadHotKey);
+                ShowTooltip(Strings.BadHotKey!);
                 return;
             }
             _newNoteHotKey = value;
@@ -329,7 +326,7 @@ public class ContextSettings : ViewModelBase
         {
             if (!HotKeyUtils.ReRegisterHotKey(HotKeyUtils.PreviousNoteHotKeyID, value))
             {
-                ShowTooltip(Strings.BadHotKey);
+                ShowTooltip(Strings.BadHotKey!);
                 return;
             }
             _previousNoteHotKey = value;
@@ -524,7 +521,7 @@ public class ContextSettings : ViewModelBase
         ThemeCollection.Sort(new Comparison<Theme>((t1, t2) => string.CompareOrdinal(t1.Name, t2.Name)));
     }
 
-    public async Task Load()
+    internal async Task Load()
     {
         InitFonts();
         InitThemes();
@@ -728,7 +725,7 @@ public class ContextSettings : ViewModelBase
         OnPropertyChanged(null);
     }
 
-    public void RestoreActiveNotes()
+    internal void RestoreActiveNotes()
     {
         foreach (var openNote in LastActiveNotes)
         {
@@ -778,7 +775,7 @@ public class ContextSettings : ViewModelBase
         LastActiveNotesWidth.Clear();
     }
 
-    public void Save() => File.WriteAllLines(SettingsFile, [
+    internal void Save() => File.WriteAllLines(SettingsFile, [
         $"AccentBackground:{BytesFromBrush(_accentBackground)}",
         $"AccentForeground:{BytesFromBrush(_accentForeground)}",
         $"FirstRun:{FirstRun}",

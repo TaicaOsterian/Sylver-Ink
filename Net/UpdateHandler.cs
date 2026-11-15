@@ -9,16 +9,16 @@ using static SylverInk.FileIO.FileUtils;
 
 namespace SylverInk.Net;
 
-public static class UpdateHandler
+internal static class UpdateHandler
 {
     private static string GitReleasesURI { get; } = "https://api.github.com/repos/TaicaOsterian/Sylver-Ink/releases?per_page=1&page=1";
-    public static bool GracefulExit { get; private set; }
-    public static string TempUri { get; } = Path.Join(DocumentsFolder, "SylverInk.msi");
-    public static string UpdateLockUri { get; } = Path.Join(DocumentsFolder, "~si_update.lock");
-    public static CancellationTokenSource UpdateTokenSource { get; private set; } = new();
-    public static Update UpdateWindow { get; } = new();
+    internal static bool GracefulExit { get; private set; }
+    internal static string TempUri { get; } = Path.Join(DocumentsFolder, "SylverInk.msi");
+    internal static string UpdateLockUri { get; } = Path.Join(DocumentsFolder, "~si_update.lock");
+    internal static CancellationTokenSource UpdateTokenSource { get; private set; } = new();
+    internal static Update UpdateWindow { get; } = new();
 
-    public static void CancelUpdate()
+    internal static void CancelUpdate()
     {
         UpdateTokenSource.Cancel();
         UpdateTokenSource.Dispose();
@@ -26,7 +26,7 @@ public static class UpdateHandler
         GracefulExit = false;
     }
 
-    public static async Task<bool> CheckForUpdates(bool notifyOnFail = false)
+    internal static async Task<bool> CheckForUpdates(bool notifyOnFail = false)
     {
         using var httpClient = new HttpClient();
         GracefulExit = false;
@@ -99,7 +99,7 @@ public static class UpdateHandler
         {
             App.LogException(e);
             if (notifyOnFail)
-                ShowTooltip(Strings.FailedUpdateCheck);
+                ShowTooltip(Strings.FailedUpdateCheck!);
 
             GracefulExit = true;
             return true;
@@ -118,7 +118,7 @@ public static class UpdateHandler
         {
             if (!notifyOnFail)
             {
-                ShowTooltip(Strings.OfferUpdateInHelp);
+                ShowTooltip(Strings.OfferUpdateInHelp!);
                 CommonUtils.Settings.PromptForUpdate = false;
             }
 

@@ -7,18 +7,18 @@ namespace SylverInk.XAML.Controls;
 /// </summary>
 public partial class DatabaseControl : UserControl
 {
-    public static readonly DependencyProperty DatabaseProperty =
+    internal static readonly DependencyProperty DatabaseProperty =
         DependencyProperty.RegisterAttached(
             "Database",
             typeof(Database),
             typeof(DatabaseControl),
             new PropertyMetadata(null, OnDatabaseChanged));
 
-    public double NoteListActualHeight => RecentNotesBox.ActualHeight;
+    internal double NoteListActualHeight => RecentNotesBox.ActualHeight;
 
-    public double NoteListActualWidth => RecentNotesBox.ActualWidth;
+    internal double NoteListActualWidth => RecentNotesBox.ActualWidth;
 
-    public DatabaseControl()
+    internal DatabaseControl()
     {
         DataContext = new DatabaseControlViewModel();
         InitializeComponent();
@@ -75,7 +75,7 @@ public partial class DatabaseControl : UserControl
         PlusTab.ContextMenu = menu;
     }
 
-    public static Database GetDatabase(DependencyObject source) => (Database)source.GetValue(DatabaseProperty);
+    internal static Database GetDatabase(DependencyObject source) => (Database)source.GetValue(DatabaseProperty);
 
     private void ListItemChosen(object sender, MouseButtonEventArgs e)
     {
@@ -115,5 +115,5 @@ public partial class DatabaseControl : UserControl
 
     private void RecentNotesBox_SizeChanged(object sender, SizeChangedEventArgs e) => ResetViewport();
 
-    public static void SetDatabase(DependencyObject source, Database value) => source.SetValue(DatabaseProperty, value);
+    internal static void SetDatabase(DependencyObject source, Database value) => source.SetValue(DatabaseProperty, value);
 }

@@ -2,7 +2,7 @@
 
 namespace SylverInk.Interop;
 
-public class HotKey
+public sealed class HotKey
 {
     [DllImport("user32.dll", CharSet = CharSet.Auto)]
     private static extern uint MapVirtualKey(uint uCode, uint uMapType);
@@ -13,30 +13,27 @@ public class HotKey
 
     private const uint MAPVK_VK_TO_CHAR = 2;
 
-    public Key Key
+    internal Key Key
     {
         get => _key;
         set => _key = value;
     }
 
-    public int KeyID
+    internal int KeyID
     {
         get => _keyID;
         set => _keyID = value;
     }
 
-    public ModifierKeys Modifiers
+    internal ModifierKeys Modifiers
     {
         get => _modifiers;
         set => _modifiers = value;
     }
 
-    public bool CombinationEquals(HotKey obj)
-    {
-        return obj.Key.Equals(this.Key) && obj.Modifiers.Equals(this.Modifiers);
-    }
+    internal bool CombinationEquals(HotKey obj) => obj.Key.Equals(this.Key) && obj.Modifiers.Equals(this.Modifiers);
 
-    public static HotKey FromString(string format)
+    internal static HotKey FromString(string format)
     {
         HotKey result = new();
 
@@ -67,18 +64,18 @@ public class HotKey
         return result;
     }
 
-    public static string GetLocalizedKeyName(Key key)
+    internal static string GetLocalizedKeyName(Key key)
     {
         switch (key)
         {
             case Key.Tab:
-                return Strings.Key_Tab;
+                return Strings.Key_Tab!;
             case Key.Enter:
-                return Strings.Key_Enter;
+                return Strings.Key_Enter!;
             case Key.Space:
-                return Strings.Key_Space;
+                return Strings.Key_Space!;
             case Key.Back:
-                return Strings.Key_Backspace;
+                return Strings.Key_Backspace!;
         }
 
         int virtualKey = KeyInterop.VirtualKeyFromKey(key);
@@ -92,7 +89,7 @@ public class HotKey
 
     public override string ToString() => ToString(true);
 
-    public string ToString(bool localize)
+    internal string ToString(bool localize)
     {
         var keyString = localize ? GetLocalizedKeyName(this.Key) : this.Key.ToString();
         var modString = string.Empty;

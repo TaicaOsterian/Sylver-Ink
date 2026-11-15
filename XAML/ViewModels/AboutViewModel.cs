@@ -2,17 +2,16 @@
 
 namespace SylverInk.XAML.ViewModels;
 
-public class AboutViewModel : ViewModelBase
+internal sealed class AboutViewModel : ViewModelBase
 {
-
     public string AboutUsUri { get; } = "https://github.com/TaicaOsterian/Sylver-Ink";
 
     public ICommand CloseCommand { get; }
     public ICommand NavigateCommand { get; }
 
-    public event EventHandler? RequestClose;
+    internal event EventHandler? RequestClose;
 
-    public AboutViewModel()
+    internal AboutViewModel()
     {
         CloseCommand = new RelayCommand(_ => RequestClose?.Invoke(this, EventArgs.Empty));
         NavigateCommand = new RelayCommand(Navigate);

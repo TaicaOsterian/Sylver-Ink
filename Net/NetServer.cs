@@ -8,7 +8,7 @@ using static SylverInk.Net.NetworkUtils;
 
 namespace SylverInk.Net;
 
-public class NetServer : IDisposable
+internal class NetServer : IDisposable
 {
     private IPAddress? Address;
     private readonly List<TcpClient> Clients = [];
@@ -22,12 +22,12 @@ public class NetServer : IDisposable
     private readonly BackgroundWorker ServerTask = new() { WorkerSupportsCancellation = true };
     private readonly BackgroundWorker WatchTask = new() { WorkerSupportsCancellation = true };
 
-    public bool Active { get; private set; }
-    public string? AddressCode { get; private set; }
-    public System.Windows.Shapes.Ellipse? Indicator { get; }
-    public bool Serving { get; private set; }
+    internal bool Active { get; private set; }
+    internal string? AddressCode { get; private set; }
+    internal System.Windows.Shapes.Ellipse? Indicator { get; }
+    internal bool Serving { get; private set; }
 
-    public NetServer(Database DB)
+    internal NetServer(Database DB)
     {
         Indicator = new()
         {
@@ -101,7 +101,7 @@ public class NetServer : IDisposable
         };
     }
 
-    public async void Broadcast(MessageType type, byte[] data)
+    internal async void Broadcast(MessageType type, byte[] data)
     {
         foreach (var client in Clients)
         {
@@ -117,7 +117,7 @@ public class NetServer : IDisposable
         RefreshRecentNotes();
     }
 
-    public void Close()
+    internal void Close()
     {
         WatchTask.CancelAsync();
         ServerTask.CancelAsync();
@@ -165,7 +165,7 @@ public class NetServer : IDisposable
         }
     }
 
-    public async Task<bool> Serve(byte Flags)
+    internal async Task<bool> Serve(byte Flags)
     {
         Active = true;
         Address = IPAddress.Loopback;

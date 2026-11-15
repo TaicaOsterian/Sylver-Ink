@@ -10,7 +10,7 @@ using System.Windows.Threading;
 namespace SylverInk.Mvvm;
 
 [ValueSerializer(typeof(ImageContainerValueSerializer))]
-public class ImageContainer : Image, IDisposable
+internal class ImageContainer : Image, IDisposable
 {
     private readonly List<BitmapSource> _compositedFrames = [];
     private long _currentDelay;
@@ -25,13 +25,13 @@ public class ImageContainer : Image, IDisposable
     private long _ticksElapsed;
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public List<BitmapSource> CompositedFrames
+    internal List<BitmapSource> CompositedFrames
     {
         get => _compositedFrames;
     }
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public long CurrentDelay
+    internal long CurrentDelay
     {
         get => _currentDelay;
         private set
@@ -42,13 +42,13 @@ public class ImageContainer : Image, IDisposable
     }
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public DispatcherTimer DelayTimer
+    internal DispatcherTimer DelayTimer
     {
         get => _delayTimer;
     }
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public string Format
+    internal string Format
     {
         get => _format;
         private set
@@ -61,7 +61,7 @@ public class ImageContainer : Image, IDisposable
     /// The setter for this property explicitly computes the given value modulo the number of frames.
     /// </summary>
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public int FrameIndex
+    internal int FrameIndex
     {
         get => _frameIndex;
         set
@@ -74,13 +74,13 @@ public class ImageContainer : Image, IDisposable
     }
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public List<long> FrameTiming
+    internal List<long> FrameTiming
     {
         get => _frameTiming;
     }
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public Window? ParentWindow
+    internal Window? ParentWindow
     {
         get => _parentWindow;
         set
@@ -90,13 +90,13 @@ public class ImageContainer : Image, IDisposable
     }
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public List<BitmapFrame> RawFrames
+    internal List<BitmapFrame> RawFrames
     {
         get => _rawFrames;
     }
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public long TicksElapsed
+    internal long TicksElapsed
     {
         get => _ticksElapsed;
         set
@@ -107,7 +107,7 @@ public class ImageContainer : Image, IDisposable
 
     private EventHandler? _layoutHandler;
 
-    public ImageContainer() : base()
+    internal ImageContainer() : base()
     {
         _delayTimer = new(DispatcherPriority.Background);
         _delayTimer.Tick += (_, _) =>
@@ -375,7 +375,7 @@ public class ImageContainer : Image, IDisposable
         return container;
     }
 
-    public static void DetectImageDoubleClick(object sender, RoutedEventArgs e)
+    internal static void DetectImageDoubleClick(object sender, RoutedEventArgs e)
     {
         DependencyObject? source = e.OriginalSource as DependencyObject;
 
@@ -417,7 +417,7 @@ public class ImageContainer : Image, IDisposable
         GC.SuppressFinalize(this);
     }
 
-    public void EvaluateVisibility()
+    internal void EvaluateVisibility()
     {
         long now = DateTime.UtcNow.Ticks;
         if (now - _lastVisibilityCheck < 1e6) // At most, refresh ten times per second.
@@ -454,7 +454,7 @@ public class ImageContainer : Image, IDisposable
         view.Show();
     }
 
-    public static ImageContainer FromSource(BitmapSource source)
+    internal static ImageContainer FromSource(BitmapSource source)
     {
         ImageContainer container = new();
 
@@ -473,7 +473,7 @@ public class ImageContainer : Image, IDisposable
         }
     }
 
-    public static ImageContainer FromStream(Stream stream)
+    internal static ImageContainer FromStream(Stream stream)
     {
         try
         {
@@ -486,7 +486,7 @@ public class ImageContainer : Image, IDisposable
         }
     }
 
-    public static ImageContainer FromBase64(string data)
+    internal static ImageContainer FromBase64(string data)
     {
         try
         {
@@ -521,7 +521,7 @@ public class ImageContainer : Image, IDisposable
         EndInit();
     }
 
-    public static ImageContainer Load(string filename)
+    internal static ImageContainer Load(string filename)
     {
         try
         {
@@ -542,7 +542,7 @@ public class ImageContainer : Image, IDisposable
         }
     }
 
-    public static void OnLoaded(object? sender, EventArgs e)
+    internal static void OnLoaded(object? sender, EventArgs e)
     {
         if (sender is not ImageContainer container)
             return;
@@ -582,7 +582,7 @@ public class ImageContainer : Image, IDisposable
         container.EvaluateVisibility();
     }
 
-    public string ToBase64()
+    internal string ToBase64()
     {
         var sb = new StringBuilder();
 
@@ -593,7 +593,7 @@ public class ImageContainer : Image, IDisposable
         return sb.ToString();
     }
 
-    public byte[] ToByteArray(string? exportFormat = null)
+    internal byte[] ToByteArray(string? exportFormat = null)
     {
         using MemoryStream stream = new();
         exportFormat ??= Format;

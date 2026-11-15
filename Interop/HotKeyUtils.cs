@@ -8,7 +8,7 @@ namespace SylverInk.Interop;
 /// <summary>
 /// Static functions serving global hotkey registration.
 /// </summary>
-public static class HotKeyUtils
+internal static class HotKeyUtils
 {
     [DllImport("User32.dll")]
     private static extern bool RegisterHotKey(nint hWnd, int id, uint fsModifiers, uint vk);
@@ -16,7 +16,7 @@ public static class HotKeyUtils
     [DllImport("User32.dll")]
     private static extern bool UnregisterHotKey(nint hWnd, int id);
 
-    public static readonly DependencyProperty HotKeyCommandProperty =
+    internal static readonly DependencyProperty HotKeyCommandProperty =
         DependencyProperty.RegisterAttached(
             "HotKeyCommand",
             typeof(ICommand),
@@ -71,7 +71,7 @@ public static class HotKeyUtils
         button.IsChecked = false;
     }
 
-    public static ICommand GetHotKeyCommand(DependencyObject obj) => (ICommand)obj.GetValue(HotKeyCommandProperty);
+    internal static ICommand GetHotKeyCommand(DependencyObject obj) => (ICommand)obj.GetValue(HotKeyCommandProperty);
 
     private static nint HwndHook(nint hwnd, int msg, nint wParam, nint lParam, ref bool handled)
     {
@@ -96,7 +96,7 @@ public static class HotKeyUtils
         return default;
     }
 
-    public static void Init()
+    internal static void Init()
     {
         hWndHelper = new WindowInteropHelper(Application.Current.MainWindow);
         WindowSource = HwndSource.FromHwnd(hWndHelper.Handle);
@@ -136,7 +136,7 @@ public static class HotKeyUtils
         RegisterHotKey(PreviousNoteHotKeyID, Settings.PreviousNoteHotKey);
     }
 
-    public static bool RegisterHotKey(int hotKeyID, HotKey gesture)
+    internal static bool RegisterHotKey(int hotKeyID, HotKey gesture)
     {
         if (hWndHelper is null)
             return false;
@@ -152,7 +152,7 @@ public static class HotKeyUtils
         return register;
     }
 
-    public static void Release()
+    internal static void Release()
     {
         try
         {
@@ -166,7 +166,7 @@ public static class HotKeyUtils
         }
     }
 
-    public static bool ReRegisterHotKey(int hotKeyID, HotKey gesture)
+    internal static bool ReRegisterHotKey(int hotKeyID, HotKey gesture)
     {
         if (!UnregisterHotKey(hotKeyID))
             return false;
@@ -177,7 +177,7 @@ public static class HotKeyUtils
         return true;
     }
 
-    public static void SetHotKeyCommand(DependencyObject obj, ICommand value) => obj.SetValue(HotKeyCommandProperty, value);
+    internal static void SetHotKeyCommand(DependencyObject obj, ICommand value) => obj.SetValue(HotKeyCommandProperty, value);
 
     private static bool TestHotKey(HotKey gesture)
     {
@@ -200,7 +200,7 @@ public static class HotKeyUtils
         UnregisterHotKey(PreviousNoteHotKeyID);
     }
 
-    public static bool UnregisterHotKey(int hotKeyID)
+    internal static bool UnregisterHotKey(int hotKeyID)
     {
         if (hWndHelper is null)
             return false;

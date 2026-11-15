@@ -6,11 +6,11 @@ namespace SylverInk.Text;
 /// <summary>
 /// Static functions serving operations on FlowDocument objects.
 /// </summary>
-public static class FlowDocumentUtils
+internal static class FlowDocumentUtils
 {
     private const int PreviewLength = 250;
 
-    public static string FlowDocumentPreview(FlowDocument? document)
+    internal static string FlowDocumentPreview(FlowDocument? document)
     {
         if (document is null)
             return string.Empty;
@@ -27,7 +27,7 @@ public static class FlowDocumentUtils
         return content.ToString().Trim();
     }
 
-    public static void ScrollToPosition(FlowDocument? document, int offset = 0, LogicalDirection direction = LogicalDirection.Forward)
+    internal static void ScrollToPosition(FlowDocument? document, int offset = 0, LogicalDirection direction = LogicalDirection.Forward)
     {
         if (document is null)
             return;
@@ -53,7 +53,7 @@ public static class FlowDocumentUtils
         box.CaretPosition = pointer;
     }
 
-    public static void ScrollToText(FlowDocument? document, string? text, LogicalDirection direction = LogicalDirection.Forward)
+    internal static void ScrollToText(FlowDocument? document, string? text, LogicalDirection direction = LogicalDirection.Forward)
     {
         if (document is null)
             return;
@@ -118,7 +118,7 @@ public static class FlowDocumentUtils
         box.Focus();
     }
 
-    public static TextPointer? TranslatePointer(TextPointer textPointer, ref StringBuilder content)
+    internal static TextPointer? TranslatePointer(TextPointer textPointer, ref StringBuilder content)
     {
         switch (textPointer.GetPointerContext(LogicalDirection.Forward))
         {
@@ -137,7 +137,7 @@ public static class FlowDocumentUtils
                 switch (element)
                 {
                     case InlineUIContainer:
-                        content.Append(CultureInfo.CurrentCulture, $"({Strings.Word_Image.ToLower(CultureInfo.CurrentCulture)})");
+                        content.Append(CultureInfo.CurrentCulture, $"({Strings.Word_Image!.ToLower(CultureInfo.CurrentCulture)})");
                         break;
                     case LineBreak:
                         content.AppendLine();

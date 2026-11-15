@@ -3,7 +3,7 @@ using System.Windows.Media.Imaging;
 
 namespace SylverInk.FileIO;
 
-public static class BitmapUtils
+internal static class BitmapUtils
 {
     private static int GetGlobalColorTableSize(byte[] gif)
     {
@@ -46,7 +46,7 @@ public static class BitmapUtils
         }
     }
 
-    public static T GetQuery<T>(BitmapMetadata? metadata, string path, T defaultValue) where T : struct
+    internal static T GetQuery<T>(BitmapMetadata? metadata, string path, T defaultValue) where T : struct
     {
         if (metadata is null)
             return defaultValue;
@@ -69,7 +69,7 @@ public static class BitmapUtils
         }
     }
 
-    public static byte[] RewriteGif(byte[] gifData, List<long> FrameTiming, List<BitmapMetadata?> frameMetadata)
+    internal static byte[] RewriteGif(byte[] gifData, List<long> FrameTiming, List<BitmapMetadata?> frameMetadata)
     {
         if (gifData == null || gifData.Length < 13)
             throw new InvalidDataException("Not a valid GIF stream.");
@@ -179,7 +179,7 @@ public static class BitmapUtils
         }
     }
 
-    public static BitmapSource Snapshot(BitmapSource source)
+    internal static BitmapSource Snapshot(BitmapSource source)
     {
         var snapshot = new WriteableBitmap(source);
         snapshot.Freeze();
@@ -213,9 +213,7 @@ public static class BitmapUtils
         output.Add(0x00);              // Block terminator.
     }
 
-    private static void WriteNetscapeLoopExtension(List<byte> output)
-    {
-        output.AddRange([
+    private static void WriteNetscapeLoopExtension(List<byte> output) => output.AddRange([
             0x21, 0xFF, 0x0B, // Application extension, 11-byte identifier.
             (byte)'N', (byte)'E', (byte)'T', (byte)'S', (byte)'C', (byte)'A', (byte)'P', (byte)'E',
             (byte)'2', (byte)'.', (byte)'0',
@@ -223,5 +221,4 @@ public static class BitmapUtils
             0x00, 0x00,       // Loop count: 0 (loop indefinitely).
             0x00              // Terminator.
         ]);
-    }
 }

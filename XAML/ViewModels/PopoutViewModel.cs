@@ -18,9 +18,9 @@ public class PopoutViewModel : ViewModelBase
 
     public ICommand CloseCommand { get; }
 
-    public event EventHandler? RequestClose;
+    internal event EventHandler? RequestClose;
 
-    public PopoutViewModel() : base()
+    internal PopoutViewModel() : base()
     {
         CloseCommand = new RelayCommand(_ => RequestClose?.Invoke(this, EventArgs.Empty));
     }

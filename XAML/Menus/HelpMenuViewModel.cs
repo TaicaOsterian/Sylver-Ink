@@ -2,12 +2,12 @@
 
 namespace SylverInk.XAML.Menus;
 
-public class HelpMenuViewModel : ViewModelBase
+internal sealed class HelpMenuViewModel : ViewModelBase
 {
     public ICommand AboutCommand { get; }
     public ICommand CheckForUpdatesCommand { get; }
 
-    public HelpMenuViewModel()
+    internal HelpMenuViewModel()
     {
         AboutCommand = new RelayCommand(MenuShowAbout);
         CheckForUpdatesCommand = new RelayCommand(CheckForUpdates);
@@ -18,7 +18,7 @@ public class HelpMenuViewModel : ViewModelBase
         if (await UpdateHandler.CheckForUpdates(true))
             return;
 
-        ShowTooltip(UpdateHandler.GracefulExit ? Strings.NoUpdateAvailable : Strings.FailedUpdateCheck);
+        ShowTooltip(UpdateHandler.GracefulExit ? Strings.NoUpdateAvailable! : Strings.FailedUpdateCheck!);
     }
 
     private static void MenuShowAbout(object? param) => new About().Show();

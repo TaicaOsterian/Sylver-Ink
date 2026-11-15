@@ -5,7 +5,7 @@ using static SylverInk.Notes.DatabaseUtils;
 
 namespace SylverInk.XAML.Menus;
 
-public class DatabaseMenuViewModel : ViewModelBase
+internal sealed class DatabaseMenuViewModel : ViewModelBase
 {
     private string _renameDatabaseName = string.Empty;
     private bool _renamePopupVisible;
@@ -39,7 +39,7 @@ public class DatabaseMenuViewModel : ViewModelBase
     public ICommand RenamePopupEscapeCommand { get; }
     public ICommand SaveRenameCommand { get; }
 
-    public DatabaseMenuViewModel()
+    internal DatabaseMenuViewModel()
     {
         BackupDatabaseCommand = new RelayCommand(MenuBackup);
         CancelRenameCommand = new RelayCommand(_ => RenamePopupVisible = false);
@@ -70,10 +70,7 @@ public class DatabaseMenuViewModel : ViewModelBase
         RefreshRecentNotes();
     }
 
-    private static void MenuProperties(object? param)
-    {
-        new Properties().Show();
-    }
+    private static void MenuProperties(object? param) => new Properties().Show();
 
     private void MenuRename(object? param)
     {
@@ -97,7 +94,7 @@ public class DatabaseMenuViewModel : ViewModelBase
             if (!RenameDatabaseName.Equals(db.Name, StringComparison.Ordinal))
                 continue;
 
-            MessageBox.Show(Strings.Message_DatabaseExists, Strings.Title_Error, MessageBoxButton.OK, MessageBoxImage.Error);
+            ShowTooltip(Strings.Message_DatabaseExists!);
             return;
         }
 

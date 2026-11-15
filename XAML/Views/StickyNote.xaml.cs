@@ -7,9 +7,9 @@ namespace SylverInk.XAML;
 /// </summary>
 public partial class StickyNote : Popout
 {
-    public override StickyNoteViewModel ViewModel => (StickyNoteViewModel)ViewModelProperty;
+    internal override StickyNoteViewModel ViewModel => (StickyNoteViewModel)ViewModelProperty;
 
-    public StickyNote()
+    internal StickyNote()
     {
         DataContext = new StickyNoteViewModel();
         base.Construct((StickyNoteViewModel)DataContext);
@@ -18,7 +18,7 @@ public partial class StickyNote : Popout
         InitializeComponent();
     }
 
-    public void Construct()
+    internal void Construct()
     {
         ViewModel.Construct();
         OpenQueries.Add(this);
@@ -49,7 +49,7 @@ public partial class StickyNote : Popout
             RichTextBoxUtils.SetDocumentCaret(NoteBox, caret); // Raise the event and let it fully go through once the document's parent reference is set.
     }
 
-    public void RequestClose(NoteRecord? source = null)
+    internal void RequestClose(NoteRecord? source = null)
     {
         if (source is not null && !ViewModel.Record.Equals(source))
             return;
@@ -57,7 +57,7 @@ public partial class StickyNote : Popout
         HandleClose(true);
     }
 
-    public bool RequestOpen(NoteRecord source)
+    internal bool RequestOpen(NoteRecord source)
     {
         if (!ViewModel.Record.Equals(source))
             return false;
@@ -68,7 +68,7 @@ public partial class StickyNote : Popout
         return true;
     }
 
-    public void RequestUnlock(NoteRecord record) => ViewModel.RequestUnlock(record);
+    internal void RequestUnlock(NoteRecord record) => ViewModel.RequestUnlock(record);
 
     private void RichTextBox_Pasting(object? sender, DataObjectPastingEventArgs e) => RichTextBoxUtils.HandlePaste(sender, e);
 

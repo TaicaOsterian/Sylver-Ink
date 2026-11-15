@@ -4,7 +4,7 @@ using static SylverInk.Notes.DatabaseUtils;
 
 namespace SylverInk.XAML.Controls;
 
-public class DatabaseControlViewModel : ViewModelBase
+internal sealed class DatabaseControlViewModel : ViewModelBase
 {
     public static string NewNoteButtonTooltip => string.Format(CultureInfo.CurrentCulture, CacheNewNoteButtonTooltip.Format, AppSettings.NewNoteHotKey);
     public static string RecentNotesTooltip => string.Format(CultureInfo.CurrentCulture, CacheRecentNotesTooltip.Format, AppSettings.PreviousNoteHotKey);
@@ -16,7 +16,7 @@ public class DatabaseControlViewModel : ViewModelBase
     public ICommand SearchCommand { get; }
     public ICommand SettingsCommand { get; }
 
-    public DatabaseControlViewModel()
+    internal DatabaseControlViewModel()
     {
         ExitCommand = new RelayCommand(Exit);
         NewNoteCommand = new RelayCommand(NewNote);

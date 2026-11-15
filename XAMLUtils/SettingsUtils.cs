@@ -2,9 +2,9 @@
 
 namespace SylverInk.XAMLUtils;
 
-public static class SettingsUtils
+internal static class SettingsUtils
 {
-    public static void ColorChanged(string? ColorTag, Brush? ColorSelection, RichTextBox? TextTarget = null)
+    internal static void ColorChanged(string? ColorTag, Brush? ColorSelection, RichTextBox? TextTarget = null)
     {
         if (ColorTag is null)
             return;

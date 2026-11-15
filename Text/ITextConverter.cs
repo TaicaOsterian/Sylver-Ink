@@ -1,6 +1,6 @@
 ﻿namespace SylverInk.Text;
 
-public enum TextFormat
+internal enum TextFormat
 {
     Plaintext,
     Xaml,
@@ -10,7 +10,7 @@ public enum TextFormat
 /// <summary>
 /// For extensible conversion needs among different text storage formats.
 /// </summary>
-public interface ITextConverter
+internal interface ITextConverter
 {
     /// <summary>
     /// Convert from one text format to another.

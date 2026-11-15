@@ -10,10 +10,10 @@ namespace SylverInk;
 /// <summary>
 /// Static helper functions and properties serving multi- or general-purpose needs across the entire project.
 /// </summary>
-public static partial class CommonUtils
+internal static partial class CommonUtils
 {
     // Options for what to display in the tab header of opened NoteTab objects in a DatabaseControl.
-    public enum DisplayType
+    internal enum DisplayType
     {
         // Displays a short preview of the NoteTab's content.
         Content,
@@ -29,7 +29,7 @@ public static partial class CommonUtils
     }
 
     // Options for how records in the recent notes box should be sorted.
-    public enum SortType
+    internal enum SortType
     {
         // Recent notes sort by propagated index number (with index 0 at the top).
         ByIndex,
@@ -41,7 +41,7 @@ public static partial class CommonUtils
         ByCreation
     }
 
-    public enum UUIDType
+    internal enum UUIDType
     {
         Database,
         Record,
@@ -52,9 +52,9 @@ public static partial class CommonUtils
     private static Search? _search;
     private static Settings? _settings;
 
-    public static bool AbortRun { get; set; }
-    public static string DateFormat { get; } = "yyyy-MM-dd HH:mm:ss";
-    public static Import? ImportWindow
+    internal static bool AbortRun { get; set; }
+    internal static string DateFormat { get; } = "yyyy-MM-dd HH:mm:ss";
+    internal static Import? ImportWindow
     {
         get => _import;
         set
@@ -64,11 +64,11 @@ public static partial class CommonUtils
             _import?.Show();
         }
     }
-    public static bool InitComplete { get; set; }
-    public static List<ImageView> OpenImages { get; } = [];
-    public static List<StickyNote> OpenQueries { get; } = [];
-    public static NoteRecord? RecentSelection { get; set; }
-    public static Search? SearchWindow
+    internal static bool InitComplete { get; set; }
+    internal static List<ImageView> OpenImages { get; } = [];
+    internal static List<StickyNote> OpenQueries { get; } = [];
+    internal static NoteRecord? RecentSelection { get; set; }
+    internal static Search? SearchWindow
     {
         get => _search;
         set
@@ -78,9 +78,9 @@ public static partial class CommonUtils
             _search?.Show();
         }
     }
-    public static ContextSettings Settings { get; } = new();
-    public static bool SettingsLoaded { get; set; }
-    public static Settings? SettingsWindow
+    internal static ContextSettings Settings { get; } = new();
+    internal static bool SettingsLoaded { get; set; }
+    internal static Settings? SettingsWindow
     {
         get => _settings;
         set
@@ -90,59 +90,59 @@ public static partial class CommonUtils
             _settings?.Show();
         }
     }
-    public static bool UpdatesChecked { get; set; }
-    public static double WindowHeight { get; set; }
-    public static double WindowWidth { get; set; }
+    internal static bool UpdatesChecked { get; set; }
+    internal static double WindowHeight { get; set; }
+    internal static double WindowWidth { get; set; }
 
     /// <summary>
     /// Dispatch an action to the main thread for synchronous execution.
     /// </summary>
     /// <param name="callback">The action to be performed on the main thread</param>
-    public static void Concurrent(Action callback) => Application.Current.Dispatcher.Invoke(callback);
+    internal static void Concurrent(Action callback) => Application.Current.Dispatcher.Invoke(callback);
 
     /// <summary>
     /// Dispatch an action with one argument and no return value to the main thread for synchronous execution.
     /// </summary>
     /// <param name="callback">The function to be executed on the main thread</param>
-    public static void Concurrent<T>(Action<T> callback, T arg) => Application.Current.Dispatcher.Invoke(callback, arg);
+    internal static void Concurrent<T>(Action<T> callback, T arg) => Application.Current.Dispatcher.Invoke(callback, arg);
 
     /// <summary>
     /// Dispatch an action with two arguments and no return value to the main thread for synchronous execution.
     /// </summary>
     /// <param name="callback">The function to be executed on the main thread</param>
-    public static void Concurrent<T1, T2>(Action<T1, T2> callback, T1 arg1, T2 arg2) => Application.Current.Dispatcher.Invoke(callback, arg1, arg2);
+    internal static void Concurrent<T1, T2>(Action<T1, T2> callback, T1 arg1, T2 arg2) => Application.Current.Dispatcher.Invoke(callback, arg1, arg2);
 
     /// <summary>
     /// Dispatch an action with three arguments and no return value to the main thread for synchronous execution.
     /// </summary>
     /// <param name="callback">The function to be executed on the main thread</param>
-    public static void Concurrent<T1, T2, T3>(Action<T1, T2, T3> callback, T1 arg1, T2 arg2, T3 arg3) => Application.Current.Dispatcher.Invoke(callback, arg1, arg2, arg3);
+    internal static void Concurrent<T1, T2, T3>(Action<T1, T2, T3> callback, T1 arg1, T2 arg2, T3 arg3) => Application.Current.Dispatcher.Invoke(callback, arg1, arg2, arg3);
 
     /// <summary>
     /// Dispatch a function with no arguments to the main thread for synchronous execution, and return the result of that execution.
     /// </summary>
     /// <param name="callback">The function to be executed on the main thread</param>
-    public static TResult Concurrent<TResult>(Func<TResult> callback) => Application.Current.Dispatcher.Invoke(callback);
+    internal static TResult Concurrent<TResult>(Func<TResult> callback) => Application.Current.Dispatcher.Invoke(callback);
 
     /// <summary>
     /// Dispatch a function with one argument to the main thread for synchronous execution, and return the result of that execution.
     /// </summary>
     /// <param name="callback">The function to be executed on the main thread</param>
-    public static TResult Concurrent<T, TResult>(Func<T, TResult> callback, T arg) => (TResult)Application.Current.Dispatcher.Invoke(callback, arg);
+    internal static TResult Concurrent<T, TResult>(Func<T, TResult> callback, T arg) => (TResult)Application.Current.Dispatcher.Invoke(callback, arg);
 
     /// <summary>
     /// Dispatch a function with two arguments to the main thread for synchronous execution, and return the result of that execution.
     /// </summary>
     /// <param name="callback">The function to be executed on the main thread</param>
-    public static TResult Concurrent<T1, T2, TResult>(Func<T1, T2, TResult> callback, T1 arg1, T2 arg2) => (TResult)Application.Current.Dispatcher.Invoke(callback, arg1, arg2);
+    internal static TResult Concurrent<T1, T2, TResult>(Func<T1, T2, TResult> callback, T1 arg1, T2 arg2) => (TResult)Application.Current.Dispatcher.Invoke(callback, arg1, arg2);
 
     /// <summary>
     /// Dispatch a function with three arguments to the main thread for synchronous execution, and return the result of that execution.
     /// </summary>
     /// <param name="callback">The function to be executed on the main thread</param>
-    public static TResult Concurrent<T1, T2, T3, TResult>(Func<T1, T2, T3, TResult> callback, T1 arg1, T2 arg2, T3 arg3) => (TResult)Application.Current.Dispatcher.Invoke(callback, arg1, arg2, arg3);
+    internal static TResult Concurrent<T1, T2, T3, TResult>(Func<T1, T2, T3, TResult> callback, T1 arg1, T2 arg2, T3 arg3) => (TResult)Application.Current.Dispatcher.Invoke(callback, arg1, arg2, arg3);
 
-    public static async void HandleCheckInit()
+    internal static async void HandleCheckInit()
     {
         using var tokenSource = new CancellationTokenSource();
         var token = tokenSource.Token;
@@ -173,7 +173,7 @@ public static partial class CommonUtils
         await initTask;
     }
 
-    public static async Task HandleFinalInit()
+    internal static async Task HandleFinalInit()
     {
         // Assign the UI a main type face.
         Settings.MainTypeFace = new(Settings.MainFontFamily, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
@@ -202,19 +202,19 @@ public static partial class CommonUtils
         Application.Current.MainWindow.ResizeMode = ResizeMode.CanResize;
     }
 
-    public static int IntFromBytes(byte[] data) =>
+    internal static int IntFromBytes(byte[] data) =>
         (data[0] << 24)
         + (data[1] << 16)
         + (data[2] << 8)
         + data[3];
 
-    public static double Lerp(double x, double y, double a)
+    internal static double Lerp(double x, double y, double a)
     {
         a = a > 1.0 ? 1.0 : a < 0.0 ? 0.0 : a;
         return (a * y) + ((1.0 - a) * x);
     }
 
-    public static Guid MakeUUID(UUIDType type = UUIDType.Record)
+    internal static Guid MakeUUID(UUIDType type = UUIDType.Record)
     {
         var uuid = Guid.NewGuid().ToString("N");
         uuid = $"{uuid[..14]}{(byte)type:X2}{uuid[16..]}";
@@ -222,13 +222,13 @@ public static partial class CommonUtils
     }
 
     // Deprecated. (Possibly temporarily.)
-    public static async Task OnFirstRun()
+    internal static async Task OnFirstRun()
     {
         if (!Settings.FirstRun)
             return;
     }
 
-    public static async void RefreshRecentNotes()
+    internal static async void RefreshRecentNotes()
     {
         if (DelayVisualUpdates)
             return;
@@ -253,23 +253,20 @@ public static partial class CommonUtils
         }
     }
 
-    public static void ShowTooltip(string text)
+    internal static void ShowTooltip(string text) => _ = new ToolTip()
     {
-        _ = new ToolTip()
-        {
-            Background = Settings.MenuBackground,
-            Content = text,
-            FontFamily = Settings.MainFontFamily,
-            FontSize = Settings.MainFontSize,
-            Foreground = Settings.MenuForeground,
-            IsOpen = true,
-            Placement = System.Windows.Controls.Primitives.PlacementMode.Mouse,
-            PlacementTarget = Application.Current.MainWindow,
-            StaysOpen = false
-        };
-    }
+        Background = Settings.MenuBackground,
+        Content = text,
+        FontFamily = Settings.MainFontFamily,
+        FontSize = Settings.MainFontSize,
+        Foreground = Settings.MenuForeground,
+        IsOpen = true,
+        Placement = System.Windows.Controls.Primitives.PlacementMode.Mouse,
+        PlacementTarget = Application.Current.MainWindow,
+        StaysOpen = false
+    };
 
-    public static void SystemPreferenceChanged(object? sender, UserPreferenceChangedEventArgs e)
+    internal static void SystemPreferenceChanged(object? sender, UserPreferenceChangedEventArgs e)
     {
         if (e.Category != UserPreferenceCategory.General)
             return;
@@ -277,14 +274,14 @@ public static partial class CommonUtils
         Settings.HighContrast = SystemParameters.HighContrast;
     }
 
-    public static byte[] ToByteArray(this int data) => [
+    internal static byte[] ToByteArray(this int data) => [
         (byte)((data >> 24) & 0xFF),
         (byte)((data >> 16) & 0xFF),
         (byte)((data >> 8) & 0xFF),
         (byte)(data & 0xFF)
     ];
 
-    public static byte[] ToByteArray(this uint data) => [
+    internal static byte[] ToByteArray(this uint data) => [
         (byte)((data >> 24) & 0xFF),
         (byte)((data >> 16) & 0xFF),
         (byte)((data >> 8) & 0xFF),
@@ -292,5 +289,5 @@ public static partial class CommonUtils
     ];
 
     [GeneratedRegex(@"\((\p{Nd}+)\)$")]
-    public static partial Regex IndexDigits();
+    internal static partial Regex IndexDigits();
 }

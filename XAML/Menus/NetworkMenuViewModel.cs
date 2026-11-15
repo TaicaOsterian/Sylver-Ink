@@ -4,7 +4,7 @@ using static SylverInk.Notes.DatabaseUtils;
 
 namespace SylverInk.XAML.Menus;
 
-public class NetworkMenuViewModel : ViewModelBase
+internal sealed class NetworkMenuViewModel : ViewModelBase
 {
     private string _addressCode = string.Empty;
     private string _addressCodeDisplay = string.Empty;
@@ -63,7 +63,7 @@ public class NetworkMenuViewModel : ViewModelBase
     public ICommand ServeCommand { get; }
     public ICommand UnserveCommand { get; }
 
-    public NetworkMenuViewModel()
+    internal NetworkMenuViewModel()
     {
         CancelConnectCommand = new RelayCommand(_ => ConnectPopupVisible = false);
         CloseCodePopupCommand = new RelayCommand(_ => CodePopupVisible = false);
@@ -97,14 +97,11 @@ public class NetworkMenuViewModel : ViewModelBase
         catch (Exception e)
         {
             App.LogException(e);
-            ShowTooltip(Strings.Tooltip_FailedCopy);
+            ShowTooltip(Strings.Tooltip_FailedCopy!);
         }
     }
 
-    private static void MenuCopyCode(object? param)
-    {
-        CopyCode();
-    }
+    private static void MenuCopyCode(object? param) => CopyCode();
 
     private void MenuConnect(object? param)
     {
@@ -130,6 +127,7 @@ public class NetworkMenuViewModel : ViewModelBase
             return;
 
         codePopup.IsOpen = true;
+        this.AddressCode = CurrentDatabase.Server.AddressCode ?? string.Empty;
         codeBox.Text = AddressCode ?? NetworkUtils.LoopbackCode;
     }
 

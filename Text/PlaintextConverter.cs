@@ -3,7 +3,7 @@ using static SylverInk.Text.FlowDocumentUtils;
 
 namespace SylverInk.Text;
 
-public class PlaintextConverter : ITextConverter
+internal sealed class PlaintextConverter : ITextConverter
 {
     public string Convert(string text, TextFormat sourceFormat) => sourceFormat switch
     {

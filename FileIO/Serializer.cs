@@ -7,7 +7,7 @@ namespace SylverInk.FileIO;
 /// <summary>
 /// Encapsulates reading and writing Sylver Ink database objects from and to files.
 /// </summary>
-public class Serializer : IDisposable
+internal sealed class Serializer : IDisposable
 {
     private byte[] _buffer = [];
     private Stream? _fileStream;
@@ -21,16 +21,16 @@ public class Serializer : IDisposable
     /// <summary>
     /// See SIDB.md for a file format description.
     /// </summary>
-    public required byte DatabaseFormat { get; set; }
-    public byte Flags { get; set; }
-    public bool Headless { get; private set; }
-    public bool Hidden { get; set; }
-    public bool UseLZW { get; private set; }
+    internal required byte DatabaseFormat { get; set; }
+    internal byte Flags { get; set; }
+    internal bool Headless { get; private set; }
+    internal bool Hidden { get; set; }
+    internal bool UseLZW { get; private set; }
 
     /// <summary>
     /// Clear previous buffers and prepare to perform a compression test.
     /// </summary>
-    public void BeginCompressionTest()
+    internal void BeginCompressionTest()
     {
         Close();
 
@@ -46,7 +46,7 @@ public class Serializer : IDisposable
     /// <summary>
     /// Clear all current buffers after a compression test.
     /// </summary>
-    public void ClearCompressionTest()
+    internal void ClearCompressionTest()
     {
         Close(true);
 
@@ -59,7 +59,7 @@ public class Serializer : IDisposable
     /// <summary>
     /// Flush the open filestream buffer and dispose it.
     /// </summary>
-    public void Close(bool testing = false, bool cancel = false)
+    internal void Close(bool testing = false, bool cancel = false)
     {
         if (!_isOpen)
             return;
@@ -124,7 +124,7 @@ public class Serializer : IDisposable
     /// <summary>
     /// Flush the compression test buffers, then read back from them to confirm the test's success.
     /// </summary>
-    public void EndCompressionTest()
+    internal void EndCompressionTest()
     {
         Close(true);
 
@@ -141,7 +141,7 @@ public class Serializer : IDisposable
     /// WARNING: This method consumes the LZW state buffers. Do not call this method until we are ready to close the stream.
     /// </summary>
     /// <returns>The outgoing compression buffer</returns>
-    public byte[] GetOutgoingStream()
+    internal byte[] GetOutgoingStream()
     {
         if (_writing)
             _lzw.Close();
@@ -169,7 +169,7 @@ public class Serializer : IDisposable
     /// <summary>
     /// Initialize the serializer's underlying stream for reading.
     /// </summary>
-    public bool OpenRead(string path)
+    internal bool OpenRead(string path)
     {
         try
         {
@@ -199,7 +199,7 @@ public class Serializer : IDisposable
     /// <summary>
     /// Initialize the serializer's underlying stream for writing.
     /// </summary>
-    public bool OpenWrite(string? path = null)
+    internal bool OpenWrite(string? path = null)
     {
         try
         {
@@ -229,7 +229,7 @@ public class Serializer : IDisposable
     /// <summary>
     /// Consume a single uncompressed byte from the stream, and decompress as needed.
     /// </summary>
-    public byte ReadByte()
+    internal byte ReadByte()
     {
         if (UseLZW)
         {
@@ -238,7 +238,7 @@ public class Serializer : IDisposable
         }
 
         _buffer = new byte[1];
-        int count = ReadFully(_fileStream, _buffer, 0, 1);
+        int count = ReadFully(_fileStream!, _buffer, 0, 1);
         if (count < 1)
             throw new EndOfStreamException();
         return _buffer[0];
@@ -253,7 +253,7 @@ public class Serializer : IDisposable
             return _lzw.Decompress(byteCount);
 
         _buffer = new byte[byteCount];
-        int count = ReadFully(_fileStream, _buffer, 0, byteCount);
+        int count = ReadFully(_fileStream!, _buffer, 0, byteCount);
         if (count < byteCount)
             throw new EndOfStreamException();
         return _buffer;
@@ -278,7 +278,7 @@ public class Serializer : IDisposable
     private void ReadHeader()
     {
         _buffer = new byte[5];
-        int read = ReadFully(_fileStream, _buffer, 0, 5);
+        int read = ReadFully(_fileStream!, _buffer, 0, 5);
         if (read < 5)
         {
             DatabaseFormat = byte.MaxValue;
@@ -300,7 +300,7 @@ public class Serializer : IDisposable
         HandleFormat();
     }
 
-    public int? ReadInt32()
+    internal int? ReadInt32()
     {
         if (!_isOpen)
             return null;
@@ -324,7 +324,7 @@ public class Serializer : IDisposable
         }
     }
 
-    public long? ReadLong()
+    internal long? ReadLong()
     {
         if (!_isOpen)
             return null;
@@ -348,7 +348,7 @@ public class Serializer : IDisposable
         }
     }
 
-    public string? ReadShortString()
+    internal string? ReadShortString()
     {
         if (!_isOpen)
             return null;
@@ -372,7 +372,7 @@ public class Serializer : IDisposable
         }
     }
 
-    public string? ReadString()
+    internal string? ReadString()
     {
         if (!_isOpen)
             return null;
@@ -408,7 +408,7 @@ public class Serializer : IDisposable
         + data[3]);
     }
 
-    public void WriteByte(byte data)
+    internal void WriteByte(byte data)
     {
         if (UseLZW)
         {
@@ -457,7 +457,7 @@ public class Serializer : IDisposable
         HandleFormat();
     }
 
-    public void WriteInt32(int value)
+    internal void WriteInt32(int value)
     {
         if (!_isOpen)
             return;
@@ -467,7 +467,7 @@ public class Serializer : IDisposable
         WriteBytes(_buffer);
     }
 
-    public void WriteLong(long value)
+    internal void WriteLong(long value)
     {
         if (!_isOpen)
             return;
@@ -482,7 +482,7 @@ public class Serializer : IDisposable
         WriteBytes(_buffer);
     }
 
-    public void WriteShortString(string? value)
+    internal void WriteShortString(string? value)
     {
         if (!_isOpen)
             return;
@@ -498,7 +498,7 @@ public class Serializer : IDisposable
         WriteBytes(_buffer);
     }
 
-    public void WriteString(string? value)
+    internal void WriteString(string? value)
     {
         if (!_isOpen)
             return;

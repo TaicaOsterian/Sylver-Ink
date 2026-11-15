@@ -5,7 +5,7 @@ using static SylverInk.XAMLUtils.MainWindowUtils;
 
 namespace SylverInk.XAML.ViewModels;
 
-public class MainWindowViewModel : ViewModelBase
+internal sealed class MainWindowViewModel : ViewModelBase
 {
     private double _pixelsPerInchY = 96.0;
     private int _refreshToken;
@@ -17,7 +17,7 @@ public class MainWindowViewModel : ViewModelBase
     public NetworkMenuViewModel NetworkMenu { get; private set; }
     public HelpMenuViewModel HelpMenu { get; private set; }
 
-    public MainWindowViewModel()
+    internal MainWindowViewModel()
     {
         FileMenu = new();
         DatabaseMenu = new();
@@ -44,7 +44,7 @@ public class MainWindowViewModel : ViewModelBase
         return result;
     }
 
-    public void OnViewportMetricsChanged(double width, double height, double pixelsPerInchY)
+    internal void OnViewportMetricsChanged(double width, double height, double pixelsPerInchY)
     {
         _viewportWidth = width;
         _viewportHeight = height;
@@ -52,7 +52,7 @@ public class MainWindowViewModel : ViewModelBase
         RefreshRecentNotes();
     }
 
-    public async Task RefreshRecentNotesAsync()
+    internal async Task RefreshRecentNotesAsync()
     {
         if (!CanResize || CommonUtils.Settings.MainTypeFace is null || _viewportHeight <= 0)
             return;

@@ -7,7 +7,7 @@ using static SylverInk.Notes.DatabaseUtils;
 
 namespace SylverInk.Net;
 
-public class NetClient : IDisposable
+internal class NetClient : IDisposable
 {
     private IPAddress? Address;
     private readonly BackgroundWorker ClientTask = new() { WorkerSupportsCancellation = true };
@@ -15,11 +15,11 @@ public class NetClient : IDisposable
     private TcpClient DBClient = new();
     private byte? Flags;
 
-    public bool Active { get; private set; }
-    public bool Connected { get; private set; }
-    public System.Windows.Shapes.Ellipse? Indicator { get; }
+    internal bool Active { get; private set; }
+    internal bool Connected { get; private set; }
+    internal System.Windows.Shapes.Ellipse? Indicator { get; }
 
-    public NetClient(Database DB)
+    internal NetClient(Database DB)
     {
         this.DB = DB;
 
@@ -51,7 +51,7 @@ public class NetClient : IDisposable
         };
     }
 
-    public async Task Connect(string code)
+    internal async Task Connect(string code)
     {
         if (code.Length != 6)
             return;
@@ -78,7 +78,7 @@ public class NetClient : IDisposable
         catch (Exception e)
         {
             App.LogException(e);
-            ShowTooltip(Strings.FailedConnection);
+            ShowTooltip(Strings.FailedConnection!);
             if (DB is not null)
                 Concurrent(RemoveDatabase, DB);
             return;
@@ -87,7 +87,7 @@ public class NetClient : IDisposable
         ClientTask.RunWorkerAsync();
     }
 
-    public async void Disconnect()
+    internal async void Disconnect()
     {
         ClientTask.CancelAsync();
         DBClient.Close();
@@ -109,7 +109,7 @@ public class NetClient : IDisposable
         GC.SuppressFinalize(this);
     }
 
-    public async void Send(MessageType type, byte[] data)
+    internal async void Send(MessageType type, byte[] data)
     {
         if (!DBClient.Connected)
             return;
@@ -124,7 +124,7 @@ public class NetClient : IDisposable
         catch (Exception e)
         {
             App.LogException(e);
-            ShowTooltip(Strings.NetClosed);
+            ShowTooltip(Strings.NetClosed!);
             Disconnect();
         }
         finally

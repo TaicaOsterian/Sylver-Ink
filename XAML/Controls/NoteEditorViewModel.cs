@@ -2,7 +2,7 @@
 
 namespace SylverInk.XAML.Controls;
 
-public class NoteEditorViewModel : PopoutViewModel, IDisposable
+internal class NoteEditorViewModel : PopoutViewModel, IDisposable
 {
     private bool _autosaving;
     private TextPointer _caretPosition;
@@ -140,7 +140,7 @@ public class NoteEditorViewModel : PopoutViewModel, IDisposable
         }
     }
 
-    public NoteEditorViewModel()
+    internal NoteEditorViewModel()
     {
         _cts = new();
         _record = new();
@@ -184,7 +184,7 @@ public class NoteEditorViewModel : PopoutViewModel, IDisposable
         }
     }
 
-    public bool CalculateIsEdited()
+    internal bool CalculateIsEdited()
     {
         if (Document.Blocks.Count != OriginalBlockCount)
             return true;
@@ -195,7 +195,7 @@ public class NoteEditorViewModel : PopoutViewModel, IDisposable
         return !OriginalText.Equals(TextConverter.Save(Document, TextFormat.Xaml), StringComparison.Ordinal);
     }
 
-    public void CancelAutosave()
+    internal void CancelAutosave()
     {
         if (!FinishedLoading)
             return;
@@ -218,7 +218,7 @@ public class NoteEditorViewModel : PopoutViewModel, IDisposable
         }
     }
 
-    public bool ConfirmExit()
+    internal bool ConfirmExit()
     {
         switch (MessageBox.Show(Strings.ExitMessage_SaveWork, Strings.Title_Notification, MessageBoxButton.YesNoCancel, MessageBoxImage.Information))
         {
@@ -238,7 +238,7 @@ public class NoteEditorViewModel : PopoutViewModel, IDisposable
         return false;
     }
 
-    public virtual void Construct()
+    internal virtual void Construct()
     {
         if (FinishedLoading)
             return;
@@ -271,7 +271,7 @@ public class NoteEditorViewModel : PopoutViewModel, IDisposable
         FinishedLoading = true;
     }
 
-    public virtual void Deconstruct()
+    internal virtual void Deconstruct()
     {
         CancelAutosave();
         RichTextBoxUtils.SetDocumentCaret(Document, CaretPosition.DocumentStart.GetOffsetToPosition(CaretPosition));
@@ -306,7 +306,7 @@ public class NoteEditorViewModel : PopoutViewModel, IDisposable
         RefreshRecentNotes();
     }
 
-    public void RequestUnlock(NoteRecord source)
+    internal void RequestUnlock(NoteRecord source)
     {
         if (!Record.Equals(source))
             return;
@@ -315,7 +315,7 @@ public class NoteEditorViewModel : PopoutViewModel, IDisposable
         IsEnabled = true;
     }
 
-    public void SaveRecord()
+    internal void SaveRecord()
     {
         if (Record is null)
             return;
@@ -326,11 +326,11 @@ public class NoteEditorViewModel : PopoutViewModel, IDisposable
         RefreshRecentNotes();
     }
 
-    public void ScrollTo(int position) => FlowDocumentUtils.ScrollToPosition(Document, position);
+    internal void ScrollTo(int position) => FlowDocumentUtils.ScrollToPosition(Document, position);
 
-    public void ScrollTo(string? text) => FlowDocumentUtils.ScrollToText(Document, text);
+    internal void ScrollTo(string? text) => FlowDocumentUtils.ScrollToText(Document, text);
 
-    public virtual void TextChanged()
+    internal virtual void TextChanged()
     {
         if (!FinishedLoading)
             return;

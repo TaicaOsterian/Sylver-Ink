@@ -5,7 +5,7 @@ using static SylverInk.Notes.DatabaseUtils;
 
 namespace SylverInk.XAML.Menus;
 
-public class FileMenuViewModel : ViewModelBase
+internal sealed class FileMenuViewModel : ViewModelBase
 {
     public ICommand BrowseFolderCommand { get; }
     public ICommand DeleteDatabaseCommand { get; }
@@ -16,9 +16,9 @@ public class FileMenuViewModel : ViewModelBase
     public ICommand SaveAsCommand { get; }
     public ICommand SaveLocalCommand { get; }
 
-    public event Action<string>? RequestSelectDatabase;
+    internal event Action<string>? RequestSelectDatabase;
 
-    public FileMenuViewModel()
+    internal FileMenuViewModel()
     {
         BrowseFolderCommand = new RelayCommand(MenuBrowseFolder);
         DeleteDatabaseCommand = new RelayCommand(MenuDelete, CanDeleteDatabase);
@@ -61,7 +61,7 @@ public class FileMenuViewModel : ViewModelBase
 
     private static void MenuCreate(object? param)
     {
-        AddDatabase(new Database());
+        AddDatabase();
         RefreshRecentNotes();
     }
 

@@ -2,9 +2,9 @@
 
 public partial class Import : Window
 {
-    public ImportViewModel ViewModel => (ImportViewModel)DataContext;
+    internal ImportViewModel ViewModel => (ImportViewModel)DataContext;
 
-    public Import()
+    internal Import()
     {
         DataContext = new ImportViewModel();
         ViewModel.RequestClose += (_, _) => Close();

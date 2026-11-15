@@ -13,9 +13,9 @@ namespace SylverInk;
 /// </summary>
 public partial class MainWindow : Window
 {
-    public MainWindowViewModel ViewModel => (MainWindowViewModel)DataContext;
+    internal MainWindowViewModel ViewModel => (MainWindowViewModel)DataContext;
 
-    public MainWindow()
+    internal MainWindow()
     {
         DataContext = new MainWindowViewModel();
         ViewModel.FileMenu.RequestSelectDatabase += SelectDatabaseTab;
@@ -99,10 +99,7 @@ public partial class MainWindow : Window
         }
     }
 
-    private void MainWindow_SizeChanged(object? sender, SizeChangedEventArgs e)
-    {
-        PushViewportMetrics();
-    }
+    private void MainWindow_SizeChanged(object? sender, SizeChangedEventArgs e) => PushViewportMetrics();
 
     private void MenuTabChanged(object? sender, SelectionChangedEventArgs e)
     {
@@ -112,7 +109,10 @@ public partial class MainWindow : Window
         if (control.SelectedItem is not TabItem item)
             return;
 
-        if (item.Tag is not Database newDB)
+        if (item.Content is not DatabaseControl dbControl)
+            return;
+
+        if (DatabaseControl.GetDatabase(dbControl) is not Database newDB)
             return;
 
         if (newDB.Equals(CurrentDatabase))
@@ -225,7 +225,13 @@ public partial class MainWindow : Window
     {
         foreach (TabItem item in DatabasesPanel.Items)
         {
-            if (item.Tag is not Database db || Path.GetFullPath(db.DBFile) != filePath)
+            if (item.Content is not DatabaseControl dbControl)
+                continue;
+
+            if (DatabaseControl.GetDatabase(dbControl) is not Database db)
+                continue;
+
+            if (Path.GetFullPath(db.DBFile) != filePath)
                 continue;
 
             DatabasesPanel.SelectedItem = item;

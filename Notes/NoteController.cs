@@ -7,14 +7,14 @@ using static SylverInk.Notes.DatabaseUtils;
 
 namespace SylverInk.Notes;
 
-public partial class NoteController : IDisposable
+internal sealed partial class NoteController : IDisposable
 {
     private short _canCompress; // -1 = Cannot compress, 1 = Can compress, 0 = Not tested.
     private bool _changed;
     private Serializer? _serializer;
     private byte? Structure;
 
-    public bool Changed
+    internal bool Changed
     {
         get => _changed;
         set
@@ -23,31 +23,31 @@ public partial class NoteController : IDisposable
             DatabaseChanged = DatabaseChanged || value;
         }
     }
-    public Database? DB { get; set; }
-    public bool EnforceNoForwardCompatibility { get; private set; }
-    public int Format { get; set; } = HighestSIDBFormat;
+    internal Database? DB { get; set; }
+    internal bool EnforceNoForwardCompatibility { get; private set; }
+    internal int Format { get; set; } = HighestSIDBFormat;
     private bool IndicesDirty { get; set; } = true;
-    public List<NoteRecord> IndexedRecords { get; private set; } = [];
-    public bool Loaded { get; set; }
-    public string? Name { get; set; }
-    public int RecordCount => Records.Count;
+    internal List<NoteRecord> IndexedRecords { get; private set; } = [];
+    internal bool Loaded { get; set; }
+    internal string? Name { get; set; }
+    internal int RecordCount => Records.Count;
     private readonly Dictionary<SortType, Comparison<NoteRecord>> Sortings = new([
         new(SortType.ByChange, new Comparison<NoteRecord>((_rev1, _rev2) => _rev2.GetLastChangeObject().CompareTo(_rev1.GetLastChangeObject()))),
         new(SortType.ByCreation, new Comparison<NoteRecord>((_rev1, _rev2) => _rev2.GetCreatedObject().CompareTo(_rev1.GetCreatedObject()))),
         new(SortType.ByIndex, new Comparison<NoteRecord>((_rev1, _rev2) => _rev1.Index.CompareTo(_rev2.Index)))
         ]);
-    public Dictionary<Guid, NoteRecord> Records { get; } = [];
-    public Guid UUID { get; set; } = MakeUUID(UUIDType.Database);
-    public Dictionary<string, double> WordPercentages { get; } = [];
+    internal Dictionary<Guid, NoteRecord> Records { get; } = [];
+    internal Guid UUID { get; set; } = MakeUUID(UUIDType.Database);
+    internal Dictionary<string, double> WordPercentages { get; } = [];
 
-    public NoteController(Database? DB = null)
+    internal NoteController(Database? DB = null)
     {
         this.DB = DB;
         InitializeRecords();
         Loaded = true;
     }
 
-    public NoteController(string dbFile, Database? DB = null)
+    internal NoteController(string dbFile, Database? DB = null)
     {
         this.DB = DB;
 
@@ -80,7 +80,7 @@ public partial class NoteController : IDisposable
         return record.UUID;
     }
 
-    public void Autosave(string filename, CancellationTokenSource? cts = null)
+    internal void Autosave(string filename, CancellationTokenSource? cts = null)
     {
         PropagateIndices();
         ReloadSerializer();
@@ -120,7 +120,7 @@ public partial class NoteController : IDisposable
         _serializer?.Close();
     }
 
-    public Guid CreateRecord(string entry, Guid? uuid = null)
+    internal Guid CreateRecord(string entry, Guid? uuid = null)
     {
         Changed = true;
         IndicesDirty = true;
@@ -134,11 +134,11 @@ public partial class NoteController : IDisposable
         return AddRecord(Record);
     }
 
-    public void CreateRevision(Guid uuid, string NewVersion) => CreateRevision(GetRecord(uuid), NewVersion);
+    internal void CreateRevision(Guid uuid, string NewVersion) => CreateRevision(GetRecord(uuid), NewVersion);
 
-    public static void CreateRevision(NoteRecord? record, string NewVersion) => record?.CreateRevision(NewVersion);
+    internal static void CreateRevision(NoteRecord? record, string NewVersion) => record?.CreateRevision(NewVersion);
 
-    public void DeleteRecord(Guid uuid)
+    internal void DeleteRecord(Guid uuid)
     {
         NoteRecord? record = GetRecord(uuid);
         if (record is null)
@@ -160,7 +160,7 @@ public partial class NoteController : IDisposable
         RefreshRecentNotes();
     }
 
-    public void DeserializeRecords()
+    internal void DeserializeRecords()
     {
         if (_serializer is null)
             return;
@@ -235,7 +235,7 @@ public partial class NoteController : IDisposable
         return false;
     }
 
-    public void EraseDatabase()
+    internal void EraseDatabase()
     {
         foreach (NoteRecord record in Records.Values)
             DeleteRecord(record.UUID);
@@ -269,7 +269,7 @@ public partial class NoteController : IDisposable
         return parse;
     }
 
-    public NoteRecord? GetRecord(int index)
+    internal NoteRecord? GetRecord(int index)
     {
         PropagateIndices();
 
@@ -287,14 +287,11 @@ public partial class NoteController : IDisposable
         }
     }
 
-    public NoteRecord? GetRecord(Guid uuid) => HasRecord(uuid) ? Records[uuid] : null;
+    internal NoteRecord? GetRecord(Guid uuid) => HasRecord(uuid) ? Records[uuid] : null;
 
-    public bool HasRecord(Guid uuid)
-    {
-        return Records.ContainsKey(uuid) && Records[uuid] != null;
-    }
+    internal bool HasRecord(Guid uuid) => Records.ContainsKey(uuid) && Records[uuid] != null;
 
-    public void InitializeRecords(bool newDatabase = true)
+    internal void InitializeRecords(bool newDatabase = true)
     {
         while (OpenQueries.Count > 0)
             OpenQueries[^1].RequestClose();
@@ -305,7 +302,7 @@ public partial class NoteController : IDisposable
         DeserializeRecords();
     }
 
-    public void MakeBackup()
+    internal void MakeBackup()
     {
         ReloadSerializer();
 
@@ -318,7 +315,7 @@ public partial class NoteController : IDisposable
         ReloadSerializer();
     }
 
-    public bool Open(string path, bool writing = false, bool hidden = false)
+    internal bool Open(string path, bool writing = false, bool hidden = false)
     {
         _serializer = new()
         {
@@ -333,7 +330,7 @@ public partial class NoteController : IDisposable
         return _serializer.OpenRead(path);
     }
 
-    public void PropagateIndices()
+    internal void PropagateIndices()
     {
         if (!IndicesDirty)
             return;
@@ -351,7 +348,7 @@ public partial class NoteController : IDisposable
         IndicesDirty = false;
     }
 
-    public void ReloadSerializer()
+    internal void ReloadSerializer()
     {
         _serializer?.Close();
         _serializer = new()
@@ -369,7 +366,7 @@ public partial class NoteController : IDisposable
         }
     }
 
-    public void RestoreAutosave(string filename)
+    internal void RestoreAutosave(string filename)
     {
         if (_serializer is null)
             ReloadSerializer();
@@ -427,7 +424,7 @@ public partial class NoteController : IDisposable
         PropagateIndices();
     }
 
-    public void Revert(DateTime targetDate)
+    internal void Revert(DateTime targetDate)
     {
         var recordSnapshot = Records.Values.Cast<NoteRecord>().ToList();
 
@@ -467,7 +464,7 @@ public partial class NoteController : IDisposable
     /// Opens a serializer instance to a file or memory stream, writes the entire contents of the database to the serializer, and then closes the serializer.
     /// </summary>
     /// <returns>If and only if <paramref name="inMemory"/> is <seealso cref="true"/>, a byte array containing the serialized database. Otherwise, <seealso cref="null"/>.</returns>
-    public byte[]? SerializeRecords(bool inMemory = false)
+    internal byte[]? SerializeRecords(bool inMemory = false)
     {
         PropagateIndices();
 
@@ -498,7 +495,7 @@ public partial class NoteController : IDisposable
         return null;
     }
 
-    public List<NoteRecord> Sort(SortType type = SortType.ByIndex)
+    internal List<NoteRecord> Sort(SortType type = SortType.ByIndex)
     {
         List<NoteRecord> orderedList = [];
 
@@ -510,7 +507,7 @@ public partial class NoteController : IDisposable
         return orderedList;
     }
 
-    public bool TestCanCompress()
+    internal bool TestCanCompress()
     {
         if (Changed)
             _canCompress = 0;
@@ -555,7 +552,7 @@ public partial class NoteController : IDisposable
         return true;
     }
 
-    public void UpdateWordPercentages()
+    internal void UpdateWordPercentages()
     {
         uint total = 0U;
         WordPercentages.Clear();

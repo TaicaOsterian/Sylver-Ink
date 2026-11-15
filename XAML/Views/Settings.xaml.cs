@@ -8,9 +8,9 @@ namespace SylverInk.XAML;
 /// </summary>
 public partial class Settings : Window
 {
-    public SettingsViewModel ViewModel => (SettingsViewModel)DataContext;
+    internal SettingsViewModel ViewModel => (SettingsViewModel)DataContext;
 
-    public Settings()
+    internal Settings()
     {
         DataContext = new SettingsViewModel();
         ViewModel.RequestClose += (_, _) => Close();
