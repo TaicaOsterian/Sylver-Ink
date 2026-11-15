@@ -7,9 +7,9 @@ using System.Windows.Threading;
 namespace SylverInk.XAMLUtils;
 
 /// <summary>
-/// Custom dependency property handlers for specific needs in regards to bindings that require special support.
+/// Custom dependency property handlers for specific needs in regards to RichTextBox bindings.
 /// </summary>
-internal sealed class RichTextBoxUtils
+internal static class RichTextBoxUtils
 {
     private static RichTextBox? _cachedRTB;
     private static bool _refreshQueued;

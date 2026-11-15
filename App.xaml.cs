@@ -8,7 +8,7 @@ using System.Windows.Threading;
 
 namespace SylverInk;
 
-public partial class App : Application
+public sealed partial class App : Application
 {
     private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
     {
