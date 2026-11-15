@@ -359,7 +359,6 @@ internal sealed class Database : IDisposable
 
     internal void MakeBackup(bool auto = false)
     {
-        var DBPath = GetDatabasePath(this);
         var BKPath = GetBackupPath(this);
         var BKFolder = Path.GetDirectoryName(BKPath);
 
@@ -384,6 +383,8 @@ internal sealed class Database : IDisposable
             if (File.Exists($"{BKPath}_{i}.sibk"))
                 File.Move($"{BKPath}_{i}.sibk", $"{BKPath}_{i + 1}.sibk", true);
         }
+
+        var DBPath = DBFile ?? GetDatabasePath(this);
 
         if (File.Exists($"{DBPath}"))
             File.Copy($"{DBPath}", $"{BKPath}_1.sibk", true);
