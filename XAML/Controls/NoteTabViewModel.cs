@@ -9,7 +9,7 @@ namespace SylverInk.XAML.Controls;
 internal sealed class NoteTabViewModel : NoteEditorViewModel
 {
     private bool _canSave;
-    private FlowDocument _historicalDocument;
+    private FlowDocument? _historicalDocument;
     private bool _isLive = true;
     private int _revisionIndex;
     private string _saveLabel = Strings.Word_Save!;
@@ -29,7 +29,7 @@ internal sealed class NoteTabViewModel : NoteEditorViewModel
         }
     }
 
-    public FlowDocument HistoricalDocument
+    public FlowDocument? HistoricalDocument
     {
         get => _historicalDocument;
         set
@@ -117,7 +117,7 @@ internal sealed class NoteTabViewModel : NoteEditorViewModel
         var blocks = new Block[HistoricalDocument.Blocks.Count];
 
         HistoricalDocument.Blocks.CopyTo(blocks, 0);
-        HistoricalDocument.Blocks.Clear();
+        ReleaseDocument();
 
         RequestRefresh?.Invoke(this, new(blocks));
     }
@@ -148,6 +148,9 @@ internal sealed class NoteTabViewModel : NoteEditorViewModel
 
     internal override void Deconstruct()
     {
+        if (IsDeconstructed)
+            return;
+
         base.Deconstruct();
 
         if (!Record.Locked)
@@ -155,6 +158,9 @@ internal sealed class NoteTabViewModel : NoteEditorViewModel
 
         CurrentDatabase.PushPreviousNote(Record);
 
+        IsDeconstructed = true;
+
+        ReleaseDocument(true);
         RemoveRecordTab(Record);
         RefreshRecentNotes();
     }
@@ -166,6 +172,7 @@ internal sealed class NoteTabViewModel : NoteEditorViewModel
 
         Deconstruct();
         Concurrent(CurrentDatabase.DeleteRecord, Record, true);
+        ReleaseDocument(true);
         RefreshRecentNotes();
     }
 
@@ -198,7 +205,7 @@ internal sealed class NoteTabViewModel : NoteEditorViewModel
 
     private void InsertImage(object? param)
     {
-        var box = (RichTextBox)Document.Parent;
+        var box = (RichTextBox?)Document?.Parent;
         if (box is null)
             return;
 
@@ -229,6 +236,8 @@ internal sealed class NoteTabViewModel : NoteEditorViewModel
 
         string revisionTime = RevisionIndex == 0 ? Record.GetLastChange() : Record.GetRevisionTime();
 
+        ReleaseDocument();
+
         if (RevisionIndex != 0)
             HistoricalDocument = Record.GetDocument(RevisionIndex);
 
@@ -249,6 +258,8 @@ internal sealed class NoteTabViewModel : NoteEditorViewModel
 
         string revisionTime = RevisionIndex == Record.GetNumRevisions() ? Record.GetCreated() : Record.GetRevisionTime();
 
+        ReleaseDocument();
+
         CanSave = true;
         HistoricalDocument = Record.GetDocument(RevisionIndex);
         IsLive = false;
@@ -256,6 +267,18 @@ internal sealed class NoteTabViewModel : NoteEditorViewModel
             ? string.Format(CultureInfo.CurrentCulture, CacheNoteEntryCreated, revisionTime)
             : string.Format(CultureInfo.CurrentCulture, CacheNoteRevisionID, BackstepIndex, revisionTime);
         SaveLabel = Strings.Word_Restore!;
+    }
+
+    private void ReleaseDocument(bool disposing = false)
+    {
+        // Detach from visual tree and clear the source so the data isn't rooted.
+        DisposeImages(HistoricalDocument);
+        HistoricalDocument?.Blocks.Clear();
+        HistoricalDocument = null;
+        if (disposing)
+            base.Dispose();
+        GC.Collect(2, GCCollectionMode.Optimized, blocking: false, compacting: true);
+        GC.WaitForPendingFinalizers();
     }
 
     private void Return(object? param)
@@ -267,6 +290,7 @@ internal sealed class NoteTabViewModel : NoteEditorViewModel
             return;
 
         Deconstruct();
+        ReleaseDocument(true);
     }
 
     internal override void TextChanged()

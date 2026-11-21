@@ -205,6 +205,10 @@ internal sealed partial class NoteController : IDisposable
     public void Dispose()
     {
         _serializer?.Dispose();
+        IndexedRecords.Clear();
+        Records.Clear();
+        WordPercentages.Clear();
+        DB = null;
         GC.SuppressFinalize(this);
     }
 

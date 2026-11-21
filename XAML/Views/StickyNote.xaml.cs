@@ -35,6 +35,8 @@ public sealed partial class StickyNote : Popout
 
         if (force)
             NoteBox.Document = new(); // This window has to decouple from the underlying document before that document can be assigned to another parent.
+        else
+            ViewModel.Dispose();
 
         OpenQueries.Remove(this);
         Close();

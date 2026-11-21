@@ -13,6 +13,8 @@ namespace SylverInk;
 /// </summary>
 public sealed partial class MainWindow : Window
 {
+    private bool IsShuttingDown;
+
     internal MainWindowViewModel ViewModel => (MainWindowViewModel)DataContext;
 
     internal MainWindow()
@@ -24,22 +26,14 @@ public sealed partial class MainWindow : Window
 
     private void Drag(object? sender, MouseButtonEventArgs e) => DragMove();
 
-    private static bool IsShuttingDown()
-    {
-        var app = Application.Current;
-        return app == null
-            || app.Dispatcher.HasShutdownStarted
-            || app.Dispatcher.HasShutdownFinished;
-    }
-
     private async void MainWindow_Closing(object? sender, CancelEventArgs e)
     {
-        if (IsShuttingDown()) // Prevent redundant event handling.
+        if (IsShuttingDown) // Prevent redundant event handling.
             return;
 
         if (AbortRun)
         {
-            Concurrent(Application.Current.Shutdown);
+            Shutdown();
             return;
         }
 
@@ -61,7 +55,7 @@ public sealed partial class MainWindow : Window
                             db.Save();
                     }
 
-                    Concurrent(Application.Current.Shutdown);
+                    Shutdown();
                     return;
             }
         }
@@ -82,13 +76,13 @@ public sealed partial class MainWindow : Window
 
                 DatabaseChanged = false;
                 Settings.Save();
-                Concurrent(Application.Current.Shutdown);
+                Shutdown();
                 return;
             case MessageBoxResult.No:
                 foreach (Database db in Databases)
                     Erase(GetLockFile(db.DBFile));
 
-                Concurrent(Application.Current.Shutdown);
+                Shutdown();
                 return;
         }
     }
@@ -183,7 +177,7 @@ public sealed partial class MainWindow : Window
         }
 
         // (If initialization was interrupted, prevent marking it as completed)
-        if (!IsShuttingDown())
+        if (!IsShuttingDown)
             UpdatesChecked = true;
 
         // Perform first run operations (if needed)
@@ -235,5 +229,11 @@ public sealed partial class MainWindow : Window
             RefreshRecentNotes();
             break;
         }
+    }
+
+    private void Shutdown()
+    {
+        IsShuttingDown = true;
+        Concurrent(Application.Current.Shutdown);
     }
 }

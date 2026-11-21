@@ -399,7 +399,7 @@ internal sealed class Serializer : IDisposable
         return (ushort)((data[0] << 8) + data[1]);
     }
 
-    private uint ReadUInt32()
+    internal uint ReadUInt32()
     {
         var data = ReadBytes(4);
         return (uint)((data[0] << 24)
@@ -513,5 +513,5 @@ internal sealed class Serializer : IDisposable
         (byte)(data & 0xFF)
     ]);
 
-    private void WriteUInt32(uint data) => WriteBytes(data.ToByteArray());
+    internal void WriteUInt32(uint data) => WriteBytes(data.ToByteArray());
 }

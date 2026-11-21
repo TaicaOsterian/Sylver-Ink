@@ -235,6 +235,24 @@ internal static class DatabaseUtils
         if (control.Items.Count < 2)
             AddDatabase();
 
+        var file = db.DBFile;
+
+        foreach (TabItem item in control.Items)
+        {
+            if (item.Content is not DatabaseControl dbControl)
+                continue;
+
+            if (DatabaseControl.GetDatabase(dbControl) is not Database tabDB)
+                continue;
+
+            if (!tabDB.Equals(db))
+                continue;
+
+            dbControl.Content = null;
+            item.Content = null;
+            item.Header = null;
+        }
+
         if (CurrentDatabase.Equals(db))
         {
             control.Items.RemoveAt(control.SelectedIndex);
@@ -255,11 +273,12 @@ internal static class DatabaseUtils
         }
 
         RefreshRecentNotes();
+        db.Dispose();
 
-        if (!Path.Exists(db.DBFile))
+        if (!Path.Exists(file))
             return;
 
-        var recentItem = new PathItem() { FullPath = db.DBFile };
+        var recentItem = new PathItem() { FullPath = file };
 
         if (!CommonUtils.Settings.RecentDatabases.Contains(recentItem))
             CommonUtils.Settings.RecentDatabases.Insert(0, recentItem);
@@ -279,6 +298,7 @@ internal static class DatabaseUtils
 
             OpenTabs.RemoveAt(i);
             tab.ViewModel.Deconstruct();
+            tab.ViewModel.Dispose();
         }
 
         var panel = Concurrent(GetCurrentTabControl)!;

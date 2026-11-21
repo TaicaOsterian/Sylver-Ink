@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using SylverInk.Mvvm;
+using System.Threading;
 
 namespace SylverInk.XAML.Controls;
 
@@ -8,9 +9,10 @@ internal class NoteEditorViewModel : PopoutViewModel, IDisposable
     private TextPointer _caretPosition;
     private CancellationTokenSource _cts;
     private bool _disposed;
-    private FlowDocument _document;
+    private FlowDocument? _document;
     private bool _edited;
     private bool _finishedLoading;
+    private bool _isDeconstructed;
     private bool _isEnabled = true;
     private string? _lastChange;
     private int _originalBlockCount;
@@ -39,7 +41,7 @@ internal class NoteEditorViewModel : PopoutViewModel, IDisposable
         }
     }
 
-    public FlowDocument Document
+    public FlowDocument? Document
     {
         get => _document;
         set
@@ -65,6 +67,16 @@ internal class NoteEditorViewModel : PopoutViewModel, IDisposable
         set
         {
             _finishedLoading = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public bool IsDeconstructed
+    {
+        get => _isDeconstructed;
+        set
+        {
+            _isDeconstructed = value;
             OnPropertyChanged();
         }
     }
@@ -174,6 +186,10 @@ internal class NoteEditorViewModel : PopoutViewModel, IDisposable
         {
             return;
         }
+        catch (ObjectDisposedException)
+        {
+            return;
+        }
         catch (Exception e)
         {
             App.LogException(e);
@@ -186,7 +202,7 @@ internal class NoteEditorViewModel : PopoutViewModel, IDisposable
 
     internal bool CalculateIsEdited()
     {
-        if (Document.Blocks.Count != OriginalBlockCount)
+        if (Document?.Blocks.Count != OriginalBlockCount)
             return true;
 
         if (!new TextRange(Document.ContentStart, Document.ContentEnd).Text.Equals(OriginalPlaintext, StringComparison.Ordinal))
@@ -279,13 +295,13 @@ internal class NoteEditorViewModel : PopoutViewModel, IDisposable
 
     protected virtual void Dispose(bool disposing)
     {
-        if (_disposed)
+        if (_disposed || !disposing)
             return;
 
-        if (disposing)
-        {
-            _cts.Dispose();
-        }
+        _cts.Dispose();
+        DisposeImages(Document);
+        Document?.Blocks.Clear();
+        Document = null;
 
         _disposed = true;
     }
@@ -296,14 +312,26 @@ internal class NoteEditorViewModel : PopoutViewModel, IDisposable
         GC.SuppressFinalize(this);
     }
 
-    protected void EraseAutosave()
+    protected static void DisposeImages(DependencyObject? root)
     {
-        if (Record is null)
+        if (root is null)
             return;
 
-        while (Record.IsAutosaveRevision())
-            Record.DeleteRevision();
+        foreach (var child in LogicalTreeHelper.GetChildren(root).OfType<DependencyObject>())
+        {
+            if (child is ImageContainer img)
+            {
+                img.Dispose();
+                continue;
+            }
 
+            DisposeImages(child);
+        }
+    }
+
+    protected void EraseAutosave()
+    {
+        Record?.EraseAutosave();
         RefreshRecentNotes();
     }
 

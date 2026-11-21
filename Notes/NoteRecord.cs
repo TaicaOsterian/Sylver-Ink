@@ -8,17 +8,19 @@ using static SylverInk.XAMLUtils.MainWindowUtils;
 
 namespace SylverInk.Notes;
 
-internal struct NoteRevision(long created = -1, bool isAutosave = false, int startIndex = -1, string? substring = null, Guid? uuid = null)
+internal struct NoteRevision(long created = -1, bool isAutosave = false, int length = -1, uint startIndex = 0, string? substring = null, Guid? uuid = null)
 {
     internal long Created { get; set; } = created;
     internal bool IsAutosave { get; set; } = isAutosave;
-    internal int StartIndex { get; set; } = startIndex;
+    internal int Length { get; set; } = length;
+    internal uint StartIndex { get; set; } = startIndex;
     internal string? Substring { get; set; } = substring;
     internal Guid Uuid { get; set; } = uuid ?? MakeUUID(UUIDType.Revision);
 }
 
 public sealed partial class NoteRecord
 {
+    private string? _cachedPreview;
     private long Created = -1;
     private int _index = -1;
     private string? Initial = string.Empty;
@@ -60,15 +62,21 @@ public sealed partial class NoteRecord
     {
         get
         {
-            var _preview = FlowDocumentPreview(TextConverter.Parse(Reconstruct(), TextFormat.Xaml))
+            if (_cachedPreview is not null && !LatestDirty)
+                return _cachedPreview;
+
+            // Never parse the Base64 payload just for a preview string.
+            string xaml = ImageRunRegex().Replace(Reconstruct(), "<Paragraph><Run>(image)</Run></Paragraph>");
+
+            string p = FlowDocumentPreview(TextConverter.Parse(xaml, TextFormat.Xaml))
                 .ReplaceLineEndings()
                 .Replace(Environment.NewLine, " ")
                 .Replace('\t', ' ');
 
-            while (_preview.Contains("  "))
-                _preview = _preview.Replace("  ", " ");
+            while (p.Contains("  "))
+                p = p.Replace("  ", " ");
 
-            return string.IsNullOrEmpty(_preview) ? Strings.EmptyNote! : _preview;
+            return _cachedPreview = string.IsNullOrEmpty(p) ? Strings.EmptyNote! : p;
         }
     }
 
@@ -135,40 +143,35 @@ public sealed partial class NoteRecord
         TagsDirty = true;
     }
 
-    // This function doesn't consume autosaved revisions, in order to preserve continuity.
-    // The onus is on the object initiating the call chain to track which revisions to discard if the user chooses not to save their changes.
-    // Properties on the record and revisions (including NoteRevision.IsAutosave) will assist with this.
     internal async Task BeginAutosave(FlowDocument document, CancellationTokenSource cts)
     {
         if (cts.IsCancellationRequested)
             return;
 
+        DelayVisualUpdates = true;
+        EraseAutosave();
         CreateRevision(TextConverter.Save(document, TextFormat.Xaml), Autosave: true);
         DB?.Autosave(cts);
+        DelayVisualUpdates = false;
         RefreshRecentNotes();
     }
 
     internal void CreateRevision(string NewVersion, bool Autosave = false)
     {
         string Current = ToXaml();
-        int StartIndex = 0;
 
         if (NewVersion.Equals(Current, StringComparison.Ordinal))
             return;
 
-        for (int i = 0; i < Math.Min(Current.Length, NewVersion.Length); i++)
-        {
-            if (!Current[i].Equals(NewVersion[i]))
-                break;
-            StartIndex = i;
-        }
+        var (StartIndex, ReplacementLength, Substring) = StringDiff(Current, NewVersion);
 
         Add(new()
         {
             Created = DateTime.UtcNow.ToBinary(),
             IsAutosave = Autosave,
+            Length = ReplacementLength,
             StartIndex = StartIndex,
-            Substring = StartIndex >= NewVersion.Length ? string.Empty : NewVersion[StartIndex..],
+            Substring = Substring,
             Uuid = MakeUUID(UUIDType.Revision)
         });
 
@@ -180,6 +183,7 @@ public sealed partial class NoteRecord
 
     internal void Delete()
     {
+        DB = null;
         Index = -1;
         Initial = string.Empty;
         LastChange = DateTime.UtcNow.ToBinary();
@@ -242,7 +246,11 @@ public sealed partial class NoteRecord
                 _revision.IsAutosave = (flags & 1) == 1;
             }
 
-            _revision.StartIndex = serializer?.ReadInt32() ?? 0;
+            _revision.StartIndex = serializer?.ReadUInt32() ?? 0;
+
+            if (serializer?.DatabaseFormat >= 17)
+                _revision.Length = serializer.ReadInt32() ?? -1;
+
             _revision.Substring = serializer?.ReadString();
 
             Add(_revision);
@@ -308,7 +316,11 @@ public sealed partial class NoteRecord
                 serializer?.WriteByte(flags);
             }
 
-            serializer?.WriteInt32(revision.StartIndex);
+            serializer?.WriteUInt32(revision.StartIndex);
+
+            if (serializer?.DatabaseFormat >= 17)
+                serializer?.WriteInt32(revision.Length);
+
             serializer?.WriteString(revision.Substring);
         }
     }
@@ -325,6 +337,12 @@ public sealed partial class NoteRecord
                 && Index.Equals(recordObj?.Index)
                 && Initial?.Equals(recordObj?.Initial, StringComparison.Ordinal) is true
                 && LastChange.Equals(recordObj?.LastChange));
+    }
+
+    internal void EraseAutosave()
+    {
+        while (IsAutosaveRevision())
+            DeleteRevision();
     }
 
     private int ExtractTags()
@@ -427,7 +445,7 @@ public sealed partial class NoteRecord
         _ => Preview
     };
 
-    internal bool IsAutosaveRevision() => Revisions.Peek().IsAutosave;
+    private bool IsAutosaveRevision() => Revisions.Peek().IsAutosave;
 
     internal bool IsAutosaveRevision(int index) => Revisions.Peek(index).IsAutosave;
 
@@ -492,10 +510,10 @@ public sealed partial class NoteRecord
         for (int i = 0; i < Revisions.Count() - Math.Min(backsteps, Revisions.Count()); i++)
         {
             var revision = Revisions.Seek(i);
-            if (revision.StartIndex > -1 && revision.StartIndex < final.Length)
-                final = final[..revision.StartIndex];
-
-            final += revision.Substring;
+            var (start, len, sub) = (revision.StartIndex, revision.Length, revision.Substring ?? string.Empty);
+            int len0 = (int)Math.Min(start, (uint)final.Length);
+            int tailStart = (int)Math.Min(len0 + (uint)Math.Max(len, 0), (uint)final.Length);
+            final = final[..len0] + sub + final[tailStart..];
         }
 
         final ??= string.Empty;
@@ -515,25 +533,14 @@ public sealed partial class NoteRecord
         {
             var Created = CreatedTags[i];
             var RString = Substrings[i];
-            var StartIndex = -1;
-            var Substring = string.Empty;
-            var ToCompare = i == 0 ? Initial : Substrings[i - 1];
-            for (int j = 0; j < ToCompare?.Length; j++)
-            {
-                if (j >= RString.Length)
-                    break;
+            var ToCompare = i == 0 ? Initial ?? string.Empty : Substrings[i - 1];
 
-                if (!RString[j].Equals(ToCompare[j]))
-                    break;
-
-                StartIndex = j + 1;
-                if (StartIndex < RString.Length)
-                    Substring = RString[StartIndex..];
-            }
+            var (StartIndex, ReplacementLength, Substring) = StringDiff(RString, ToCompare);
 
             Add(new NoteRevision()
             {
                 Created = Created,
+                Length = ReplacementLength,
                 StartIndex = StartIndex,
                 Substring = Substring,
                 Uuid = MakeUUID(UUIDType.Revision)
@@ -559,8 +566,10 @@ public sealed partial class NoteRecord
             if (serializer?.DatabaseFormat >= 7)
             {
                 string uuidString = serializer?.ReadShortString() ?? string.Empty;
+
                 if (!Guid.TryParse(uuidString, out var uuid))
                     uuid = MakeUUID(UUIDType.Revision);
+
                 _revision.Uuid = uuid;
             }
 
@@ -573,7 +582,9 @@ public sealed partial class NoteRecord
                 _revision.IsAutosave = (flags & 1) == 1;
             }
 
-            _revision.StartIndex = serializer?.ReadInt32() ?? 0;
+            _revision.StartIndex = serializer?.ReadUInt32() ?? 0;
+            if (serializer?.DatabaseFormat >= 17)
+                _revision.Length = serializer?.ReadInt32() ?? -1;
             _revision.Substring = serializer?.ReadString();
 
             Add(_revision);
@@ -588,7 +599,7 @@ public sealed partial class NoteRecord
 
     internal void Serialize(Serializer? serializer)
     {
-        if (serializer?.DatabaseFormat < 9)
+        if (serializer?.DatabaseFormat <= 8)
             TargetPlaintext();
 
         if (serializer?.DatabaseFormat >= 5)
@@ -609,7 +620,7 @@ public sealed partial class NoteRecord
 
             serializer?.WriteLong(revision.Created);
 
-            if (serializer?.DatabaseFormat > 15)
+            if (serializer?.DatabaseFormat >= 16)
             {
                 byte flags = (byte)(
                     //0 << 7 |
@@ -625,9 +636,53 @@ public sealed partial class NoteRecord
                 serializer?.WriteByte(flags);
             }
 
-            serializer?.WriteInt32(revision.StartIndex);
+            serializer?.WriteUInt32(revision.StartIndex);
+
+            if (serializer?.DatabaseFormat >= 17)
+                serializer?.WriteInt32(revision.Length);
+
             serializer?.WriteString(revision.Substring);
         }
+    }
+
+    private static (uint, int, string) StringDiff(string oldVersion, string newVersion)
+    {
+        var limit = Math.Min(oldVersion.Length, newVersion.Length);
+        uint StartIndex = 0;
+        int ReplacementLength = -1;
+        string Substring = string.Empty;
+
+        for (int i = 0; i < limit; i++)
+        {
+            if (!oldVersion[i].Equals(newVersion[i]))
+                break;
+
+            StartIndex = (uint)i + 1U;
+        }
+
+        if (StartIndex == 0)
+            return (StartIndex, ReplacementLength, newVersion);
+
+        int i1 = oldVersion.Length - 1;
+        int i2 = newVersion.Length - 1;
+
+        while (i1 > StartIndex && oldVersion[i1].Equals(newVersion[i2]))
+        {
+            i1--;
+            i2--;
+        }
+
+        if (i1 > StartIndex)
+            ReplacementLength = (int)(i1 - StartIndex + 1);
+        else if (i1 == StartIndex)
+            ReplacementLength = 0;
+
+        if (ReplacementLength == -1)
+            Substring = newVersion[(int)StartIndex..];
+        else if (i1 != i2)
+            Substring = newVersion[(int)StartIndex..(i2 + 1)];
+
+        return (StartIndex, ReplacementLength, Substring);
     }
 
     private void TargetPlaintext()
@@ -679,6 +734,9 @@ public sealed partial class NoteRecord
     internal string ToXaml() => Reconstruct();
 
     internal void Unlock() => Locked = false;
+
+    [GeneratedRegex(@"<Paragraph><Run Tag=""base64"">[^<]*</Run></Paragraph>|<Paragraph Tag=""base64"">[\s\S]*?</Paragraph>", RegexOptions.Singleline)]
+    private static partial Regex ImageRunRegex();
 
     [GeneratedRegex(@"(\p{Ll}+)")]
     private static partial Regex Lowercase();

@@ -12,6 +12,7 @@ Format number -- [1 byte]
 
 Starting from Format 15, the header contains a flag byte - **Bit 0 of the flag byte indicates the compression state**, rather than the version byte.
 
+
 - Format 1
 
 ```
@@ -26,6 +27,7 @@ Record count -- [4 bytes: big-endian unsigned int]
         Revision substring -- [4 bytes][n bytes: string. The text to insert in the record after removing all text after the revision start index. May be string.Empty]
 ```
 
+
 - Format 2
 
 Data is compressed using the Lempel–Ziv–Welch (LZW) algorithm.
@@ -33,6 +35,7 @@ Data is compressed using the Lempel–Ziv–Welch (LZW) algorithm.
 The LZW bit stream is formatted with a code dictionary at most 25 bits wide, yielding a length at most 2^25, or ~33.5 million.
 
 The dictionary is not reset when its width limit is reached. This results in exponential resource usage with increasing database size, eventually becoming prohibitive.
+
 
 - Format 4
 
@@ -51,6 +54,7 @@ Record count -- [4 bytes: big-endian unsigned int]
         Revision substring -- [4 bytes][n bytes: string. The text to insert in the record after removing all text after the revision start index. May be string.Empty]
 ```
 
+
 - Format 6
 
 Add record UUID to front of record data.
@@ -68,6 +72,7 @@ Record count -- [4 bytes: big-endian unsigned int]
         Revision start index -- [4 bytes][n bytes: string from signed int. Index of the change to the record string. Dependant on the state of the record after reconstruction from all previous revisions (see NoteRecord.Reconstruct)]
         Revision substring -- [4 bytes][n bytes: string. The text to insert in the record after removing all text after the revision start index. May be string.Empty]
 ```
+
 
 - Format 8
 
@@ -89,17 +94,20 @@ Record count -- [4 bytes: big-endian unsigned int]
         Revision substring -- [4 bytes][n bytes: string. The text to insert in the record after removing all text after the revision start index. May be string.Empty]
 ```
 
+
 - Format 10
 
 For formats >= 9, Sylver Ink expects to read Xaml data in record text. This data takes the form of a single FlowDocument object containing blocks representing the record data. See MSDN for more info.
 
 SIDB structure is otherwise unchanged in this revision.
 
+
 - Format 12
 
 For formats >= 11, Sylver Ink encodes and decodes LZW data using a code-packet dictionary that resets upon reaching a certain size.
 
 SIDB structure is otherwise unchanged in this revision.
+
 
 - Format 14
 
@@ -120,6 +128,7 @@ Record count -- [4 bytes: big-endian unsigned int]
         Revision start index -- [4 bytes][n bytes: string from signed int. Index of the change to the record string. Dependant on the state of the record after reconstruction from all previous revisions (see NoteRecord.Reconstruct)]
         Revision substring -- [4 bytes][n bytes: string. The text to insert in the record after removing all text after the revision start index. May be string.Empty]
 ```
+
 
 - Format 15
 
@@ -146,6 +155,7 @@ Record count -- [4 bytes: big-endian unsigned int]
         Revision substring -- [4 bytes][n bytes: string. The text to insert in the record after removing all text after the revision start index. May be string.Empty]
 ```
 
+
 - Format 16
 
 The revision structure now contains a flag byte immediately following its creation marker and preceding its start index.
@@ -171,5 +181,33 @@ Record count -- [4 bytes: big-endian unsigned int]
             Bits 7-1 -- Reserved.
             Bit 0 -- Autosave state flag. (0 = Full revision, 1 = autosaved revision)
         Revision start index -- [4 bytes][n bytes: string from signed int. Index of the change to the record string. Dependant on the state of the record after reconstruction from all previous revisions (see NoteRecord.Reconstruct)]
+        Revision substring -- [4 bytes][n bytes: string. The text to insert in the record after removing all text after the revision start index. May be string.Empty]
+```
+
+
+- Format 17
+
+Revision data now contains a length object of type signed int. To reduce overhead of recreating unmodified data at the *end* of a record, this measures the exact character count that should be deleted and replaced with the substring. In cases where the full remainder of the note record should be replaced, or when reading an older database, or when the length exceeds the signed int limit, set the length value to -1.
+
+```
+Flags -- [1 byte]
+    Bits 7-1 -- Reserved.
+    Bit 0 -- LZW compression state. (0 = uncompressed, 1 = LZW-compressed)
+Database UUID -- [2 bytes][n bytes: string]
+Database name -- [2 bytes: big-endian unsigned short, length of following string][n bytes: string]
+Record count -- [4 bytes: big-endian unsigned int]
+    Record UUID -- [2 bytes][n bytes: string]
+    Record creation date/time -- [2 bytes][n bytes: string from long]
+    Record index -- [4 bytes][n bytes: string from signed int]
+    Record initial state -- [4 bytes][n bytes: string. Initial text of the record at the time of creation]
+    Record modified date/time -- [2 bytes][n bytes: string from long. Date and time of the last change to record]
+    Revision count -- [4 bytes][n bytes: string from signed int. Number of changes made to record]
+        Revision UUID -- [2 bytes][n bytes: string]
+        Revision creation date/time -- [4 bytes][n bytes: string from long. Date the change was made]
+        Revision flags -- [1 byte]
+            Bits 7-1 -- Reserved.
+            Bit 0 -- Autosave state flag. (0 = Full revision, 1 = autosaved revision)
+        Revision start index -- [4 bytes][n bytes: string from signed int. Index of the change to the record string. Dependant on the state of the record after reconstruction from all previous revisions (see NoteRecord.Reconstruct)]
+        Revision length -- [4 bytes: big-endian signed int, length of *existing data to be removed* (NOT length of below substring)]
         Revision substring -- [4 bytes][n bytes: string. The text to insert in the record after removing all text after the revision start index. May be string.Empty]
 ```

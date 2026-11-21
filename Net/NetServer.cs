@@ -12,21 +12,21 @@ internal sealed class NetServer : IDisposable
 {
     private IPAddress? Address;
     private readonly List<TcpClient> Clients = [];
+    private Database? DB;
     private TcpListener DBServer = new(IPAddress.Any, TcpPort);
+    private bool _disposed;
     private static readonly string[] DNSAddresses = [
         "http://checkip.dyndns.org",
         "https://ifconfig.me/ip",
         "https://icanhazip.com",
         "https://api.ipify.org"
     ];
-    private bool _disposed;
     private byte? Flags;
     private readonly BackgroundWorker ServerTask = new() { WorkerSupportsCancellation = true };
     private readonly BackgroundWorker WatchTask = new() { WorkerSupportsCancellation = true };
 
     internal bool Active { get; private set; }
     internal string? AddressCode { get; private set; }
-    internal Database? DB { get; private set; }
     internal System.Windows.Shapes.Ellipse? Indicator { get; private set; }
     internal bool Serving { get; private set; }
 
@@ -140,6 +140,9 @@ internal sealed class NetServer : IDisposable
             ServerTask.Dispose();
             WatchTask.Dispose();
             Clients.Clear();
+            Address = null;
+            DB = null;
+            Indicator = null;
         }
 
         _disposed = true;

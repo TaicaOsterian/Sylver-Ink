@@ -11,7 +11,7 @@ internal sealed class NetClient : IDisposable
 {
     private IPAddress? Address;
     private readonly BackgroundWorker ClientTask = new() { WorkerSupportsCancellation = true };
-    private readonly Database? DB;
+    private Database? DB;
     private TcpClient DBClient = new();
     private bool _disposed;
     private byte? Flags;
@@ -107,6 +107,9 @@ internal sealed class NetClient : IDisposable
         {
             ClientTask.Dispose();
             DBClient.Dispose();
+            Address = null;
+            DB = null;
+            Indicator = null;
         }
 
         _disposed = true;

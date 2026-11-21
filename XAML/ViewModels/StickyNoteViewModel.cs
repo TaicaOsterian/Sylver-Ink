@@ -32,7 +32,6 @@ internal sealed class StickyNoteViewModel : NoteEditorViewModel
             SaveRecord();
 
         Record?.DB?.Transmit(NetworkUtils.MessageType.RecordUnlock, Record?.UUID.ToString() ?? string.Empty);
-
         OpenQueries.RemoveAll(query => query.ViewModel.Record.Equals(Record));
     }
 

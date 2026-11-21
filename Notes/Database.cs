@@ -160,6 +160,11 @@ internal sealed class Database : IDisposable
     public void Dispose()
     {
         Controller.Dispose();
+        Client?.Dispose();
+        Server?.Dispose();
+        PreviousOpenNotes.Clear();
+        HeaderPanel?.Children.Clear();
+        HeaderPanel = null;
         GC.SuppressFinalize(this);
     }
 
